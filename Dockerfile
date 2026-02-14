@@ -1,13 +1,20 @@
 # Stage 1: Build
 FROM dart:stable AS build
 
+# Set workdir to /app
 WORKDIR /app
 
-# IMPORTANT: Copy ONLY the backend_dart folder contents into /app
-# This ensures we don't accidentally pick up the Flutter project's pubspec.yaml from the parent folder
-COPY backend_dart/ .
+# Copy the ENTIRE backend_dart folder into /app/backend_dart
+# This preserves the directory structure exactly
+COPY backend_dart /app/backend_dart
 
-# Resolve dependencies (now running in a directory that ONLY has the server code)
+# Switch into that directory
+WORKDIR /app/backend_dart
+
+# Verify we are in the right place (for debug logging if it fails, but it won't)
+RUN ls -la
+
+# Resolve dependencies
 RUN dart pub get
 
 # Compile
@@ -21,8 +28,9 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 
 WORKDIR /app
 
-# Copy the compiled server from previous stage
-COPY --from=build /app/bin/server /app/bin/server
+# Copy the compiled server from the build stage
+# Note the specific path: /app/backend_dart/bin/server
+COPY --from=build /app/backend_dart/bin/server /app/bin/server
 
 # Start server
 ENV PORT=8080
