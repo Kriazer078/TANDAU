@@ -1,0 +1,25 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/tandau-backend', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/tandau-backend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'tandau-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/tandau-backend'
+      - '--region'
+      - 'europe-west1'
+      - '--platform'
+      - 'managed'
+      - '--port'
+      - '8080'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'FIREBASE_PROJECT_ID=tandau-app,GEMINI_API_KEY=AIzaSyAdGTLDlQhfAvkYTvuXycyMDFKdSuTwpTw'
+
+images:
+  - 'gcr.io/$PROJECT_ID/tandau-backend'
