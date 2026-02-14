@@ -1,0 +1,38 @@
+{
+    "functions": [
+        {
+            "source": "functions",
+            "codebase": "default",
+            "ignore": [
+                "venv",
+                ".git",
+                "firebase-debug.log",
+                "firebase-debug.*.log"
+            ],
+            "runtime": "python311"
+        }
+    ],
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "tandau-app",
+                    "appId": "1:60478017512:android:89360d3b214edfff731e5d",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "tandau-app",
+                    "configurations": {
+                        "android": "1:60478017512:android:89360d3b214edfff731e5d",
+                        "ios": "1:60478017512:ios:d86487c87bd26cc1731e5d",
+                        "macos": "1:60478017512:ios:d86487c87bd26cc1731e5d",
+                        "web": "1:60478017512:web:3ed9674abbf6ed69731e5d",
+                        "windows": "1:60478017512:web:95170cd655475c9c731e5d"
+                    }
+                }
+            }
+        }
+    }
+}

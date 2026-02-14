@@ -1,0 +1,22 @@
+# Credentials
+.env
+service_account.json
+backend_dart/.env
+backend_dart/service_account.json
+
+# Dart/Flutter
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS generated
+.DS_Store
+Thumbs.db

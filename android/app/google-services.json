@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "60478017512",
+    "project_id": "tandau-app",
+    "storage_bucket": "tandau-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60478017512:android:89360d3b214edfff731e5d",
+        "android_client_info": {
+          "package_name": "com.example.tandau"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60478017512-vk8i4mkjmiqkhbunou8q7kjmf8k6o6ba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tandau",
+            "certificate_hash": "c62b4cd50e8635d869b31685650784978d356243"
+          }
+        },
+        {
+          "client_id": "60478017512-3ull6p7sgf06qcokoaji54gc83kh1i0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5RML9VM-h0-vLMs5CBcuqoNiaP8j44aU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60478017512-3ull6p7sgf06qcokoaji54gc83kh1i0q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "60478017512-idvgfcbko9sgo4cpgaiernj0j5u5v75l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tandau"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

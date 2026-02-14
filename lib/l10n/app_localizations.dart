@@ -1,0 +1,1116 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_en.dart';
+import 'app_localizations_kk.dart';
+import 'app_localizations_ru.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations? of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('kk'),
+    Locale('ru'),
+  ];
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TANDAU'**
+  String get appTitle;
+
+  /// No description provided for @homeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the right path to your future'**
+  String get homeSubtitle;
+
+  /// No description provided for @ctaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Choosing'**
+  String get ctaStart;
+
+  /// No description provided for @statsUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'Universities'**
+  String get statsUniversity;
+
+  /// No description provided for @statsStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get statsStudent;
+
+  /// No description provided for @statsGraduates.
+  ///
+  /// In en, this message translates to:
+  /// **'Graduates'**
+  String get statsGraduates;
+
+  /// No description provided for @statsSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get statsSpecialty;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get settingsTheme;
+
+  /// No description provided for @settingsThemeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to dark mode'**
+  String get settingsThemeSubtitle;
+
+  /// No description provided for @settingsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingsNotifications;
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About App'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get settingsHelp;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settingsPrivacy;
+
+  /// No description provided for @dialogLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Language'**
+  String get dialogLanguageTitle;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get navSearch;
+
+  /// No description provided for @navFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get navFavorites;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @navAgent.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Agent'**
+  String get navAgent;
+
+  /// No description provided for @authRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get authRegister;
+
+  /// No description provided for @authLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get authLogin;
+
+  /// No description provided for @authCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get authCreateAccount;
+
+  /// No description provided for @authWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to TANDAU!'**
+  String get authWelcome;
+
+  /// No description provided for @authWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back!'**
+  String get authWelcomeBack;
+
+  /// No description provided for @authLoginToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to your account'**
+  String get authLoginToAccount;
+
+  /// No description provided for @authFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get authFullName;
+
+  /// No description provided for @authPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get authPhone;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authEmail;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPassword;
+
+  /// No description provided for @authAlreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get authAlreadyHaveAccount;
+
+  /// No description provided for @authDontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get authDontHaveAccount;
+
+  /// No description provided for @authRegisterNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get authRegisterNow;
+
+  /// No description provided for @authLoginNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get authLoginNow;
+
+  /// No description provided for @authGuestLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get authGuestLogin;
+
+  /// No description provided for @authGoogleLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login with Google'**
+  String get authGoogleLogin;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authErrorRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration error. Try again.'**
+  String get authErrorRegister;
+
+  /// No description provided for @authErrorLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password.'**
+  String get authErrorLogin;
+
+  /// No description provided for @authLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout from account'**
+  String get authLogout;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search University...'**
+  String get searchHint;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Universities not found'**
+  String get searchNoResults;
+
+  /// No description provided for @searchTryOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Try other filters'**
+  String get searchTryOthers;
+
+  /// No description provided for @filterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filterTitle;
+
+  /// No description provided for @filterNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get filterNext;
+
+  /// No description provided for @filterShowResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Results'**
+  String get filterShowResults;
+
+  /// No description provided for @filterCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Which City?'**
+  String get filterCity;
+
+  /// No description provided for @filterCitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the city where you want to study'**
+  String get filterCitySubtitle;
+
+  /// No description provided for @filterMajor.
+  ///
+  /// In en, this message translates to:
+  /// **'Which Major?'**
+  String get filterMajor;
+
+  /// No description provided for @filterMajorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a major you are interested in'**
+  String get filterMajorSubtitle;
+
+  /// No description provided for @filterBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your budget?'**
+  String get filterBudget;
+
+  /// No description provided for @filterBudgetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select annual tuition fee range'**
+  String get filterBudgetSubtitle;
+
+  /// No description provided for @filterClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get filterClear;
+
+  /// No description provided for @aiAgentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiAgentTitle;
+
+  /// No description provided for @aiAgentWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help choosing a university?\nAsk me a question!'**
+  String get aiAgentWelcome;
+
+  /// No description provided for @aiAgentInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a question...'**
+  String get aiAgentInputHint;
+
+  /// No description provided for @aiAgentSample1.
+  ///
+  /// In en, this message translates to:
+  /// **'Which university is better?'**
+  String get aiAgentSample1;
+
+  /// No description provided for @aiAgentSample2.
+  ///
+  /// In en, this message translates to:
+  /// **'Where are IT majors?'**
+  String get aiAgentSample2;
+
+  /// No description provided for @aiAgentSample3.
+  ///
+  /// In en, this message translates to:
+  /// **'What is needed for a grant?'**
+  String get aiAgentSample3;
+
+  /// No description provided for @commonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonOk;
+
+  /// No description provided for @majorIT.
+  ///
+  /// In en, this message translates to:
+  /// **'IT'**
+  String get majorIT;
+
+  /// No description provided for @majorMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get majorMedicine;
+
+  /// No description provided for @majorPedagogy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pedagogy'**
+  String get majorPedagogy;
+
+  /// No description provided for @majorEconomics.
+  ///
+  /// In en, this message translates to:
+  /// **'Economics'**
+  String get majorEconomics;
+
+  /// No description provided for @majorEngineering.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineering'**
+  String get majorEngineering;
+
+  /// No description provided for @majorArt.
+  ///
+  /// In en, this message translates to:
+  /// **'Art'**
+  String get majorArt;
+
+  /// No description provided for @budgetOnlyGrants.
+  ///
+  /// In en, this message translates to:
+  /// **'Only grants'**
+  String get budgetOnlyGrants;
+
+  /// No description provided for @budgetUpTo500k.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 500k T'**
+  String get budgetUpTo500k;
+
+  /// No description provided for @budget1To2m.
+  ///
+  /// In en, this message translates to:
+  /// **'1-2m T'**
+  String get budget1To2m;
+
+  /// No description provided for @budgetAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Not important'**
+  String get budgetAny;
+
+  /// No description provided for @validationEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get validationEmail;
+
+  /// No description provided for @validationPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get validationPassword;
+
+  /// No description provided for @validationName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get validationName;
+
+  /// No description provided for @validationPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone is required'**
+  String get validationPhone;
+
+  /// No description provided for @validationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email'**
+  String get validationEmailInvalid;
+
+  /// No description provided for @validationPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Min 6 characters'**
+  String get validationPasswordTooShort;
+
+  /// No description provided for @validationNameLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname must be 3-20 characters'**
+  String get validationNameLength;
+
+  /// No description provided for @validationNameChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Only letters, numbers and _ allowed'**
+  String get validationNameChars;
+
+  /// No description provided for @validationEmailFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email format'**
+  String get validationEmailFormat;
+
+  /// No description provided for @settingsNotificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure notifications'**
+  String get settingsNotificationsSubtitle;
+
+  /// No description provided for @settingsAboutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Information about TANDAU'**
+  String get settingsAboutSubtitle;
+
+  /// No description provided for @settingsHelpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ and support'**
+  String get settingsHelpSubtitle;
+
+  /// No description provided for @settingsPrivacySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get settingsPrivacySubtitle;
+
+  /// No description provided for @settingsInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is in development'**
+  String get settingsInProgress;
+
+  /// No description provided for @aboutContent.
+  ///
+  /// In en, this message translates to:
+  /// **'TANDAU - is an application to help students choose a university.\n\nVersion: 1.0.0\n\n© 2026 TANDAU Team'**
+  String get aboutContent;
+
+  /// No description provided for @searchHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Search History'**
+  String get searchHistory;
+
+  /// No description provided for @searchPopularCities.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Cities'**
+  String get searchPopularCities;
+
+  /// No description provided for @searchDepartments.
+  ///
+  /// In en, this message translates to:
+  /// **'Departments'**
+  String get searchDepartments;
+
+  /// No description provided for @navComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparison'**
+  String get navComparison;
+
+  /// No description provided for @comparisonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'University Comparison'**
+  String get comparisonTitle;
+
+  /// No description provided for @comparisonEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparison list is empty'**
+  String get comparisonEmpty;
+
+  /// No description provided for @comparisonEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add universities to compare their features'**
+  String get comparisonEmptySubtitle;
+
+  /// No description provided for @comparisonBrowseUniversities.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Universities'**
+  String get comparisonBrowseUniversities;
+
+  /// No description provided for @comparisonClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get comparisonClear;
+
+  /// No description provided for @comparisonClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear comparison?'**
+  String get comparisonClearTitle;
+
+  /// No description provided for @comparisonClearMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'All universities will be removed from comparison'**
+  String get comparisonClearMessage;
+
+  /// No description provided for @comparisonClearConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove all universities from comparison?'**
+  String get comparisonClearConfirm;
+
+  /// No description provided for @comparisonEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add universities from the list to start comparing'**
+  String get comparisonEmptyHint;
+
+  /// No description provided for @comparisonRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from comparison'**
+  String get comparisonRemoved;
+
+  /// No description provided for @comparisonAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to comparison'**
+  String get comparisonAdded;
+
+  /// No description provided for @comparisonFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum {max} universities for comparison'**
+  String comparisonFull(int max);
+
+  /// No description provided for @comparisonInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparing {count} of {max} universities'**
+  String comparisonInfo(int count, int max);
+
+  /// No description provided for @comparisonParameters.
+  ///
+  /// In en, this message translates to:
+  /// **'Parameters'**
+  String get comparisonParameters;
+
+  /// No description provided for @comparisonParamName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get comparisonParamName;
+
+  /// No description provided for @comparisonParamCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get comparisonParamCity;
+
+  /// No description provided for @comparisonParamTuition.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuition Cost'**
+  String get comparisonParamTuition;
+
+  /// No description provided for @comparisonParamGrants.
+  ///
+  /// In en, this message translates to:
+  /// **'Grants/Budget'**
+  String get comparisonParamGrants;
+
+  /// No description provided for @comparisonParamRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get comparisonParamRating;
+
+  /// No description provided for @comparisonParamSpecialties.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get comparisonParamSpecialties;
+
+  /// No description provided for @commonYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get commonYes;
+
+  /// No description provided for @commonNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get commonNo;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// No description provided for @comparisonAddToCompare.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Compare'**
+  String get comparisonAddToCompare;
+
+  /// No description provided for @comparisonComparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparing 2 Universities'**
+  String get comparisonComparing;
+
+  /// No description provided for @comparisonAddMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one more university to compare'**
+  String get comparisonAddMore;
+
+  /// No description provided for @comparisonAddUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'Add University'**
+  String get comparisonAddUniversity;
+
+  /// No description provided for @backToList.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to List'**
+  String get backToList;
+
+  /// No description provided for @available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// No description provided for @notAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Available'**
+  String get notAvailable;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'more'**
+  String get more;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @tuition.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuition'**
+  String get tuition;
+
+  /// No description provided for @grants.
+  ///
+  /// In en, this message translates to:
+  /// **'Grants'**
+  String get grants;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @specialties.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get specialties;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get delete;
+
+  /// No description provided for @inDevelopment.
+  ///
+  /// In en, this message translates to:
+  /// **'In Development'**
+  String get inDevelopment;
+
+  /// No description provided for @inDevelopmentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is under development and will be available soon!'**
+  String get inDevelopmentMessage;
+
+  /// No description provided for @commonOr.
+  ///
+  /// In en, this message translates to:
+  /// **'Or'**
+  String get commonOr;
+
+  /// No description provided for @tabOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get tabOverview;
+
+  /// No description provided for @tabMajors.
+  ///
+  /// In en, this message translates to:
+  /// **'Majors'**
+  String get tabMajors;
+
+  /// No description provided for @tabAdmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Admissions'**
+  String get tabAdmissions;
+
+  /// No description provided for @tabContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get tabContact;
+
+  /// No description provided for @tabReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get tabReviews;
+
+  /// No description provided for @detailAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About University'**
+  String get detailAbout;
+
+  /// No description provided for @detailTuition.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuition Fees'**
+  String get detailTuition;
+
+  /// No description provided for @detailPassingScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Passing Score'**
+  String get detailPassingScore;
+
+  /// No description provided for @detailDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Documents'**
+  String get detailDocuments;
+
+  /// No description provided for @detailDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Deadline'**
+  String get detailDeadline;
+
+  /// No description provided for @detailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get detailAddress;
+
+  /// No description provided for @detailWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get detailWebsite;
+
+  /// No description provided for @detailLeaveReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a Review'**
+  String get detailLeaveReview;
+
+  /// No description provided for @detailNoReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get detailNoReviews;
+
+  /// No description provided for @universityDormitory.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory'**
+  String get universityDormitory;
+
+  /// No description provided for @universityGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant'**
+  String get universityGrant;
+
+  /// No description provided for @universityMilitary.
+  ///
+  /// In en, this message translates to:
+  /// **'Military Department'**
+  String get universityMilitary;
+
+  /// No description provided for @universityStudentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} students'**
+  String universityStudentCount(int count);
+
+  /// No description provided for @authGuestMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to access all features'**
+  String get authGuestMessage;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdated;
+
+  /// No description provided for @profileAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get profileAge;
+
+  /// No description provided for @profileEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get profileEducation;
+
+  /// No description provided for @profileCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get profileCity;
+
+  /// No description provided for @profileUntScore.
+  ///
+  /// In en, this message translates to:
+  /// **'UNT Score'**
+  String get profileUntScore;
+
+  /// No description provided for @profileIeltsScore.
+  ///
+  /// In en, this message translates to:
+  /// **'IELTS (optional)'**
+  String get profileIeltsScore;
+
+  /// No description provided for @profileErrorUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile update failed'**
+  String get profileErrorUpdate;
+
+  /// No description provided for @profileErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading profile. Please retry.'**
+  String get profileErrorLoad;
+
+  /// No description provided for @authPleaseLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in'**
+  String get authPleaseLogin;
+
+  /// No description provided for @authEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get authEmailHint;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['en', 'kk', 'ru'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
+    case 'kk':
+      return AppLocalizationsKk();
+    case 'ru':
+      return AppLocalizationsRu();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}
