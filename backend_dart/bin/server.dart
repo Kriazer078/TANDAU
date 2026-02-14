@@ -10,7 +10,10 @@ import 'package:antigravity_backend/services/gemini_service.dart';
 
 void main(List<String> args) async {
   // Load environment variables
-  var env = DotEnv(includePlatformEnvironment: true)..load();
+  var env = DotEnv(includePlatformEnvironment: true);
+  if (File('.env').existsSync()) {
+    env.load();
+  }
 
   final projectId = env['FIREBASE_PROJECT_ID'] ?? 'your-project-id';
   final geminiKey =
