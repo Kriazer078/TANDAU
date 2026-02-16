@@ -14,6 +14,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const universityRoutes = require('./routes/universityRoutes');
 const grantRoutes = require('./routes/grantRoutes');
+const chatRoutes = require('./routes/chatRoutes'); // AI Chat
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use(`${apiVersion}/auth`, authRoutes);
 app.use(`${apiVersion}/users`, userRoutes);
 app.use(`${apiVersion}/universities`, universityRoutes);
 app.use(`${apiVersion}/grants`, grantRoutes);
+app.use(`${apiVersion}/chat`, chatRoutes); // AI Endpoint
 
 // Admin Panel
 app.use('/admin', express.static(path.join(__dirname, '../admin')));
