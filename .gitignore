@@ -1,22 +1,78 @@
-# Credentials
-.env
-service_account.json
-backend_dart/.env
-backend_dart/service_account.json
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
 
-# Dart/Flutter
+# IntelliJ / Android Studio
+*.iml
+.idea/
+.run/
+.name/
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# Flutter/Dart/Pub
 .dart_tool/
-.packages
-.pub/
-build/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
 
-# IDEs
-.idea/
-.vscode/
-*.iml
+# Android
+**/android/local.properties
+**/android/**/generated/
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/key.properties
+**/android/*.jks
+**/android/*.keystore
+**/android/**/google-services.json
 
-# OS generated
-.DS_Store
-Thumbs.db
+# iOS
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner/GoogleService-Info.plist
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+
+# Web
+lib/generated_plugin_registrant.dart
+
+# Exceptions to above rules.
+!**/android/**/gradle-wrapper.jar
+!**/android/gradlew
+!**/android/gradlew.bat
+
+# Firebase / Secrets
+firebase_options.dart
+lib/firebase_options.dart
+.env
+backend_dart/.env
+service_account.json
+backend_dart/service_account.json
+*.pem
+*.key
+*.p12
+creds.json
+gcloud-keys.json

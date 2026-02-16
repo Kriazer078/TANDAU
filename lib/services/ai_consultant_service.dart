@@ -10,7 +10,10 @@ class AIConsultantService {
 
   // URL for Antigravity Backend
   // Use 10.0.2.2 for Android Emulator, localhost for iOS simulator, or IP for physical device
-  static const String _baseUrl = 'http://10.0.2.2:8080/api/v1';
+  // URL for Antigravity Backend
+  // Use 10.0.2.2 for Android Emulator, localhost for iOS simulator, or IP for physical device
+  // PRODUCTION URL:
+  static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
 
   /// Инициализация (перемещена на backend)
   void init() {
