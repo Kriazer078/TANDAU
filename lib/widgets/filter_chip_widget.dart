@@ -75,7 +75,7 @@ class FilterChipWidget extends StatelessWidget {
             ),
             if (isSelected) ...[
               const SizedBox(width: 8),
-              const Icon(Icons.star, size: 20, color: AppColors.gold),
+              const Icon(Icons.star, size: 20, color: AppColors.accent),
             ],
           ],
         ),

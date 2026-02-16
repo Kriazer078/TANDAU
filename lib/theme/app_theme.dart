@@ -6,14 +6,16 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
+      brightness: Brightness.light,
+      primaryColor: AppColors.primary,
+      colorScheme: ColorScheme.light(
         primary: AppColors.primary,
-        secondary: AppColors.secondary,
+        secondary: AppColors.gold,
         surface: AppColors.background,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.background,
+      fontFamily: GoogleFonts.outfit().fontFamily,
       textTheme: GoogleFonts.outfitTextTheme().copyWith(
         displayLarge: GoogleFonts.outfit(
           fontSize: 32,
@@ -25,14 +27,10 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
-        bodyLarge: GoogleFonts.outfit(
-          fontSize: 16,
-          color: AppColors.textPrimary,
-        ),
       ),
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.background,
         elevation: 0,
         titleTextStyle: GoogleFonts.outfit(
           fontSize: 20,
@@ -42,49 +40,24 @@ class AppTheme {
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
       cardTheme: CardThemeData(
+        // ⭐ Fixed type name from CardTheme to CardThemeData
         color: AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+          side: const BorderSide(color: AppColors.border, width: 1),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 56),
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          elevation: 0,
-          textStyle: GoogleFonts.outfit(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.bold),
         ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 16,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
-        ),
-        labelStyle: GoogleFonts.outfit(color: AppColors.textSecondary),
-        hintStyle: GoogleFonts.outfit(color: AppColors.textHint),
       ),
     );
   }
@@ -93,6 +66,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      primaryColor: AppColors.primary,
       colorScheme: ColorScheme.dark(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
@@ -100,13 +74,14 @@ class AppTheme {
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,
+      fontFamily: GoogleFonts.outfit().fontFamily,
       textTheme: GoogleFonts.outfitTextTheme().apply(
         bodyColor: Colors.white,
         displayColor: Colors.white,
       ),
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.backgroundDark,
         elevation: 0,
         titleTextStyle: GoogleFonts.outfit(
           fontSize: 20,
@@ -116,6 +91,7 @@ class AppTheme {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       cardTheme: CardThemeData(
+        // ⭐ Fixed type name from CardTheme to CardThemeData
         color: AppColors.cardDark,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -127,11 +103,11 @@ class AppTheme {
         filled: true,
         fillColor: AppColors.cardDark,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
       ),
