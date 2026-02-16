@@ -5,6 +5,10 @@ class StudentProfile {
   final String userId;
   final String name;
   final int? entScore; // Прогнозируемый или реальный балл ЕНТ
+  final double? gpa; // GPA (max 4.0)
+  final double? ieltsScore; // IELTS Score (0-9.0)
+  final int? mathScore; // Math Score (or similar subject score)
+  final double? profileStrength; // 0.0 to 1.0 (calculated or estimated)
   final List<String> achievements; // Список достижений
   final List<String> preferredCities; // Предпочитаемые города
   final List<String> preferredMajors; // Интересующие специальности
@@ -16,6 +20,10 @@ class StudentProfile {
     required this.userId,
     required this.name,
     this.entScore,
+    this.gpa,
+    this.ieltsScore,
+    this.mathScore,
+    this.profileStrength,
     this.achievements = const [],
     this.preferredCities = const [],
     this.preferredMajors = const [],
@@ -30,6 +38,10 @@ class StudentProfile {
       'userId': userId,
       'name': name,
       'entScore': entScore,
+      'gpa': gpa,
+      'ieltsScore': ieltsScore,
+      'mathScore': mathScore,
+      'profileStrength': profileStrength,
       'achievements': achievements,
       'preferredCities': preferredCities,
       'preferredMajors': preferredMajors,
@@ -49,6 +61,10 @@ class StudentProfile {
       userId: map['userId'] ?? '',
       name: map['name'] ?? '',
       entScore: map['entScore'],
+      gpa: (map['gpa'] as num?)?.toDouble(),
+      ieltsScore: (map['ieltsScore'] as num?)?.toDouble(),
+      mathScore: map['mathScore'],
+      profileStrength: (map['profileStrength'] as num?)?.toDouble(),
       achievements: List<String>.from(map['achievements'] ?? []),
       preferredCities: List<String>.from(map['preferredCities'] ?? []),
       preferredMajors: List<String>.from(map['preferredMajors'] ?? []),
@@ -72,6 +88,10 @@ class StudentProfile {
     String? userId,
     String? name,
     int? entScore,
+    double? gpa,
+    double? ieltsScore,
+    int? mathScore,
+    double? profileStrength,
     List<String>? achievements,
     List<String>? preferredCities,
     List<String>? preferredMajors,
@@ -83,6 +103,10 @@ class StudentProfile {
       userId: userId ?? this.userId,
       name: name ?? this.name,
       entScore: entScore ?? this.entScore,
+      gpa: gpa ?? this.gpa,
+      ieltsScore: ieltsScore ?? this.ieltsScore,
+      mathScore: mathScore ?? this.mathScore,
+      profileStrength: profileStrength ?? this.profileStrength,
       achievements: achievements ?? this.achievements,
       preferredCities: preferredCities ?? this.preferredCities,
       preferredMajors: preferredMajors ?? this.preferredMajors,
@@ -104,12 +128,19 @@ class StudentProfile {
     int total = 0;
     int filled = 0;
 
-    // Базовые поля
+    // Базовые поля (Base fields)
     total += 4;
+    // Расширенные поля (Extended fields for AI strategy)
+    total += 3; // gpa, ielts, math
+
     if (entScore != null) filled++;
     if (achievements.isNotEmpty) filled++;
     if (preferredMajors.isNotEmpty) filled++;
     if (preferredCities.isNotEmpty) filled++;
+
+    if (gpa != null) filled++;
+    if (ieltsScore != null) filled++;
+    if (mathScore != null) filled++;
 
     return ((filled / total) * 100).round();
   }

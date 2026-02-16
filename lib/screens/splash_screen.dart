@@ -5,6 +5,7 @@ import 'legal/terms_screen.dart';
 import '../../screens/main_navigation_screen.dart';
 import '../services/auth_service.dart';
 import 'register_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -45,6 +46,10 @@ class _SplashScreenState extends State<SplashScreen>
     // Navigate based on auth state after 3 seconds
     Future.delayed(const Duration(seconds: 3), () async {
       if (mounted) {
+        // ⭐ Request permissions first
+        await _requestPermissions();
+
+        if (!mounted) return;
         final prefs = await SharedPreferences.getInstance();
         final bool termsAccepted = prefs.getBool('terms_accepted') ?? false;
         final bool loggedIn = AuthService().isLoggedIn.value;
@@ -134,5 +139,18 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _requestPermissions() async {
+    try {
+      // Request multiple permissions at once
+      await [
+        Permission.camera,
+        Permission.photos,
+        Permission.storage,
+      ].request();
+    } catch (e) {
+      debugPrint('Permission request error: $e');
+    }
   }
 }

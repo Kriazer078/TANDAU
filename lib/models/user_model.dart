@@ -11,6 +11,8 @@ class UserModel {
   final double? ieltsScore;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final double? gpa; // ⭐ GPA (max 4.0)
+  final int? mathScore; // ⭐ Math Score
   final String? photoUrl; // ⭐ URL фото профиля
   final List<String> favoriteUniversities;
 
@@ -23,6 +25,8 @@ class UserModel {
     this.city,
     this.untScore,
     this.ieltsScore,
+    this.gpa, // ⭐
+    this.mathScore, // ⭐
     this.photoUrl, // ⭐
     required this.createdAt,
     this.updatedAt,
@@ -39,6 +43,8 @@ class UserModel {
       'city': city,
       'untScore': untScore,
       'ieltsScore': ieltsScore,
+      'gpa': gpa, // ⭐
+      'mathScore': mathScore, // ⭐
       'photoUrl': photoUrl, // ⭐
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
@@ -55,7 +61,15 @@ class UserModel {
       education: map['education'],
       city: map['city'],
       untScore: map['untScore'],
-      ieltsScore: (map['ieltsScore'] as num?)?.toDouble(),
+      ieltsScore: (map['ieltsScore'] is String)
+          ? double.tryParse(map['ieltsScore'])
+          : (map['ieltsScore'] as num?)?.toDouble(),
+      gpa: (map['gpa'] is String)
+          ? double.tryParse(map['gpa'])
+          : (map['gpa'] as num?)?.toDouble(),
+      mathScore: (map['mathScore'] is String)
+          ? int.tryParse(map['mathScore'])
+          : map['mathScore'] as int?,
       photoUrl: map['photoUrl'], // ⭐
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       updatedAt: map['updatedAt'] != null
@@ -81,6 +95,8 @@ class UserModel {
     String? city,
     int? untScore,
     double? ieltsScore,
+    double? gpa, // ⭐
+    int? mathScore, // ⭐
     String? photoUrl, // ⭐
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -95,6 +111,8 @@ class UserModel {
       city: city ?? this.city,
       untScore: untScore ?? this.untScore,
       ieltsScore: ieltsScore ?? this.ieltsScore,
+      gpa: gpa ?? this.gpa, // ⭐
+      mathScore: mathScore ?? this.mathScore, // ⭐
       photoUrl: photoUrl ?? this.photoUrl, // ⭐
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

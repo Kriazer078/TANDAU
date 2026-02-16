@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../widgets/like_review_widgets.dart';
-import '../utils/guest_guard.dart'; // ⭐ Import GuestGuard
+import '../utils/guest_guard.dart';
 
 class UniversityCard extends StatelessWidget {
-  final String universityId; // ⭐ Новое поле
+  final String universityId;
   final String name;
   final String city;
   final String logoUrl;
@@ -15,14 +15,13 @@ class UniversityCard extends StatelessWidget {
   final VoidCallback? onCompareToggle;
   final bool isInComparison;
 
-  // ⭐ Новые поля для лайков и рейтинга
   final int likesCount;
   final int reviewsCount;
   final double averageRating;
 
   const UniversityCard({
     super.key,
-    required this.universityId, // ⭐ Обязательный параметр
+    required this.universityId,
     required this.name,
     required this.city,
     required this.logoUrl,
@@ -32,51 +31,75 @@ class UniversityCard extends StatelessWidget {
     required this.onFavoriteToggle,
     this.onCompareToggle,
     this.isInComparison = false,
-    this.likesCount = 0, // ⭐ По умолчанию 0
-    this.reviewsCount = 0, // ⭐ По умолчанию 0
-    this.averageRating = 0.0, // ⭐ По умолчанию 0.0
+    this.likesCount = 0,
+    this.reviewsCount = 0,
+    this.averageRating = 0.0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // University Logo
               Container(
-                width: 60,
-                height: 60,
+                width: 70,
+                height: 70,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.2),
+                  ),
                 ),
-                child: const Icon(
-                  Icons.school,
-                  size: 32,
-                  color: AppColors.primary,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.network(
+                    logoUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.school,
+                      size: 35,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 12), // Reduced spacing to prevent overflow
-              // University Info
+              const SizedBox(width: 16),
+              // Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      maxLines: 2,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Icon(
                           Icons.location_on,
@@ -84,123 +107,54 @@ class UniversityCard extends StatelessWidget {
                           color: AppColors.textSecondary,
                         ),
                         const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            city,
-                            style: Theme.of(context).textTheme.bodySmall,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                        Text(city, style: theme.textTheme.bodySmall),
                       ],
                     ),
                     const SizedBox(height: 8),
-
-                    // Features
-                    Wrap(
-                      spacing: 8,
-                      children: features
-                          .where(
-                            (feature) => !feature.contains('⭐'),
-                          ) // Не показываем рейтинг
-                          .map((feature) {
-                            final isRating = feature.contains('⭐');
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  isRating ? Icons.star : Icons.check_circle,
-                                  size: 14,
-                                  color: isRating
-                                      ? AppColors.accent
-                                      : AppColors.success,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  feature.replaceAll(
-                                    ' ⭐',
-                                    '',
-                                  ), // Remove star from text as icon is added
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
-                                      ),
-                                ),
-                              ],
-                            );
-                          })
-                          .toList(),
-                    ),
-
-                    // ⭐ СТАТЫ И ЛАЙК (Всегда показываем, чтобы можно было лайкнуть)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Row(
-                        children: [
-                          // Рейтинг
-                          if (averageRating > 0) ...[
-                            const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                              size: 14,
+                    // Stats & Rating
+                    Row(
+                      children: [
+                        if (averageRating > 0) ...[
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.accent,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            averageRating.toStringAsFixed(1),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.accent,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              averageRating.toStringAsFixed(1),
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            if (reviewsCount > 0) ...[
-                              const SizedBox(width: 2),
-                              Text(
-                                '($reviewsCount)',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ],
+                          ),
+                          const SizedBox(width: 8),
                         ],
-                      ),
+                        LikeButton(
+                          universityId: universityId,
+                          initialLikesCount: likesCount,
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-
-              const SizedBox(width: 8),
-
-              // Кнопки действий В КОЛОНКУ (экономим ширину)
+              // Actions
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Favorite Button (Top)
                   IconButton(
                     onPressed: () {
-                      if (GuestGuard.check(context)) {
-                        onFavoriteToggle();
-                      }
+                      if (GuestGuard.check(context)) onFavoriteToggle();
                     },
                     icon: Icon(
                       isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                      color: isFavorite
-                          ? AppColors.accent
-                          : AppColors.textSecondary,
+                      color: isFavorite ? AppColors.accent : AppColors.textHint,
                     ),
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.all(8),
-                    iconSize: 24, // Explicit size
                   ),
-
-                  // Compare Button
                   if (onCompareToggle != null)
                     IconButton(
                       onPressed: () {
-                        if (GuestGuard.check(context)) {
-                          onCompareToggle!();
-                        }
+                        if (GuestGuard.check(context)) onCompareToggle!();
                       },
                       icon: Icon(
                         isInComparison
@@ -208,19 +162,9 @@ class UniversityCard extends StatelessWidget {
                             : Icons.compare_arrows_outlined,
                         color: isInComparison
                             ? AppColors.primary
-                            : AppColors.textSecondary,
+                            : AppColors.textHint,
                       ),
-                      tooltip: 'Compare',
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(8),
-                      iconSize: 24,
                     ),
-
-                  // Like Button (Bottom)
-                  LikeButton(
-                    universityId: universityId,
-                    initialLikesCount: likesCount,
-                  ),
                 ],
               ),
             ],

@@ -22,7 +22,7 @@ class FilterChipWidget extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -30,7 +30,7 @@ class FilterChipWidget extends StatelessWidget {
           color: isSelected
               ? theme.primaryColor
               : (isDark ? theme.cardColor : Colors.white),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? theme.primaryColor

@@ -24,6 +24,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _cityController;
   late TextEditingController _untScoreController;
   late TextEditingController _ieltsScoreController;
+  late TextEditingController _gpaController; // ⭐
+  late TextEditingController _mathScoreController; // ⭐
   String? _selectedEducation;
 
   bool _isLoading = false;
@@ -43,6 +45,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _ieltsScoreController = TextEditingController(
       text: widget.user.ieltsScore?.toString() ?? '',
     );
+    _gpaController = TextEditingController(
+      text: widget.user.gpa?.toString() ?? '',
+    );
+    _mathScoreController = TextEditingController(
+      text: widget.user.mathScore?.toString() ?? '',
+    );
 
     if (widget.user.education != null &&
         _educationOptions.contains(widget.user.education)) {
@@ -58,6 +66,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _cityController.dispose();
     _untScoreController.dispose();
     _ieltsScoreController.dispose();
+    _gpaController.dispose();
+    _mathScoreController.dispose();
     super.dispose();
   }
 
@@ -72,6 +82,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         city: _cityController.text.trim(),
         untScore: int.tryParse(_untScoreController.text.trim()),
         ieltsScore: double.tryParse(_ieltsScoreController.text.trim()),
+        gpa: double.tryParse(_gpaController.text.trim()), // ⭐
+        mathScore: int.tryParse(_mathScoreController.text.trim()), // ⭐
       );
 
       if (mounted) {
@@ -123,156 +135,100 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             children: [
               // Telegram-style Profile Picture
-              Center(
-                child: Stack(
-                  children: [
-                    // Main Avatar
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _isLoading
-                            ? Colors.grey.shade300
-                            : (widget.user.photoUrl != null
-                                  ? Colors.transparent
-                                  : Colors
-                                        .blue
-                                        .shade300), // Telegram-like blue fallback
-                        image: widget.user.photoUrl != null && !_isLoading
-                            ? DecorationImage(
-                                image: NetworkImage(widget.user.photoUrl!),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child: widget.user.photoUrl == null && !_isLoading
-                          ? Center(
-                              child: Text(
-                                widget.user.name.isNotEmpty
-                                    ? widget.user.name[0].toUpperCase()
-                                    : '?',
-                                style: const TextStyle(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                          : null,
-                    ),
-
-                    // Loading Overlay
-                    if (_isLoading)
-                      const Positioned.fill(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          color: Colors.blue, // Telegram Blue
-                        ),
-                      ),
-
-                    // Camera Icon Button
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () async {
-                          if (_isLoading) return;
-
-                          // Capture messenger first to avoid async gap issues
-                          final messenger = ScaffoldMessenger.of(context);
-
-                          // 1. Pick Image
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
-                            maxWidth: 512, // Resize for performance
-                            maxHeight: 512,
-                            imageQuality: 80,
-                          );
-
-                          if (image == null) return;
-
-                          if (!mounted) return;
-                          setState(() {
-                            _isLoading = true;
-                          });
-
-                          // 2. Upload Image
-                          final File file = File(image.path);
-                          final downloadUrl = await AuthService()
-                              .uploadProfilePhoto(file);
-
-                          if (!mounted) return;
-
-                          if (downloadUrl != null) {
-                            // 3. Update Profile with new URL
-                            final success = await AuthService().updateProfile(
-                              photoUrl: downloadUrl,
-                            );
-
-                            if (!mounted) return;
-
-                            if (success) {
-                              messenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Фото успешно обновлено!'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                              // Force refresh (setState is called at the end)
-                            } else {
-                              messenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Ошибка обновления профиля'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          } else {
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Ошибка загрузки фото. Попробуйте еще раз.',
-                                ),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-
-                          if (mounted) {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
+              ValueListenableBuilder<UserModel?>(
+                valueListenable: AuthService().currentUser,
+                builder: (context, user, child) {
+                  final displayUser = user ?? widget.user;
+                  return Center(
+                    child: Stack(
+                      children: [
+                        // Main Avatar
+                        Container(
+                          width: 130,
+                          height: 130,
                           decoration: BoxDecoration(
-                            color: Colors.blue, // Telegram Blue
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            color: _isLoading
+                                ? Colors.grey.shade300
+                                : (displayUser.photoUrl != null &&
+                                          displayUser.photoUrl!.isNotEmpty
+                                      ? Colors.transparent
+                                      : Colors.blue.shade300),
+                            image:
+                                displayUser.photoUrl != null &&
+                                    displayUser.photoUrl!.isNotEmpty &&
+                                    !_isLoading
+                                ? DecorationImage(
+                                    image: NetworkImage(displayUser.photoUrl!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 22,
+                          child:
+                              (displayUser.photoUrl == null ||
+                                      displayUser.photoUrl!.isEmpty) &&
+                                  !_isLoading
+                              ? Center(
+                                  child: Text(
+                                    displayUser.name.isNotEmpty
+                                        ? displayUser.name[0].toUpperCase()
+                                        : '?',
+                                    style: const TextStyle(
+                                      fontSize: 48,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+
+                        // Loading Overlay
+                        if (_isLoading)
+                          Positioned.fill(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: Colors.blue.shade400,
+                            ),
+                          ),
+
+                        // Camera Icon Button
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () => _showImagePicker(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).scaffoldBackgroundColor,
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.2),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
               const SizedBox(height: 32),
 
@@ -314,8 +270,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ).contains(_ageController.text)
                           ? _ageController.text
                           : null,
+                      isExpanded: true, // ⭐ Устраняет переполнение
                       decoration: InputDecoration(
                         isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ), // Меньше отступы
                         labelText:
                             AppLocalizations.of(context)?.profileAge ??
                             'Возраст',
@@ -379,8 +340,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         fontSize: 16,
                       ),
                       initialValue: _selectedEducation,
+                      isExpanded: true, // ⭐ Устраняет переполнение
                       decoration: InputDecoration(
                         isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ), // Меньше отступы
                         labelText:
                             AppLocalizations.of(context)?.profileEducation ??
                             'Учёба',
@@ -542,6 +508,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 20),
 
+              // Existing Score Fields
               Row(
                 children: [
                   Expanded(
@@ -569,6 +536,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
+
+              // NEW: GPA and Math Score
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      label: 'GPA (max 4.0)', // Localize later
+                      controller: _gpaController,
+                      icon: Icons.grade,
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      label: 'Проф. Математика', // Localize later
+                      controller: _mathScoreController,
+                      icon: Icons.calculate,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
@@ -600,5 +594,86 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _showImagePicker(BuildContext context) async {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Colors.blue),
+              title: const Text('Галерея'),
+              onTap: () {
+                Navigator.pop(context);
+                _handleImageSelection(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Colors.blue),
+              title: const Text('Камера'),
+              onTap: () {
+                Navigator.pop(context);
+                _handleImageSelection(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleImageSelection(ImageSource source) async {
+    if (_isLoading) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final ImagePicker picker = ImagePicker();
+
+    try {
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 80,
+      );
+
+      if (image == null) return;
+
+      setState(() => _isLoading = true);
+
+      final File file = File(image.path);
+      final downloadUrl = await AuthService().uploadProfilePhoto(file);
+
+      if (downloadUrl != null) {
+        final success = await AuthService().updateProfile(
+          photoUrl: downloadUrl,
+        );
+        if (success) {
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Фото успешно обновлено!')),
+          );
+        } else {
+          throw Exception('Ошибка обновления ссылки в профиле');
+        }
+      } else {
+        throw Exception('Ошибка загрузки в облако');
+      }
+    } catch (e) {
+      debugPrint('Photo error: $e');
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Ошибка: ${e.toString().replaceAll('Exception:', '')}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 }

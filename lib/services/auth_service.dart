@@ -4,8 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart'; // Import Google Sign In
 import 'package:shared_preferences/shared_preferences.dart'; // Import for persistent attempts
-import 'package:firebase_storage/firebase_storage.dart'; // ⭐ Import Storage
 import 'dart:io'; // ⭐ Import File
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 
 class AuthService {
@@ -309,7 +310,9 @@ class AuthService {
     String? city,
     int? untScore,
     double? ieltsScore,
-    String? photoUrl, // ⭐ Added photoUrl
+    double? gpa, // ⭐ Added GPA
+    int? mathScore, // ⭐ Added Math Score
+    String? photoUrl,
   }) async {
     try {
       final user = _auth.currentUser;
@@ -322,7 +325,9 @@ class AuthService {
         city: city ?? currentUser.value!.city,
         untScore: untScore ?? currentUser.value!.untScore,
         ieltsScore: ieltsScore ?? currentUser.value!.ieltsScore,
-        photoUrl: photoUrl ?? currentUser.value!.photoUrl, // ⭐ Updated photoUrl
+        gpa: gpa ?? currentUser.value!.gpa, // ⭐
+        mathScore: mathScore ?? currentUser.value!.mathScore, // ⭐
+        photoUrl: photoUrl ?? currentUser.value!.photoUrl,
         updatedAt: DateTime.now(),
       );
 
@@ -347,35 +352,32 @@ class AuthService {
     }
   }
 
-  /// Upload profile photo to Firebase Storage
+  /// Upload profile photo to ImgBB (Free storage)
   Future<String?> uploadProfilePhoto(File file) async {
     try {
       final user = _auth.currentUser;
       if (user == null) return null;
 
-      // Generate a unique filename to avoid caching issues
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final ext = file.path.split('.').last;
-      final filename = 'profile_$timestamp.$ext';
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://api.imgbb.com/1/upload'),
+      );
 
-      // 1. Create reference: users/{uid}/{filename}
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('users')
-          .child(user.uid)
-          .child(filename);
+      request.fields['key'] = '16ea590b6156b5c9fbc737026770d231';
+      request.files.add(await http.MultipartFile.fromPath('image', file.path));
 
-      // 2. Upload file
-      // Using putFile is generally more efficient for larger files,
-      // but ensure the file path is accessible.
-      final uploadTask = ref.putFile(file);
-      final snapshot = await uploadTask;
-
-      // 3. Get download URL
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final resBody = await response.stream.bytesToString();
+        final data = jsonDecode(resBody);
+        final String? downloadUrl = data['data']['url'];
+        return downloadUrl;
+      } else {
+        debugPrint('ImgBB Error status: ${response.statusCode}');
+        return null;
+      }
     } catch (e) {
-      debugPrint('Error uploading photo: $e');
+      debugPrint('ImgBB upload error: $e');
       return null;
     }
   }

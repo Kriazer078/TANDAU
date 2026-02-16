@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Нам нужен доступ к камере для обновления фото профиля.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Нам нужен доступ к галерее для выбора фото профиля.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Нам нужен доступ к микрофону для записи видео (опционально).</string>
 </dict>
 </plist>

@@ -80,10 +80,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     '${university.rating} ⭐',
                   ],
                   isFavorite: true,
-                  // ⭐ Новые параметры
-                  likesCount: university.likesCount,
-                  reviewsCount: university.reviewsCount,
-                  averageRating: university.averageRating,
                   onTap: () {
                     Navigator.push(
                       context,

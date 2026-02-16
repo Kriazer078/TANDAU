@@ -7,6 +7,9 @@ import 'login_screen.dart';
 import 'admin_migration_screen.dart';
 import '../models/user_model.dart'; // Import UserModel
 import 'edit_profile_screen.dart'; // Import EditProfileScreen
+import 'notifications_settings_screen.dart';
+import 'help_support_screen.dart';
+import 'privacy_policy_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -129,12 +132,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)?.settingsInProgress ??
-                          'Feature in development',
-                    ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NotificationsSettingsScreen(),
                   ),
                 );
               },
@@ -185,12 +186,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)?.settingsInProgress ??
-                          'Section in development',
-                    ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HelpSupportScreen(),
                   ),
                 );
               },
@@ -212,12 +211,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)?.settingsInProgress ??
-                          'Privacy policy in development',
-                    ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrivacyPolicyScreen(),
                   ),
                 );
               },
@@ -275,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         icon: const Icon(Icons.logout, color: Colors.red),
                         label: Text(
-                          AppLocalizations.of(context)!.authLogout,
+                          AppLocalizations.of(context)?.authLogout ?? 'Logout',
                           style: const TextStyle(
                             color: Colors.red,
                             fontWeight: FontWeight.bold,
@@ -362,7 +359,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            ?trailing,
+            trailing ?? const SizedBox.shrink(),
           ],
         ),
       ),
@@ -436,7 +433,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              image: user.photoUrl != null
+              image: user.photoUrl != null && user.photoUrl!.isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(user.photoUrl!),
                       fit: BoxFit.cover,
