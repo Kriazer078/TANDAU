@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import '../admin_migration_screen.dart';
 import 'send_notification_screen.dart';
+import 'review_moderation_screen.dart';
+import 'user_management_screen.dart';
 
 class AdminPanelScreen extends StatelessWidget {
   const AdminPanelScreen({super.key});
@@ -27,6 +29,38 @@ class AdminPanelScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SendNotificationScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildAdminCard(
+            context,
+            title: 'Модерация отзывов',
+            subtitle: 'Просмотр, фильтрация и удаление отзывов',
+            icon: Icons.chat_bubble_rounded,
+            color: Colors.purple,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ReviewModerationScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildAdminCard(
+            context,
+            title: 'Управление пользователями',
+            subtitle: 'Роли, поиск, удаление пользователей',
+            icon: Icons.people_rounded,
+            color: Colors.teal,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UserManagementScreen(),
                 ),
               );
             },

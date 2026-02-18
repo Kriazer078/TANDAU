@@ -868,6 +868,24 @@ abstract class AppLocalizations {
   /// **'Specialties'**
   String get comparisonParamSpecialties;
 
+  /// No description provided for @comparisonParamDormitory.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory'**
+  String get comparisonParamDormitory;
+
+  /// No description provided for @comparisonParamStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get comparisonParamStudents;
+
+  /// No description provided for @comparisonParamPassingScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Passing Score'**
+  String get comparisonParamPassingScore;
+
   /// No description provided for @commonYes.
   ///
   /// In en, this message translates to:

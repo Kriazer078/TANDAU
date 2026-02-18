@@ -67,6 +67,9 @@ class AuthService {
     }
   }
 
+  /// Ban info notifier — non-null when user is banned and forced to log out
+  final ValueNotifier<String?> bannedReason = ValueNotifier<String?>(null);
+
   /// Load user data from Firestore
   Future<void> _loadUserData(String uid) async {
     try {
@@ -76,12 +79,45 @@ class AuthService {
           .get()
           .timeout(const Duration(seconds: 10));
       if (doc.exists) {
-        currentUser.value = UserModel.fromDocument(doc);
+        final UserModel user = UserModel.fromDocument(doc);
+
+        // 🚫 Check if user is banned
+        if (user.banned) {
+          debugPrint('🚫 User ${user.email} is BANNED: ${user.banReason}');
+          bannedReason.value = user.banReason ?? 'Ваш аккаунт заблокирован';
+          await _auth.signOut();
+          currentUser.value = null;
+          isLoggedIn.value = false;
+          return;
+        }
+
+        currentUser.value = user;
+
+        // Auto-sync: if email is in admin whitelist but Firestore role != 'admin',
+        // automatically set role='admin' in Firestore for consistency
+        _syncAdminRoleIfNeeded(currentUser.value!);
       }
     } catch (e) {
       debugPrint(
         'Error loading user data (might be offline or permission denied): $e',
       );
+    }
+  }
+
+  /// Auto-sync admin role for whitelisted emails
+  Future<void> _syncAdminRoleIfNeeded(UserModel user) async {
+    try {
+      final String email = user.email.toLowerCase();
+      if (_adminEmails.contains(email) && user.role != 'admin') {
+        debugPrint('🛡️ Auto-syncing admin role for ${user.email}');
+        await _firestore.collection('users').doc(user.uid).update({
+          'role': 'admin',
+        });
+        // Update local model too
+        currentUser.value = user.copyWith(role: 'admin');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Failed to auto-sync admin role: $e');
     }
   }
 

@@ -406,6 +406,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comparisonParamSpecialties => 'Specialties';
 
   @override
+  String get comparisonParamDormitory => 'Dormitory';
+
+  @override
+  String get comparisonParamStudents => 'Students';
+
+  @override
+  String get comparisonParamPassingScore => 'Passing Score';
+
+  @override
   String get commonYes => 'Yes';
 
   @override

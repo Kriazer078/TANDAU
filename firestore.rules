@@ -51,9 +51,9 @@ service cloud.firestore {
       allow create: if isSignedIn() 
                     && likeId == request.auth.uid + '_' + request.resource.data.universityId;
       
-      // Удалить лайк можно только свой
+      // Удалить лайк: свой ИЛИ админ (при удалении пользователя)
       allow delete: if isSignedIn() 
-                    && resource.data.userId == request.auth.uid;
+                    && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
     // ═══════════════════════════════════════
@@ -101,7 +101,8 @@ service cloud.firestore {
       // 🔔 УВЕДОМЛЕНИЯ (вложенная коллекция)
       match /notifications/{notificationId} {
         // Пользователь может читать/удалять свои уведомления
-        allow read, delete: if isOwner(userId);
+        // Админ тоже может удалять (при удалении пользователя)
+        allow read, delete: if isOwner(userId) || isAdmin();
         // Писать может владелец ИЛИ админ (для отправки уведомлений)
         allow create, update: if isOwner(userId) || isAdmin();
       }

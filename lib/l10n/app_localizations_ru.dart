@@ -408,6 +408,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get comparisonParamSpecialties => 'Специальности';
 
   @override
+  String get comparisonParamDormitory => 'Общежитие';
+
+  @override
+  String get comparisonParamStudents => 'Студенты';
+
+  @override
+  String get comparisonParamPassingScore => 'Проходной балл';
+
+  @override
   String get commonYes => 'Да';
 
   @override

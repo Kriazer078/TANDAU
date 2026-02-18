@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/admin_service.dart';
+import '../../services/auth_service.dart';
 import '../../models/user_model.dart';
 import '../../theme/app_colors.dart';
 
@@ -103,6 +104,14 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // SECURITY: Guard — block non-admin access
+    if (!AuthService().isAdmin) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Доступ запрещён')),
+        body: const Center(child: Text('❌ У вас нет прав администратора')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Отправить уведомление'), elevation: 0),
       body: SingleChildScrollView(

@@ -633,29 +633,62 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
   Widget _buildReviews(bool isDark) {
     return Column(
       children: [
+        // ── "Leave Review" button ──
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          child: OutlinedButton.icon(
-            onPressed: () {
-              if (GuestGuard.check(context)) {
-                showDialog(
-                  context: context,
-                  builder: (_) =>
-                      AddReviewDialog(universityId: widget.university.id),
-                );
-              }
-            },
-            icon: const Icon(Icons.add_comment_rounded),
-            label: const Text('Оставить отзыв'),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              side: const BorderSide(color: AppColors.primary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppColors.primary, Color(0xFF6366F1)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                if (GuestGuard.check(context)) {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) =>
+                        AddReviewDialog(universityId: widget.university.id),
+                  );
+                }
+              },
+              icon: const Icon(
+                Icons.edit_rounded,
+                size: 20,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'Оставить отзыв',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
             ),
           ),
         ),
+
+        // ── Reviews list ──
         Expanded(
           child: StreamBuilder<List<Review>>(
             stream: _reviewService.getUniversityReviewsStream(
@@ -667,79 +700,365 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
               }
               final reviews = snapshot.data!;
               if (reviews.isEmpty) {
-                return const Center(child: Text('Пока нет отзывов'));
+                return _buildEmptyReviews(isDark);
               }
 
-              return ListView.builder(
+              return ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                itemCount: reviews.length,
-                itemBuilder: (context, index) {
-                  final r = reviews[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.cardDark : Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withAlpha(13) // ~0.05
-                            : AppColors.border.withAlpha(128), // ~0.5
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              r.userName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.gold.withAlpha(26), // ~0.1
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.star_rounded,
-                                    color: AppColors.gold,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${r.rating}',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.gold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(r.comment, style: const TextStyle(height: 1.5)),
-                      ],
-                    ),
-                  );
-                },
+                children: [
+                  // Rating summary card
+                  _buildRatingSummary(reviews, isDark),
+                  const SizedBox(height: 16),
+                  // Review cards
+                  ...reviews.map((r) => _buildReviewCard(r, isDark)),
+                  const SizedBox(height: 80),
+                ],
               );
             },
           ),
         ),
       ],
     );
+  }
+
+  // ── Empty state ──
+  Widget _buildEmptyReviews(bool isDark) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.gold.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.rate_review_outlined,
+                size: 48,
+                color: AppColors.gold.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Пока нет отзывов',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white70 : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Будьте первым, кто оставит отзыв!',
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white38 : AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Rating summary (Google Play style) ──
+  Widget _buildRatingSummary(List<Review> reviews, bool isDark) {
+    final int total = reviews.length;
+    final double avg = reviews.fold<int>(0, (sum, r) => sum + r.rating) / total;
+
+    // Count per star
+    final Map<int, int> counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+    for (final r in reviews) {
+      counts[r.rating] = (counts[r.rating] ?? 0) + 1;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : AppColors.border.withValues(alpha: 0.5),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          // Left: big average number
+          SizedBox(
+            width: 100,
+            child: Column(
+              children: [
+                Text(
+                  avg.toStringAsFixed(1),
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
+                    height: 1.0,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (i) {
+                    return Icon(
+                      i < avg.round()
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: AppColors.gold,
+                      size: 16,
+                    );
+                  }),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$total отзывов',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.white38 : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 20),
+
+          // Right: bar distribution
+          Expanded(
+            child: Column(
+              children: List.generate(5, (i) {
+                final int star = 5 - i;
+                final int count = counts[star] ?? 0;
+                final double fraction = total > 0 ? count / total : 0;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Text(
+                        '$star',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? Colors.white54
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: fraction,
+                            backgroundColor: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.grey.withValues(alpha: 0.15),
+                            color: AppColors.gold,
+                            minHeight: 8,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Single review card ──
+  Widget _buildReviewCard(Review r, bool isDark) {
+    // Format date
+    final String dateStr = _formatReviewDate(r.createdAt);
+
+    // Avatar color from userName
+    final Color avatarColor = _avatarColor(r.userName);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : AppColors.border.withValues(alpha: 0.5),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // User row
+          Row(
+            children: [
+              // Avatar
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: avatarColor.withValues(alpha: 0.15),
+                child: Text(
+                  r.userName.isNotEmpty ? r.userName[0].toUpperCase() : '?',
+                  style: TextStyle(
+                    color: avatarColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Name + date
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      r.userName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      dateStr,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.white38
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Stars badge
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.gold.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ...List.generate(r.rating, (i) {
+                      return const Icon(
+                        Icons.star_rounded,
+                        color: AppColors.gold,
+                        size: 14,
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Comment text
+          Text(
+            r.comment,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.55,
+              color: isDark ? Colors.white70 : AppColors.textPrimary,
+            ),
+          ),
+          // Edited badge
+          if (r.updatedAt != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.edit_outlined,
+                  size: 12,
+                  color: isDark ? Colors.white24 : Colors.grey,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'изменено',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontStyle: FontStyle.italic,
+                    color: isDark ? Colors.white24 : Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatReviewDate(DateTime date) {
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inMinutes < 1) return 'только что';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} мин назад';
+    if (diff.inHours < 24) return '${diff.inHours} ч назад';
+    if (diff.inDays < 7) return '${diff.inDays} дн назад';
+
+    final months = [
+      'янв',
+      'фев',
+      'мар',
+      'апр',
+      'май',
+      'июн',
+      'июл',
+      'авг',
+      'сен',
+      'окт',
+      'ноя',
+      'дек',
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  Color _avatarColor(String name) {
+    final colors = [
+      const Color(0xFF6366F1), // Indigo
+      const Color(0xFF10B981), // Emerald
+      const Color(0xFFF59E0B), // Amber
+      const Color(0xFFEF4444), // Red
+      const Color(0xFF8B5CF6), // Violet
+      const Color(0xFF3B82F6), // Blue
+      const Color(0xFFEC4899), // Pink
+      const Color(0xFF14B8A6), // Teal
+    ];
+    final int hash = name.codeUnits.fold<int>(0, (prev, c) => prev + c);
+    return colors[hash % colors.length];
   }
 
   Future<void> _showAdmissionStrategy() async {

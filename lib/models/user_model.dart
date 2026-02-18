@@ -18,6 +18,8 @@ class UserModel {
   final List<String> achievements; // ⭐ Достижения студента
   final List<String> preferredMajors; // ⭐ Предпочитаемые специальности
   final String role; // 🔐 Роль: 'user' или 'admin'
+  final bool banned; // 🚫 Забанен ли пользователь
+  final String? banReason; // 📝 Причина бана
 
   UserModel({
     required this.uid,
@@ -37,6 +39,8 @@ class UserModel {
     this.achievements = const [],
     this.preferredMajors = const [],
     this.role = 'user',
+    this.banned = false,
+    this.banReason,
   });
 
   Map<String, dynamic> toMap() {
@@ -58,6 +62,8 @@ class UserModel {
       'achievements': achievements,
       'preferredMajors': preferredMajors,
       'role': role,
+      'banned': banned,
+      'banReason': banReason,
     };
   }
 
@@ -92,6 +98,8 @@ class UserModel {
       achievements: List<String>.from(map['achievements'] ?? []),
       preferredMajors: List<String>.from(map['preferredMajors'] ?? []),
       role: map['role'] ?? 'user',
+      banned: map['banned'] ?? false,
+      banReason: map['banReason'],
     );
   }
 
@@ -118,6 +126,8 @@ class UserModel {
     List<String>? achievements, // ⭐
     List<String>? preferredMajors, // ⭐
     String? role, // 🔐
+    bool? banned, // 🚫
+    String? banReason, // 📝
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -137,6 +147,8 @@ class UserModel {
       achievements: achievements ?? this.achievements,
       preferredMajors: preferredMajors ?? this.preferredMajors,
       role: role ?? this.role,
+      banned: banned ?? this.banned,
+      banReason: banReason ?? this.banReason,
     );
   }
 }

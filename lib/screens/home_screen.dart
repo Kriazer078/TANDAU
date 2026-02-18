@@ -406,7 +406,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: _buildActionCard(
             context,
             title: l10n?.comparisonTitle ?? 'Compare',
-            subtitle: l10n?.homeUniversities ?? 'Universities',
+            subtitle: l10n?.navComparison ?? 'Comparison',
             icon: Icons.compare_arrows_rounded,
             color: const Color(0xFF10B981),
             isDark: isDark,
@@ -422,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: _buildActionCard(
             context,
             title: l10n?.homeAdvancedFilter ?? 'Advanced Filter',
-            subtitle: l10n?.homeUniversities ?? 'Universities',
+            subtitle: l10n?.filterTitle ?? 'Filters',
             icon: Icons.tune_rounded,
             color: const Color(0xFFF59E0B),
             isDark: isDark,

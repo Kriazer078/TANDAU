@@ -318,6 +318,18 @@ class ReviewService {
         );
   }
 
+  /// ADMIN: Stream всех отзывов (для модерации)
+  Stream<List<Review>> getAllReviewsStream() {
+    return _firestore
+        .collection(_reviewsCollection)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Review.fromDocument(doc)).toList(),
+        );
+  }
+
   /// ADMIN: Инициализировать рейтинги для всех университетов
   Future<void> initializeRatings() async {
     try {

@@ -10,6 +10,7 @@ import 'edit_profile_screen.dart'; // Import EditProfileScreen
 import 'notifications_settings_screen.dart';
 import 'help_support_screen.dart';
 import 'privacy_policy_screen.dart';
+import 'favorites_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -135,6 +136,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const NotificationsSettingsScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+
+            // Saved Universities
+            _buildSettingCard(
+              context,
+              icon: Icons.favorite_rounded,
+              title: AppLocalizations.of(context)?.navFavorites ?? 'Saved',
+              subtitle: 'Ваши сохранённые университеты',
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Theme.of(
+                  context,
+                ).iconTheme.color?.withValues(alpha: 0.5),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritesScreen(),
                   ),
                 );
               },

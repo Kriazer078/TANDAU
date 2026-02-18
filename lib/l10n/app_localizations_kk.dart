@@ -405,6 +405,15 @@ class AppLocalizationsKk extends AppLocalizations {
   String get comparisonParamSpecialties => 'Мамандықтар';
 
   @override
+  String get comparisonParamDormitory => 'Жатақхана';
+
+  @override
+  String get comparisonParamStudents => 'Студенттер';
+
+  @override
+  String get comparisonParamPassingScore => 'Өту балы';
+
+  @override
   String get commonYes => 'Иә';
 
   @override
