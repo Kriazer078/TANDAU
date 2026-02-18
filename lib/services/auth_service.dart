@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'notification_service.dart';
 import '../models/user_model.dart';
 
+import 'moderation_service.dart';
+
 class AuthService {
   // Singleton instance
   static final AuthService _instance = AuthService._internal();
@@ -20,6 +22,8 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn =
       GoogleSignIn(); // Initialize Google Sign In
+
+  final ModerationService _moderationService = ModerationService();
 
   final ValueNotifier<bool> isLoggedIn = ValueNotifier<bool>(false);
   final ValueNotifier<UserModel?> currentUser = ValueNotifier<UserModel?>(null);
@@ -267,6 +271,10 @@ class AuthService {
   Future<String?> register(String name, String email, String password) async {
     _isRegistering = true;
     try {
+      if (_moderationService.hasProfanity(name)) {
+        return 'Имя содержит недопустимые выражения.';
+      }
+
       debugPrint('📝 AUTH: START Registration process');
 
       // 1. Create User in Firebase Auth
@@ -357,6 +365,13 @@ class AuthService {
         photoUrl: photoUrl ?? currentUser.value!.photoUrl,
         updatedAt: DateTime.now(),
       );
+
+      // --- MODERATION CHECK (Name) ---
+      if (name != null && _moderationService.hasProfanity(name)) {
+        debugPrint('❌ Update rejected: Profanity in name');
+        return false;
+      }
+      // -------------------------------
 
       await _firestore
           .collection('users')

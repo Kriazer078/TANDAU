@@ -211,5 +211,17 @@
     "detailScoreSubtitle": "Based on last year's data",
     "detailPhoneLabel": "Phone",
     "moderationSpam": "Too many messages. Please wait a moment.",
-    "moderationProfanity": "Please use respectful language. Profanity is not allowed."
+    "moderationProfanity": "Please use respectful language. Profanity is not allowed.",
+    "homeTools": "Tools",
+    "homeMarketInsights": "Market Insights",
+    "homeAIPowered": "AI Powered",
+    "homeGreetingMorning": "Good Morning",
+    "homeGreetingAfternoon": "Good Afternoon",
+    "homeGreetingEvening": "Good Evening",
+    "homeChanceEstimation": "Chance Estimation",
+    "homeChanceAnalysis": "Grant Admission Analysis 2025",
+    "homeAdvancedFilter": "Advanced Filter",
+    "homeUniversities": "Universities",
+    "homeAIAnalysisInProgress": "AI Analysis...",
+    "homeAIAnalyticsTitle": "TANDAU AI Analytics"
 }

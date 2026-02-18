@@ -31,9 +31,7 @@ class _HomeScreenState extends State<HomeScreen>
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
 
-  // Cache greeting to avoid re-computing each build
-  late String _greeting;
-  String? _greetingLocale;
+  // Cache notification stream to avoid re-creating on each build
 
   // Cache notification stream to avoid re-creating on each build
   late Stream<List<AppNotification>> _notificationStream;
@@ -62,26 +60,14 @@ class _HomeScreenState extends State<HomeScreen>
     _notificationStream = NotificationService()
         .getNotificationsStream()
         .asBroadcastStream();
-
-    _updateGreeting(null);
   }
 
-  void _updateGreeting(String? locale) {
+  String _getGreeting(AppLocalizations? l10n) {
+    if (l10n == null) return 'Good Morning';
     final hour = DateTime.now().hour;
-    if (locale == 'ru') {
-      _greeting = hour < 12
-          ? 'Доброе утро'
-          : (hour < 18 ? 'Добрый день' : 'Добрый вечер');
-    } else if (locale == 'kk') {
-      _greeting = hour < 12
-          ? 'Қайырлы таң'
-          : (hour < 18 ? 'Қайырлы күн' : 'Қайырлы кеш');
-    } else {
-      _greeting = hour < 12
-          ? 'Good Morning'
-          : (hour < 18 ? 'Good Afternoon' : 'Good Evening');
-    }
-    _greetingLocale = locale;
+    if (hour < 12) return l10n.homeGreetingMorning;
+    if (hour < 18) return l10n.homeGreetingAfternoon;
+    return l10n.homeGreetingEvening;
   }
 
   @override
@@ -97,9 +83,7 @@ class _HomeScreenState extends State<HomeScreen>
     final l10n = AppLocalizations.of(context);
 
     // Only recompute greeting if locale changed
-    if (_greetingLocale != l10n?.localeName) {
-      _updateGreeting(l10n?.localeName);
-    }
+    final greeting = _getGreeting(l10n);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -125,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen>
                         // Greeting & Subtitle
                         const SizedBox(height: 8),
                         Text(
-                          _greeting,
+                          greeting,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: isDark
                                 ? Colors.white60
@@ -157,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                         // Quick Actions Grid
                         Text(
-                          'Tools',
+                          l10n?.homeTools ?? 'Tools',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white70 : Colors.black54,
@@ -172,14 +156,14 @@ class _HomeScreenState extends State<HomeScreen>
 
                         // MARKET STATS
                         Text(
-                          'Market Insights',
+                          l10n?.homeMarketInsights ?? 'Market Insights',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white70 : Colors.black54,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        RepaintBoundary(child: _buildMarketStats(isDark)),
+                        RepaintBoundary(child: _buildMarketStats(l10n, isDark)),
 
                         const SizedBox(height: 100), // Bottom padding
                       ],
@@ -222,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             const SizedBox(width: 12),
             Text(
-              'TANDAU',
+              AppLocalizations.of(context)?.appTitle ?? 'TANDAU',
               style: TextStyle(
                 color: isDark ? Colors.white : AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
@@ -275,6 +259,7 @@ class _HomeScreenState extends State<HomeScreen>
   // MAIN FEATURE CARD
   // ═══════════════════════════════════════════
   Widget _buildMainFeatureCard(BuildContext context, bool isDark) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       height: 180,
@@ -351,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen>
                             color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
@@ -361,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                               SizedBox(width: 6),
                               Text(
-                                'AI Powered',
+                                l10n?.homeAIPowered ?? 'AI Powered',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -377,11 +362,11 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ],
                     ),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Оценка шансов',
+                          l10n?.homeChanceEstimation ?? 'Оценка шансов',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -391,7 +376,8 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Анализ поступления на грант 2025',
+                          l10n?.homeChanceAnalysis ??
+                              'Анализ поступления на грант 2025',
                           style: TextStyle(color: Colors.white70, fontSize: 14),
                         ),
                       ],
@@ -420,7 +406,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: _buildActionCard(
             context,
             title: l10n?.comparisonTitle ?? 'Compare',
-            subtitle: 'Universities',
+            subtitle: l10n?.homeUniversities ?? 'Universities',
             icon: Icons.compare_arrows_rounded,
             color: const Color(0xFF10B981),
             isDark: isDark,
@@ -435,8 +421,8 @@ class _HomeScreenState extends State<HomeScreen>
         Expanded(
           child: _buildActionCard(
             context,
-            title: l10n?.ctaStart ?? 'Search',
-            subtitle: 'Advanced Filter',
+            title: l10n?.homeAdvancedFilter ?? 'Advanced Filter',
+            subtitle: l10n?.homeUniversities ?? 'Universities',
             icon: Icons.tune_rounded,
             color: const Color(0xFFF59E0B),
             isDark: isDark,
@@ -534,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen>
   // ═══════════════════════════════════════════
   // MARKET STATS
   // ═══════════════════════════════════════════
-  Widget _buildMarketStats(bool isDark) {
+  Widget _buildMarketStats(AppLocalizations? l10n, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -545,11 +531,11 @@ class _HomeScreenState extends State<HomeScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildStatItem('120+', 'ВУЗов', isDark),
+          _buildStatItem('120+', l10n?.statsUniversity ?? 'ВУЗов', isDark),
           _buildDivider(isDark),
-          _buildStatItem('25k', 'Студентов', isDark),
+          _buildStatItem('25k', l10n?.statsStudent ?? 'Студентов', isDark),
           _buildDivider(isDark),
-          _buildStatItem('4.8', 'Рейтинг', isDark),
+          _buildStatItem('4.8', l10n?.rating ?? 'Рейтинг', isDark),
         ],
       ),
     );
@@ -630,6 +616,8 @@ class _HomeScreenState extends State<HomeScreen>
     final user = authService.currentUser.value;
     if (user == null) return;
 
+    final l10n = AppLocalizations.of(context);
+
     // Show Loading
     showDialog(
       context: context,
@@ -643,13 +631,13 @@ class _HomeScreenState extends State<HomeScreen>
                 : Colors.white,
             borderRadius: BorderRadius.circular(32),
           ),
-          child: const Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
               Text(
-                "AI Analysis...",
+                l10n?.homeAIAnalysisInProgress ?? "AI Analysis...",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
@@ -691,6 +679,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _showResultSheet(String strategy) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     showModalBottomSheet(
       context: context,
@@ -732,7 +721,7 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'AI Аналитика TANDAU',
+                  l10n?.homeAIAnalyticsTitle ?? 'AI Аналитика TANDAU',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -826,6 +815,8 @@ class _UniversityPickerSheetState extends State<_UniversityPickerSheet> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final l10n = AppLocalizations.of(context);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
@@ -850,7 +841,7 @@ class _UniversityPickerSheetState extends State<_UniversityPickerSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Выберите вуз',
+                  l10n?.comparisonBrowseUniversities ?? 'Select University',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -859,7 +850,7 @@ class _UniversityPickerSheetState extends State<_UniversityPickerSheet> {
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Поиск университета...',
+                    hintText: l10n?.searchHint ?? 'Search University...',
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: isDark ? AppColors.cardDark : Colors.grey[100],
@@ -966,8 +957,13 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
       } else if (_selected.length < 2) {
         _selected.add(uni);
       } else {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Можно выбрать только 2 вуза')),
+          SnackBar(
+            content: Text(
+              l10n?.comparisonFull(2) ?? 'Select max 2 universities',
+            ),
+          ),
         );
       }
     });
@@ -976,6 +972,8 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
@@ -986,6 +984,7 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
       child: Column(
         children: [
           const SizedBox(height: 16),
+          // Drag handle
           Container(
             width: 40,
             height: 4,
@@ -1003,7 +1002,7 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Сравнение вузов',
+                      l10n?.comparisonTitle ?? 'University Comparison',
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -1022,7 +1021,7 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Поиск университета...',
+                    hintText: l10n?.searchHint ?? 'Search University...',
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: isDark ? AppColors.cardDark : Colors.grey[100],
@@ -1072,8 +1071,9 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () =>
-                        widget.onComparisonSelected(_selected.toList()),
+                    onPressed: () {
+                      widget.onComparisonSelected(_selected.toList());
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
@@ -1082,8 +1082,8 @@ class _ComparePickerSheetState extends State<_ComparePickerSheet> {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Сравнить',
+                    child: Text(
+                      l10n?.navComparison ?? 'Compare',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

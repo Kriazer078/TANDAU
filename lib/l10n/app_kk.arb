@@ -213,5 +213,17 @@
     "detailScoreSubtitle": "Былтырғы деректер негізінде",
     "detailPhoneLabel": "Телефон",
     "moderationSpam": "Хабарлама тым көп. Біраз күте тұрыңыз.",
-    "moderationProfanity": "Әдептілік сақтаңыз. Боқтық сөздер қолдануға тыйым салынған."
+    "moderationProfanity": "Әдептілік сақтаңыз. Боқтық сөздер қолдануға тыйым салынған.",
+    "homeTools": "Құралдар",
+    "homeMarketInsights": "Нарыққа шолу",
+    "homeAIPowered": "AI негізінде",
+    "homeGreetingMorning": "Қайырлы таң",
+    "homeGreetingAfternoon": "Қайырлы күн",
+    "homeGreetingEvening": "Қайырлы кеш",
+    "homeChanceEstimation": "Шанстарды бағалау",
+    "homeChanceAnalysis": "2025 грантқа түсу талдауы",
+    "homeAdvancedFilter": "Кеңейтілген сүзгі",
+    "homeUniversities": "Университеттер",
+    "homeAIAnalysisInProgress": "AI Талдау...",
+    "homeAIAnalyticsTitle": "TANDAU AI Аналитикасы"
 }

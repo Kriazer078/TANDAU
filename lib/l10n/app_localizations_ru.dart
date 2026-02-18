@@ -586,4 +586,40 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get moderationProfanity =>
       'Пожалуйста, соблюдайте правила приличия. Использование мата запрещено.';
+
+  @override
+  String get homeTools => 'Инструменты';
+
+  @override
+  String get homeMarketInsights => 'Обзор рынка';
+
+  @override
+  String get homeAIPowered => 'На базе AI';
+
+  @override
+  String get homeGreetingMorning => 'Доброе утро';
+
+  @override
+  String get homeGreetingAfternoon => 'Добрый день';
+
+  @override
+  String get homeGreetingEvening => 'Добрый вечер';
+
+  @override
+  String get homeChanceEstimation => 'Оценка шансов';
+
+  @override
+  String get homeChanceAnalysis => 'Анализ поступления на грант 2025';
+
+  @override
+  String get homeAdvancedFilter => 'Расширенный фильтр';
+
+  @override
+  String get homeUniversities => 'Университеты';
+
+  @override
+  String get homeAIAnalysisInProgress => 'AI Анализ...';
+
+  @override
+  String get homeAIAnalyticsTitle => 'AI Аналитика TANDAU';
 }

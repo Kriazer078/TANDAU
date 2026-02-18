@@ -4,6 +4,8 @@ import '../models/university.dart';
 import '../models/student_profile.dart';
 import 'grant_chance_service.dart';
 
+import 'moderation_service.dart';
+
 /// AI-консультант для помощи студентам в выборе университета
 class AIConsultantService {
   static final AIConsultantService _instance = AIConsultantService._internal();
@@ -12,6 +14,8 @@ class AIConsultantService {
 
   // PRODUCTION URL:
   static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
+
+  final ModerationService _moderationService = ModerationService();
 
   /// Инициализация (Warm-up backend)
   void init() {
@@ -139,6 +143,12 @@ $jsonInput
         if (ieltsScore != null && ieltsScore > 0) {
           context += 'IELTS: $ieltsScore. ';
         }
+
+        // --- MODERATION CHECK (LOCAL) ---
+        if (_moderationService.hasProfanity(message)) {
+          return 'Мы за вежливое общение. Пожалуйста, переформулируйте ваш вопрос без использования грубых выражений.';
+        }
+        // --------------------------------
         if (gpa != null && gpa > 0) {
           context += 'GPA: $gpa. ';
         }

@@ -213,5 +213,17 @@
     "detailScoreSubtitle": "На основе данных прошлого года",
     "detailPhoneLabel": "Телефон",
     "moderationSpam": "Слишком много сообщений. Пожалуйста, подождите.",
-    "moderationProfanity": "Пожалуйста, соблюдайте правила приличия. Использование мата запрещено."
+    "moderationProfanity": "Пожалуйста, соблюдайте правила приличия. Использование мата запрещено.",
+    "homeTools": "Инструменты",
+    "homeMarketInsights": "Обзор рынка",
+    "homeAIPowered": "На базе AI",
+    "homeGreetingMorning": "Доброе утро",
+    "homeGreetingAfternoon": "Добрый день",
+    "homeGreetingEvening": "Добрый вечер",
+    "homeChanceEstimation": "Оценка шансов",
+    "homeChanceAnalysis": "Анализ поступления на грант 2025",
+    "homeAdvancedFilter": "Расширенный фильтр",
+    "homeUniversities": "Университеты",
+    "homeAIAnalysisInProgress": "AI Анализ...",
+    "homeAIAnalyticsTitle": "AI Аналитика TANDAU"
 }

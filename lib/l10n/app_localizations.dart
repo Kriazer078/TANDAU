@@ -1215,6 +1215,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please use respectful language. Profanity is not allowed.'**
   String get moderationProfanity;
+
+  /// No description provided for @homeTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get homeTools;
+
+  /// No description provided for @homeMarketInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Market Insights'**
+  String get homeMarketInsights;
+
+  /// No description provided for @homeAIPowered.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Powered'**
+  String get homeAIPowered;
+
+  /// No description provided for @homeGreetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get homeGreetingMorning;
+
+  /// No description provided for @homeGreetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get homeGreetingAfternoon;
+
+  /// No description provided for @homeGreetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get homeGreetingEvening;
+
+  /// No description provided for @homeChanceEstimation.
+  ///
+  /// In en, this message translates to:
+  /// **'Chance Estimation'**
+  String get homeChanceEstimation;
+
+  /// No description provided for @homeChanceAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant Admission Analysis 2025'**
+  String get homeChanceAnalysis;
+
+  /// No description provided for @homeAdvancedFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Filter'**
+  String get homeAdvancedFilter;
+
+  /// No description provided for @homeUniversities.
+  ///
+  /// In en, this message translates to:
+  /// **'Universities'**
+  String get homeUniversities;
+
+  /// No description provided for @homeAIAnalysisInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Analysis...'**
+  String get homeAIAnalysisInProgress;
+
+  /// No description provided for @homeAIAnalyticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TANDAU AI Analytics'**
+  String get homeAIAnalyticsTitle;
 }
 
 class _AppLocalizationsDelegate

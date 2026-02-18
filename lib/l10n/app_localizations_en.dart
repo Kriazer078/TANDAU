@@ -582,4 +582,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get moderationProfanity =>
       'Please use respectful language. Profanity is not allowed.';
+
+  @override
+  String get homeTools => 'Tools';
+
+  @override
+  String get homeMarketInsights => 'Market Insights';
+
+  @override
+  String get homeAIPowered => 'AI Powered';
+
+  @override
+  String get homeGreetingMorning => 'Good Morning';
+
+  @override
+  String get homeGreetingAfternoon => 'Good Afternoon';
+
+  @override
+  String get homeGreetingEvening => 'Good Evening';
+
+  @override
+  String get homeChanceEstimation => 'Chance Estimation';
+
+  @override
+  String get homeChanceAnalysis => 'Grant Admission Analysis 2025';
+
+  @override
+  String get homeAdvancedFilter => 'Advanced Filter';
+
+  @override
+  String get homeUniversities => 'Universities';
+
+  @override
+  String get homeAIAnalysisInProgress => 'AI Analysis...';
+
+  @override
+  String get homeAIAnalyticsTitle => 'TANDAU AI Analytics';
 }

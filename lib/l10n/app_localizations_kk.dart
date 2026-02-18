@@ -581,4 +581,40 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get moderationProfanity =>
       'Әдептілік сақтаңыз. Боқтық сөздер қолдануға тыйым салынған.';
+
+  @override
+  String get homeTools => 'Құралдар';
+
+  @override
+  String get homeMarketInsights => 'Нарыққа шолу';
+
+  @override
+  String get homeAIPowered => 'AI негізінде';
+
+  @override
+  String get homeGreetingMorning => 'Қайырлы таң';
+
+  @override
+  String get homeGreetingAfternoon => 'Қайырлы күн';
+
+  @override
+  String get homeGreetingEvening => 'Қайырлы кеш';
+
+  @override
+  String get homeChanceEstimation => 'Шанстарды бағалау';
+
+  @override
+  String get homeChanceAnalysis => '2025 грантқа түсу талдауы';
+
+  @override
+  String get homeAdvancedFilter => 'Кеңейтілген сүзгі';
+
+  @override
+  String get homeUniversities => 'Университеттер';
+
+  @override
+  String get homeAIAnalysisInProgress => 'AI Талдау...';
+
+  @override
+  String get homeAIAnalyticsTitle => 'TANDAU AI Аналитикасы';
 }

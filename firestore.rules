@@ -6,11 +6,14 @@ service cloud.firestore {
     // HELPER FUNCTIONS
     // ═══════════════════════════════════════
 
-    // Check if the current user is an admin (has role='admin' in their user document)
+    // Check if the current user is an admin (has role='admin' in their user document OR is in whitelist)
     function isAdmin() {
-      return request.auth != null 
-             && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-             && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return request.auth != null && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+        || request.auth.token.email == 'nurdauletabutalip02@gmail.com'
+        || request.auth.token.email == 'orazhannurik00@gmail.com'
+      );
     }
 
     // Check if user is authenticated
