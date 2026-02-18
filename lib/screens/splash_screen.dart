@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'legal/terms_screen.dart';
 import '../../screens/main_navigation_screen.dart';
+import 'banned_screen.dart';
 import '../services/auth_service.dart';
 import 'register_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -43,8 +44,18 @@ class _SplashScreenState extends State<SplashScreen> {
       final bool termsAccepted = prefs.getBool('terms_accepted') ?? false;
       final bool loggedIn = AuthService().isLoggedIn.value;
 
+      // 🚫 Check if user was banned during session restore
+      final String? banReason = AuthService().bannedReason.value;
+
       if (mounted) {
-        if (loggedIn) {
+        if (banReason != null) {
+          // User is banned — show ban screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => BannedScreen(reason: banReason),
+            ),
+          );
+        } else if (loggedIn) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => const MainNavigationScreen(),

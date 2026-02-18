@@ -4,6 +4,7 @@ import 'theme/app_theme.dart';
 import 'theme/theme_manager.dart';
 
 import 'screens/splash_screen.dart';
+import 'screens/banned_screen.dart';
 import 'services/locale_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
@@ -35,16 +36,51 @@ void main() async {
   runApp(const TandauApp());
 }
 
-class TandauApp extends StatelessWidget {
+class TandauApp extends StatefulWidget {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
   const TandauApp({super.key});
 
   @override
+  State<TandauApp> createState() => _TandauAppState();
+}
+
+class _TandauAppState extends State<TandauApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen for ban events globally — navigate to BannedScreen if banned
+    AuthService().bannedReason.addListener(_onBanStateChanged);
+  }
+
+  @override
+  void dispose() {
+    AuthService().bannedReason.removeListener(_onBanStateChanged);
+    super.dispose();
+  }
+
+  void _onBanStateChanged() {
+    final String? reason = AuthService().bannedReason.value;
+    if (reason != null) {
+      // Use addPostFrameCallback to avoid modifying widget tree during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final NavigatorState? navigator = TandauApp.navigatorKey.currentState;
+        if (navigator != null) {
+          navigator.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => BannedScreen(reason: reason)),
+            (route) => false,
+          );
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Pass navigator key to notification service
-    NotificationService().setNavigatorKey(navigatorKey);
+    NotificationService().setNavigatorKey(TandauApp.navigatorKey);
 
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeManager().themeMode,
@@ -53,7 +89,7 @@ class TandauApp extends StatelessWidget {
           valueListenable: LocaleManager().locale,
           builder: (context, locale, child) {
             return MaterialApp(
-              navigatorKey: navigatorKey,
+              navigatorKey: TandauApp.navigatorKey,
               title: 'TANDAU',
               debugShowCheckedModeBanner: false,
               theme: AppTheme.lightTheme,

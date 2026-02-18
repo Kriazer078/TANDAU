@@ -32,6 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (mounted) {
         setState(() => _isLoading = false);
+        // If banned, global listener in main.dart will handle navigation
+        if (error == AuthService.bannedErrorCode) return;
+
         if (error == null) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
@@ -280,6 +283,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 final error = await AuthService().signInWithGoogle();
                 if (mounted) {
                   setState(() => _isLoading = false);
+                  // If banned, global listener in main.dart will handle navigation
+                  if (error == AuthService.bannedErrorCode) return;
+
                   if (error == null) {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(

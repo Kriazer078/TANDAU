@@ -36,6 +36,9 @@ class AuthService {
   static const int _maxAttempts = 5;
   static const int _lockoutDurationMinutes = 5;
 
+  /// Special error code returned when user is banned
+  static const String bannedErrorCode = 'account-banned';
+
   /// Initialize and check auth state
   Future<void> init() async {
     // Listen to auth state changes
@@ -50,8 +53,11 @@ class AuthService {
         debugPrint(
           '🟢 AUTH: Пользователь обнаружен (${user.uid}). Загрузка данных...',
         );
-        _loadUserData(user.uid);
-        isLoggedIn.value = true;
+        await _loadUserData(user.uid);
+        // Only mark as logged in if NOT banned
+        if (bannedReason.value == null) {
+          isLoggedIn.value = true;
+        }
       } else {
         isLoggedIn.value = false;
         currentUser.value = null;
@@ -61,9 +67,11 @@ class AuthService {
     // Check if user is already logged in
     final user = _auth.currentUser;
     if (user != null) {
-      isLoggedIn.value = true;
-      // Load user data in background to prevent app freeze
-      _loadUserData(user.uid);
+      // SECURITY: await ban check before marking as logged in
+      await _loadUserData(user.uid);
+      if (bannedReason.value == null) {
+        isLoggedIn.value = true;
+      }
     }
   }
 
@@ -157,8 +165,13 @@ class AuthService {
         await prefs.setInt(_attemptsKey, 0);
         await prefs.remove(_lockoutTimeKey);
 
-        // Load user data in background
-        _loadUserData(credential.user!.uid);
+        // SECURITY: await ban check before returning success
+        await _loadUserData(credential.user!.uid);
+
+        // If user was banned, _loadUserData already signed out
+        if (bannedReason.value != null) {
+          return bannedErrorCode; // BannedScreen is triggered by listener in main.dart
+        }
 
         // Save FCM Token
         NotificationService().getToken().then((token) {
@@ -258,8 +271,13 @@ class AuthService {
           );
         }
 
-        // Load user data in background
-        _loadUserData(user.uid);
+        // SECURITY: await ban check before returning success
+        await _loadUserData(user.uid);
+
+        // If user was banned, _loadUserData already signed out
+        if (bannedReason.value != null) {
+          return bannedErrorCode; // BannedScreen is triggered by listener in main.dart
+        }
 
         // Save FCM Token
         NotificationService().getToken().then((token) {

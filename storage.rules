@@ -1,12 +1,32 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Allow access to user profile photos
+    
+    // ═══════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isNotBanned() {
+      return !isSignedIn() || 
+             !firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) ||
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('banned', false) == false;
+    }
+
+    // ═══════════════════════════════════════
+    // USER STORAGE
+    // ═══════════════════════════════════════
     match /users/{userId}/{allPaths=**} {
-      // Anyone can view photos
+      // Любой может видеть фото (нужно для профилей других людей)
       allow read: if true;
-      // Only the user can upload/edit their own photo
-      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      // Только владелец может загружать/менять, если он НЕ ЗАБАНЕН
+      allow write: if isSignedIn() 
+                   && request.auth.uid == userId 
+                   && isNotBanned();
     }
   }
 }

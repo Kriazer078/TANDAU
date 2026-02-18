@@ -3,38 +3,49 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // ═══════════════════════════════════════
-    // HELPER FUNCTIONS
+    // 🛡️ HELPER FUNCTIONS (PRO)
     // ═══════════════════════════════════════
 
-    // Check if the current user is an admin (has role='admin' in their user document OR is in whitelist)
+    // Проверка прав администратора (Short-circuit optimization)
     function isAdmin() {
-      return request.auth != null && (
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid))
-         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
-        || request.auth.token.email == 'nurdauletabutalip02@gmail.com'
-        || request.auth.token.email == 'orazhannurik00@gmail.com'
+      return isSignedIn() && (
+        request.auth.token.email == 'nurdauletabutalip02@gmail.com' ||
+        request.auth.token.email == 'orazhannurik00@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin')
       );
     }
 
-    // Check if user is authenticated
+    // Проверка авторизации
     function isSignedIn() {
       return request.auth != null;
     }
 
-    // Check if user owns the document
+    // Проверка на бан (Предотвращает запись для забаненных)
+    function isNotBanned() {
+      return !isSignedIn() || 
+             !exists(/databases/$(database)/documents/users/$(request.auth.uid)) ||
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('banned', false) == false;
+    }
+
+    // Стандартные права для записи (Авторизован + Не забанен)
+    function isAuth() {
+      return isSignedIn() && isNotBanned();
+    }
+
+    // Владелец документа
     function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
     // ═══════════════════════════════════════
     // 🏫 УНИВЕРСИТЕТЫ
     // ═══════════════════════════════════════
-    // Читать могут все.
-    // Обновлять счетчики (лайки/рейтинг) могут авторизованные пользователи.
-    // Создавать/удалять вузы — только админ.
     match /universities/{universityId} {
       allow read: if true;
-      allow update: if isSignedIn() 
+      // Пользователи могут обновлять только статистику. 
+      // В идеале это должно быть в Cloud Functions, но для текущей архитектуры оставляем так.
+      allow update: if isAuth() 
                     && request.resource.data.diff(resource.data).affectedKeys()
                         .hasOnly(['likesCount', 'reviewsCount', 'averageRating']);
       allow create, delete: if isAdmin();
@@ -43,16 +54,14 @@ service cloud.firestore {
     // ═══════════════════════════════════════
     // ❤️ ЛАЙКИ
     // ═══════════════════════════════════════
-    // ID документа ОБЯЗАН быть в формате: userId_universityId
     match /likes/{likeId} {
       allow read: if isSignedIn();
-      
-      // Создать лайк можно только для себя
-      allow create: if isSignedIn() 
-                    && likeId == request.auth.uid + '_' + request.resource.data.universityId;
-      
-      // Удалить лайк: свой ИЛИ админ (при удалении пользователя)
-      allow delete: if isSignedIn() 
+      // Enforce ID format: userId_universityId
+      allow create: if isAuth() 
+                    && likeId == request.auth.uid + '_' + request.resource.data.universityId
+                    && request.resource.data.userId == request.auth.uid;
+      // Удалять может только владелец или админ
+      allow delete: if isAuth() 
                     && (resource.data.userId == request.auth.uid || isAdmin());
     }
 
@@ -61,20 +70,18 @@ service cloud.firestore {
     // ═══════════════════════════════════════
     match /reviews/{reviewId} {
       allow read: if true;
-      
-      // Создать отзыв: только авторизованный, валидный рейтинг (1-5), ограничение длины
-      allow create: if isSignedIn() 
+      // Ограничения на создание: валидный рейтинг и длина комментария
+      allow create: if isAuth() 
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.rating >= 1
                     && request.resource.data.rating <= 5
-                    && request.resource.data.comment.size() < 1000;
-                    
-      // Изменить: только автор отзыва
-      allow update: if isSignedIn() 
-                    && resource.data.userId == request.auth.uid;
-
-      // Удалить: автор или админ
-      allow delete: if isSignedIn() 
+                    && request.resource.data.comment.size() < 1500;
+      // Запрет на смену автора или университета при редактировании
+      allow update: if isAuth() 
+                    && resource.data.userId == request.auth.uid
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['userId', 'universityId', 'createdAt']);
+      allow delete: if isAuth() 
                     && (resource.data.userId == request.auth.uid || isAdmin());
     }
     
@@ -82,29 +89,26 @@ service cloud.firestore {
     // 👤 ПОЛЬЗОВАТЕЛИ
     // ═══════════════════════════════════════
     match /users/{userId} {
-      // Читать профили могут все (чтобы видеть ник/фото)
       allow read: if true;
+      // При создании нельзя сразу стать админом или снять бан
+      allow create: if isOwner(userId)
+                    && request.resource.data.get('role', 'user') == 'user'
+                    && request.resource.data.get('banned', false) == false;
       
-      // Создать свой профиль (при регистрации)
-      allow create: if isOwner(userId);
+      allow update: if (
+        isOwner(userId) && isNotBanned() &&
+        // Пользователь не может сам менять свою роль или статус бана
+        !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['role', 'banned', 'banReason'])
+      ) || isAdmin();
 
-      // Обновить свой профиль (но нельзя менять role самому!)
-      allow update: if isOwner(userId) 
-                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
-
-      // Админ может менять role (для назначения других админов)
-      allow update: if isAdmin();
-
-      // Удалить свой профиль
       allow delete: if isOwner(userId) || isAdmin();
 
-      // 🔔 УВЕДОМЛЕНИЯ (вложенная коллекция)
+      // 🔔 УВЕДОМЛЕНИЯ
       match /notifications/{notificationId} {
-        // Пользователь может читать/удалять свои уведомления
-        // Админ тоже может удалять (при удалении пользователя)
         allow read, delete: if isOwner(userId) || isAdmin();
-        // Писать может владелец ИЛИ админ (для отправки уведомлений)
-        allow create, update: if isOwner(userId) || isAdmin();
+        // Создавать уведомления может админ или сам пользователь (для системных/локальных синхронизаций)
+        allow create, update: if isAdmin() || (isAuth() && isOwner(userId));
       }
     }
     
@@ -112,7 +116,18 @@ service cloud.firestore {
     // 📊 СРАВНЕНИЯ
     // ═══════════════════════════════════════
     match /comparisons/{docId} {
-      allow read, write: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create, update, delete: if isAuth() && (
+        (request.resource.data.get('userId', '') == request.auth.uid) || 
+        (resource != null && resource.data.userId == request.auth.uid)
+      );
+    }
+
+    // ═══════════════════════════════════════
+    // 🛡️ АДМИН-ДОСТУП КО ВСЕМУ (CATCH-ALL)
+    // ═══════════════════════════════════════
+    match /{path=**} {
+      allow read, write: if isAdmin();
     }
   }
 }
