@@ -61,23 +61,18 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
 
     try {
       if (_broadcastMode) {
-        await _adminService.broadcastNotification(
+        final count = await _adminService.broadcastNotification(
           title: _titleController.text,
           message: _messageController.text,
         );
-        _showSnackBar('Уведомление отправлено ВСЕМ пользователям');
+        _showSnackBar('Уведомление отправлено $count пользователям');
       } else {
-        final success = await _adminService.sendNotification(
+        await _adminService.sendNotification(
           targetUserId: _selectedUser!.uid,
           title: _titleController.text,
           message: _messageController.text,
         );
-
-        if (success) {
-          _showSnackBar('Уведомление отправлено для ${_selectedUser!.name}');
-        } else {
-          _showSnackBar('Ошибка при отправке', isError: true);
-        }
+        _showSnackBar('Уведомление отправлено для ${_selectedUser!.name}');
       }
 
       if (mounted) {
@@ -118,7 +113,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
             // Mode Toggle
             SwitchListTile(
               title: const Text('Отправить ВСЕМ пользователям'),
-              subtitle: const Text('Внимание: это отправит пуш всем в базе'),
+              subtitle: const Text('Создаст уведомление в приложении для всех'),
               value: _broadcastMode,
               onChanged: (val) {
                 setState(() {

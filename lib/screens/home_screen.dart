@@ -34,9 +34,9 @@ class _HomeScreenState extends State<HomeScreen>
   // Cache greeting to avoid re-computing each build
   late String _greeting;
   String? _greetingLocale;
-s
+
   // Cache notification stream to avoid re-creating on each build
-  late final Stream<List<AppNotification>> _notificationStream;
+  late Stream<List<AppNotification>> _notificationStream;
 
   @override
   void initState() {
@@ -295,6 +295,8 @@ s
       ),
       child: Material(
         color: Colors.transparent,
+        borderRadius: BorderRadius.circular(32),
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
             if (GuestGuard.check(context)) {

@@ -13,9 +13,22 @@ class AIConsultantService {
   // PRODUCTION URL:
   static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
 
-  /// Инициализация (перемещена на backend)
+  /// Инициализация (Warm-up backend)
   void init() {
-    // No-op for client side logic
+    // Fire and forget request to wake up Render instance
+    _wakeUpBackend();
+  }
+
+  Future<void> _wakeUpBackend() async {
+    try {
+      // Отправляем легкий запрос, чтобы "разбудить" сервер (Render Cold Start)
+      // Нам не важен ответ (404 или 200), главное — инициировать процесс
+      await http
+          .get(Uri.parse('$_baseUrl/health'))
+          .timeout(const Duration(seconds: 5));
+    } catch (_) {
+      // Игнорируем ошибки при прогреве
+    }
   }
 
   /// Получить подробную стратегию поступления (TANDAU AI Agent)

@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'services/auth_service.dart';
 import 'services/notification_service.dart';
+import 'services/ai_consultant_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -24,6 +25,7 @@ void main() async {
   await LocaleManager().init();
   await AuthService().init();
   await NotificationService().init();
+  AIConsultantService().init(); // Fire-and-forget warm-up
 
   // System UI overlay will be set dynamically per-screen via AnnotatedRegion
   SystemChrome.setSystemUIOverlayStyle(
