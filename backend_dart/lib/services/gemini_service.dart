@@ -6,13 +6,11 @@ import '../models/university.dart';
 class GeminiService {
   final String _apiKey;
 
-  // List of models available to current key
+  // List of models available to current key (Prioritizing stable models)
   static const List<String> _endpoints = [
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
   ];
 
   GeminiService(this._apiKey);
