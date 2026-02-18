@@ -34,7 +34,14 @@ class UniversityController {
         headers: {'Content-Type': 'application/json'},
       );
     } catch (e) {
-      return Response.internalServerError(body: 'Error: $e');
+      stderr.writeln('AI Chat Error: $e');
+      return Response.ok(
+        jsonEncode({
+          'answer':
+              '📍 **Сервис временно недоступен.**\n\nПроизошла техническая ошибка. Мы уже уведомлены и работаем над исправлением. Пожалуйста, попробуйте позже.'
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
   }
 
@@ -96,8 +103,14 @@ class UniversityController {
         headers: {'Content-Type': 'application/json'},
       );
     } catch (e, stack) {
-      stderr.writeln('Error in recommend: $e\n$stack');
-      return Response.internalServerError(body: 'Internal Server Error: $e');
+      stderr.writeln('Recommendation Error: $e\n$stack');
+      return Response.ok(
+        jsonEncode({
+          'answer':
+              '📍 **Ошибка обработки рекомендаций.**\n\nНе удалось составить список университетов. Пожалуйста, проверьте ваше интернет-соединение и попробуйте снова.'
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
   }
 }

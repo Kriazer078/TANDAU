@@ -4,7 +4,7 @@ import '../services/locale_manager.dart';
 import '../services/auth_service.dart';
 import '../l10n/app_localizations.dart';
 import 'login_screen.dart';
-import 'admin_migration_screen.dart';
+import 'admin/admin_panel_screen.dart';
 import '../models/user_model.dart'; // Import UserModel
 import 'edit_profile_screen.dart'; // Import EditProfileScreen
 import 'notifications_settings_screen.dart';
@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context, user, _) {
                 return Column(
                   children: [
-                    if (user != null)
+                    if (user != null && !AuthService().isGuest)
                       _buildUserHeader(context, user)
                     else
                       _buildGuestHeader(context),
@@ -82,7 +82,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onChanged: (value) {
                   ThemeManager().toggleTheme(value);
                 },
-                activeThumbColor: Theme.of(context).primaryColor,
               ),
             ),
             const SizedBox(height: 12),
@@ -229,12 +228,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Admin Panel - Migration (Visible only to specific admin)
-                    if (user.email == 'qwerty@gmail.com')
+                    // Admin Panel - Migration (Visible ONLY temporarily for setup)
+                    if (AuthService().isAdmin)
                       _buildSettingCard(
                         context,
-                        icon: Icons.cloud_upload,
-                        title: 'Миграция данных',
-                        subtitle: 'Загрузить университеты в Firestore',
+                        icon: Icons.admin_panel_settings,
+                        title: 'Админ Панель',
+                        subtitle: 'Управление пушем и данными',
                         trailing: Icon(
                           Icons.arrow_forward_ios,
                           size: 16,
@@ -246,8 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const AdminMigrationScreen(),
+                              builder: (context) => const AdminPanelScreen(),
                             ),
                           );
                         },
@@ -433,20 +432,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              image: user.photoUrl != null && user.photoUrl!.isNotEmpty
-                  ? DecorationImage(
-                      image: NetworkImage(user.photoUrl!),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
             ),
-            child: user.photoUrl == null
-                ? Icon(
+            child: user.photoUrl != null && user.photoUrl!.isNotEmpty
+                ? ClipOval(
+                    child: Image.network(
+                      user.photoUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.person,
+                          size: 60,
+                          color: Theme.of(context).primaryColor,
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Icon(
                     Icons.person,
                     size: 60,
                     color: Theme.of(context).primaryColor,
-                  )
-                : null,
+                  ),
           ),
           const SizedBox(height: 16),
           Text(

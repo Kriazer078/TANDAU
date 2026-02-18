@@ -87,6 +87,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authWelcome => 'Welcome to TANDAU!';
 
   @override
+  String get authSubtitle => 'Join TANDAU and start your educational journey';
+
+  @override
   String get authWelcomeBack => 'Welcome Back!';
 
   @override
@@ -174,11 +177,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterClear => 'Clear';
 
   @override
+  String get filterEducationType => 'Education Type';
+
+  @override
+  String get filterGrant => 'Grant';
+
+  @override
+  String get filterPaid => 'Paid';
+
+  @override
+  String get filterMaxPrice => 'Max Price (per year)';
+
+  @override
+  String get filterPricePerYear => 'Price per year';
+
+  @override
   String get aiAgentTitle => 'AI Assistant';
 
   @override
   String get aiAgentWelcome =>
       'Need help choosing a university?\nAsk me a question!';
+
+  @override
+  String get aiAgentSubtitle =>
+      'I analyze thousands of universities to find your perfect match.';
 
   @override
   String get aiAgentInputHint => 'Write a question...';
@@ -191,6 +213,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiAgentSample3 => 'What is needed for a grant?';
+
+  @override
+  String get aiClearChat => 'Clear Chat';
+
+  @override
+  String get aiAbout => 'About TANDAU AI';
+
+  @override
+  String get aiClearDialogTitle => 'Clear History?';
+
+  @override
+  String get aiClearDialogContent =>
+      'All messages will be permanently deleted.';
+
+  @override
+  String get aiClearDialogConfirm => 'Clear';
+
+  @override
+  String get aiAboutDialogContent =>
+      'I use advanced algorithms to analyze university data. My goal is to help you find the perfect place to study and assess your chances of admission.';
+
+  @override
+  String get aiAboutDialogButton => 'Got it';
+
+  @override
+  String get aiTyping => 'Thinking...';
+
+  @override
+  String get aiError => 'Sorry, an error occurred. Please try again later.';
 
   @override
   String get commonOk => 'OK';
@@ -251,6 +302,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationEmailFormat => 'Invalid email format';
+
+  @override
+  String get validationTerms => 'You must agree to the Terms and Conditions';
 
   @override
   String get settingsNotificationsSubtitle => 'Configure notifications';
@@ -413,9 +467,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'This feature is under development and will be available soon!';
 
   @override
-  String get commonOr => 'Or';
-
-  @override
   String get tabOverview => 'Overview';
 
   @override
@@ -509,4 +560,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authEmailHint => 'Enter your email';
+
+  @override
+  String get detailChances => 'Estimate Chances';
+
+  @override
+  String get detailRequirementsHeader => 'Admission Requirements';
+
+  @override
+  String get detailScorePoints => 'points';
+
+  @override
+  String get detailScoreSubtitle => 'Based on last year\'s data';
+
+  @override
+  String get detailPhoneLabel => 'Phone';
+
+  @override
+  String get moderationSpam => 'Too many messages. Please wait a moment.';
+
+  @override
+  String get moderationProfanity =>
+      'Please use respectful language. Profanity is not allowed.';
 }

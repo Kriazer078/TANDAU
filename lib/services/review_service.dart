@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/review.dart';
 import 'auth_service.dart';
+import 'moderation_service.dart';
 
 /// Сервис для работы с отзывами университетов
 ///
@@ -12,9 +13,21 @@ import 'auth_service.dart';
 class ReviewService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService = AuthService();
+  final ModerationService _moderationService = ModerationService();
 
   static const String _reviewsCollection = 'reviews';
   static const String _universitiesCollection = 'universities';
+
+  /// Strip HTML tags and trim whitespace to prevent XSS
+  String _sanitizeInput(String input) {
+    return input
+        .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
+        .replaceAll(
+          RegExp(r'&[a-z]+;', caseSensitive: false),
+          '',
+        ) // Remove HTML entities
+        .trim();
+  }
 
   /// Добавить отзыв
   Future<bool> addReview({
@@ -35,8 +48,15 @@ class ReviewService {
         return false;
       }
 
-      if (comment.trim().isEmpty) {
+      final sanitizedComment = _sanitizeInput(comment);
+      if (sanitizedComment.isEmpty) {
         debugPrint('❌ Comment is empty');
+        return false;
+      }
+
+      // Profanity check
+      if (_moderationService.hasProfanity(sanitizedComment)) {
+        debugPrint('❌ Profanity detected in comment');
         return false;
       }
 
@@ -49,7 +69,7 @@ class ReviewService {
         return await updateReview(
           reviewId: existingReview.id,
           rating: rating,
-          comment: comment,
+          comment: sanitizedComment,
         );
       }
 
@@ -60,7 +80,7 @@ class ReviewService {
         universityId: universityId,
         userName: user.name,
         rating: rating,
-        comment: comment.trim(),
+        comment: sanitizedComment,
         createdAt: DateTime.now(),
       );
 
@@ -82,7 +102,7 @@ class ReviewService {
     }
   }
 
-  /// Обновить отзыв
+  /// Обновить отзыв (только автор может редактировать)
   Future<bool> updateReview({
     required String reviewId,
     required int rating,
@@ -95,8 +115,15 @@ class ReviewService {
         return false;
       }
 
-      if (comment.trim().isEmpty) {
+      final sanitizedComment = _sanitizeInput(comment);
+      if (sanitizedComment.isEmpty) {
         debugPrint('❌ Comment is empty');
+        return false;
+      }
+
+      // Profanity check
+      if (_moderationService.hasProfanity(sanitizedComment)) {
+        debugPrint('❌ Profanity detected in comment');
         return false;
       }
 
@@ -115,10 +142,17 @@ class ReviewService {
 
       final currentReview = Review.fromDocument(reviewDoc);
 
+      // SECURITY: Verify ownership
+      final currentUserId = _authService.currentUser.value?.uid;
+      if (currentUserId == null || currentUserId != currentReview.userId) {
+        debugPrint('❌ Unauthorized: user does not own this review');
+        return false;
+      }
+
       // Обновляем отзыв
       await _firestore.collection(_reviewsCollection).doc(reviewId).update({
         'rating': rating,
-        'comment': comment.trim(),
+        'comment': sanitizedComment,
         'updatedAt': Timestamp.fromDate(DateTime.now()),
       });
 
@@ -136,7 +170,7 @@ class ReviewService {
     }
   }
 
-  /// Удалить отзыв
+  /// Удалить отзыв (только автор или админ)
   Future<bool> deleteReview(String reviewId) async {
     try {
       debugPrint('🗑️ Deleting review: $reviewId');
@@ -153,6 +187,17 @@ class ReviewService {
       }
 
       final review = Review.fromDocument(reviewDoc);
+
+      // SECURITY: Verify ownership or admin
+      final currentUserId = _authService.currentUser.value?.uid;
+      final isAdmin = _authService.isAdmin;
+      if (currentUserId == null ||
+          (currentUserId != review.userId && !isAdmin)) {
+        debugPrint(
+          '❌ Unauthorized: user does not own this review and is not admin',
+        );
+        return false;
+      }
 
       // Удаляем отзыв
       await _firestore.collection(_reviewsCollection).doc(reviewId).delete();

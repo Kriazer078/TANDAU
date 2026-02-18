@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../models/university.dart';
+import '../models/user_model.dart';
 import '../services/university_service.dart';
 import '../services/review_service.dart';
 import '../models/review.dart';
@@ -10,6 +11,7 @@ import '../services/auth_service.dart';
 import '../utils/guest_guard.dart';
 import '../models/student_profile.dart';
 import '../services/ai_consultant_service.dart';
+import '../services/grant_chance_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'dart:ui';
 
@@ -28,29 +30,34 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
   final ReviewService _reviewService = ReviewService();
   final AuthService _authService = AuthService();
   late TabController _tabController;
-  bool _isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
-    _loadFavoriteStatus();
-  }
-
-  void _loadFavoriteStatus() {
-    setState(() {
-      _isFavorite = _service.isFavorite(widget.university.id);
-    });
   }
 
   Future<void> _toggleFavorite() async {
     if (!GuestGuard.check(context)) return;
-    if (_isFavorite) {
-      await _service.removeFromFavorites(widget.university.id);
-    } else {
-      await _service.addToFavorites(widget.university.id);
+    try {
+      final isFavorite =
+          _authService.currentUser.value?.favoriteUniversities.contains(
+            widget.university.id,
+          ) ??
+          false;
+      if (isFavorite) {
+        await _service.removeFromFavorites(widget.university.id);
+      } else {
+        await _service.addToFavorites(widget.university.id);
+      }
+    } catch (e) {
+      debugPrint('Error toggling favorite: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ошибка обновления избранного')),
+        );
+      }
     }
-    _loadFavoriteStatus();
   }
 
   @override
@@ -93,12 +100,26 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
                       color: Colors.black26,
-                      child: IconButton(
-                        icon: Icon(
-                          _isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                          color: _isFavorite ? AppColors.accent : Colors.white,
-                        ),
-                        onPressed: _toggleFavorite,
+                      child: ValueListenableBuilder<UserModel?>(
+                        valueListenable: _authService.currentUser,
+                        builder: (context, user, child) {
+                          final isFavorite =
+                              user?.favoriteUniversities.contains(
+                                widget.university.id,
+                              ) ??
+                              false;
+                          return IconButton(
+                            icon: Icon(
+                              isFavorite
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: isFavorite
+                                  ? AppColors.accent
+                                  : Colors.white,
+                            ),
+                            onPressed: _toggleFavorite,
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -173,47 +194,54 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                UniversityHeader(university: widget.university),
+                RepaintBoundary(
+                  child: UniversityHeader(university: widget.university),
+                ),
 
                 // Analytics Button - Integrated Design
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                RepaintBoundary(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _showAdmissionStrategy,
+                    child: Container(
+                      width: double.infinity,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
                         borderRadius: BorderRadius.circular(20),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.analytics_rounded, color: Colors.white),
-                            SizedBox(width: 12),
-                            Text(
-                              'Оценить шансы',
-                              style: TextStyle(
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withAlpha(77), // ~0.3
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _showAdmissionStrategy,
+                          borderRadius: BorderRadius.circular(20),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.analytics_rounded,
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 12),
+                              Text(
+                                'Оценить шансы',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -223,29 +251,31 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                 const SizedBox(height: 16),
 
                 // Modern TabBar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: TabBar(
-                    controller: _tabController,
-                    isScrollable: true,
-                    labelColor: AppColors.primary,
-                    unselectedLabelColor: isDark
-                        ? Colors.white38
-                        : Colors.black38,
-                    indicatorColor: AppColors.primary,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    dividerColor: Colors.transparent,
-                    labelStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                RepaintBoundary(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      labelColor: AppColors.primary,
+                      unselectedLabelColor: isDark
+                          ? Colors.white38
+                          : Colors.black38,
+                      indicatorColor: AppColors.primary,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      dividerColor: Colors.transparent,
+                      labelStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      tabs: const [
+                        Tab(text: 'Обзор'),
+                        Tab(text: 'Специальности'),
+                        Tab(text: 'Поступление'),
+                        Tab(text: 'Контакты'),
+                        Tab(text: 'Отзывы'),
+                      ],
                     ),
-                    tabs: const [
-                      Tab(text: 'Обзор'),
-                      Tab(text: 'Специальности'),
-                      Tab(text: 'Поступление'),
-                      Tab(text: 'Контакты'),
-                      Tab(text: 'Отзывы'),
-                    ],
                   ),
                 ),
 
@@ -257,11 +287,11 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      _buildOverview(isDark),
-                      _buildMajors(isDark),
-                      _buildAdmission(isDark),
-                      _buildContact(isDark),
-                      _buildReviews(isDark),
+                      RepaintBoundary(child: _buildOverview(isDark)),
+                      RepaintBoundary(child: _buildMajors(isDark)),
+                      RepaintBoundary(child: _buildAdmission(isDark)),
+                      RepaintBoundary(child: _buildContact(isDark)),
+                      RepaintBoundary(child: _buildReviews(isDark)),
                     ],
                   ),
                 ),
@@ -286,12 +316,12 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : AppColors.border.withValues(alpha: 0.5),
+              ? Colors.white.withAlpha(13) // ~0.05
+              : AppColors.border.withAlpha(128), // ~0.5
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withAlpha(8), // ~0.03
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -347,8 +377,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : AppColors.border.withValues(alpha: 0.5),
+                  ? Colors.white.withAlpha(13) // ~0.05
+                  : AppColors.border.withAlpha(128), // ~0.5
             ),
           ),
           child: Row(
@@ -356,7 +386,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.primary.withAlpha(26), // ~0.1
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -398,36 +428,32 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                   ),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: isDark
-                        ? AppColors.darkGradient
-                        : AppColors.primaryGradient,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${widget.university.passingScore}',
-                        style: const TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          height: 1.0,
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '${widget.university.passingScore}',
+                      style: TextStyle(
+                        fontSize: 64,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : AppColors.primary,
+                        height: 1.0,
                       ),
-                      const Text(
-                        'баллов',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'баллов',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: isDark
+                            ? Colors.white70
+                            : AppColors.textSecondary,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -500,7 +526,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withOpacity(0.1),
+                      color: AppColors.error.withAlpha(26), // ~0.1
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -610,11 +636,15 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: OutlinedButton.icon(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (_) =>
-                  AddReviewDialog(universityId: widget.university.id),
-            ),
+            onPressed: () {
+              if (GuestGuard.check(context)) {
+                showDialog(
+                  context: context,
+                  builder: (_) =>
+                      AddReviewDialog(universityId: widget.university.id),
+                );
+              }
+            },
             icon: const Icon(Icons.add_comment_rounded),
             label: const Text('Оставить отзыв'),
             style: OutlinedButton.styleFrom(
@@ -653,8 +683,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark
-                            ? Colors.white.withOpacity(0.05)
-                            : AppColors.border.withOpacity(0.5),
+                            ? Colors.white.withAlpha(13) // ~0.05
+                            : AppColors.border.withAlpha(128), // ~0.5
                       ),
                     ),
                     child: Column(
@@ -675,7 +705,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.gold.withOpacity(0.1),
+                                color: AppColors.gold.withAlpha(26), // ~0.1
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
@@ -717,110 +747,40 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
     final user = _authService.currentUser.value;
     if (user == null) return;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => Center(
-        child: Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? AppColors.surfaceDark
-                : Colors.white,
-            borderRadius: BorderRadius.circular(32),
-          ),
-          child: const CircularProgressIndicator(),
-        ),
-      ),
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Build student profile
+    final StudentProfile profile = StudentProfile(
+      userId: user.uid,
+      name: user.name,
+      entScore: user.untScore,
+      ieltsScore: user.ieltsScore,
+      gpa: user.gpa,
+      mathScore: user.mathScore,
+      profileStrength: 0.6,
+      achievements: user.achievements,
+      preferredCities: [user.city ?? 'Almaty'],
+      preferredMajors: user.preferredMajors,
     );
 
-    try {
-      final strategy = await AIConsultantService().getAdmissionStrategy(
-        profile: StudentProfile(
-          userId: user.uid,
-          name: user.name,
-          entScore: user.untScore,
-          ieltsScore: user.ieltsScore,
-          gpa: user.gpa,
-          mathScore: user.mathScore,
-          profileStrength: 0.6,
-          achievements: user.achievements,
-          preferredCities: [user.city ?? 'Almaty'],
-          preferredMajors: user.preferredMajors,
-        ),
-        university: widget.university,
-      );
-      if (!mounted) return;
-      Navigator.pop(context);
+    // STEP 1: Instant SVD calculation (no network!)
+    final GrantChanceResult svdResult = AIConsultantService()
+        .calculateGrantChance(profile: profile, university: widget.university);
 
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.85,
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.backgroundDark.withOpacity(0.9)
-                  : Colors.white.withOpacity(0.9),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(32),
-              ),
-            ),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white24,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    const Icon(Icons.auto_awesome, color: AppColors.primary),
-                    const SizedBox(width: 12),
-                    Text(
-                      'AI Аналитика TANDAU',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Divider(color: Colors.white10),
-                Expanded(
-                  child: Markdown(
-                    data: strategy,
-                    styleSheet: MarkdownStyleSheet(
-                      p: const TextStyle(fontSize: 16, height: 1.6),
-                      h1: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      Navigator.pop(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
+    if (!mounted) return;
+
+    // Show SVD result bottom sheet
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _SvdResultSheet(
+        svdResult: svdResult,
+        isDark: isDark,
+        university: widget.university,
+        profile: profile,
+      ),
+    );
   }
 
   @override
@@ -858,4 +818,376 @@ class GridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// ─── SVD Result Bottom Sheet ───
+class _SvdResultSheet extends StatefulWidget {
+  final GrantChanceResult svdResult;
+  final bool isDark;
+  final University university;
+  final StudentProfile profile;
+
+  const _SvdResultSheet({
+    required this.svdResult,
+    required this.isDark,
+    required this.university,
+    required this.profile,
+  });
+
+  @override
+  State<_SvdResultSheet> createState() => _SvdResultSheetState();
+}
+
+class _SvdResultSheetState extends State<_SvdResultSheet> {
+  bool _isLoadingAiStrategy = false;
+  String? _aiStrategy;
+
+  Color get _riskColor {
+    switch (widget.svdResult.riskLevel) {
+      case RiskLevel.low:
+        return Colors.green;
+      case RiskLevel.medium:
+        return Colors.orange;
+      case RiskLevel.high:
+        return Colors.deepOrange;
+      case RiskLevel.critical:
+        return AppColors.error;
+      case RiskLevel.unknown:
+        return Colors.grey;
+    }
+  }
+
+  Future<void> _loadAiStrategy() async {
+    setState(() => _isLoadingAiStrategy = true);
+    try {
+      final String strategy = await AIConsultantService().getAdmissionStrategy(
+        profile: widget.profile,
+        university: widget.university,
+      );
+      if (mounted) {
+        setState(() {
+          _aiStrategy = strategy;
+          _isLoadingAiStrategy = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingAiStrategy = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Ошибка: $e')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final GrantChanceResult r = widget.svdResult;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.88,
+      decoration: BoxDecoration(
+        color: widget.isDark ? AppColors.backgroundDark : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: widget.isDark ? Colors.white24 : Colors.black12,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.analytics_rounded,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'СВД Аналитика',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withAlpha(26),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Данные ${r.dataYear}',
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Container(
+                      width: 160,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _riskColor.withAlpha(77),
+                          width: 6,
+                        ),
+                        color: _riskColor.withAlpha(26),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${r.chancePercent}%',
+                            style: TextStyle(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: _riskColor,
+                              height: 1.0,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'шанс на грант',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: widget.isDark
+                                  ? Colors.white70
+                                  : AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _riskColor.withAlpha(26),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            r.riskLevel.emoji,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Риск: ${r.riskLevel.displayName}',
+                            style: TextStyle(
+                              color: _riskColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: Text(
+                      r.verdict,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.4,
+                        color: widget.isDark
+                            ? Colors.white70
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      'Порог ЕНТ для этого направления: ${r.entThreshold} баллов',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: widget.isDark
+                            ? Colors.white38
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (r.details.isNotEmpty) ...[
+                    const Text(
+                      'Детали расчёта',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ...r.details.map(
+                      (d) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          d,
+                          style: const TextStyle(fontSize: 15, height: 1.4),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  if (r.recommendations.isNotEmpty) ...[
+                    const Text(
+                      '💡 Рекомендации',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ...r.recommendations.map(
+                      (rec) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 18,
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                rec,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                  if (_aiStrategy == null && !_isLoadingAiStrategy)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed: _loadAiStrategy,
+                        icon: const Icon(
+                          Icons.auto_awesome,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          'Подробная AI стратегия',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+                  if (_isLoadingAiStrategy)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 16),
+                            Text(
+                              'AI формирует стратегию...',
+                              style: TextStyle(color: AppColors.textSecondary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (_aiStrategy != null) ...[
+                    const Divider(height: 32),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.auto_awesome,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'AI Стратегия TANDAU',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    MarkdownBody(
+                      data: _aiStrategy!,
+                      styleSheet: MarkdownStyleSheet(
+                        p: TextStyle(
+                          fontSize: 15,
+                          height: 1.6,
+                          color: widget.isDark ? Colors.white : Colors.black87,
+                        ),
+                        h1: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                          fontSize: 20,
+                        ),
+                        h2: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        listBullet: TextStyle(
+                          color: widget.isDark
+                              ? Colors.white70
+                              : Colors.black54,
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

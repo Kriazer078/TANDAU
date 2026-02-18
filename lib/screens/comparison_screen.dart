@@ -12,55 +12,49 @@ class ComparisonScreen extends StatefulWidget {
 
 class _ComparisonScreenState extends State<ComparisonScreen> {
   final ComparisonService _comparisonService = ComparisonService();
-  List<University> _universities = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadComparison();
-  }
-
-  Future<void> _loadComparison() async {
-    setState(() => _isLoading = true);
-    final universities = await _comparisonService.getComparisonUniversities();
-    setState(() {
-      _universities = universities;
-      _isLoading = false;
-    });
-  }
-
-  Future<void> _removeUniversity(String universityId) async {
-    await _comparisonService.removeFromComparison(universityId);
-    await _loadComparison();
-  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n?.comparisonTitle ?? 'Comparison'),
-        actions: [
-          if (_universities.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.delete_sweep),
-              onPressed: () async {
-                await _comparisonService.clearComparison();
-                _loadComparison();
-              },
-            ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _universities.isEmpty
-          ? Center(child: Text(l10n?.comparisonEmpty ?? 'List is empty'))
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [..._universities.map((uni) => _buildUniRow(uni))],
-            ),
+    return StreamBuilder(
+      stream: _comparisonService.getComparisonStream(),
+      builder: (context, snapshot) {
+        return FutureBuilder<List<University>>(
+          future: _comparisonService.getComparisonUniversities(),
+          builder: (context, uniSnapshot) {
+            final universities = uniSnapshot.data ?? [];
+            final isLoading =
+                uniSnapshot.connectionState == ConnectionState.waiting;
+
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(l10n?.comparisonTitle ?? 'Comparison'),
+                actions: [
+                  if (universities.isNotEmpty)
+                    IconButton(
+                      icon: const Icon(Icons.delete_sweep),
+                      onPressed: () => _comparisonService.clearComparison(),
+                    ),
+                ],
+              ),
+              body: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : universities.isEmpty
+                  ? Center(
+                      child: Text(l10n?.comparisonEmpty ?? 'List is empty'),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: universities.length,
+                      itemBuilder: (context, index) {
+                        return _buildUniRow(universities[index]);
+                      },
+                    ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -75,7 +69,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         subtitle: Text('${uni.city} • ${uni.tuitionRange}'),
         trailing: IconButton(
           icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-          onPressed: () => _removeUniversity(uni.id),
+          onPressed: () => _comparisonService.removeFromComparison(uni.id),
         ),
       ),
     );

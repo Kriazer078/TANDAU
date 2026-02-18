@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:googleapis/firestore/v1.dart';
+import 'package:googleapis/fcm/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import '../models/university.dart';
 
 class FirebaseService {
   late FirestoreApi _firestoreApi;
+  late FirebaseCloudMessagingApi _fcmApi;
   final String _projectId;
 
   FirebaseService(this._projectId);
@@ -17,19 +19,22 @@ class FirebaseService {
             'service_account.json';
 
     if (!File(serviceAccountPath).existsSync()) {
-      // print(
-      //     'Warning: Service account file not found at $serviceAccountPath. Using default application credentials if available.');
-      // Fallback to default creds or error handling
-      var client = await clientViaApplicationDefaultCredentials(
-          scopes: [FirestoreApi.datastoreScope]);
+      var client = await clientViaApplicationDefaultCredentials(scopes: [
+        FirestoreApi.datastoreScope,
+        FirebaseCloudMessagingApi.firebaseMessagingScope
+      ]);
       _firestoreApi = FirestoreApi(client);
+      _fcmApi = FirebaseCloudMessagingApi(client);
     } else {
       final accountCredentials = ServiceAccountCredentials.fromJson(
           await File(serviceAccountPath).readAsString());
 
-      final client = await clientViaServiceAccount(
-          accountCredentials, [FirestoreApi.datastoreScope]);
+      final client = await clientViaServiceAccount(accountCredentials, [
+        FirestoreApi.datastoreScope,
+        FirebaseCloudMessagingApi.firebaseMessagingScope
+      ]);
       _firestoreApi = FirestoreApi(client);
+      _fcmApi = FirebaseCloudMessagingApi(client);
     }
   }
 
@@ -56,7 +61,14 @@ class FirebaseService {
           if (v.arrayValue != null) {
             return v.arrayValue!.values?.map((e) => getValue(e)).toList() ?? [];
           }
-          return null; // Handle mapValue, timestampValue as needed
+          if (v.mapValue != null) {
+            final map = <String, dynamic>{};
+            v.mapValue!.fields?.forEach((key, val) {
+              map[key] = getValue(val);
+            });
+            return map;
+          }
+          return null;
         }
 
         Map<String, dynamic> json = {};
@@ -73,6 +85,80 @@ class FirebaseService {
     } catch (e) {
       // stderr.writeln('Error fetching universities: $e');
       return [];
+    }
+  }
+
+  Future<String?> getUserToken(String uid) async {
+    final name =
+        'projects/$_projectId/databases/(default)/documents/users/$uid';
+    try {
+      final doc = await _firestoreApi.projects.databases.documents.get(name);
+      if (doc.fields != null && doc.fields!.containsKey('fcmToken')) {
+        return doc.fields!['fcmToken']?.stringValue;
+      }
+      return null;
+    } catch (e) {
+      // stderr.writeln('Error fetching token for $uid: $e');
+      return null;
+    }
+  }
+
+  Future<List<String>> getAllUserTokens() async {
+    final parent = 'projects/$_projectId/databases/(default)/documents';
+    try {
+      final response = await _firestoreApi.projects.databases.documents
+          .list(parent, 'users', pageSize: 1000); // Pagination needed for >1000
+
+      if (response.documents == null) return [];
+
+      List<String> tokens = [];
+      for (var doc in response.documents!) {
+        if (doc.fields != null && doc.fields!.containsKey('fcmToken')) {
+          final tokenVal = doc.fields!['fcmToken']?.stringValue;
+          if (tokenVal != null && tokenVal.isNotEmpty) {
+            tokens.add(tokenVal);
+          }
+        }
+      }
+      return tokens;
+    } catch (e) {
+      stderr.writeln('Error fetching user tokens: $e');
+      return [];
+    }
+  }
+
+  Future<void> sendMulticastNotification(
+      List<String> tokens, String title, String body,
+      {Map<String, String>? data}) async {
+    // Note: FCM v1 API doesn't support multicast directly like legacy API.
+    // We must send individually or use topics. For simplicity/reliability in this small scale, loop.
+    // Better: use batch API if available, or just async parallel.
+
+    for (var token in tokens) {
+      await sendNotification(token, title, body, data: data);
+    }
+  }
+
+  Future<bool> sendNotification(String token, String title, String body,
+      {Map<String, String>? data}) async {
+    try {
+      final message = Message(
+        token: token,
+        notification: Notification(
+          title: title,
+          body: body,
+        ),
+        data: data,
+      );
+
+      final request = SendMessageRequest(message: message);
+      final parent = 'projects/$_projectId';
+
+      await _fcmApi.projects.messages.send(request, parent);
+      return true;
+    } catch (e) {
+      stderr.writeln('Error sending notification to $token: $e');
+      return false;
     }
   }
 }

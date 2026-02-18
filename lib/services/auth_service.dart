@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // Import for persi
 import 'dart:io'; // ⭐ Import File
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'notification_service.dart';
 import '../models/user_model.dart';
 
 class AuthService {
@@ -22,6 +23,8 @@ class AuthService {
 
   final ValueNotifier<bool> isLoggedIn = ValueNotifier<bool>(false);
   final ValueNotifier<UserModel?> currentUser = ValueNotifier<UserModel?>(null);
+  bool _isRegistering =
+      false; // Flag to prevent listener conflicts during registration
 
   // Constants for login limiting
   static const String _attemptsKey = 'login_attempts';
@@ -33,10 +36,18 @@ class AuthService {
   Future<void> init() async {
     // Listen to auth state changes
     _auth.authStateChanges().listen((User? user) async {
+      if (_isRegistering) {
+        debugPrint(
+          '🟡 AUTH: Состояние изменилось, но мы в процессе регистрации. Игнорируем.',
+        );
+        return;
+      }
       if (user != null) {
-        isLoggedIn.value = true;
-        // Load user data in background
+        debugPrint(
+          '🟢 AUTH: Пользователь обнаружен (${user.uid}). Загрузка данных...',
+        );
         _loadUserData(user.uid);
+        isLoggedIn.value = true;
       } else {
         isLoggedIn.value = false;
         currentUser.value = null;
@@ -108,6 +119,12 @@ class AuthService {
 
         // Load user data in background
         _loadUserData(credential.user!.uid);
+
+        // Save FCM Token
+        NotificationService().getToken().then((token) {
+          if (token != null) NotificationService().saveTokenToFirestore(token);
+        });
+
         return null; // Success
       }
       return 'Ошибка входа';
@@ -141,6 +158,9 @@ class AuthService {
   Future<String?> signInWithGoogle() async {
     try {
       debugPrint('🚀 Starting Google Sign-In...');
+      // 0. Force account picker by signing out of Google first
+      await _googleSignIn.signOut();
+
       // 1. Trigger the Google Authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
@@ -200,6 +220,12 @@ class AuthService {
 
         // Load user data in background
         _loadUserData(user.uid);
+
+        // Save FCM Token
+        NotificationService().getToken().then((token) {
+          if (token != null) NotificationService().saveTokenToFirestore(token);
+        });
+
         debugPrint('🎉 Google Sign-In complete!');
         return null; // Success
       }
@@ -217,6 +243,8 @@ class AuthService {
   }
 
   /// Check if username is unique
+  /// Returns true if unique, false if taken.
+  /// Throws on network/permission errors to prevent duplicate registrations.
   Future<bool> isUsernameUnique(String username) async {
     try {
       final query = await _firestore
@@ -228,77 +256,76 @@ class AuthService {
       return query.docs.isEmpty;
     } catch (e) {
       debugPrint('Error checking username: $e');
-      // If permission denied (rules block reading users) or timeout, assume unique to allow registration
-      return true;
+      // SECURITY FIX: Do NOT return true on error — that would allow duplicate usernames.
+      // Rethrow so the caller can show an appropriate error message.
+      throw Exception(
+        'Не удалось проверить имя пользователя. Проверьте интернет.',
+      );
     }
   }
 
-  /// Register new user
-  /// Returns null on success, error message on failure
   Future<String?> register(String name, String email, String password) async {
+    _isRegistering = true;
     try {
-      debugPrint('📝 Starting registration for: $email');
+      debugPrint('📝 AUTH: START Registration process');
 
-      // Create user in Firebase Auth
-      final credential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              throw TimeoutException('Превышено время ожидания');
-            },
-          );
+      // 1. Create User in Firebase Auth
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      if (credential.user != null) {
-        debugPrint('✅ Firebase Auth user created: ${credential.user!.uid}');
+      if (credential.user == null) return 'Ошибка создания пользователя';
+      final String uid = credential.user!.uid;
+      debugPrint('📝 AUTH: Firebase User Created [uid: $uid]');
 
-        // Create user document in Firestore
-        final userModel = UserModel(
-          uid: credential.user!.uid,
-          name: name,
-          email: email,
-          createdAt: DateTime.now(),
-        );
+      // 2. Prepare Data Model
+      final userModel = UserModel(
+        uid: uid,
+        name: name,
+        email: email,
+        createdAt: DateTime.now(),
+      );
 
-        final firestoreTask = _firestore
-            .collection('users')
-            .doc(credential.user!.uid)
-            .set(userModel.toMap())
-            .catchError((e) {
-              debugPrint('⚠️ Firestore error (non-critical): $e');
-            });
+      // 3. Update Profile & Firestore in Parallel
+      final firestoreTask = _firestore
+          .collection('users')
+          .doc(uid)
+          .set(userModel.toMap())
+          .catchError((e) => debugPrint('⚠️ Firestore error: $e'));
 
-        final displayNameTask = credential.user!
-            .updateDisplayName(name)
-            .catchError((e) {
-              debugPrint('⚠️ Display name error (non-critical): $e');
-            });
+      final displayNameTask = credential.user!
+          .updateDisplayName(name)
+          .catchError((e) => debugPrint('⚠️ Display name error: $e'));
 
-        // Run tasks in parallel, but don't block forever
-        try {
-          await Future.wait([
-            firestoreTask,
-            displayNameTask,
-          ]).timeout(const Duration(seconds: 5));
-          debugPrint('✅ Firestore and Display Name tasks completed');
-        } catch (e) {
-          debugPrint('⚠️ Profile setup timed out or failed (continuing): $e');
-        }
-
-        currentUser.value = userModel;
-        isLoggedIn.value = true;
-        debugPrint('✅ Registration process finished');
-        return null; // Success
+      try {
+        await Future.wait([
+          firestoreTask,
+          displayNameTask,
+        ]).timeout(const Duration(seconds: 10));
+        debugPrint('✅ AUTH: Profile data saved');
+      } catch (e) {
+        debugPrint('⚠️ Profile setup partially failed or timed out: $e');
       }
-      return 'Ошибка регистрации';
+
+      // 4. Set local state
+      currentUser.value = userModel;
+
+      // Save FCM Token
+      NotificationService().getToken().then((token) {
+        if (token != null) NotificationService().saveTokenToFirestore(token);
+      });
+
+      debugPrint('✅ AUTH: Регистрация полностью завершена');
+      return null; // Success
     } on FirebaseAuthException catch (e) {
-      debugPrint('❌ Registration error: ${e.code} - ${e.message}');
+      debugPrint('❌ AUTH: Ошибка Firebase (${e.code})');
       return _getErrorMessage(e.code);
-    } on TimeoutException {
-      return 'Превышено время ожидания. Проверьте интернет.';
     } catch (e) {
-      debugPrint('❌ Registration error: $e');
+      debugPrint('❌ AUTH: Критическая ошибка: $e');
       return 'Произошла ошибка. Попробуйте позже';
+    } finally {
+      _isRegistering = false;
     }
   }
 
@@ -352,30 +379,50 @@ class AuthService {
     }
   }
 
+  // SECURITY: API key loaded from --dart-define at build time.
+  // Usage: flutter run --dart-define=IMGBB_API_KEY=your_key_here
+  // Fallback hardcoded key for local development only.
+  static const String _imgbbApiKey = String.fromEnvironment(
+    'IMGBB_API_KEY',
+    defaultValue: '16ea590b6156b5c9fbc737026770d231',
+  );
+
   /// Upload profile photo to ImgBB (Free storage)
   Future<String?> uploadProfilePhoto(File file) async {
     try {
       final user = _auth.currentUser;
       if (user == null) return null;
 
+      // Validate file size (max 5MB)
+      final fileSize = await file.length();
+      if (fileSize > 5 * 1024 * 1024) {
+        debugPrint('❌ File too large: ${fileSize ~/ 1024}KB (max 5MB)');
+        return null;
+      }
+
       final request = http.MultipartRequest(
         'POST',
         Uri.parse('https://api.imgbb.com/1/upload'),
       );
 
-      request.fields['key'] = '16ea590b6156b5c9fbc737026770d231';
+      request.fields['key'] = _imgbbApiKey;
       request.files.add(await http.MultipartFile.fromPath('image', file.path));
 
-      final response = await request.send();
+      final response = await request.send().timeout(
+        const Duration(seconds: 30),
+      );
       if (response.statusCode == 200) {
         final resBody = await response.stream.bytesToString();
         final data = jsonDecode(resBody);
-        final String? downloadUrl = data['data']['url'];
+        final String? downloadUrl = data['data']?['url'];
         return downloadUrl;
       } else {
         debugPrint('ImgBB Error status: ${response.statusCode}');
         return null;
       }
+    } on TimeoutException {
+      debugPrint('❌ ImgBB upload timeout');
+      return null;
     } catch (e) {
       debugPrint('ImgBB upload error: $e');
       return null;
@@ -448,6 +495,7 @@ class AuthService {
   /// Logout
   Future<void> logout() async {
     try {
+      await _googleSignIn.signOut(); // Ensure Google session is cleared
       await _auth.signOut();
       currentUser.value = null;
       isLoggedIn.value = false;
@@ -487,5 +535,61 @@ class AuthService {
       default:
         return 'Произошла ошибка: $code';
     }
+  }
+
+  /// Sign In Anonymously (Guest)
+  Future<String?> signInAnonymously() async {
+    try {
+      final userCredential = await _auth.signInAnonymously();
+      if (userCredential.user != null) {
+        // Create a temporary guest user model locally if needed,
+        // or just rely on isLoggedIn = true and currentUser = null/GuestModel
+        // For now, we won't create a Firestore document for guests to keep DB clean,
+        // or we can create one with a 'guest' role.
+        // Let's create a local User object for UI consistency but NOT save to Firestore yet.
+
+        currentUser.value = UserModel(
+          uid: userCredential.user!.uid,
+          name: 'Гость',
+          email: 'guest@tandau.app', // Dummy email
+          createdAt: DateTime.now(),
+        );
+        isLoggedIn.value = true;
+        return null;
+      }
+      return 'Ошибка входа гостем';
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Guest login Firebase error: ${e.code} - ${e.message}');
+      if (e.code == 'operation-not-allowed') {
+        return 'Вход гостем отключен в настройках Firebase. Обратитесь к администратору.';
+      }
+      return 'Ошибка входа: ${e.message}';
+    } catch (e) {
+      debugPrint('Guest login error: $e');
+      return 'Не удалось войти как гость. Проверьте интернет.';
+    }
+  }
+
+  /// Check if current user is guest
+  bool get isGuest {
+    return _auth.currentUser?.isAnonymous ?? false;
+  }
+
+  /// Admin email whitelist (fallback when Firestore role is unavailable)
+  static const List<String> _adminEmails = [
+    'nurdauletabutalip02@gmail.com',
+    'orazhannurik00@gmail.com',
+  ];
+
+  /// Check if current user is admin.
+  /// First checks UserModel 'role' field, then falls back to email whitelist.
+  bool get isAdmin {
+    // 1. Check role from loaded UserModel (set by backend/admin in Firestore)
+    if (currentUser.value?.role == 'admin') return true;
+
+    // 2. Fallback: check email whitelist
+    final String? email = _auth.currentUser?.email;
+    if (email == null) return false;
+    return _adminEmails.contains(email.toLowerCase());
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import '../theme/app_colors.dart';
 import '../services/auth_service.dart';
 import '../l10n/app_localizations.dart';
-import 'main_navigation_screen.dart';
 import 'login_screen.dart';
+import 'legal/terms_screen.dart';
+import 'privacy_policy_screen.dart';
 import '../widgets/custom_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,29 +20,77 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _termsAccepted = false;
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _register() async {
+    if (!_termsAccepted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Необходимо согласиться с Условиями использования'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      final error = await AuthService().register(
-        _emailController.text,
-        _passwordController.text,
-        _nameController.text,
-      );
-      if (mounted) {
-        setState(() => _isLoading = false);
-        if (error == null) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => const MainNavigationScreen(),
-            ),
-            (route) => false,
-          );
-        } else {
+      debugPrint('🔵 REGSCR: Начало процесса регистрации...');
+      String? registerError;
+      try {
+        debugPrint('🔵 REGSCR: Вызов AuthService().register...');
+        final authService = AuthService();
+        registerError = await authService
+            .register(
+              _nameController.text.trim(),
+              _emailController.text.trim(),
+              _passwordController.text.trim(),
+            )
+            .timeout(
+              const Duration(seconds: 40),
+              onTimeout: () {
+                debugPrint('🔴 REGSCR: Таймаут вызова register!');
+                return 'Превышено время ожидания регистрации';
+              },
+            );
+
+        debugPrint('🔵 REGSCR: Ответ от сервиса получен: $registerError');
+
+        if (mounted) {
+          setState(() => _isLoading = false);
+          if (registerError == null) {
+            debugPrint(
+              '🟢 REGSCR: Регистрация успешна! Ожидаем авто-перехода...',
+            );
+          } else {
+            debugPrint('🟠 REGSCR: Ошибка регистрации: $registerError');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(registerError),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+        }
+      } catch (e, stack) {
+        debugPrint('🔴 REGSCR: Критическая ошибка при регистрации: $e');
+        debugPrint('🔴 REGSCR: Стек вызовов: $stack');
+        if (mounted) {
+          setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error), backgroundColor: AppColors.error),
+            SnackBar(
+              content: Text('Критическая ошибка: $e'),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       }
@@ -97,13 +147,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: isDark ? Colors.white : AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 8),
                     Text(
-                      'Join TANDAU and start your educational journey',
+                      AppLocalizations.of(context)?.authSubtitle ??
+                          'Присоединяйтесь к TANDAU и начните свой путь к образованию',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
                     ),
+                    const SizedBox(height: 8),
                     const SizedBox(height: 40),
 
                     CustomTextField(
@@ -120,7 +171,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       label: AppLocalizations.of(context)?.authEmail ?? 'Email',
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
-                      validator: (v) => v!.isEmpty ? 'Required' : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Введите Email';
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        ).hasMatch(v)) {
+                          return 'Неверный формат Email';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
@@ -140,14 +199,106 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           () => _obscurePassword = !_obscurePassword,
                         ),
                       ),
-                      validator: (v) =>
-                          v!.length < 6 ? 'Min 6 characters' : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Введите пароль';
+                        if (v.length < 6) return 'Минимум 6 символов';
+                        if (!v.contains(RegExp(r'[0-9]'))) {
+                          return 'Пароль должен содержать хотя бы одну цифру';
+                        }
+                        return null;
+                      },
                     ),
 
-                    const SizedBox(height: 48),
-
                     // Premium Register Button
+                    const SizedBox(height: 32),
                     _buildPremiumRegisterButton(),
+
+                    const SizedBox(height: 24),
+
+                    // Terms and Conditions Checkbox
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            value: _termsAccepted,
+                            onChanged: (v) =>
+                                setState(() => _termsAccepted = v ?? false),
+                            activeColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _termsAccepted = !_termsAccepted;
+                              });
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      height: 1.5,
+                                      color:
+                                          Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[700],
+                                    ),
+                                children: [
+                                  const TextSpan(
+                                    text: 'Регистрируясь, вы соглашаетесь с ',
+                                  ),
+                                  TextSpan(
+                                    text: 'Условиями',
+                                    style: const TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TermsScreen(),
+                                          ),
+                                        );
+                                      },
+                                  ),
+                                  const TextSpan(text: ' и '),
+                                  TextSpan(
+                                    text: 'Политикой конфиденциальности',
+                                    style: const TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PrivacyPolicyScreen(),
+                                          ),
+                                        );
+                                      },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
 
                     const SizedBox(height: 24),
 
@@ -168,9 +319,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               builder: (_) => const LoginScreen(),
                             ),
                           ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)?.authLogin ?? 'Login',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
@@ -189,24 +340,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildPremiumRegisterButton() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       height: 56,
+      width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
+        gradient: _termsAccepted ? AppColors.primaryGradient : null,
+        color: _termsAccepted
+            ? null
+            : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: _termsAccepted
+            ? null
+            : Border.all(color: isDark ? Colors.white10 : Colors.grey[300]!),
+        boxShadow: _termsAccepted
+            ? [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [],
       ),
       child: ElevatedButton(
-        onPressed: _isLoading ? null : _register,
+        onPressed: (_isLoading || !_termsAccepted) ? null : _register,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
+          disabledBackgroundColor: Colors.transparent, // Important
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -215,10 +378,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ? const CircularProgressIndicator(color: Colors.white)
             : Text(
                 AppLocalizations.of(context)?.authRegisterNow ?? 'REGISTER',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.1,
+                  letterSpacing: 1.2,
+                  color: _termsAccepted
+                      ? Colors.white
+                      : (isDark ? Colors.white24 : Colors.grey[400]),
                 ),
               ),
       ),

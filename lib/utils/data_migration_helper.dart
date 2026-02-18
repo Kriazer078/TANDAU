@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/university_service.dart';
 import '../services/firestore_service.dart';
+import '../data/universities.dart';
 
 /// Utility class for migrating data to Firestore
 class DataMigrationHelper {
@@ -27,7 +28,9 @@ class DataMigrationHelper {
       }
 
       // Migrate universities
-      final success = await _universityService.migrateToFirestore();
+      final success = await _universityService.migrateToFirestore(
+        sampleUniversities,
+      );
 
       if (success) {
         debugPrint('✅ Successfully migrated universities to Firestore');

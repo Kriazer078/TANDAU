@@ -97,11 +97,21 @@ class University {
     );
   }
 
+  double get maxTuitionValue {
+    // Remove separators and symbols to parse pure numbers
+    // Example: "500 000 - 1 200 000 ₸" -> "500000-1200000"
+    final clean = tuitionRange.replaceAll(RegExp(r'[^\d-]'), '');
+    final parts = clean.split('-');
+    if (parts.isEmpty || parts.last.isEmpty) return 0;
+    return double.tryParse(parts.last) ?? 0;
+  }
+
   // Helper method to check if university matches filters
   bool matchesFilters({
     List<String>? cityFilter,
     List<String>? majorFilter,
-    List<String>? budgetFilter,
+    bool? onlyGrants,
+    double? maxPrice,
   }) {
     if (cityFilter != null &&
         cityFilter.isNotEmpty &&
@@ -110,32 +120,30 @@ class University {
     }
 
     if (majorFilter != null && majorFilter.isNotEmpty) {
-      bool majorMatch = false;
-      for (var filter in majorFilter) {
-        if (majors.any(
-          (major) => major.toLowerCase().contains(filter.toLowerCase()),
-        )) {
-          majorMatch = true;
-          break;
-        }
-      }
+      bool majorMatch = majors.any(
+        (major) => majorFilter.any(
+          (filter) => major.toLowerCase().contains(filter.toLowerCase()),
+        ),
+      );
       if (!majorMatch) return false;
     }
 
-    if (budgetFilter != null && budgetFilter.isNotEmpty) {
-      // Budget matching logic
-      // This is a simplified example. In a real app, you'd compare numeric values.
-      bool budgetMatch = false;
-      for (var filter in budgetFilter) {
-        if (filter.contains('500,000') &&
-            (tuitionRange.contains('Грант') || passingScore < 100)) {
-          budgetMatch = true;
-          break;
-        }
-        // Add more budget cases as needed
-      }
-      // If we have budget filters, at least one selection should satisfy
-      if (!budgetMatch) return false;
+    // Logic for Education Type:
+    // If BOTH specified, it's (Grant) OR (Paid within Price)
+    // If only one, strict filter.
+    final bool filterByGrant = onlyGrants == true;
+    final bool filterByPrice = maxPrice != null && maxPrice > 0;
+
+    if (filterByGrant && filterByPrice) {
+      final bool matchesPrice =
+          maxTuitionValue > 0 && maxTuitionValue <= maxPrice;
+      if (!hasGrants && !matchesPrice) return false;
+    } else if (filterByGrant) {
+      if (!hasGrants) return false;
+    } else if (filterByPrice) {
+      final bool matchesPrice =
+          maxTuitionValue > 0 && maxTuitionValue <= maxPrice;
+      if (!matchesPrice) return false;
     }
 
     return true;

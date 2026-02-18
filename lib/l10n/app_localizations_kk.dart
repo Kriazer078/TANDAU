@@ -87,6 +87,9 @@ class AppLocalizationsKk extends AppLocalizations {
   String get authWelcome => 'TANDAU-ға қош келдіңіз!';
 
   @override
+  String get authSubtitle => 'TANDAU-ға қосылып, білім жолын бастаңыз';
+
+  @override
   String get authWelcomeBack => 'Қайта оралуыңызбен!';
 
   @override
@@ -174,11 +177,30 @@ class AppLocalizationsKk extends AppLocalizations {
   String get filterClear => 'Тазалау';
 
   @override
+  String get filterEducationType => 'Оқу түрі';
+
+  @override
+  String get filterGrant => 'Грант';
+
+  @override
+  String get filterPaid => 'Ақылы';
+
+  @override
+  String get filterMaxPrice => 'Макс. баға (жылына)';
+
+  @override
+  String get filterPricePerYear => 'Жылдық баға';
+
+  @override
   String get aiAgentTitle => 'AI Кеңесші';
 
   @override
   String get aiAgentWelcome =>
       'Университет таңдауда көмек керек пе?\nМаған сұрақ қойыңыз!';
+
+  @override
+  String get aiAgentSubtitle =>
+      'Мен сізге ең қолайлы университетті табу үшін мыңдаған нұсқаны талдаймын.';
 
   @override
   String get aiAgentInputHint => 'Сұрақ жазыңыз...';
@@ -191,6 +213,34 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get aiAgentSample3 => 'Грант алу үшін не керек?';
+
+  @override
+  String get aiClearChat => 'Чатты тазалау';
+
+  @override
+  String get aiAbout => 'TANDAU AI туралы';
+
+  @override
+  String get aiClearDialogTitle => 'Тарихты тазалау?';
+
+  @override
+  String get aiClearDialogContent => 'Барлық хабарламалар жойылады.';
+
+  @override
+  String get aiClearDialogConfirm => 'Тазалау';
+
+  @override
+  String get aiAboutDialogContent =>
+      'Мен университеттер деректерін талдау үшін озық алгоритмдерді қолданамын. Мақсатым - сізге оқу орнын табуға және түсу мүмкіндігіңізді бағалауға көмектесу.';
+
+  @override
+  String get aiAboutDialogButton => 'Түсінікті';
+
+  @override
+  String get aiTyping => 'Ойлануда...';
+
+  @override
+  String get aiError => 'Кешіріңіз, қате шықты. Кейінірек қайталап көріңіз.';
 
   @override
   String get commonOk => 'Жарайды';
@@ -253,6 +303,9 @@ class AppLocalizationsKk extends AppLocalizations {
   String get validationEmailFormat => 'Email форматы қате';
 
   @override
+  String get validationTerms => 'Пайдалану шарттарымен келісу қажет';
+
+  @override
   String get settingsNotificationsSubtitle => 'Хабарландыруларды баптау';
 
   @override
@@ -308,11 +361,11 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get comparisonClearConfirm =>
-      'Remove all universities from comparison?';
+      'Барлық университеттерді салыстырудан алып тастау керек пе?';
 
   @override
   String get comparisonEmptyHint =>
-      'Add universities from the list to start comparing';
+      'Салыстыруды бастау үшін тізімнен университеттер қосыңыз';
 
   @override
   String get comparisonRemoved => 'Салыстырудан жойылды';
@@ -412,9 +465,6 @@ class AppLocalizationsKk extends AppLocalizations {
   String get inDevelopmentMessage => 'Бұл функция әзірлену үстінде';
 
   @override
-  String get commonOr => 'Немесе';
-
-  @override
   String get tabOverview => 'Шолу';
 
   @override
@@ -509,4 +559,26 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get authEmailHint => 'Email енгізіңіз';
+
+  @override
+  String get detailChances => 'Мүмкіндіктерді бағалау';
+
+  @override
+  String get detailRequirementsHeader => 'Түсу үшін не қажет';
+
+  @override
+  String get detailScorePoints => 'балл';
+
+  @override
+  String get detailScoreSubtitle => 'Былтырғы деректер негізінде';
+
+  @override
+  String get detailPhoneLabel => 'Телефон';
+
+  @override
+  String get moderationSpam => 'Хабарлама тым көп. Біраз күте тұрыңыз.';
+
+  @override
+  String get moderationProfanity =>
+      'Әдептілік сақтаңыз. Боқтық сөздер қолдануға тыйым салынған.';
 }

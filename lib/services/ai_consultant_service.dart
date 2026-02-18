@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/university.dart';
 import '../models/student_profile.dart';
+import 'grant_chance_service.dart';
 
 /// AI-консультант для помощи студентам в выборе университета
 class AIConsultantService {
@@ -18,42 +19,49 @@ class AIConsultantService {
   }
 
   /// Получить подробную стратегию поступления (TANDAU AI Agent)
+  /// Использует СВД (GrantChanceService) для расчёта шансов.
   Future<String> getAdmissionStrategy({
     required StudentProfile profile,
     required University university,
     bool isPro = false,
   }) async {
     try {
-      // 1. Calculate Probability & Risk (Probability Engine simulation)
-      final calcResult = _calculateProbabilityAndRisk(profile, university);
-      final double probability = calcResult['probability'] as double;
-      final String riskLevel = calcResult['riskLevel'] as String;
-      final List<String> weakAreas = calcResult['weakAreas'] as List<String>;
+      // 1. Определяем категорию специальности
+      final MajorCategory category = university.majors.isNotEmpty
+          ? GrantChanceService().detectCategory(university.majors.first)
+          : MajorCategory.other;
 
-      // 2. Prepare JSON Payload for the AI
+      // 2. Рассчитать шансы через СВД (верифицированные данные 2025)
+      final GrantChanceResult svdResult = GrantChanceService().calculate(
+        entScore: profile.entScore,
+        universityId: university.id,
+        majorCategory: category,
+        gpa: profile.gpa,
+        ieltsScore: profile.ieltsScore,
+        achievements: profile.achievements,
+        mathScore: profile.mathScore,
+      );
+
+      // 3. Подготовить JSON для AI с результатами СВД
       final Map<String, dynamic> inputData = {
         "student": {
           "gpa": profile.gpa,
           "ielts": profile.ieltsScore,
           "mathScore": profile.mathScore,
-          "profileStrength": profile.profileStrength ?? 0.5,
           "entScore": profile.entScore,
+          "achievements": profile.achievements,
         },
         "university": {
           "name": university.name,
           "requiredScore": university.passingScore,
-          "competitionLevel": "high",
+          "majors": university.majors.take(5).toList(),
         },
-        "calculatedProbability": probability,
-        "riskLevel": riskLevel,
-        "weakAreas": weakAreas,
+        "svdResult": svdResult.toJson(),
         "subscription": isPro ? "PRO" : "FREE",
       };
 
       final String jsonInput = jsonEncode(inputData);
 
-      // 3. Send to AI Agent with Specific Strategy Prompt
-      // We wrap the JSON in the specific instruction the user provided
       final String strategyPrompt =
           '''
 $_strategySystemInstruction
@@ -64,56 +72,28 @@ $jsonInput
 
       return await sendMessage(strategyPrompt, isInternalStrategyCall: true);
     } catch (e) {
-      return 'Error generating strategy: $e';
+      return '📍 **Ошибка генерации стратегии.**\n\nНе удалось получить расчет от AI. Пожалуйста, попробуйте еще раз через минуту.';
     }
   }
 
-  /// Helper: Probability Engine Simulation
-  Map<String, dynamic> _calculateProbabilityAndRisk(
-    StudentProfile profile,
-    University university,
-  ) {
-    double probability = 0.5;
-    List<String> weakAreas = [];
+  /// Рассчитать шансы на грант (мгновенно, без сети)
+  GrantChanceResult calculateGrantChance({
+    required StudentProfile profile,
+    required University university,
+  }) {
+    final MajorCategory category = university.majors.isNotEmpty
+        ? GrantChanceService().detectCategory(university.majors.first)
+        : MajorCategory.other;
 
-    // ENT Score logic
-    if (profile.entScore != null && university.passingScore > 0) {
-      if (profile.entScore! < university.passingScore) {
-        probability -= 0.3;
-        weakAreas.add(
-          "ЕНТ: Ниже проходного балла (${university.passingScore})",
-        );
-      } else if (profile.entScore! >= university.passingScore + 20) {
-        probability += 0.2;
-      }
-    }
-
-    // IELTS logic
-    if (profile.ieltsScore != null && profile.ieltsScore! < 6.0) {
-      probability -= 0.15;
-      weakAreas.add("IELTS: Нужно минимум 6.0-6.5");
-    }
-
-    // GPA logic
-    if (profile.gpa != null && profile.gpa! < 3.2) {
-      probability -= 0.1;
-      weakAreas.add("GPA: Средний балл ниже 3.2");
-    }
-
-    // Clamp & Risk Level
-    probability = probability.clamp(0.05, 0.98);
-    String riskLevel = "medium";
-    if (probability < 0.4) {
-      riskLevel = "high";
-    } else if (probability > 0.75) {
-      riskLevel = "low";
-    }
-
-    return {
-      'probability': double.parse(probability.toStringAsFixed(2)),
-      'riskLevel': riskLevel,
-      'weakAreas': weakAreas,
-    };
+    return GrantChanceService().calculate(
+      entScore: profile.entScore,
+      universityId: university.id,
+      majorCategory: category,
+      gpa: profile.gpa,
+      ieltsScore: profile.ieltsScore,
+      achievements: profile.achievements,
+      mathScore: profile.mathScore,
+    );
   }
 
   /// Отправить сообщение AI консультанту (Chat)
@@ -168,55 +148,69 @@ $jsonInput
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
-        return data['answer'] ?? 'No answer received.';
+        return data['answer'] ?? 'Извините, ответ не получен.';
       }
-      return 'Server error: ${response.statusCode}';
+      return '📍 **Проблема с подключением.**\n\nСервер TANDAU сейчас перегружен или недоступен (Код: ${response.statusCode}). Пожалуйста, попробуйте позже.';
     } catch (e) {
-      return 'Connection error: $e';
+      return '📍 **Ошибка сети.**\n\nПроверьте ваше интернет-соединение и попробуйте снова.';
     }
   }
 
   // --- SYSTEM INSTRUCTIONS ---
 
   static const String _chatSystemInstruction = '''
-SYSTEM INSTRUCTIONS:
-You are TANDAU AI — a concise UNIVERSITY admission expert in Kazakhstan. 
-FOCUS ON UNIVERSITIES only. Be brief (max 150 words). No questions unless necessary.
-Language: Russian.
+ТЫ — TANDAU AI, элитный эксперт №1 по высшему образованию и грантам в Казахстане.
+Твоя цель: давать сверхточные, практические и экспертные советы абитуриентам.
+
+ТВОИ ЗНАНИЯ (ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ 2025):
+- ЕНТ 2025: макс. 140 баллов, 120 заданий, основное ЕНТ: 16 мая — 5 июля.
+- Пороги для грантов: нац. вузы — 65, остальные — 50.
+- Педагогика/Право — 75, Медицина — 70, С/Х — 60.
+- Подача на грант: 13-20 июля 2025. Результаты: до 10 августа 2025.
+- Можно сдать ЕНТ дважды, лучший результат — в конкурс на грант.
+- Гос. квоты для выпускников сельских школ.
+- Университеты: NU, КБТУ, МУИТ, AITU, AlmaU, КазНУ, ЕНУ, Satbayev и др.
+
+ТВОЙ СТИЛЬ:
+- Профессиональный, лаконичный, но вдохновляющий.
+- Форматируй текст (жирный для ключевого).
+- Максимум 180 слов. Без воды.
+- Если данных мало — задавай уточняющий вопрос.
+
+ОБЯЗАТЕЛЬНО:
+- Учитывай контекст студента (ЕНТ, IELTS, GPA).
+- Если мечтает о невозможном — мягко, но честно предложи альтернативу.
 ''';
 
   static const String _strategySystemInstruction = '''
-SYSTEM INSTRUCTIONS:
+ТЫ — TANDAU AI AGENT, стратег по поступлению. Используй данные СВД (Системы Вычисления Шансов) — она работает на верифицированных данных МОН РК 2025:
+- Макс. ЕНТ: 140 баллов
+- Нац. вузы порог: 65, остальные: 50
+- Педагогика/Право: 75, Медицина: 70
 
-You are TANDAU AI — a university admission assistant. 
-Your role is to explain the admission probability calculated by the backend Probability Engine and give actionable guidance to the student.
+В JSON ты получишь svdResult с полями: chancePercent, riskLevel, verdict, details, recommendations.
 
-Rules:
-- DO NOT calculate probability yourself. Use only the backend data.
-- Explain probability in simple terms: Low / Medium / High risk.
-- Highlight the student's weak areas objectively.
-- Provide 2–4 actionable steps to improve.
-- (PRO subscription only) Suggest 1–2 alternative universities if risk is Medium/High.
-- Output headings (in Russian): "Резюме", "Разбор шансов", "Слабые стороны", "План действий", "Альтернативы (PRO)".
-- Be concise, professional, and encouraging.
-- Never invent numbers or requirements.
-- Language: Russian.
+СТРУКТУРА ТВОЕГО ОТВЕТА:
 
-Expected output format:
+📌 Резюме ситуации:
+[Честный анализ профиля. Ссылайся на svdResult.chancePercent и entThreshold.]
 
-Резюме:
-- [Short explanation of the student's situation]
+📊 Аналитика шансов (данные СВД 2025):
+- Шанс: [svdResult.chancePercent]%
+- Уровень риска: [svdResult.riskLevel]
+- Порог для этого направления: [svdResult.entThreshold] баллов
 
-Разбор шансов:
-- [Risk level and reasoning based on backend probability]
+❌ Критические точки:
+[Перечисли из svdResult.details только ❌ и ⚠️ пункты]
 
-Слабые стороны:
-- [List of areas needing improvement]
+🚀 План "Победа" (3-5 шагов):
+1. [Конкретное действие на основе svdResult.recommendations]
+2. [Совет по документам или квотам]
+3. [Стратегия выбора комбинации специальностей]
 
-План действий:
-- [Step-by-step actions for the student]
+💡 Альтернативный маршрут:
+[Если риск high/critical — предложи 2 вуза-дублера]
 
-Альтернативы (PRO):
-- [1–2 suggested universities if applicable]
+Язык: Русский. Тон: Экспертный стратег. Будь объективен.
 ''';
 }

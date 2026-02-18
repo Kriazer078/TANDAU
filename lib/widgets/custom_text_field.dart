@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
@@ -10,6 +11,9 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final bool? readOnly;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextCapitalization textCapitalization;
+  final int? maxLines;
 
   const CustomTextField({
     super.key,
@@ -21,6 +25,9 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.readOnly,
+    this.inputFormatters,
+    this.textCapitalization = TextCapitalization.none,
+    this.maxLines = 1,
   });
 
   @override
@@ -45,6 +52,9 @@ class CustomTextField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
+        inputFormatters: inputFormatters,
+        textCapitalization: textCapitalization,
+        maxLines: maxLines,
         style: TextStyle(
           color: isDark ? Colors.white : AppColors.textPrimary,
           fontSize: 16,

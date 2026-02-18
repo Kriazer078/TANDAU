@@ -17,6 +17,7 @@ class UserModel {
   final List<String> favoriteUniversities;
   final List<String> achievements; // ⭐ Достижения студента
   final List<String> preferredMajors; // ⭐ Предпочитаемые специальности
+  final String role; // 🔐 Роль: 'user' или 'admin'
 
   UserModel({
     required this.uid,
@@ -35,6 +36,7 @@ class UserModel {
     this.favoriteUniversities = const [],
     this.achievements = const [],
     this.preferredMajors = const [],
+    this.role = 'user',
   });
 
   Map<String, dynamic> toMap() {
@@ -55,6 +57,7 @@ class UserModel {
       'favoriteUniversities': favoriteUniversities,
       'achievements': achievements,
       'preferredMajors': preferredMajors,
+      'role': role,
     };
   }
 
@@ -77,7 +80,9 @@ class UserModel {
           ? int.tryParse(map['mathScore'])
           : map['mathScore'] as int?,
       photoUrl: map['photoUrl'], // ⭐
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
       updatedAt: map['updatedAt'] != null
           ? (map['updatedAt'] as Timestamp).toDate()
           : null,
@@ -86,6 +91,7 @@ class UserModel {
       ),
       achievements: List<String>.from(map['achievements'] ?? []),
       preferredMajors: List<String>.from(map['preferredMajors'] ?? []),
+      role: map['role'] ?? 'user',
     );
   }
 
@@ -111,6 +117,7 @@ class UserModel {
     List<String>? favoriteUniversities,
     List<String>? achievements, // ⭐
     List<String>? preferredMajors, // ⭐
+    String? role, // 🔐
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -129,6 +136,7 @@ class UserModel {
       favoriteUniversities: favoriteUniversities ?? this.favoriteUniversities,
       achievements: achievements ?? this.achievements,
       preferredMajors: preferredMajors ?? this.preferredMajors,
+      role: role ?? this.role,
     );
   }
 }

@@ -267,8 +267,7 @@ class _TermsScreenState extends State<TermsScreen> {
                   // Optional: Decline / Exit button
                   TextButton(
                     onPressed: () {
-                      // Exit app or show dialog
-                      // SystemNavigator.pop();
+                      Navigator.of(context).pop();
                     },
                     child: Text(
                       'Выход',

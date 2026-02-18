@@ -4,6 +4,7 @@ import '../widgets/filter_chip_widget.dart';
 import '../services/university_service.dart';
 import 'university_list_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/l10n_extensions.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
@@ -18,7 +19,9 @@ class _FilterScreenState extends State<FilterScreen> {
   int _currentStep = 0;
   final List<String> _selectedCities = [];
   final List<String> _selectedMajors = [];
-  final List<String> _selectedBudgets = [];
+  bool _onlyGrants = false;
+  double _maxPrice = 1500000;
+  bool _showPaid = false;
 
   List<String> _cities = [];
   List<String> _majors = [];
@@ -33,19 +36,14 @@ class _FilterScreenState extends State<FilterScreen> {
   Future<void> _loadData() async {
     final cities = await _service.getUniqueCities();
     final majors = await _service.getUniqueMajors();
-    setState(() {
-      _cities = cities;
-      _majors = majors;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _cities = cities;
+        _majors = majors;
+        _isLoading = false;
+      });
+    }
   }
-
-  final List<String> budgetOptions = [
-    '500,000 ₸ және одан төмен',
-    '500,000 - 1,000,000 ₸',
-    '1,000,000 - 2,000,000 ₸',
-    '2,000,000 ₸ және одан жоғары',
-  ];
 
   void _nextStep() {
     if (_currentStep < 2) {
@@ -72,7 +70,8 @@ class _FilterScreenState extends State<FilterScreen> {
         builder: (context) => UniversityListScreen(
           cityFilter: _selectedCities,
           majorFilter: _selectedMajors,
-          budgetFilter: _selectedBudgets,
+          onlyGrants: _onlyGrants,
+          maxPrice: _showPaid ? _maxPrice : null,
         ),
       ),
     );
@@ -80,9 +79,10 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)?.filterTitle ?? 'Filters'),
+        title: Text(l10n?.filterTitle ?? 'Filters'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -137,9 +137,9 @@ class _FilterScreenState extends State<FilterScreen> {
             padding: const EdgeInsets.all(24),
             child: ElevatedButton(
               onPressed:
-                  _currentStep == 0 && _selectedCities.isEmpty ||
-                      _currentStep == 1 && _selectedMajors.isEmpty ||
-                      _currentStep == 2 && _selectedBudgets.isEmpty
+                  (_currentStep == 0 && _selectedCities.isEmpty) ||
+                      (_currentStep == 1 && _selectedMajors.isEmpty) ||
+                      (_currentStep == 2 && (!_onlyGrants && !_showPaid))
                   ? null
                   : _nextStep,
               style: ElevatedButton.styleFrom(
@@ -148,9 +148,8 @@ class _FilterScreenState extends State<FilterScreen> {
               ),
               child: Text(
                 _currentStep < 2
-                    ? (AppLocalizations.of(context)?.filterNext ?? 'Next')
-                    : (AppLocalizations.of(context)?.filterShowResults ??
-                          'Show Results'),
+                    ? (l10n?.filterNext ?? 'Next')
+                    : (l10n?.filterShowResults ?? 'Show Results'),
                 style: const TextStyle(fontSize: 16),
               ),
             ),
@@ -161,17 +160,17 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildCitySelection() {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)?.filterCity ?? 'Which City?',
+          l10n?.filterCity ?? 'Which City?',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 8),
         Text(
-          AppLocalizations.of(context)?.filterCitySubtitle ??
-              'Choose the city where you want to study',
+          l10n?.filterCitySubtitle ?? 'Choose the city where you want to study',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
@@ -205,17 +204,17 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildMajorSelection() {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)?.filterMajor ?? 'Which Major?',
+          l10n?.filterMajor ?? 'Which Major?',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 8),
         Text(
-          AppLocalizations.of(context)?.filterMajorSubtitle ??
-              'Choose a major you are interested in',
+          l10n?.filterMajorSubtitle ?? 'Choose a major you are interested in',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
@@ -249,43 +248,67 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildBudgetSelection() {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)?.filterBudget ?? 'What is your budget?',
+          l10n.filterEducationType,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 8),
-        Text(
-          AppLocalizations.of(context)?.filterBudgetSubtitle ??
-              'Select annual tuition fee range',
-          style: Theme.of(context).textTheme.bodyMedium,
+        const Text(
+          'Выберите подходящий тип обучения',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
         const SizedBox(height: 24),
 
-        Column(
-          children: budgetOptions.map((budget) {
-            final isSelected = _selectedBudgets.contains(budget);
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: FilterChipWidget(
-                label: budget,
-                isSelected: isSelected,
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      _selectedBudgets.remove(budget);
-                    } else {
-                      _selectedBudgets.add(budget);
-                    }
-                  });
-                },
-                icon: Icons.attach_money,
-              ),
-            );
-          }).toList(),
+        FilterChipWidget(
+          label: l10n.filterGrant,
+          isSelected: _onlyGrants,
+          onTap: () => setState(() => _onlyGrants = !_onlyGrants),
+          icon: Icons.auto_awesome,
         ),
+        const SizedBox(height: 16),
+        FilterChipWidget(
+          label: l10n.filterPaid,
+          isSelected: _showPaid,
+          onTap: () => setState(() => _showPaid = !_showPaid),
+          icon: Icons.payments_outlined,
+        ),
+
+        if (_showPaid) ...[
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.filterMaxPrice,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                '${(_maxPrice / 1000).toStringAsFixed(0)}k ₸',
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          Slider(
+            value: _maxPrice,
+            min: 300000,
+            max: 4000000,
+            divisions: 37,
+            label: '${(_maxPrice / 1000).toStringAsFixed(0)}k ₸',
+            activeColor: AppColors.primary,
+            onChanged: (val) => setState(() => _maxPrice = val),
+          ),
+        ],
       ],
     );
   }

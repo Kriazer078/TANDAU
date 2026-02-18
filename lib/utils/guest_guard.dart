@@ -8,7 +8,7 @@ class GuestGuard {
   /// и возвращает false.
   /// Если пользователь авторизован, возвращает true.
   static bool check(BuildContext context) {
-    if (AuthService().currentUser.value == null) {
+    if (AuthService().isGuest) {
       showGuestDialog(context);
       return false;
     }

@@ -5,6 +5,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:dotenv/dotenv.dart';
 
 import 'package:antigravity_backend/controllers/university_controller.dart';
+import 'package:antigravity_backend/controllers/notification_controller.dart';
 import 'package:antigravity_backend/services/firebase_service.dart';
 import 'package:antigravity_backend/services/gemini_service.dart';
 
@@ -29,10 +30,12 @@ void main(List<String> args) async {
   // Initialize Controller
   final universityController =
       UniversityController(firebaseService, geminiService);
+  final notificationController = NotificationController(firebaseService);
 
   // Router
   final router = Router();
   router.mount('/api/v1', universityController.router.call);
+  router.mount('/api/v1/notifications', notificationController.router.call);
 
   // Health check
   router.get('/health', (Request req) => Response.ok('OK'));

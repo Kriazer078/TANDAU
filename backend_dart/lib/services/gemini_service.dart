@@ -6,10 +6,12 @@ import '../models/university.dart';
 class GeminiService {
   final String _apiKey;
 
-  // List of models available to current key (updated based on check_gemini.dart output)
+  // List of models available to current key
   static const List<String> _endpoints = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent',
   ];
 
@@ -17,19 +19,16 @@ class GeminiService {
 
   Future<String> _generate(String prompt) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) {
-      return 'Error: Gemini API Key is missing. Please check .env file.';
+      return 'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.';
     }
 
-    stderr.writeln(
-        'Sending prompt to Gemini... (Attempting with multiple models)');
+    stderr.write('Sending prompt to Gemini... ');
 
-    String lastError = '';
+    int lastStatusCode = 0;
 
-    // Iterate through available endpoints until one works
     for (final endpoint in _endpoints) {
       try {
         final modelName = endpoint.split('/models/').last.split(':').first;
-        stderr.writeln('Attempting model: $modelName... ($endpoint)');
 
         final response = await http.post(
           Uri.parse('$endpoint?key=$_apiKey'),
@@ -45,25 +44,27 @@ class GeminiService {
           }),
         );
 
+        lastStatusCode = response.statusCode;
+
         if (response.statusCode == 200) {
-          stderr.writeln('Success with model: $modelName');
           final json = jsonDecode(utf8.decode(response.bodyBytes));
           return json['candidates']?[0]?['content']?['parts']?[0]?['text'] ??
-              'No response content.';
+              'Извините, я не смог сгенерировать ответ. Попробуйте перефразировать вопрос.';
         } else {
-          lastError =
-              'Error $modelName: ${response.statusCode} - ${response.body}';
-          stderr.writeln(lastError);
-          // Continue to next model...
+          stderr.writeln('Model $modelName failed: ${response.statusCode}');
+          // If it's a 429, we might want to try another model as quotas sometimes differ,
+          // but usually it's per project. We continue anyway.
         }
       } catch (e) {
-        lastError = 'Connection Error: $e';
-        stderr.writeln(lastError);
-        // Continue to next model...
+        stderr.writeln('Connection Error: $e');
       }
     }
 
-    return 'All Gemini models failed. Last error: $lastError';
+    if (lastStatusCode == 429) {
+      return '📍 **Лимит запросов исчерпан.**\n\nИзвините, сейчас слишком много людей пользуются AI-консультантом. Пожалуйста, подождите немного (около 30-60 секунд) и попробуйте снова. Мы работаем над расширением лимитов!';
+    }
+
+    return 'Извините, сервис временно недоступен. Пожалуйста, попробуйте отправить сообщение еще раз через минуту.';
   }
 
   Future<String> generateChat(String question) async {

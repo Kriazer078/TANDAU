@@ -2,63 +2,113 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 🏫 УНИВЕРСИТЕТЫ
-    // Читать могут все.
-    // Обновлять счетчики (лайки/рейтинг) могут авторизованные пользователи.
-    // Создавать/удалять вузы - НИКТО (только админ через консоль Firebase).
-    match /universities/{universityId} {
-      allow read: if true;
-      allow update: if request.auth != null 
-                    && request.resource.data.diff(resource.data).affectedKeys()
-                        .hasOnly(['likesCount', 'reviewsCount', 'averageRating']);
+    // ═══════════════════════════════════════
+    // HELPER FUNCTIONS
+    // ═══════════════════════════════════════
+
+    // Check if the current user is an admin (has role='admin' in their user document)
+    function isAdmin() {
+      return request.auth != null 
+             && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+             && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Check if user owns the document
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // ═══════════════════════════════════════
+    // 🏫 УНИВЕРСИТЕТЫ
+    // ═══════════════════════════════════════
+    // Читать могут все.
+    // Обновлять счетчики (лайки/рейтинг) могут авторизованные пользователи.
+    // Создавать/удалять вузы — только админ.
+    match /universities/{universityId} {
+      allow read: if true;
+      allow update: if isSignedIn() 
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['likesCount', 'reviewsCount', 'averageRating']);
+      allow create, delete: if isAdmin();
+    }
+
+    // ═══════════════════════════════════════
     // ❤️ ЛАЙКИ
+    // ═══════════════════════════════════════
     // ID документа ОБЯЗАН быть в формате: userId_universityId
     match /likes/{likeId} {
-      allow read: if request.auth != null;
+      allow read: if isSignedIn();
       
       // Создать лайк можно только для себя
-      allow create: if request.auth != null 
+      allow create: if isSignedIn() 
                     && likeId == request.auth.uid + '_' + request.resource.data.universityId;
       
       // Удалить лайк можно только свой
-      allow delete: if request.auth != null 
+      allow delete: if isSignedIn() 
                     && resource.data.userId == request.auth.uid;
     }
 
+    // ═══════════════════════════════════════
     // ⭐ ОТЗЫВЫ
+    // ═══════════════════════════════════════
     match /reviews/{reviewId} {
       allow read: if true;
       
-      // Создать отзыв: только авторизованный, валидный рейтинг (1-5)
-      allow create: if request.auth != null 
+      // Создать отзыв: только авторизованный, валидный рейтинг (1-5), ограничение длины
+      allow create: if isSignedIn() 
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.rating >= 1
                     && request.resource.data.rating <= 5
                     && request.resource.data.comment.size() < 1000;
                     
-      // Удалить/изменить: только свой отзыв
-      allow update, delete: if request.auth != null 
-                            && resource.data.userId == request.auth.uid;
-    }
-    
-    // 👤 ПОЛЬЗОВАТЕЛИ
-    match /users/{userId} {
-      // 1. ЧИТАТЬ профили может любой авторизованный пользователь
-      // (полезно для социальных функций, списка друзей и т.д.)
-      allow read: if request.auth != null;
+      // Изменить: только автор отзыва
+      allow update: if isSignedIn() 
+                    && resource.data.userId == request.auth.uid;
 
-      // 2. ИЗМЕНЯТЬ (создавать, обновлять, удалять) профиль может ТОЛЬКО владелец
-      // (ID документа должен совпадать с UID пользователя)
-      allow write: if request.auth != null && request.auth.uid == userId;
+      // Удалить: автор или админ
+      allow delete: if isSignedIn() 
+                    && (resource.data.userId == request.auth.uid || isAdmin());
     }
     
-    // 📊 СРАВНЕНИЯ (если есть коллекция comparisons)
+    // ═══════════════════════════════════════
+    // 👤 ПОЛЬЗОВАТЕЛИ
+    // ═══════════════════════════════════════
+    match /users/{userId} {
+      // Читать профили могут все (чтобы видеть ник/фото)
+      allow read: if true;
+      
+      // Создать свой профиль (при регистрации)
+      allow create: if isOwner(userId);
+
+      // Обновить свой профиль (но нельзя менять role самому!)
+      allow update: if isOwner(userId) 
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+
+      // Админ может менять role (для назначения других админов)
+      allow update: if isAdmin();
+
+      // Удалить свой профиль
+      allow delete: if isOwner(userId) || isAdmin();
+
+      // 🔔 УВЕДОМЛЕНИЯ (вложенная коллекция)
+      match /notifications/{notificationId} {
+        // Пользователь может читать/удалять свои уведомления
+        allow read, delete: if isOwner(userId);
+        // Писать может владелец ИЛИ админ (для отправки уведомлений)
+        allow create, update: if isOwner(userId) || isAdmin();
+      }
+    }
+    
+    // ═══════════════════════════════════════
+    // 📊 СРАВНЕНИЯ
+    // ═══════════════════════════════════════
     match /comparisons/{docId} {
-      allow read, write: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, write: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
   }
 }
-  
-  

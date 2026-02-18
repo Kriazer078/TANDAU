@@ -256,6 +256,12 @@ abstract class AppLocalizations {
   /// **'Welcome to TANDAU!'**
   String get authWelcome;
 
+  /// No description provided for @authSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join TANDAU and start your educational journey'**
+  String get authSubtitle;
+
   /// No description provided for @authWelcomeBack.
   ///
   /// In en, this message translates to:
@@ -430,6 +436,36 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get filterClear;
 
+  /// No description provided for @filterEducationType.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Type'**
+  String get filterEducationType;
+
+  /// No description provided for @filterGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant'**
+  String get filterGrant;
+
+  /// No description provided for @filterPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get filterPaid;
+
+  /// No description provided for @filterMaxPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Price (per year)'**
+  String get filterMaxPrice;
+
+  /// No description provided for @filterPricePerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per year'**
+  String get filterPricePerYear;
+
   /// No description provided for @aiAgentTitle.
   ///
   /// In en, this message translates to:
@@ -441,6 +477,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Need help choosing a university?\nAsk me a question!'**
   String get aiAgentWelcome;
+
+  /// No description provided for @aiAgentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'I analyze thousands of universities to find your perfect match.'**
+  String get aiAgentSubtitle;
 
   /// No description provided for @aiAgentInputHint.
   ///
@@ -465,6 +507,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What is needed for a grant?'**
   String get aiAgentSample3;
+
+  /// No description provided for @aiClearChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Chat'**
+  String get aiClearChat;
+
+  /// No description provided for @aiAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About TANDAU AI'**
+  String get aiAbout;
+
+  /// No description provided for @aiClearDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear History?'**
+  String get aiClearDialogTitle;
+
+  /// No description provided for @aiClearDialogContent.
+  ///
+  /// In en, this message translates to:
+  /// **'All messages will be permanently deleted.'**
+  String get aiClearDialogContent;
+
+  /// No description provided for @aiClearDialogConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get aiClearDialogConfirm;
+
+  /// No description provided for @aiAboutDialogContent.
+  ///
+  /// In en, this message translates to:
+  /// **'I use advanced algorithms to analyze university data. My goal is to help you find the perfect place to study and assess your chances of admission.'**
+  String get aiAboutDialogContent;
+
+  /// No description provided for @aiAboutDialogButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get aiAboutDialogButton;
+
+  /// No description provided for @aiTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'Thinking...'**
+  String get aiTyping;
+
+  /// No description provided for @aiError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, an error occurred. Please try again later.'**
+  String get aiError;
 
   /// No description provided for @commonOk.
   ///
@@ -585,6 +681,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid email format'**
   String get validationEmailFormat;
+
+  /// No description provided for @validationTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'You must agree to the Terms and Conditions'**
+  String get validationTerms;
 
   /// No description provided for @settingsNotificationsSubtitle.
   ///
@@ -886,12 +988,6 @@ abstract class AppLocalizations {
   /// **'This feature is under development and will be available soon!'**
   String get inDevelopmentMessage;
 
-  /// No description provided for @commonOr.
-  ///
-  /// In en, this message translates to:
-  /// **'Or'**
-  String get commonOr;
-
   /// No description provided for @tabOverview.
   ///
   /// In en, this message translates to:
@@ -1077,6 +1173,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your email'**
   String get authEmailHint;
+
+  /// No description provided for @detailChances.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate Chances'**
+  String get detailChances;
+
+  /// No description provided for @detailRequirementsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Requirements'**
+  String get detailRequirementsHeader;
+
+  /// No description provided for @detailScorePoints.
+  ///
+  /// In en, this message translates to:
+  /// **'points'**
+  String get detailScorePoints;
+
+  /// No description provided for @detailScoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on last year\'s data'**
+  String get detailScoreSubtitle;
+
+  /// No description provided for @detailPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get detailPhoneLabel;
+
+  /// No description provided for @moderationSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many messages. Please wait a moment.'**
+  String get moderationSpam;
+
+  /// No description provided for @moderationProfanity.
+  ///
+  /// In en, this message translates to:
+  /// **'Please use respectful language. Profanity is not allowed.'**
+  String get moderationProfanity;
 }
 
 class _AppLocalizationsDelegate

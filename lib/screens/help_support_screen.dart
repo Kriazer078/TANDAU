@@ -47,7 +47,7 @@ class HelpSupportScreen extends StatelessWidget {
               'Как сменить язык приложения?',
               'Перейдите в Профиль -> Настройки -> Язык и выберите нужный.',
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 120),
             Center(
               child: Column(
                 children: [

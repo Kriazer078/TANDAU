@@ -1,13 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:async';
 import '../models/comparison.dart';
 import '../models/university.dart';
 import 'university_service.dart';
 
 /// Сервис сравнения университетов (работает БЕЗ регистрации, использует локальное хранилище)
 class ComparisonService {
+  static final ComparisonService _instance = ComparisonService._internal();
+
+  factory ComparisonService() {
+    return _instance;
+  }
+
+  ComparisonService._internal() {
+    // Initial load
+    getUserComparison();
+  }
+
   final UniversityService _universityService = UniversityService();
+  final StreamController<ComparisonItem?> _controller =
+      StreamController<ComparisonItem?>.broadcast();
+
+  ComparisonItem? _cachedComparison;
 
   static const String _storageKey = 'comparison_universities';
   static const int maxComparisonItems =
@@ -15,27 +31,29 @@ class ComparisonService {
 
   /// Get current comparison list from local storage
   Future<ComparisonItem?> getUserComparison() async {
+    if (_cachedComparison != null) return _cachedComparison;
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_storageKey);
 
-      if (jsonString == null) return null;
+      if (jsonString == null) {
+        _cachedComparison = null;
+        return null;
+      }
 
       final Map<String, dynamic> data = json.decode(jsonString);
-      return ComparisonItem.fromMap(data);
+      _cachedComparison = ComparisonItem.fromMap(data);
+      _controller.add(_cachedComparison);
+      return _cachedComparison;
     } catch (e) {
       debugPrint('Error getting user comparison: $e');
       return null;
     }
   }
 
-  /// Get comparison stream (not real-time, just returns current state)
-  Stream<ComparisonItem?> getComparisonStream() async* {
-    while (true) {
-      yield await getUserComparison();
-      await Future.delayed(const Duration(seconds: 1));
-    }
-  }
+  /// Get comparison stream
+  Stream<ComparisonItem?> getComparisonStream() => _controller.stream;
 
   /// Add university to comparison
   Future<bool> addToComparison(String universityId) async {
@@ -46,17 +64,17 @@ class ComparisonService {
       final comparison = await getUserComparison();
       final now = DateTime.now();
 
+      ComparisonItem updatedComparison;
+
       if (comparison == null) {
         // Create new comparison
         debugPrint('✅ Creating new comparison list');
-        final newComparison = ComparisonItem(
+        updatedComparison = ComparisonItem(
           userId: 'local_user', // Не требуется авторизация
           universityIds: [universityId],
           createdAt: now,
           updatedAt: now,
         );
-        await prefs.setString(_storageKey, json.encode(newComparison.toMap()));
-        debugPrint('✅ New comparison created successfully');
       } else {
         // Check if already in comparison
         if (comparison.universityIds.contains(universityId)) {
@@ -75,16 +93,19 @@ class ComparisonService {
         // Add to existing comparison
         final updatedIds = [...comparison.universityIds, universityId];
         debugPrint('✅ Adding to existing comparison. New list: $updatedIds');
-        final updatedComparison = comparison.copyWith(
+        updatedComparison = comparison.copyWith(
           universityIds: updatedIds,
           updatedAt: now,
         );
-        await prefs.setString(
-          _storageKey,
-          json.encode(updatedComparison.toMap()),
-        );
-        debugPrint('✅ Comparison updated successfully');
       }
+
+      await prefs.setString(
+        _storageKey,
+        json.encode(updatedComparison.toMap()),
+      );
+      _cachedComparison = updatedComparison;
+      _controller.add(updatedComparison);
+      debugPrint('✅ Comparison updated successfully');
 
       return true;
     } catch (e, stackTrace) {
@@ -108,6 +129,8 @@ class ComparisonService {
       if (updatedIds.isEmpty) {
         // Delete comparison if empty
         await prefs.remove(_storageKey);
+        _cachedComparison = null;
+        _controller.add(null);
       } else {
         final updatedComparison = comparison.copyWith(
           universityIds: updatedIds,
@@ -117,6 +140,8 @@ class ComparisonService {
           _storageKey,
           json.encode(updatedComparison.toMap()),
         );
+        _cachedComparison = updatedComparison;
+        _controller.add(updatedComparison);
       }
 
       return true;
@@ -131,6 +156,8 @@ class ComparisonService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_storageKey);
+      _cachedComparison = null;
+      _controller.add(null);
       return true;
     } catch (e) {
       debugPrint('Error clearing comparison: $e');
@@ -177,6 +204,29 @@ class ComparisonService {
   Future<bool> canAddMore() async {
     final count = await getComparisonCount();
     return count < maxComparisonItems;
+  }
+
+  /// Set specific universities for comparison (replaces existing)
+  Future<bool> setComparison(List<String> universityIds) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final now = DateTime.now();
+
+      final newComparison = ComparisonItem(
+        userId: 'local_user',
+        universityIds: universityIds.take(maxComparisonItems).toList(),
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      await prefs.setString(_storageKey, json.encode(newComparison.toMap()));
+      _cachedComparison = newComparison;
+      _controller.add(newComparison);
+      return true;
+    } catch (e) {
+      debugPrint('Error setting comparison: $e');
+      return false;
+    }
   }
 
   /// Get remaining slots

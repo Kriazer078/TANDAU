@@ -87,6 +87,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get authWelcome => 'Добро пожаловать в TANDAU!';
 
   @override
+  String get authSubtitle =>
+      'Присоединяйтесь к TANDAU и начните свой путь к образованию';
+
+  @override
   String get authWelcomeBack => 'С возвращением!';
 
   @override
@@ -175,11 +179,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filterClear => 'Очистить';
 
   @override
+  String get filterEducationType => 'Тип обучения';
+
+  @override
+  String get filterGrant => 'Грант';
+
+  @override
+  String get filterPaid => 'Платное';
+
+  @override
+  String get filterMaxPrice => 'Макс. цена (в год)';
+
+  @override
+  String get filterPricePerYear => 'Цена за год';
+
+  @override
   String get aiAgentTitle => 'AI Консультант';
 
   @override
   String get aiAgentWelcome =>
       'Нужна помощь в выборе университета?\nЗадайте мне вопрос!';
+
+  @override
+  String get aiAgentSubtitle =>
+      'Я анализирую тысячи университетов, чтобы найти идеальный вариант для вас.';
 
   @override
   String get aiAgentInputHint => 'Задайте вопрос...';
@@ -192,6 +215,35 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aiAgentSample3 => 'Что нужно для гранта?';
+
+  @override
+  String get aiClearChat => 'Очистить чат';
+
+  @override
+  String get aiAbout => 'О TANDAU AI';
+
+  @override
+  String get aiClearDialogTitle => 'Очистить историю?';
+
+  @override
+  String get aiClearDialogContent =>
+      'Все сообщения будут удалены безвозвратно.';
+
+  @override
+  String get aiClearDialogConfirm => 'Очистить';
+
+  @override
+  String get aiAboutDialogContent =>
+      'Я использую передовые алгоритмы для анализа данных университетов. Моя цель - помочь вам найти идеальное место для учебы и оценить шансы на поступление.';
+
+  @override
+  String get aiAboutDialogButton => 'Понятно';
+
+  @override
+  String get aiTyping => 'Думаю...';
+
+  @override
+  String get aiError => 'Извини, произошла ошибка. Попробуй позже.';
 
   @override
   String get commonOk => 'OK';
@@ -254,7 +306,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get validationEmailFormat => 'Некорректный формат email';
 
   @override
-  String get settingsNotificationsSubtitle => 'Настроить уведомления';
+  String get validationTerms =>
+      'Необходимо согласиться с Условиями использования';
+
+  @override
+  String get settingsNotificationsSubtitle => 'Настройте получение уведомлений';
 
   @override
   String get settingsAboutSubtitle => 'Информация о TANDAU';
@@ -285,7 +341,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get navComparison => 'Сравнение';
 
   @override
-  String get comparisonTitle => 'Сравнение университетов';
+  String get comparisonTitle => 'Сравнить вузы';
 
   @override
   String get comparisonEmpty => 'Список сравнения пуст';
@@ -308,12 +364,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Все университеты будут удалены из списка сравнения';
 
   @override
-  String get comparisonClearConfirm =>
-      'Remove all universities from comparison?';
+  String get comparisonClearConfirm => 'Удалить все университеты из сравнения?';
 
   @override
   String get comparisonEmptyHint =>
-      'Add universities from the list to start comparing';
+      'Добавьте университеты из списка, чтобы начать сравнение';
 
   @override
   String get comparisonRemoved => 'Удалено из сравнения';
@@ -413,9 +468,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get inDevelopmentMessage => 'Этот функционал находится в разработке';
 
   @override
-  String get commonOr => 'Или';
-
-  @override
   String get tabOverview => 'Обзор';
 
   @override
@@ -511,4 +563,27 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get authEmailHint => 'Введите ваш email';
+
+  @override
+  String get detailChances => 'Оценить шансы';
+
+  @override
+  String get detailRequirementsHeader => 'Что нужно для поступления';
+
+  @override
+  String get detailScorePoints => 'баллов';
+
+  @override
+  String get detailScoreSubtitle => 'На основе данных прошлого года';
+
+  @override
+  String get detailPhoneLabel => 'Телефон';
+
+  @override
+  String get moderationSpam =>
+      'Слишком много сообщений. Пожалуйста, подождите.';
+
+  @override
+  String get moderationProfanity =>
+      'Пожалуйста, соблюдайте правила приличия. Использование мата запрещено.';
 }

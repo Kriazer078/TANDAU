@@ -7,11 +7,13 @@ import '../utils/guest_guard.dart'; // ⭐ Import GuestGuard
 class LikeButton extends StatefulWidget {
   final String universityId;
   final int initialLikesCount;
+  final bool? initialIsLiked;
 
   const LikeButton({
     super.key,
     required this.universityId,
     this.initialLikesCount = 0,
+    this.initialIsLiked,
   });
 
   @override
