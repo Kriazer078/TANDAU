@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/university.dart';
 import '../../theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class UniversityHeader extends StatelessWidget {
   final University university;
@@ -10,100 +11,140 @@ class UniversityHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // City Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.location_on_rounded,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  university.city,
+                  style: GoogleFonts.outfit(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // University Name
           Text(
             university.name,
-            style: Theme.of(context).textTheme.displaySmall,
+            style: GoogleFonts.outfit(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : AppColors.textPrimary,
+              letterSpacing: -0.5,
+            ),
           ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.location_on,
-                size: 20,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  university.city,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
 
-          // Quick Info
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildInfoChip(
-                context,
-                Icons.people,
-                AppLocalizations.of(
-                      context,
-                    )?.universityStudentCount(university.studentCount) ??
-                    '${university.studentCount} students',
-              ),
-              if (university.hasDormitory)
-                _buildInfoChip(
+          const SizedBox(height: 20),
+
+          // High-End Info Row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            child: Row(
+              children: [
+                _buildModernChip(
                   context,
-                  Icons.home,
-                  AppLocalizations.of(context)?.universityDormitory ??
-                      'Dormitory',
+                  Icons.people_alt_rounded,
+                  AppLocalizations.of(
+                        context,
+                      )?.universityStudentCount(university.studentCount) ??
+                      '${university.studentCount} абитуриентов',
+                  AppColors.primary,
                 ),
-              if (university.hasGrants)
-                _buildInfoChip(
-                  context,
-                  Icons.card_giftcard,
-                  AppLocalizations.of(context)?.universityGrant ?? 'Grant',
-                ),
-            ],
+                const SizedBox(width: 12),
+                if (university.hasDormitory)
+                  _buildModernChip(
+                    context,
+                    Icons.bedtime_rounded,
+                    AppLocalizations.of(context)?.universityDormitory ??
+                        'Общежитие',
+                    const Color(0xFF10B981), // Emerald 500
+                  ),
+                const SizedBox(width: 12),
+                if (university.hasGrants)
+                  _buildModernChip(
+                    context,
+                    Icons.auto_awesome_rounded,
+                    AppLocalizations.of(context)?.universityGrant ?? 'Гранты',
+                    AppColors.gold,
+                  ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoChip(BuildContext context, IconData icon, String label) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+  Widget _buildModernChip(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Color color,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark
-            ? theme.colorScheme.surfaceContainerHighest
-            : AppColors.background,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white10 : AppColors.border),
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : AppColors.border.withValues(alpha: 0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: isDark ? theme.colorScheme.primary : AppColors.primary,
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 14, color: color),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark
-                  ? theme.colorScheme.onSurface
-                  : AppColors.textPrimary,
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white70 : AppColors.textPrimary,
             ),
           ),
         ],

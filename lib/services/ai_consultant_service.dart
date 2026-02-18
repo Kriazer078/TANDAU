@@ -33,11 +33,11 @@ class AIConsultantService {
       // 2. Prepare JSON Payload for the AI
       final Map<String, dynamic> inputData = {
         "student": {
-          "gpa": profile.gpa ?? 0.0,
-          "ielts": profile.ieltsScore ?? 0.0,
-          "mathScore": profile.mathScore ?? 0,
+          "gpa": profile.gpa,
+          "ielts": profile.ieltsScore,
+          "mathScore": profile.mathScore,
           "profileStrength": profile.profileStrength ?? 0.5,
-          "entScore": profile.entScore ?? 0,
+          "entScore": profile.entScore,
         },
         "university": {
           "name": university.name,

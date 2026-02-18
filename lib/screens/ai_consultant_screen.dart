@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/ai_consultant_service.dart';
+import '../services/auth_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../theme/app_colors.dart';
 
@@ -34,6 +35,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
+    // Get current user profile for context
+    final user = AuthService().currentUser.value;
+
     setState(() {
       _messages.add(ChatMessage(text: text, isUser: true));
       _isLoading = true;
@@ -41,7 +45,16 @@ class _AIConsultantScreenState extends State<AIConsultantScreen> {
     _messageController.clear();
 
     try {
-      final response = await _aiService.sendMessage(text);
+      final response = await _aiService.sendMessage(
+        text,
+        entScore: user?.untScore,
+        ieltsScore: user?.ieltsScore,
+        gpa: user?.gpa,
+        currentEducation: user?.education,
+        preferredCities: user?.city != null ? [user!.city!] : null,
+        userAchievements: user?.achievements,
+        preferredMajors: user?.preferredMajors,
+      );
       setState(() {
         _messages.add(ChatMessage(text: response, isUser: false));
         _isLoading = false;

@@ -15,6 +15,8 @@ class UserModel {
   final int? mathScore; // ⭐ Math Score
   final String? photoUrl; // ⭐ URL фото профиля
   final List<String> favoriteUniversities;
+  final List<String> achievements; // ⭐ Достижения студента
+  final List<String> preferredMajors; // ⭐ Предпочитаемые специальности
 
   UserModel({
     required this.uid,
@@ -25,12 +27,14 @@ class UserModel {
     this.city,
     this.untScore,
     this.ieltsScore,
-    this.gpa, // ⭐
-    this.mathScore, // ⭐
-    this.photoUrl, // ⭐
+    this.gpa,
+    this.mathScore,
+    this.photoUrl,
     required this.createdAt,
     this.updatedAt,
     this.favoriteUniversities = const [],
+    this.achievements = const [],
+    this.preferredMajors = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -49,6 +53,8 @@ class UserModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       'favoriteUniversities': favoriteUniversities,
+      'achievements': achievements,
+      'preferredMajors': preferredMajors,
     };
   }
 
@@ -78,6 +84,8 @@ class UserModel {
       favoriteUniversities: List<String>.from(
         map['favoriteUniversities'] ?? [],
       ),
+      achievements: List<String>.from(map['achievements'] ?? []),
+      preferredMajors: List<String>.from(map['preferredMajors'] ?? []),
     );
   }
 
@@ -101,6 +109,8 @@ class UserModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     List<String>? favoriteUniversities,
+    List<String>? achievements, // ⭐
+    List<String>? preferredMajors, // ⭐
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -117,6 +127,8 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       favoriteUniversities: favoriteUniversities ?? this.favoriteUniversities,
+      achievements: achievements ?? this.achievements,
+      preferredMajors: preferredMajors ?? this.preferredMajors,
     );
   }
 }
