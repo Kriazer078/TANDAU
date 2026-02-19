@@ -44,6 +44,7 @@ class _AdminMigrationScreenState extends State<AdminMigrationScreen> {
         _statusMessage = '❌ Ошибка: $e';
         _hasError = true;
       });
+  
     } finally {
       setState(() {
         _isMigrating = false;
