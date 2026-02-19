@@ -56,65 +56,144 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+
   @override
   Widget build(BuildContext context) {
+    final textColor = _isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistics Dashboard'),
+        centerTitle: true,
+        backgroundColor: _isDark
+            ? AppColors.backgroundDark
+            : AppColors.background,
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchStats),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _fetchStats,
+            tooltip: 'Refresh Data',
+          ),
         ],
       ),
+      backgroundColor: _isDark
+          ? AppColors.backgroundDark
+          : AppColors.background,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
-          ? Center(child: Text(_errorMessage))
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  _errorMessage,
+                  style: TextStyle(color: AppColors.error),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDateFilter(),
+                  _buildDateFilter(textColor),
                   const SizedBox(height: 24),
                   _buildSummaryCards(),
                   const SizedBox(height: 32),
-                  _buildUserGrowthChart(),
+                  _buildChartSection(
+                    title: 'User Growth',
+                    child: _buildUserGrowthChart(),
+                    textColor: textColor,
+                  ),
                   const SizedBox(height: 32),
-                  _buildReviewActivityChart(),
+                  _buildChartSection(
+                    title: 'Review Activity',
+                    child: _buildReviewActivityChart(),
+                    textColor: textColor,
+                  ),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildDateFilter() {
+  Widget _buildDateFilter(Color textColor) {
     final dateFormat = DateFormat('MMM d, yyyy');
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '${dateFormat.format(_startDate)} - ${dateFormat.format(_endDate)}',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: _isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.2),
         ),
-        TextButton(
-          onPressed: () async {
-            final picked = await showDateRangePicker(
-              context: context,
-              firstDate: DateTime(2024),
-              lastDate: DateTime.now(),
-              initialDateRange: DateTimeRange(start: _startDate, end: _endDate),
-            );
-            if (picked != null) {
-              setState(() {
-                _startDate = picked.start;
-                _endDate = picked.end;
-              });
-              _fetchStats();
-            }
-          },
-          child: const Text('Change Range'),
-        ),
-      ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today,
+                size: 18,
+                color: _isDark ? Colors.white70 : Colors.grey[700],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${dateFormat.format(_startDate)} - ${dateFormat.format(_endDate)}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          TextButton(
+            onPressed: () async {
+              final picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(2024),
+                lastDate: DateTime.now(),
+                initialDateRange: DateTimeRange(
+                  start: _startDate,
+                  end: _endDate,
+                ),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: _isDark
+                          ? const ColorScheme.dark(
+                              primary: AppColors.primary,
+                              onPrimary: Colors.white,
+                              surface: AppColors.surfaceDark,
+                              onSurface: Colors.white,
+                            )
+                          : const ColorScheme.light(primary: AppColors.primary),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              if (picked != null) {
+                setState(() {
+                  _startDate = picked.start;
+                  _endDate = picked.end;
+                });
+                _fetchStats();
+              }
+            },
+            child: const Text('Change Range'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -135,6 +214,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             totalNewUsers.toString(),
             Icons.person_add,
             Colors.blue,
+            _isDark
+                ? Colors.blue.withValues(alpha: 0.2)
+                : Colors.blue.withValues(alpha: 0.1),
           ),
         ),
         const SizedBox(width: 16),
@@ -144,6 +226,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             totalNewReviews.toString(),
             Icons.rate_review,
             Colors.orange,
+            _isDark
+                ? Colors.orange.withValues(alpha: 0.2)
+                : Colors.orange.withValues(alpha: 0.1),
           ),
         ),
       ],
@@ -154,13 +239,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     String title,
     String value,
     IconData icon,
-    Color color,
+    Color iconColor,
+    Color bgIconColor,
   ) {
+    final cardBg = _isDark ? AppColors.surfaceDark : Colors.white;
+    final textColor = _isDark ? Colors.white : AppColors.textPrimary;
+    final subTextColor = _isDark ? Colors.white70 : AppColors.textSecondary;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: cardBg,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -168,27 +258,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: _isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: bgIconColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: iconColor, size: 24),
+          ),
+          const SizedBox(height: 16),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 24,
+            style: TextStyle(
+              fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: textColor,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: subTextColor,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -196,157 +298,244 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildUserGrowthChart() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'User Growth',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  Widget _buildChartSection({
+    required String title,
+    required Widget child,
+    required Color textColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: _isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.grey.withValues(alpha: 0.1),
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 250,
-          child: LineChart(
-            LineChartData(
-              gridData: const FlGridData(show: false),
-              titlesData: FlTitlesData(
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index >= 0 && index < _stats.length) {
-                        // Show date every few items to avoid clutter
-                        if (_stats.length > 7 &&
-                            index % (_stats.length ~/ 5) != 0) {
-                          return const SizedBox();
-                        }
-
-                        final dateStr = _stats[index]['date'] as String;
-                        final date = DateTime.parse(dateStr);
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            DateFormat('MM/dd').format(date),
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                        );
-                      }
-                      return const SizedBox();
-                    },
-                    reservedSize: 30,
-                  ),
-                ),
-                leftTitles: const AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: false,
-                  ), // Hide Y axis for cleaner look
-                ),
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: _stats.asMap().entries.map((e) {
-                    final index = e.key.toDouble();
-                    final val = (e.value['new_users'] as int? ?? 0).toDouble();
-                    return FlSpot(index, val);
-                  }).toList(),
-                  isCurved: true,
-                  color: AppColors.primary,
-                  barWidth: 3,
-                  isStrokeCapRound: true,
-                  dotData: const FlDotData(show: false),
-                  belowBarData: BarAreaData(
-                    show: true,
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                  ),
-                ),
-              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
+          const SizedBox(height: 24),
+          SizedBox(height: 250, child: child),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserGrowthChart() {
+    // Determine max Y for scaling
+    double maxY = 0;
+    for (var s in _stats) {
+      final val = (s['new_users'] as int? ?? 0).toDouble();
+      if (val > maxY) maxY = val;
+    }
+    if (maxY == 0) maxY = 5; // Default scale if empty
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxY > 5 ? maxY / 5 : 1,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: _isDark
+                  ? Colors.white10
+                  : Colors.grey.withValues(alpha: 0.2),
+              strokeWidth: 1,
+            );
+          },
         ),
-      ],
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index < 0 || index >= _stats.length)
+                  return const SizedBox();
+
+                // Show date every few items to avoid clutter
+                if (_stats.length > 7 && index % (_stats.length ~/ 5) != 0) {
+                  return const SizedBox();
+                }
+
+                final dateStr = _stats[index]['date'] as String;
+                final date = DateTime.parse(dateStr);
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    DateFormat('MM/dd').format(date),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: _isDark ? Colors.white54 : AppColors.textSecondary,
+                    ),
+                  ),
+                );
+              },
+              reservedSize: 30,
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: maxY > 5 ? maxY / 5 : 1,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                if (value == 0) return const SizedBox(); // Don't show 0
+                return Text(
+                  value.toInt().toString(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: _isDark ? Colors.white54 : AppColors.textSecondary,
+                  ),
+                );
+              },
+            ),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        borderData: FlBorderData(show: false),
+        minY: 0,
+        maxY: maxY * 1.2, // Add some headroom
+        lineBarsData: [
+          LineChartBarData(
+            spots: _stats.asMap().entries.map((e) {
+              final index = e.key.toDouble();
+              final val = (e.value['new_users'] as int? ?? 0).toDouble();
+              return FlSpot(index, val);
+            }).toList(),
+            isCurved: true,
+            color: AppColors.primary,
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: AppColors.primary.withValues(alpha: 0.15),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildReviewActivityChart() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Review Activity',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 250,
-          child: BarChart(
-            BarChartData(
-              gridData: const FlGridData(show: false),
-              titlesData: FlTitlesData(
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index >= 0 && index < _stats.length) {
-                        if (_stats.length > 7 &&
-                            index % (_stats.length ~/ 5) != 0) {
-                          return const SizedBox();
-                        }
+    double maxY = 0;
+    for (var s in _stats) {
+      final val = (s['new_reviews'] as int? ?? 0).toDouble();
+      if (val > maxY) maxY = val;
+    }
+    if (maxY == 0) maxY = 5;
 
-                        final dateStr = _stats[index]['date'] as String;
-                        final date = DateTime.parse(dateStr);
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            DateFormat('MM/dd').format(date),
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                        );
-                      }
-                      return const SizedBox();
-                    },
-                    reservedSize: 30,
-                  ),
-                ),
-                leftTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              barGroups: _stats.asMap().entries.map((e) {
-                final index = e.key;
-                final val = (e.value['new_reviews'] as int? ?? 0).toDouble();
-                return BarChartGroupData(
-                  x: index,
-                  barRods: [
-                    BarChartRodData(
-                      toY: val,
-                      color: Colors.orange,
-                      width: 12,
-                      borderRadius: BorderRadius.circular(4),
+    return BarChart(
+      BarChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxY > 5 ? maxY / 5 : 1,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: _isDark
+                  ? Colors.white10
+                  : Colors.grey.withValues(alpha: 0.2),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index < 0 || index >= _stats.length)
+                  return const SizedBox();
+
+                if (_stats.length > 7 && index % (_stats.length ~/ 5) != 0) {
+                  return const SizedBox();
+                }
+
+                final dateStr = _stats[index]['date'] as String;
+                final date = DateTime.parse(dateStr);
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    DateFormat('MM/dd').format(date),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: _isDark ? Colors.white54 : AppColors.textSecondary,
                     ),
-                  ],
+                  ),
                 );
-              }).toList(),
+              },
+              reservedSize: 30,
             ),
           ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              interval: maxY > 5 ? maxY / 5 : 1,
+              getTitlesWidget: (value, meta) {
+                if (value == 0) return const SizedBox();
+                return Text(
+                  value.toInt().toString(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: _isDark ? Colors.white54 : AppColors.textSecondary,
+                  ),
+                );
+              },
+            ),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
-      ],
+        borderData: FlBorderData(show: false),
+        maxY: maxY * 1.2,
+        barGroups: _stats.asMap().entries.map((e) {
+          final index = e.key;
+          final val = (e.value['new_reviews'] as int? ?? 0).toDouble();
+          return BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                toY: val,
+                color: Colors.orange,
+                width: 12,
+                borderRadius: BorderRadius.circular(4),
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  toY: maxY * 1.2,
+                  color: _isDark
+                      ? Colors.white10
+                      : Colors.grey.withValues(alpha: 0.1),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 }
