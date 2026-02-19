@@ -362,8 +362,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
-                if (index < 0 || index >= _stats.length)
+                if (index < 0 || index >= _stats.length) {
                   return const SizedBox();
+                }
 
                 // Show date every few items to avoid clutter
                 if (_stats.length > 7 && index % (_stats.length ~/ 5) != 0) {
@@ -464,8 +465,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
-                if (index < 0 || index >= _stats.length)
+                if (index < 0 || index >= _stats.length) {
                   return const SizedBox();
+                }
 
                 if (_stats.length > 7 && index % (_stats.length ~/ 5) != 0) {
                   return const SizedBox();
