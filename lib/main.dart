@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_manager.dart';
 
@@ -33,7 +34,7 @@ void main() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
-  runApp(const TandauApp());
+  runApp(const ProviderScope(child: TandauApp()));
 }
 
 class TandauApp extends StatefulWidget {

@@ -1,65 +1,38 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../services/admin_service.dart';
+import 'package:shimmer/shimmer.dart'; // Make sure this package is added
+import '../../providers/dashboard_provider.dart';
+import '../../models/dashboard_stats.dart';
 import '../../theme/app_colors.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  final AdminService _adminService = AdminService();
-  bool _isLoading = true;
-  List<Map<String, dynamic>> _stats = [];
-  String _errorMessage = '';
-
-  // Default range: Last 7 days
-  DateTime _startDate = DateTime.now().subtract(const Duration(days: 6));
-  DateTime _endDate = DateTime.now();
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  // We no longer need local state for loading/error/stats since Riverpod handles it
 
   @override
   void initState() {
     super.initState();
-    _fetchStats();
-  }
-
-  Future<void> _fetchStats() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
-
-    try {
-      final stats = await _adminService.getStatistics(
-        start: _startDate,
-        end: _endDate,
-      );
-
-      // Sort by date to ensure charts are correct
-      stats.sort(
-        (a, b) => (a['date'] as String).compareTo(b['date'] as String),
-      );
-
-      setState(() {
-        _stats = stats;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error loading statistics: $e';
-        _isLoading = false;
-      });
-    }
+    // Use Future.microtask to avoid build phase issues if needed,
+    // but AsyncNotifierProvider auto-inits on watch/read.
+    // We can explicitly refresh if we want fresh data on every open.
+    // ref.refresh(dashboardStatsProvider);
   }
 
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
 
   @override
   Widget build(BuildContext context) {
+    final statsAsync = ref.watch(dashboardStatsProvider);
+    final dateRange = ref.watch(dashboardDateRangeProvider);
+
     final textColor = _isDark
         ? AppColors.textPrimaryDark
         : AppColors.textPrimary;
@@ -74,7 +47,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _fetchStats,
+            onPressed: () =>
+                ref.read(dashboardStatsProvider.notifier).refresh(),
             tooltip: 'Refresh Data',
           ),
         ],
@@ -82,47 +56,137 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: _isDark
           ? AppColors.backgroundDark
           : AppColors.background,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  _errorMessage,
+      body: statsAsync.when(
+        data: (stats) => _buildContent(stats, dateRange, textColor),
+        loading: () => _buildShimmerLoading(),
+        error: (err, stack) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading statistics:\n$err',
                   style: TextStyle(color: AppColors.error),
                   textAlign: TextAlign.center,
                 ),
-              ),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDateFilter(textColor),
-                  const SizedBox(height: 24),
-                  _buildSummaryCards(),
-                  const SizedBox(height: 32),
-                  _buildChartSection(
-                    title: 'User Growth',
-                    child: _buildUserGrowthChart(),
-                    textColor: textColor,
-                  ),
-                  const SizedBox(height: 32),
-                  _buildChartSection(
-                    title: 'Review Activity',
-                    child: _buildReviewActivityChart(),
-                    textColor: textColor,
-                  ),
-                  const SizedBox(height: 32),
-                ],
-              ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () =>
+                      ref.read(dashboardStatsProvider.notifier).refresh(),
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildDateFilter(Color textColor) {
+  Widget _buildContent(
+    List<DashboardStats> stats,
+    DateTimeRange dateRange,
+    Color textColor,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDateFilter(dateRange, textColor),
+          const SizedBox(height: 24),
+          _buildSummaryCards(stats),
+          const SizedBox(height: 32),
+          _buildChartSection(
+            title: 'User Growth',
+            child: _buildUserGrowthChart(stats),
+            textColor: textColor,
+          ),
+          const SizedBox(height: 32),
+          _buildChartSection(
+            title: 'Review Activity',
+            child: _buildReviewActivityChart(stats),
+            textColor: textColor,
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    final baseColor = _isDark ? Colors.white10 : Colors.grey[300]!;
+    final highlightColor = _isDark ? Colors.white24 : Colors.grey[100]!;
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Date Filter Shimmer
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Cards Shimmer
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            // Chart 1 Shimmer
+            Container(
+              height: 350,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Chart 2 Shimmer
+            Container(
+              height: 350,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateFilter(DateTimeRange dateRange, Color textColor) {
     final dateFormat = DateFormat('MMM d, yyyy');
     return Container(
       padding: const EdgeInsets.all(16),
@@ -148,7 +212,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  '${dateFormat.format(_startDate)} - ${dateFormat.format(_endDate)}',
+                  '${dateFormat.format(dateRange.start)} - ${dateFormat.format(dateRange.end)}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -167,10 +231,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   context: context,
                   firstDate: DateTime(2024),
                   lastDate: DateTime.now(),
-                  initialDateRange: DateTimeRange(
-                    start: _startDate,
-                    end: _endDate,
-                  ),
+                  initialDateRange: dateRange,
                   builder: (context, child) {
                     return Theme(
                       data: Theme.of(context).copyWith(
@@ -190,11 +251,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                 );
                 if (picked != null) {
-                  setState(() {
-                    _startDate = picked.start;
-                    _endDate = picked.end;
-                  });
-                  _fetchStats();
+                  ref
+                      .read(dashboardDateRangeProvider.notifier)
+                      .updateRange(picked);
+                  // AsyncNotifier automatically refreshes when dependency changes if valid,
+                  // but dashboardStatsProvider depends on ref.watch(dateRangeProvider).
+                  // So it should trigger update automatically.
                 }
               },
               style: OutlinedButton.styleFrom(
@@ -214,13 +276,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildSummaryCards() {
+  Widget _buildSummaryCards(List<DashboardStats> stats) {
     int totalNewUsers = 0;
     int totalNewReviews = 0;
 
-    for (var stat in _stats) {
-      totalNewUsers += (stat['new_users'] as int? ?? 0);
-      totalNewReviews += (stat['new_reviews'] as int? ?? 0);
+    for (var stat in stats) {
+      totalNewUsers += stat.newUsers;
+      totalNewReviews += stat.newReviews;
     }
 
     return Row(
@@ -349,11 +411,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildUserGrowthChart() {
+  Widget _buildUserGrowthChart(List<DashboardStats> stats) {
     // Determine max Y for scaling
     double maxY = 0;
-    for (var s in _stats) {
-      final val = (s['new_users'] as int? ?? 0).toDouble();
+    for (var s in stats) {
+      final val = s.newUsers.toDouble();
       if (val > maxY) maxY = val;
     }
     if (maxY == 0) maxY = 5; // Default scale if empty
@@ -379,17 +441,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
-                if (index < 0 || index >= _stats.length) {
+                if (index < 0 || index >= stats.length) {
                   return const SizedBox();
                 }
 
                 // Show date every few items to avoid clutter
-                if (_stats.length > 7 && index % (_stats.length ~/ 5) != 0) {
+                if (stats.length > 7 && index % (stats.length ~/ 5) != 0) {
                   return const SizedBox();
                 }
 
-                final dateStr = _stats[index]['date'] as String;
-                final date = DateTime.parse(dateStr);
+                final date = stats[index].date;
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
@@ -433,9 +494,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         maxY: maxY * 1.2, // Add some headroom
         lineBarsData: [
           LineChartBarData(
-            spots: _stats.asMap().entries.map((e) {
+            spots: stats.asMap().entries.map((e) {
               final index = e.key.toDouble();
-              final val = (e.value['new_users'] as int? ?? 0).toDouble();
+              final val = e.value.newUsers.toDouble();
               return FlSpot(index, val);
             }).toList(),
             isCurved: true,
@@ -453,10 +514,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildReviewActivityChart() {
+  Widget _buildReviewActivityChart(List<DashboardStats> stats) {
     double maxY = 0;
-    for (var s in _stats) {
-      final val = (s['new_reviews'] as int? ?? 0).toDouble();
+    for (var s in stats) {
+      final val = s.newReviews.toDouble();
       if (val > maxY) maxY = val;
     }
     if (maxY == 0) maxY = 5;
@@ -482,16 +543,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
-                if (index < 0 || index >= _stats.length) {
+                if (index < 0 || index >= stats.length) {
                   return const SizedBox();
                 }
 
-                if (_stats.length > 7 && index % (_stats.length ~/ 5) != 0) {
+                if (stats.length > 7 && index % (stats.length ~/ 5) != 0) {
                   return const SizedBox();
                 }
 
-                final dateStr = _stats[index]['date'] as String;
-                final date = DateTime.parse(dateStr);
+                final date = stats[index].date;
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
@@ -532,9 +592,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         borderData: FlBorderData(show: false),
         maxY: maxY * 1.2,
-        barGroups: _stats.asMap().entries.map((e) {
+        barGroups: stats.asMap().entries.map((e) {
           final index = e.key;
-          final val = (e.value['new_reviews'] as int? ?? 0).toDouble();
+          final val = e.value.newReviews.toDouble();
           return BarChartGroupData(
             x: index,
             barRods: [
