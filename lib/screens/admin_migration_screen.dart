@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 import '../utils/data_migration_helper.dart';
 
 /// Экран для администратора для управления миграцией данных
@@ -132,6 +134,50 @@ class _AdminMigrationScreenState extends State<AdminMigrationScreen> {
     }
   }
 
+  Future<void> _generateDummyStats() async {
+    setState(() {
+      _isMigrating = true;
+      _statusMessage = 'Генерация тестовой статистики...';
+      _hasError = false;
+    });
+
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final random = Random();
+
+      // Генерируем данные за последние 30 дней
+      for (int i = 0; i < 30; i++) {
+        final date = DateTime.now().subtract(Duration(days: i));
+        // YYYY-MM-DD
+        final dateStr = date.toIso8601String().split('T')[0];
+
+        // Имитируем разные значения
+        final newUsers = random.nextInt(15); // 0-14 новых юзеров
+        final newReviews = random.nextInt(8); // 0-7 новых отзывов
+
+        await firestore.collection('statistics').doc(dateStr).set({
+          'new_users': newUsers,
+          'new_reviews': newReviews,
+          'date': Timestamp.fromDate(date),
+        }, SetOptions(merge: true));
+      }
+
+      setState(() {
+        _statusMessage = '✅ Тестовая статистика сгенерирована!';
+        _hasError = false;
+      });
+    } catch (e) {
+      setState(() {
+        _statusMessage = '❌ Ошибка генерации: $e';
+        _hasError = true;
+      });
+    } finally {
+      setState(() {
+        _isMigrating = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,6 +272,17 @@ class _AdminMigrationScreenState extends State<AdminMigrationScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.red,
                 side: const BorderSide(color: Colors.red),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Dummy Data Button
+            OutlinedButton.icon(
+              onPressed: _isMigrating ? null : _generateDummyStats,
+              icon: const Icon(Icons.show_chart),
+              label: const Text('Generate Dummy Stats (Test)'),
+              style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),

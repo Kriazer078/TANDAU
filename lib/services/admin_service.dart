@@ -234,4 +234,33 @@ class AdminService {
       );
     }
   }
+
+  /// Fetch statistics for a given date range (ADMIN ONLY)
+  Future<List<Map<String, dynamic>>> getStatistics({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    try {
+      _requireAdmin();
+
+      // Convert to YYYY-MM-DD for string comparison
+      final startStr = start.toIso8601String().split('T')[0];
+      final endStr = end.toIso8601String().split('T')[0];
+
+      final snapshot = await _firestore
+          .collection('statistics')
+          .where(FieldPath.documentId, isGreaterThanOrEqualTo: startStr)
+          .where(FieldPath.documentId, isLessThanOrEqualTo: endStr)
+          .get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['date'] = doc.id; // Include document ID as date
+        return data;
+      }).toList();
+    } catch (e) {
+      debugPrint('Error fetching statistics: $e');
+      return [];
+    }
+  }
 }

@@ -72,4 +72,5 @@ def send_push_notification(event: firestore_fn.Event[firestore_fn.DocumentSnapsh
         response = messaging.send(message)
         print(f"Successfully sent message: {response}")
     except Exception as e:
-        print(f"Error sending message: {e}")
+# Removed Cloud Functions triggers to avoid Cloud Build dependency.
+# Stats are now handled via manual API calls to Render backend.

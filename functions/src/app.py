@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from src.utils.errors import AppError
 from src.controllers.user_controller import user_bp
+from src.controllers.stats_controller import stats_bp
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +12,7 @@ def create_app():
     
     # Register Blueprints with versioning
     app.register_blueprint(user_bp, url_prefix='/v1/users')
+    app.register_blueprint(stats_bp, url_prefix='/v1/stats')
     
     # Global Error Handler
     @app.errorhandler(AppError)

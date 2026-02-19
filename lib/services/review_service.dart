@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 import '../models/review.dart';
 import 'auth_service.dart';
 import 'moderation_service.dart';
@@ -93,6 +94,9 @@ class ReviewService {
 
       // Обновляем средний рейтинг университета
       await _updateUniversityRating(universityId);
+
+      // Track statistics on backend (fire and forget)
+      _trackNewReview();
 
       return true;
     } catch (e, stackTrace) {
@@ -346,6 +350,32 @@ class ReviewService {
       debugPrint('✅ All ratings initialized');
     } catch (e) {
       debugPrint('❌ Error initializing ratings: $e');
+    }
+  }
+
+  /// Track stats on backend
+  Future<void> _trackNewReview() async {
+    try {
+      // Note: Assuming backend is deployed at this URL
+      final uri = Uri.parse(
+        'https://tandau-backend.onrender.com/v1/stats/review-created',
+      );
+
+      // Fire and forget - don't await/block UI
+      http
+          .post(uri)
+          .then((response) {
+            if (response.statusCode != 200) {
+              debugPrint('⚠️ Failed to track review: ${response.body}');
+            } else {
+              debugPrint('✅ Review stats tracked');
+            }
+          })
+          .catchError((e) {
+            debugPrint('⚠️ Error tracking review: $e');
+          });
+    } catch (e) {
+      debugPrint('⚠️ Error initiating tracking: $e');
     }
   }
 }

@@ -264,6 +264,9 @@ class AuthService {
                 .collection('users')
                 .doc(user.uid)
                 .set(userModel.toMap());
+
+            // Track stats: New User via Google
+            _trackNewUser();
           }
         } catch (e) {
           debugPrint(
@@ -377,6 +380,9 @@ class AuthService {
       NotificationService().getToken().then((token) {
         if (token != null) NotificationService().saveTokenToFirestore(token);
       });
+
+      // Track stats: New User via Data
+      _trackNewUser();
 
       debugPrint('✅ AUTH: Регистрация полностью завершена');
       return null; // Success
@@ -660,5 +666,28 @@ class AuthService {
     final String? email = _auth.currentUser?.email;
     if (email == null) return false;
     return _adminEmails.contains(email.toLowerCase());
+  }
+
+  /// Track new user on backend
+  Future<void> _trackNewUser() async {
+    try {
+      final uri = Uri.parse(
+        'https://tandau-backend.onrender.com/v1/stats/user-created',
+      );
+      // Fire and forget, but handle error
+      http
+          .post(uri)
+          .then((response) {
+            if (response.statusCode != 200) {
+              debugPrint('⚠️ Stats API error: ${response.body}');
+            }
+          })
+          .catchError((e) {
+            debugPrint('⚠️ Error tracking user: $e');
+            // Return dummy response to satisfy type system if needed, though catchError on Future<Response> expects Response
+          });
+    } catch (e) {
+      debugPrint('⚠️ Error initiating user tracking: $e');
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tandau/services/update_service.dart'; // Import UpdateService
 import 'legal/terms_screen.dart';
 import '../../screens/main_navigation_screen.dart';
 import 'banned_screen.dart';
@@ -28,6 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
 
+    // Initialize Remote Config settings
+    UpdateService().init();
+
     // Navigate based on auth state after some time
     _checkAuthAndNavigate();
   }
@@ -37,6 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
+      // Check for updates BEFORE navigating anywhere else
+      await UpdateService().checkForUpdate(context);
+
       await _requestPermissions();
       if (!mounted) return;
 

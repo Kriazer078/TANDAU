@@ -4,6 +4,7 @@ import '../admin_migration_screen.dart';
 import 'send_notification_screen.dart';
 import 'review_moderation_screen.dart';
 import 'user_management_screen.dart';
+import 'dashboard_screen.dart';
 
 class AdminPanelScreen extends StatelessWidget {
   const AdminPanelScreen({super.key});
@@ -89,9 +90,12 @@ class AdminPanelScreen extends StatelessWidget {
             icon: Icons.analytics,
             color: Colors.green,
             onTap: () {
-              ScaffoldMessenger.of(
+              Navigator.push(
                 context,
-              ).showSnackBar(const SnackBar(content: Text('В разработке...')));
+                MaterialPageRoute(
+                  builder: (context) => const DashboardScreen(),
+                ),
+              );
             },
           ),
         ],
