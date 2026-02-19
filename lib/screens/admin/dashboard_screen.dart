@@ -125,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildDateFilter(Color textColor) {
     final dateFormat = DateFormat('MMM d, yyyy');
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -135,62 +135,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
               : Colors.grey.withValues(alpha: 0.2),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.calendar_today,
-                size: 18,
+                size: 20,
                 color: _isDark ? Colors.white70 : Colors.grey[700],
               ),
-              const SizedBox(width: 8),
-              Text(
-                '${dateFormat.format(_startDate)} - ${dateFormat.format(_endDate)}',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${dateFormat.format(_startDate)} - ${dateFormat.format(_endDate)}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
                 ),
               ),
             ],
           ),
-          TextButton(
-            onPressed: () async {
-              final picked = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime(2024),
-                lastDate: DateTime.now(),
-                initialDateRange: DateTimeRange(
-                  start: _startDate,
-                  end: _endDate,
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () async {
+                final picked = await showDateRangePicker(
+                  context: context,
+                  firstDate: DateTime(2024),
+                  lastDate: DateTime.now(),
+                  initialDateRange: DateTimeRange(
+                    start: _startDate,
+                    end: _endDate,
+                  ),
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: _isDark
+                            ? const ColorScheme.dark(
+                                primary: AppColors.primary,
+                                onPrimary: Colors.white,
+                                surface: AppColors.surfaceDark,
+                                onSurface: Colors.white,
+                              )
+                            : const ColorScheme.light(
+                                primary: AppColors.primary,
+                              ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+                if (picked != null) {
+                  setState(() {
+                    _startDate = picked.start;
+                    _endDate = picked.end;
+                  });
+                  _fetchStats();
+                }
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: _isDark ? Colors.white24 : Colors.grey[300]!,
                 ),
-                builder: (context, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: _isDark
-                          ? const ColorScheme.dark(
-                              primary: AppColors.primary,
-                              onPrimary: Colors.white,
-                              surface: AppColors.surfaceDark,
-                              onSurface: Colors.white,
-                            )
-                          : const ColorScheme.light(primary: AppColors.primary),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-              if (picked != null) {
-                setState(() {
-                  _startDate = picked.start;
-                  _endDate = picked.end;
-                });
-                _fetchStats();
-              }
-            },
-            child: const Text('Change Range'),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Change Range'),
+            ),
           ),
         ],
       ),
