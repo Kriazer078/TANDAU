@@ -8,6 +8,7 @@ class GeminiService {
 
   // List of models available to current key (Prioritizing stable models)
   static const List<String> _endpoints = [
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
@@ -53,10 +54,16 @@ class GeminiService {
 
         if (response.statusCode == 200) {
           final json = jsonDecode(utf8.decode(response.bodyBytes));
-          return json['candidates']?[0]?['content']?['parts']?[0]?['text'] ??
-              'Извините, я не смог сгенерировать ответ. Попробуйте перефразировать вопрос.';
+          final text =
+              json['candidates']?[0]?['content']?['parts']?[0]?['text'];
+          if (text != null) {
+            stderr.writeln('OK ($modelName)');
+            return text;
+          }
+          stderr.writeln('Empty response from $modelName');
         } else {
-          stderr.writeln('Model $modelName failed: ${response.statusCode}');
+          stderr.writeln(
+              'Model $modelName failed: ${response.statusCode} - ${response.body}');
         }
       } catch (e) {
         stderr.writeln('Connection Error: $e');
@@ -143,6 +150,41 @@ Instructions:
 3. Explain why each university is a good fit.
 4. Give specific advice on admission.
 5. Answer in the language of the user's question.
+''';
+    return _generate(prompt);
+  }
+
+  Future<String> generateAIStrategy({
+    required String universityName,
+    required int untScore,
+    required String specialty,
+    required Map<String, int> subjectScores,
+  }) async {
+    final scoresText = subjectScores.entries
+        .map((e) => "${e.key}: ${e.value} баллов")
+        .join('\n');
+
+    final prompt = '''
+Role: TANDAU AI STRATEGIST.
+Task: Create a detailed admission strategy for a student.
+
+Target: $universityName
+Specialty: $specialty
+ENT Total Score: $untScore
+
+Subject Breakdown:
+$scoresText
+
+Instructions:
+1. Provide a realistic assessment of the chances.
+2. List 3 key steps to increase the probability of admission/grant.
+3. Suggest 2 alternative universities in case the main one is too risky.
+4. Use a professional and encouraging tone.
+5. Language: Russian.
+
+Format your response in Markdown:
+# Admission Strategy: $universityName
+[Your analysis here]
 ''';
     return _generate(prompt);
   }

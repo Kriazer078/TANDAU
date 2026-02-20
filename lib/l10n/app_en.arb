@@ -224,7 +224,17 @@
     "homeChanceEstimation": "Chance Estimation",
     "homeChanceAnalysis": "Grant Admission Analysis 2025",
     "homeAdvancedFilter": "Advanced Filter",
+    "homeUniversitySearch": "University Search",
     "homeUniversities": "Universities",
+    "homeNoUniversitiesFound": "No universities found",
+    "homeYourScore": "Your current score: {score}",
+    "@homeYourScore": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
     "homeAIAnalysisInProgress": "AI Analysis...",
     "homeAIAnalyticsTitle": "TANDAU AI Analytics",
     "detailBeFirstReview": "Be the first to leave a review!",

@@ -621,7 +621,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeAdvancedFilter => 'Advanced Filter';
 
   @override
+  String get homeUniversitySearch => 'University Search';
+
+  @override
   String get homeUniversities => 'Universities';
+
+  @override
+  String get homeNoUniversitiesFound => 'No universities found';
+
+  @override
+  String homeYourScore(int score) {
+    return 'Your current score: $score';
+  }
 
   @override
   String get homeAIAnalysisInProgress => 'AI Analysis...';

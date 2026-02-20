@@ -1288,11 +1288,29 @@ abstract class AppLocalizations {
   /// **'Advanced Filter'**
   String get homeAdvancedFilter;
 
+  /// No description provided for @homeUniversitySearch.
+  ///
+  /// In en, this message translates to:
+  /// **'University Search'**
+  String get homeUniversitySearch;
+
   /// No description provided for @homeUniversities.
   ///
   /// In en, this message translates to:
   /// **'Universities'**
   String get homeUniversities;
+
+  /// No description provided for @homeNoUniversitiesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No universities found'**
+  String get homeNoUniversitiesFound;
+
+  /// No description provided for @homeYourScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current score: {score}'**
+  String homeYourScore(int score);
 
   /// No description provided for @homeAIAnalysisInProgress.
   ///

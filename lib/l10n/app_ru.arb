@@ -226,7 +226,17 @@
     "homeChanceEstimation": "Оценка шансов",
     "homeChanceAnalysis": "Анализ поступления на грант 2025",
     "homeAdvancedFilter": "Расширенный фильтр",
+    "homeUniversitySearch": "Поиск ВУЗов",
     "homeUniversities": "Университеты",
+    "homeNoUniversitiesFound": "Университеты не найдены",
+    "homeYourScore": "Ваш актуальный балл: {score}",
+    "@homeYourScore": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
     "homeAIAnalysisInProgress": "AI Анализ...",
     "homeAIAnalyticsTitle": "AI Аналитика TANDAU",
     "detailBeFirstReview": "Будьте первым, кто оставит отзыв!",

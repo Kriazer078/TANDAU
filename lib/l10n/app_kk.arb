@@ -226,7 +226,17 @@
     "homeChanceEstimation": "Шанстарды бағалау",
     "homeChanceAnalysis": "2025 грантқа түсу талдауы",
     "homeAdvancedFilter": "Кеңейтілген сүзгі",
+    "homeUniversitySearch": "Университеттерді іздеу",
     "homeUniversities": "Университеттер",
+    "homeNoUniversitiesFound": "Университеттер табылмады",
+    "homeYourScore": "Сіздің қазіргі баллыңыз: {score}",
+    "@homeYourScore": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
     "homeAIAnalysisInProgress": "AI Талдау...",
     "homeAIAnalyticsTitle": "TANDAU AI Аналитикасы",
     "detailBeFirstReview": "Бірінші болып пікір қалдырыңыз!",

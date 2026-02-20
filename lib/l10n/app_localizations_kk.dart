@@ -620,7 +620,18 @@ class AppLocalizationsKk extends AppLocalizations {
   String get homeAdvancedFilter => 'Кеңейтілген сүзгі';
 
   @override
+  String get homeUniversitySearch => 'Университеттерді іздеу';
+
+  @override
   String get homeUniversities => 'Университеттер';
+
+  @override
+  String get homeNoUniversitiesFound => 'Университеттер табылмады';
+
+  @override
+  String homeYourScore(int score) {
+    return 'Сіздің қазіргі баллыңыз: $score';
+  }
 
   @override
   String get homeAIAnalysisInProgress => 'AI Талдау...';

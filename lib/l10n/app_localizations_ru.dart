@@ -624,7 +624,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homeAdvancedFilter => 'Расширенный фильтр';
 
   @override
+  String get homeUniversitySearch => 'Поиск ВУЗов';
+
+  @override
   String get homeUniversities => 'Университеты';
+
+  @override
+  String get homeNoUniversitiesFound => 'Университеты не найдены';
+
+  @override
+  String homeYourScore(int score) {
+    return 'Ваш актуальный балл: $score';
+  }
 
   @override
   String get homeAIAnalysisInProgress => 'AI Анализ...';

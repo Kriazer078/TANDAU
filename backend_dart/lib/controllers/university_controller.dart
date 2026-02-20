@@ -4,6 +4,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import '../services/firebase_service.dart';
 import '../services/gemini_service.dart';
+import '../models/university.dart';
 
 class UniversityController {
   final FirebaseService _firebaseService;
@@ -13,6 +14,8 @@ class UniversityController {
   UniversityController(this._firebaseService, this._aiService) {
     router.post('/recommend', _recommend);
     router.post('/chat', _chat);
+    router.post(
+        '/ai/getAIStrategy', _getAIStrategy); // Added prefix to match frontend
     router.get('/health',
         (Request req) => Response.ok('Antigravity Server is running'));
   }
@@ -127,6 +130,63 @@ class UniversityController {
         }),
         headers: {'Content-Type': 'application/json'},
       );
+    }
+  }
+
+  Future<Response> _getAIStrategy(Request request) async {
+    try {
+      final body = await request.readAsString();
+      final data = jsonDecode(body);
+
+      final universityId = data['university_id'] as String?;
+      final untScore = data['user_unt_score'] as int? ?? 0;
+      final specialtyId = data['specialty_id'] as String? ?? 'unknown';
+      final subjectScores =
+          Map<String, int>.from(data['user_subjects_scores'] ?? {});
+
+      if (universityId == null) {
+        return Response.badRequest(body: 'Missing university_id');
+      }
+
+      // Fetch university name
+      final universities = await _firebaseService.getUniversities();
+      final university = universities.firstWhere((u) => u.id == universityId,
+          orElse: () => University(
+                id: 'unknown',
+                name: 'Университет',
+                city: '',
+                subjects: [],
+                minScore: 0,
+                price: '',
+                hasGrants: false,
+                description: '',
+                website: '',
+                rating: 0,
+              ));
+
+      final strategy = await _aiService.generateAIStrategy(
+        universityName: university.name,
+        untScore: untScore,
+        specialty: specialtyId,
+        subjectScores: subjectScores,
+      );
+
+      return Response.ok(
+        jsonEncode({
+          'title': 'Стратегия: ${university.name}',
+          'description': strategy,
+          'alternative_options': [
+            {'name': 'Усилить подготовку к ЕНТ', 'icon': 'trending_up'},
+            {'name': 'Рассмотреть смежные специальности', 'icon': 'list_alt'},
+          ]
+        }),
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      );
+    } catch (e, stack) {
+      stderr.writeln('AI Strategy Error: $e\n$stack');
+      return Response.internalServerError(body: 'Internal Server Error: $e');
     }
   }
 }
