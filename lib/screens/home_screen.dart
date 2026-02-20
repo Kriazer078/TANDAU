@@ -11,7 +11,6 @@ import 'filter_screen.dart';
 import '../providers/grant_predictor_provider.dart';
 import 'grant_prediction_results_screen.dart';
 import 'university_list_screen.dart';
-import '../widgets/stat_card.dart';
 import '../widgets/premium_background.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -102,8 +101,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             const SizedBox(height: 8),
                             _buildGreetingSubtitle(l10n, theme, isDark),
                             const SizedBox(height: 24),
-                            _buildStatsRow(l10n),
-                            const SizedBox(height: 32),
                             _buildScoreInput(untScore, isDark, l10n),
                             const SizedBox(height: 24),
                             Text(
@@ -242,34 +239,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 );
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatsRow(AppLocalizations? l10n) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        children: [
-          StatCard(
-            icon: Icons.school_rounded,
-            value: '120+',
-            label: l10n?.statsUniversity ?? 'ВУЗов',
-          ),
-          const SizedBox(width: 16),
-          StatCard(
-            icon: Icons.people_rounded,
-            value: '15k+',
-            label: l10n?.statsStudent ?? 'Студентов',
-          ),
-          const SizedBox(width: 16),
-          StatCard(
-            icon: Icons.auto_awesome_rounded,
-            value: '98%',
-            label: l10n?.statsSpecialty ?? 'Грантов',
           ),
         ],
       ),
