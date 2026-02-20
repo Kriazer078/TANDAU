@@ -228,5 +228,91 @@
     "homeAdvancedFilter": "Кеңейтілген сүзгі",
     "homeUniversities": "Университеттер",
     "homeAIAnalysisInProgress": "AI Талдау...",
-    "homeAIAnalyticsTitle": "TANDAU AI Аналитикасы"
+    "homeAIAnalyticsTitle": "TANDAU AI Аналитикасы",
+    "detailBeFirstReview": "Бірінші болып пікір қалдырыңыз!",
+    "reviewEdited": "өзгертілген",
+    "reviewAuthRequired": "Бағалау үшін жүйеге кіріңіз",
+    "reviewHelpful": "Пайдалы {count}",
+    "@reviewHelpful": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "reviewOfficialReply": "Ресми жауап",
+    "commonError": "Қате: {error}",
+    "@commonError": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesAnalytics": "СБЖ Аналитика",
+    "aiChancesDataYear": "{year} жылғы деректер",
+    "@aiChancesDataYear": {
+        "placeholders": {
+            "year": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesGrant": "грантқа түсу мүмкіндігі",
+    "aiChancesRisk": "Тәуекел: {risk}",
+    "@aiChancesRisk": {
+        "placeholders": {
+            "risk": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesEntThreshold": "Осы бағыт үшін ҰБТ шегі: {score} балл",
+    "@aiChancesEntThreshold": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "aiChancesDetails": "Есептеу бөлшектері",
+    "aiChancesDetailedStrategy": "Толық AI стратегиясы",
+    "detailErrorFavorites": "Таңдаулыларды жаңарту қатесі",
+    "aiStrategyTitle": "AI Стратегиясы",
+    "aiStrategyGoal": "Мақсат: {university}",
+    "aiStrategyAlternatives": "Баламалы нұсқалар",
+    "aiStrategyUniversity": "ЖОО",
+    "aiStrategySpecialty": "Мамандық",
+    "aiStrategyLoading": "{university} үшін деректерді жинау және мүмкіндіктерді талдау...\nГрантқа кепілдік беру үшін қандай тақырыптарды жақсарту керектігін біліңіз!",
+    "aiStrategyGetPlan": "Толық жоспарды алу",
+    "aiStrategyFallbackTitle": "Оқуға түсу стратегиясы",
+    "authLoginContinue": "Жолды жалғастыру үшін жүйеге кіріңіз",
+    "authLoginButton": "КІРУ",
+    "authRegisterButton": "Тіркелу",
+    "authTermsIHaveRead": "Мен ",
+    "authTermsLink": "Пайдалану шарттарымен",
+    "authTermsAnd": " және ",
+    "authPrivacyLink": "Құпиялылық саясатымен",
+    "authTermsSuffix": " келісемін",
+    "authGuestTitle": "Қонақ ретінде кіру",
+    "authGuestWarning": "Қонақ режимінде қолжетімділік шектеулі. AI-кеңесшіге және басқа функцияларға толық қол жеткізу үшін тіркелу қажет.",
+    "authContinue": "Жалғастыру",
+    "authTermsRegister": "Тіркелу арқылы сіз ",
+    "authRequired": "Міндетті",
+    "validationMinLength": "Кемінде {count} таңба",
+    "validationDigitRequired": "Құпия сөзде кемінде бір сан болуы керек",
+    "detailEstimateChances": "Шанстарды бағалау",
+    "detailRecommendations": "💡 Ұсыныстар",
+    "detailAiThinking": "AI стратегияны жасауда...",
+    "detailAiStrategySubtitle": "TANDAU AI Стратегиясы",
+    "tabOverview": "Шолу",
+    "tabMajors": "Мамандықтар",
+    "tabAdmissions": "Оқуға түсу",
+    "tabContact": "Контактілер",
+    "tabReviews": "Пікірлер",
+    "profileSavedSubtitle": "Сіздің сақталған университеттеріңіз",
+    "adminPanelTitle": "Админ панелі",
+    "adminPanelSubtitle": "Пуш пен деректерді басқару",
+    "authGuestMessage": "Барлық функцияларға қол жеткізу үшін есептік жазбаңызға кіріңіз",
+    "authTermsSuffix": " келісемін"
 }

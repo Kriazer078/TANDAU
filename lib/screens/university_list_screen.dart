@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import '../theme/app_colors.dart';
 import '../models/university.dart';
 import '../services/university_service.dart';
@@ -202,7 +203,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
           ),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? _buildShimmerLoading()
                 : _universities.isEmpty
                 ? Center(
                     child: Text(
@@ -283,6 +284,95 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                   ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  // SHIMMER SKELETON
+  // ═══════════════════════════════════════════
+  Widget _buildShimmerLoading() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark
+        ? const Color(0xFF1E293B)
+        : const Color(0xFFE2E8F0);
+    final highlightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFF8FAFC);
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemCount: 6,
+        itemBuilder: (context, _) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Container(
+            height: 110,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                // Logo placeholder
+                Container(
+                  width: 80,
+                  height: 110,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // University name
+                      Container(
+                        height: 14,
+                        width: double.infinity,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(height: 12, width: 140, color: Colors.white),
+                      const SizedBox(height: 12),
+                      // Tags
+                      Row(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            height: 20,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

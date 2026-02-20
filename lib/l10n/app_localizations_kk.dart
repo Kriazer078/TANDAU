@@ -480,10 +480,10 @@ class AppLocalizationsKk extends AppLocalizations {
   String get tabMajors => 'Мамандықтар';
 
   @override
-  String get tabAdmissions => 'Түсу';
+  String get tabAdmissions => 'Оқуға түсу';
 
   @override
-  String get tabContact => 'Байланыс';
+  String get tabContact => 'Контактілер';
 
   @override
   String get tabReviews => 'Пікірлер';
@@ -530,7 +530,8 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get authGuestMessage => 'Барлық мүмкіндіктерді пайдалану үшін кіріңіз';
+  String get authGuestMessage =>
+      'Барлық функцияларға қол жеткізу үшін есептік жазбаңызға кіріңіз';
 
   @override
   String get editProfileTitle => 'Профильді өңдеу';
@@ -626,4 +627,154 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get homeAIAnalyticsTitle => 'TANDAU AI Аналитикасы';
+
+  @override
+  String get detailBeFirstReview => 'Бірінші болып пікір қалдырыңыз!';
+
+  @override
+  String get reviewEdited => 'өзгертілген';
+
+  @override
+  String get reviewAuthRequired => 'Бағалау үшін жүйеге кіріңіз';
+
+  @override
+  String reviewHelpful(String count) {
+    return 'Пайдалы $count';
+  }
+
+  @override
+  String get reviewOfficialReply => 'Ресми жауап';
+
+  @override
+  String commonError(String error) {
+    return 'Қате: $error';
+  }
+
+  @override
+  String get aiChancesAnalytics => 'СБЖ Аналитика';
+
+  @override
+  String aiChancesDataYear(String year) {
+    return '$year жылғы деректер';
+  }
+
+  @override
+  String get aiChancesGrant => 'грантқа түсу мүмкіндігі';
+
+  @override
+  String aiChancesRisk(String risk) {
+    return 'Тәуекел: $risk';
+  }
+
+  @override
+  String aiChancesEntThreshold(int score) {
+    return 'Осы бағыт үшін ҰБТ шегі: $score балл';
+  }
+
+  @override
+  String get aiChancesDetails => 'Есептеу бөлшектері';
+
+  @override
+  String get aiChancesDetailedStrategy => 'Толық AI стратегиясы';
+
+  @override
+  String get detailErrorFavorites => 'Таңдаулыларды жаңарту қатесі';
+
+  @override
+  String get aiStrategyTitle => 'AI Стратегиясы';
+
+  @override
+  String aiStrategyGoal(String university) {
+    return 'Мақсат: $university';
+  }
+
+  @override
+  String get aiStrategyAlternatives => 'Баламалы нұсқалар';
+
+  @override
+  String get aiStrategyUniversity => 'ЖОО';
+
+  @override
+  String get aiStrategySpecialty => 'Мамандық';
+
+  @override
+  String aiStrategyLoading(String university) {
+    return '$university үшін деректерді жинау және мүмкіндіктерді талдау...\nГрантқа кепілдік беру үшін қандай тақырыптарды жақсарту керектігін біліңіз!';
+  }
+
+  @override
+  String get aiStrategyGetPlan => 'Толық жоспарды алу';
+
+  @override
+  String get aiStrategyFallbackTitle => 'Оқуға түсу стратегиясы';
+
+  @override
+  String get authLoginContinue => 'Жолды жалғастыру үшін жүйеге кіріңіз';
+
+  @override
+  String get authLoginButton => 'КІРУ';
+
+  @override
+  String get authRegisterButton => 'Тіркелу';
+
+  @override
+  String get authTermsIHaveRead => 'Мен ';
+
+  @override
+  String get authTermsLink => 'Пайдалану шарттарымен';
+
+  @override
+  String get authTermsAnd => ' және ';
+
+  @override
+  String get authPrivacyLink => 'Құпиялылық саясатымен';
+
+  @override
+  String get authGuestTitle => 'Қонақ ретінде кіру';
+
+  @override
+  String get authGuestWarning =>
+      'Қонақ режимінде қолжетімділік шектеулі. AI-кеңесшіге және басқа функцияларға толық қол жеткізу үшін тіркелу қажет.';
+
+  @override
+  String get authContinue => 'Жалғастыру';
+
+  @override
+  String get authTermsRegister => 'Тіркелу арқылы сіз ';
+
+  @override
+  String get authRequired => 'Міндетті';
+
+  @override
+  String validationMinLength(int count) {
+    return 'Кемінде $count таңба';
+  }
+
+  @override
+  String get validationDigitRequired =>
+      'Құпия сөзде кемінде бір сан болуы керек';
+
+  @override
+  String get detailEstimateChances => 'Шанстарды бағалау';
+
+  @override
+  String get detailRecommendations => '💡 Ұсыныстар';
+
+  @override
+  String get detailAiThinking => 'AI стратегияны жасауда...';
+
+  @override
+  String get detailAiStrategySubtitle => 'TANDAU AI Стратегиясы';
+
+  @override
+  String get profileSavedSubtitle => 'Сіздің сақталған университеттеріңіз';
+
+  @override
+  String get adminPanelTitle => 'Админ панелі';
+
+  @override
+  String get adminPanelSubtitle => 'Пуш пен деректерді басқару';
+
+  @override
+  String get authTermsSuffix => ' келісемін';
 }

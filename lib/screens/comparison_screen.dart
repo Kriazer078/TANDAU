@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../models/university.dart';
 import '../services/comparison_service.dart';
 import '../l10n/app_localizations.dart';
@@ -93,10 +94,67 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? _buildShimmerLoading(isDark)
           : _universities.isEmpty
           ? _buildEmptyState(l10n, isDark)
           : _buildComparisonContent(l10n, isDark),
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  // SHIMMER SKELETON
+  // ═══════════════════════════════════════════
+  Widget _buildShimmerLoading(bool isDark) {
+    final baseColor = isDark
+        ? const Color(0xFF1E293B)
+        : const Color(0xFFE2E8F0);
+    final highlightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFF8FAFC);
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Two university header card placeholders
+            Row(
+              children: List.generate(
+                2,
+                (_) => Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Table row skeletons
+            ...List.generate(
+              6,
+              (_) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Container(
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

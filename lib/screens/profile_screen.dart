@@ -31,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -147,7 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context,
               icon: Icons.favorite_rounded,
               title: AppLocalizations.of(context)?.navFavorites ?? 'Saved',
-              subtitle: 'Ваши сохранённые университеты',
+              subtitle:
+                  l10n?.profileSavedSubtitle ?? 'Ваши сохранённые университеты',
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
@@ -258,8 +260,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _buildSettingCard(
                         context,
                         icon: Icons.admin_panel_settings,
-                        title: 'Админ Панель',
-                        subtitle: 'Управление пушем и данными',
+                        title: l10n?.adminPanelTitle ?? 'Админ Панель',
+                        subtitle:
+                            l10n?.adminPanelSubtitle ??
+                            'Управление пушем и данными',
                         trailing: Icon(
                           Icons.arrow_forward_ios,
                           size: 16,

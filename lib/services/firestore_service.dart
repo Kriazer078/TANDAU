@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/university.dart';
+import '../models/specialty.dart';
 
 class FirestoreService {
   // Singleton instance
@@ -200,5 +201,20 @@ class FirestoreService {
       debugPrint('Error getting unique majors: $e');
       return [];
     }
+  }
+
+  // --- SPECIALTIES CURRENTLY ADDED:
+  /// Get specialties for a university
+  Stream<List<Specialty>> getSpecialties(String universityId) {
+    return _firestore
+        .collection('universities')
+        .doc(universityId)
+        .collection('specialties')
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            return Specialty.fromMap(doc.data(), doc.id);
+          }).toList();
+        });
   }
 }

@@ -66,6 +66,8 @@ dependencies:
   fl_chart: ^1.1.1
   flutter_riverpod: ^2.6.1
   shimmer: ^3.0.0
+  percent_indicator: ^4.2.5
+  lottie: ^3.3.2
 
 dev_dependencies:
   flutter_test:

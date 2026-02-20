@@ -4,6 +4,7 @@ import '../admin_migration_screen.dart';
 import 'send_notification_screen.dart';
 import 'review_moderation_screen.dart';
 import 'user_management_screen.dart';
+import 'audit_log_screen.dart';
 import 'dashboard_screen.dart';
 
 class AdminPanelScreen extends StatelessWidget {
@@ -79,6 +80,20 @@ class AdminPanelScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => const AdminMigrationScreen(),
                 ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildAdminCard(
+            context,
+            title: 'Аудит-логи',
+            subtitle: 'Журнал действий администраторов',
+            icon: Icons.history_rounded,
+            color: Colors.indigo,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AuditLogScreen()),
               );
             },
           ),

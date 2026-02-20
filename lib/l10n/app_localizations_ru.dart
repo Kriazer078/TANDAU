@@ -631,4 +631,154 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeAIAnalyticsTitle => 'AI Аналитика TANDAU';
+
+  @override
+  String get detailBeFirstReview => 'Будьте первым, кто оставит отзыв!';
+
+  @override
+  String get reviewEdited => 'изменено';
+
+  @override
+  String get reviewAuthRequired => 'Аутентифицируйтесь для оценки';
+
+  @override
+  String reviewHelpful(String count) {
+    return 'Полезно $count';
+  }
+
+  @override
+  String get reviewOfficialReply => 'Официальный ответ';
+
+  @override
+  String commonError(String error) {
+    return 'Ошибка: $error';
+  }
+
+  @override
+  String get aiChancesAnalytics => 'СВД Аналитика';
+
+  @override
+  String aiChancesDataYear(String year) {
+    return 'Данные $year';
+  }
+
+  @override
+  String get aiChancesGrant => 'шанс на грант';
+
+  @override
+  String aiChancesRisk(String risk) {
+    return 'Риск: $risk';
+  }
+
+  @override
+  String aiChancesEntThreshold(int score) {
+    return 'Порог ЕНТ для этого направления: $score баллов';
+  }
+
+  @override
+  String get aiChancesDetails => 'Детали расчёта';
+
+  @override
+  String get aiChancesDetailedStrategy => 'Подробная AI стратегия';
+
+  @override
+  String get detailErrorFavorites => 'Ошибка обновления избранного';
+
+  @override
+  String get aiStrategyTitle => 'AI Стратегия';
+
+  @override
+  String aiStrategyGoal(String university) {
+    return 'Цель: $university';
+  }
+
+  @override
+  String get aiStrategyAlternatives => 'Альтернативные варианты';
+
+  @override
+  String get aiStrategyUniversity => 'Вуз';
+
+  @override
+  String get aiStrategySpecialty => 'Специальность';
+
+  @override
+  String aiStrategyLoading(String university) {
+    return 'Сбор данных и анализ шансов для $university...\nУзнайте, какие темы стоит подтянуть, чтобы гарантировать грант!';
+  }
+
+  @override
+  String get aiStrategyGetPlan => 'Получить детальный план';
+
+  @override
+  String get aiStrategyFallbackTitle => 'Стратегия поступления';
+
+  @override
+  String get authLoginContinue => 'Войдите, чтобы продолжить путь';
+
+  @override
+  String get authLoginButton => 'ВОЙТИ';
+
+  @override
+  String get authRegisterButton => 'Зарегистрироваться';
+
+  @override
+  String get authTermsIHaveRead => 'Я согласен с ';
+
+  @override
+  String get authTermsLink => 'Условиями использования';
+
+  @override
+  String get authTermsAnd => ' и ';
+
+  @override
+  String get authPrivacyLink => 'Политикой конфиденциальности';
+
+  @override
+  String get authGuestTitle => 'Войти как гость';
+
+  @override
+  String get authGuestWarning =>
+      'В режиме гостя доступ ограничен. Для полного доступа к AI-консультанту и другим функциям необходима регистрация.';
+
+  @override
+  String get authContinue => 'Продолжить';
+
+  @override
+  String get authTermsRegister => 'Регистрируясь, вы соглашаетесь с ';
+
+  @override
+  String get authRequired => 'Обязательно';
+
+  @override
+  String validationMinLength(int count) {
+    return 'Минимум $count символов';
+  }
+
+  @override
+  String get validationDigitRequired =>
+      'Пароль должен содержать хотя бы одну цифру';
+
+  @override
+  String get detailEstimateChances => 'Оценить шансы';
+
+  @override
+  String get detailRecommendations => '💡 Рекомендации';
+
+  @override
+  String get detailAiThinking => 'AI формирует стратегию...';
+
+  @override
+  String get detailAiStrategySubtitle => 'AI Стратегия TANDAU';
+
+  @override
+  String get profileSavedSubtitle => 'Ваши сохранённые университеты';
+
+  @override
+  String get adminPanelTitle => 'Админ панель';
+
+  @override
+  String get adminPanelSubtitle => 'Управление пушем и данными';
+
+  @override
+  String get authTermsSuffix => '';
 }

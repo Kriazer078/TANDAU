@@ -11,6 +11,14 @@ class Review {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  // Улучшенные отзывы
+  final List<String>? photoUrls;
+  final int helpfulCount;
+  final List<String> helpfulBy;
+  final String? adminReply;
+  final DateTime? repliedAt;
+  final String? replierName;
+
   Review({
     required this.id,
     required this.userId,
@@ -20,6 +28,12 @@ class Review {
     required this.comment,
     required this.createdAt,
     this.updatedAt,
+    this.photoUrls,
+    this.helpfulCount = 0,
+    this.helpfulBy = const [],
+    this.adminReply,
+    this.repliedAt,
+    this.replierName,
   });
 
   /// Валидация рейтинга
@@ -35,24 +49,19 @@ class Review {
       'comment': comment,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
+      'photoUrls': photoUrls,
+      'helpfulCount': helpfulCount,
+      'helpfulBy': helpfulBy,
+      'adminReply': adminReply,
+      'repliedAt': repliedAt != null ? Timestamp.fromDate(repliedAt!) : null,
+      'replierName': replierName,
     };
   }
 
   /// Создание из Firestore документа
   factory Review.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return Review(
-      id: doc.id,
-      userId: data['userId'] ?? '',
-      universityId: data['universityId'] ?? '',
-      userName: data['userName'] ?? 'Anonymous',
-      rating: data['rating'] ?? 0,
-      comment: data['comment'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      updatedAt: data['updatedAt'] != null
-          ? (data['updatedAt'] as Timestamp).toDate()
-          : null,
-    );
+    return Review.fromMap(data, doc.id);
   }
 
   /// Создание из Map
@@ -68,6 +77,14 @@ class Review {
       updatedAt: map['updatedAt'] != null
           ? (map['updatedAt'] as Timestamp).toDate()
           : null,
+      photoUrls: (map['photoUrls'] as List<dynamic>?)?.cast<String>(),
+      helpfulCount: map['helpfulCount'] ?? 0,
+      helpfulBy: (map['helpfulBy'] as List<dynamic>?)?.cast<String>() ?? [],
+      adminReply: map['adminReply'],
+      repliedAt: map['repliedAt'] != null
+          ? (map['repliedAt'] as Timestamp).toDate()
+          : null,
+      replierName: map['replierName'],
     );
   }
 
@@ -81,6 +98,12 @@ class Review {
     String? comment,
     DateTime? createdAt,
     DateTime? updatedAt,
+    List<String>? photoUrls,
+    int? helpfulCount,
+    List<String>? helpfulBy,
+    String? adminReply,
+    DateTime? repliedAt,
+    String? replierName,
   }) {
     return Review(
       id: id ?? this.id,
@@ -91,6 +114,12 @@ class Review {
       comment: comment ?? this.comment,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      photoUrls: photoUrls ?? this.photoUrls,
+      helpfulCount: helpfulCount ?? this.helpfulCount,
+      helpfulBy: helpfulBy ?? this.helpfulBy,
+      adminReply: adminReply ?? this.adminReply,
+      repliedAt: repliedAt ?? this.repliedAt,
+      replierName: replierName ?? this.replierName,
     );
   }
 }

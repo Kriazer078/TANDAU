@@ -74,6 +74,8 @@ class GrantChanceService {
     double? ieltsScore,
     List<String> achievements = const [],
     int? mathScore,
+    String? userCity,
+    String? universityCity,
   }) {
     // Если нет балла ЕНТ — не можем рассчитать
     if (entScore == null || entScore <= 0) {
@@ -185,23 +187,78 @@ class GrantChanceService {
       }
     }
 
-    // ── 5. Бонус достижений (+10%) ──
+    // ── 5. Бонус достижений (до +15%) ──
     double achievementBonus = 0;
     if (achievements.isNotEmpty) {
-      // Каждое достижение = +2%, макс 10%
-      achievementBonus = (achievements.length * 2.0).clamp(0, 10);
-      details.add(
-        '✅ ${achievements.length} достижений (бонус +${achievementBonus.toInt()}%)',
-      );
+      for (final ach in achievements) {
+        final lowerAch = ach.toLowerCase();
+        if (lowerAch.contains('олимпиад') ||
+            lowerAch.contains('olympiad') ||
+            lowerAch.contains('алтын белгі') ||
+            lowerAch.contains('altyn belgi')) {
+          achievementBonus += 5;
+          details.add('✅ Победитель олимпиады / Алтын белгі (+5%)');
+        } else if (lowerAch.contains('волонтер') ||
+            lowerAch.contains('volunteering')) {
+          achievementBonus += 3;
+          details.add('✅ Волонтёрская деятельность (+3%)');
+        } else if (lowerAch.contains('спорт') ||
+            lowerAch.contains('sport') ||
+            lowerAch.contains('соревнован')) {
+          achievementBonus += 3;
+          details.add('✅ Спортивные достижения (+3%)');
+        } else {
+          achievementBonus += 2;
+        }
+      }
+
+      achievementBonus = achievementBonus.clamp(0, 15);
+
+      if (achievementBonus > 0 &&
+          !details.any(
+            (d) =>
+                d.contains('олимпиад') ||
+                d.contains('Волонтёрская') ||
+                d.contains('Спортивные'),
+          )) {
+        details.add(
+          '✅ Учтены профильные достижения (+${achievementBonus.toInt()}%)',
+        );
+      }
     } else {
       recommendations.add(
-        'Добавьте достижения (олимпиады, волонтёрство) для повышения шансов',
+        'Добавьте достижения (олимпиады, волонтёрство, спорт) для повышения шансов',
       );
+    }
+
+    // ── 6. Региональный модификатор (Квоты) ──
+    double regionModifier = 0;
+    if (userCity != null && userCity.isNotEmpty) {
+      final String lowerCity = userCity.toLowerCase();
+      // Проверка на сельскую местность по ключевым словам
+      final bool isRural =
+          lowerCity.contains('ауыл') ||
+          lowerCity.contains('село') ||
+          lowerCity.contains('район') ||
+          lowerCity.contains('а. ') ||
+          lowerCity.contains('пос.');
+      if (isRural) {
+        regionModifier = 5;
+        details.add('✅ Применена сельская квота (+5%)');
+      } else if (universityCity != null &&
+          universityCity.isNotEmpty &&
+          lowerCity != universityCity.toLowerCase()) {
+        // Упоминание о мобильности, но не дает прямого % к шансам
+        details.add(
+          'ℹ️ Иногородний студент (возможны целевые квоты или Серпін)',
+        );
+      }
     }
 
     // ── Итого ──
     final double totalChance =
-        (baseChance + gpaBonus + ieltsBonus + achievementBonus).clamp(0, 98);
+        (baseChance + gpaBonus + ieltsBonus + achievementBonus + regionModifier)
+            .clamp(0, 98);
     final int chancePercent = totalChance.round();
 
     // Определение уровня риска
@@ -265,6 +322,7 @@ class GrantChanceService {
     if (_matchesAny(lower, [
       'it',
       'информац',
+      'информатик', // ← добавлено: 'Информатика', 'Информатика и системы'
       'программ',
       'computer',
       'software',

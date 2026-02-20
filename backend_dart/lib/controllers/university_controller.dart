@@ -23,11 +23,27 @@ class UniversityController {
       final data = jsonDecode(body);
       final question = data['question'] as String?;
 
+      // Parse history if available
+      final rawHistory = data['history'] as List<dynamic>?;
+      List<Map<String, dynamic>>? history;
+
+      if (rawHistory != null) {
+        history = rawHistory.map((item) {
+          final isUser = item['isUser'] == true;
+          return {
+            'role': isUser ? 'user' : 'model',
+            'parts': [
+              {'text': item['text'].toString()}
+            ]
+          };
+        }).toList();
+      }
+
       if (question == null) {
         return Response.badRequest(body: 'Missing question');
       }
 
-      final answer = await _aiService.generateChat(question);
+      final answer = await _aiService.generateChat(question, history: history);
 
       return Response.ok(
         jsonEncode({'answer': answer}),

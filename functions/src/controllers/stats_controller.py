@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from src.services.stats_service import StatsService
 
-stats_bp = Blueprint('stats', __name__, url_prefix='/stats')
+stats_bp = Blueprint('stats', __name__)
 stats_service = StatsService()
 
 @stats_bp.route('/user-created', methods=['POST'])

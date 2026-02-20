@@ -35,8 +35,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     if (!_termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Необходимо согласиться с Условиями использования'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.validationTerms ??
+                'Необходимо согласиться с Условиями использования',
+          ),
           backgroundColor: AppColors.error,
         ),
       );
@@ -163,7 +166,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           AppLocalizations.of(context)?.authFullName ??
                           'Full Name',
                       icon: Icons.person_outline,
-                      validator: (v) => v!.isEmpty ? 'Required' : null,
+                      validator: (v) => v!.isEmpty
+                          ? (AppLocalizations.of(context)?.authRequired ??
+                                'Required')
+                          : null,
                     ),
                     const SizedBox(height: 20),
                     CustomTextField(
@@ -172,11 +178,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Введите Email';
+                        if (v == null || v.isEmpty) {
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationEmail ??
+                              'Введите Email';
+                        }
                         if (!RegExp(
                           r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                         ).hasMatch(v)) {
-                          return 'Неверный формат Email';
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationEmailFormat ??
+                              'Неверный формат Email';
                         }
                         return null;
                       },
@@ -200,10 +214,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Введите пароль';
-                        if (v.length < 6) return 'Минимум 6 символов';
+                        if (v == null || v.isEmpty) {
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationPassword ??
+                              'Введите пароль';
+                        }
+                        if (v.length < 6) {
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationMinLength(6) ??
+                              'Минимум 6 символов';
+                        }
                         if (!v.contains(RegExp(r'[0-9]'))) {
-                          return 'Пароль должен содержать хотя бы одну цифру';
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationDigitRequired ??
+                              'Пароль должен содержать хотя бы одну цифру';
                         }
                         return null;
                       },
@@ -252,11 +279,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           : Colors.grey[700],
                                     ),
                                 children: [
-                                  const TextSpan(
-                                    text: 'Регистрируясь, вы соглашаетесь с ',
+                                  TextSpan(
+                                    text:
+                                        AppLocalizations.of(
+                                          context,
+                                        )?.authTermsRegister ??
+                                        'Регистрируясь, вы соглашаетесь с ',
                                   ),
                                   TextSpan(
-                                    text: 'Условиями',
+                                    text:
+                                        AppLocalizations.of(
+                                          context,
+                                        )?.authTermsLink ??
+                                        'Условиями',
                                     style: const TextStyle(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.bold,
@@ -273,9 +308,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         );
                                       },
                                   ),
-                                  const TextSpan(text: ' и '),
                                   TextSpan(
-                                    text: 'Политикой конфиденциальности',
+                                    text:
+                                        AppLocalizations.of(
+                                          context,
+                                        )?.authTermsAnd ??
+                                        ' и ',
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        AppLocalizations.of(
+                                          context,
+                                        )?.authPrivacyLink ??
+                                        'Политикой конфиденциальности',
                                     style: const TextStyle(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.bold,
@@ -292,6 +337,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         );
                                       },
                                   ),
+                                  if (AppLocalizations.of(
+                                        context,
+                                      )?.localeName ==
+                                      'kk')
+                                    TextSpan(
+                                      text:
+                                          AppLocalizations.of(
+                                            context,
+                                          )?.authTermsSuffix ??
+                                          ' келісемін',
+                                    ),
                                 ],
                               ),
                             ),

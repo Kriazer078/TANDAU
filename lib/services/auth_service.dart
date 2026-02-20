@@ -335,10 +335,14 @@ class AuthService {
       debugPrint('📝 AUTH: START Registration process');
 
       // 1. Create User in Firebase Auth
-      final credential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      // ⏱️ Timeout prevents infinite hang on poor connectivity
+      final credential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () =>
+                throw TimeoutException('Превышено время ожидания регистрации'),
+          );
 
       if (credential.user == null) return 'Ошибка создания пользователя';
       final String uid = credential.user!.uid;
@@ -376,10 +380,17 @@ class AuthService {
       // 4. Set local state
       currentUser.value = userModel;
 
-      // Save FCM Token
-      NotificationService().getToken().then((token) {
-        if (token != null) NotificationService().saveTokenToFirestore(token);
-      });
+      // Save FCM Token (fire & forget with timeout so it never blocks)
+      () async {
+        try {
+          final token = await NotificationService().getToken().timeout(
+            const Duration(seconds: 5),
+          );
+          if (token != null) NotificationService().saveTokenToFirestore(token);
+        } catch (e) {
+          debugPrint('⚠️ FCM token fetch failed: $e');
+        }
+      }();
 
       // Track stats: New User via Data
       _trackNewUser();
@@ -674,9 +685,10 @@ class AuthService {
       final uri = Uri.parse(
         'https://tandau-backend.onrender.com/v1/stats/user-created',
       );
-      // Fire and forget, but handle error
+      // Fire and forget with 10s timeout to prevent lingering HTTP handles
       http
           .post(uri)
+          .timeout(const Duration(seconds: 10))
           .then((response) {
             if (response.statusCode != 200) {
               debugPrint('⚠️ Stats API error: ${response.body}');
@@ -684,7 +696,6 @@ class AuthService {
           })
           .catchError((e) {
             debugPrint('⚠️ Error tracking user: $e');
-            // Return dummy response to satisfy type system if needed, though catchError on Future<Response> expects Response
           });
     } catch (e) {
       debugPrint('⚠️ Error initiating user tracking: $e');

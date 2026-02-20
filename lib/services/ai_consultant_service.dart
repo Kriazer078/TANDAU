@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/university.dart';
 import '../models/student_profile.dart';
+import 'auth_service.dart';
 import 'grant_chance_service.dart';
 
 import 'moderation_service.dart';
@@ -48,6 +50,8 @@ class AIConsultantService {
           ? GrantChanceService().detectCategory(university.majors.first)
           : MajorCategory.other;
 
+      final user = AuthService().currentUser.value;
+
       // 2. Рассчитать шансы через СВД (верифицированные данные 2025)
       final GrantChanceResult svdResult = GrantChanceService().calculate(
         entScore: profile.entScore,
@@ -57,6 +61,8 @@ class AIConsultantService {
         ieltsScore: profile.ieltsScore,
         achievements: profile.achievements,
         mathScore: profile.mathScore,
+        userCity: user?.city,
+        universityCity: university.city,
       );
 
       // 3. Подготовить JSON для AI с результатами СВД
@@ -102,6 +108,8 @@ $jsonInput
         ? GrantChanceService().detectCategory(university.majors.first)
         : MajorCategory.other;
 
+    final user = AuthService().currentUser.value;
+
     return GrantChanceService().calculate(
       entScore: profile.entScore,
       universityId: university.id,
@@ -110,12 +118,45 @@ $jsonInput
       ieltsScore: profile.ieltsScore,
       achievements: profile.achievements,
       mathScore: profile.mathScore,
+      userCity: user?.city,
+      universityCity: university.city,
     );
+  }
+
+  /// Получить детальный план стратегии от AI
+  Future<Map<String, dynamic>> getAIStrategy({
+    required String universityId,
+    required int untScore,
+    required String specialtyId,
+    Map<String, int>? subjectScores,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/ai/getAIStrategy'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_unt_score': untScore,
+          'specialty_id': specialtyId,
+          'university_id': universityId,
+          'user_subjects_scores': subjectScores ?? {},
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(utf8.decode(response.bodyBytes));
+      } else {
+        throw Exception('Failed to load AI strategy: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error getting AI strategy: $e');
+      rethrow;
+    }
   }
 
   /// Отправить сообщение AI консультанту (Chat)
   Future<String> sendMessage(
     String message, {
+    List<Map<String, dynamic>>? history,
     List<String>? userAchievements,
     int? entScore,
     double? ieltsScore,
@@ -159,14 +200,21 @@ $jsonInput
           context += 'Текущее образование: $currentEducation. ';
         }
 
+        // Important: we append the context to the message so Gemini knows current user state
         fullMessage =
-            '$_chatSystemInstruction\n\n${context.isNotEmpty ? 'Context: $context\n\n' : ''}Question: $message';
+            '${context.isNotEmpty ? 'Мой контекст: $context\n\n' : ''}Мой вопрос: $message';
+      }
+
+      final bodyData = <String, dynamic>{'question': fullMessage};
+
+      if (history != null && history.isNotEmpty) {
+        bodyData['history'] = history;
       }
 
       final response = await http.post(
         Uri.parse('$_baseUrl/chat'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'question': fullMessage}),
+        body: jsonEncode(bodyData),
       );
 
       if (response.statusCode == 200) {
@@ -180,30 +228,6 @@ $jsonInput
   }
 
   // --- SYSTEM INSTRUCTIONS ---
-
-  static const String _chatSystemInstruction = '''
-ТЫ — TANDAU AI, элитный эксперт №1 по высшему образованию и грантам в Казахстане.
-Твоя цель: давать сверхточные, практические и экспертные советы абитуриентам.
-
-ТВОИ ЗНАНИЯ (ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ 2025):
-- ЕНТ 2025: макс. 140 баллов, 120 заданий, основное ЕНТ: 16 мая — 5 июля.
-- Пороги для грантов: нац. вузы — 65, остальные — 50.
-- Педагогика/Право — 75, Медицина — 70, С/Х — 60.
-- Подача на грант: 13-20 июля 2025. Результаты: до 10 августа 2025.
-- Можно сдать ЕНТ дважды, лучший результат — в конкурс на грант.
-- Гос. квоты для выпускников сельских школ.
-- Университеты: NU, КБТУ, МУИТ, AITU, AlmaU, КазНУ, ЕНУ, Satbayev и др.
-
-ТВОЙ СТИЛЬ:
-- Профессиональный, лаконичный, но вдохновляющий.
-- Форматируй текст (жирный для ключевого).
-- Максимум 180 слов. Без воды.
-- Если данных мало — задавай уточняющий вопрос.
-
-ОБЯЗАТЕЛЬНО:
-- Учитывай контекст студента (ЕНТ, IELTS, GPA).
-- Если мечтает о невозможном — мягко, но честно предложи альтернативу.
-''';
 
   static const String _strategySystemInstruction = '''
 ТЫ — TANDAU AI AGENT, стратег по поступлению. Используй данные СВД (Системы Вычисления Шансов) — она работает на верифицированных данных МОН РК 2025:

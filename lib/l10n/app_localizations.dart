@@ -1117,7 +1117,7 @@ abstract class AppLocalizations {
   /// No description provided for @authGuestMessage.
   ///
   /// In en, this message translates to:
-  /// **'Log in to access all features'**
+  /// **'Log in to your account to access all features'**
   String get authGuestMessage;
 
   /// No description provided for @editProfileTitle.
@@ -1305,6 +1305,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TANDAU AI Analytics'**
   String get homeAIAnalyticsTitle;
+
+  /// No description provided for @detailBeFirstReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to leave a review!'**
+  String get detailBeFirstReview;
+
+  /// No description provided for @reviewEdited.
+  ///
+  /// In en, this message translates to:
+  /// **'edited'**
+  String get reviewEdited;
+
+  /// No description provided for @reviewAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate to rate'**
+  String get reviewAuthRequired;
+
+  /// No description provided for @reviewHelpful.
+  ///
+  /// In en, this message translates to:
+  /// **'Helpful {count}'**
+  String reviewHelpful(String count);
+
+  /// No description provided for @reviewOfficialReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Official Reply'**
+  String get reviewOfficialReply;
+
+  /// No description provided for @commonError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String commonError(String error);
+
+  /// No description provided for @aiChancesAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'SVD Analytics'**
+  String get aiChancesAnalytics;
+
+  /// No description provided for @aiChancesDataYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Data for {year}'**
+  String aiChancesDataYear(String year);
+
+  /// No description provided for @aiChancesGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'chance for grant'**
+  String get aiChancesGrant;
+
+  /// No description provided for @aiChancesRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk: {risk}'**
+  String aiChancesRisk(String risk);
+
+  /// No description provided for @aiChancesEntThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'UNT Threshold for this major: {score} points'**
+  String aiChancesEntThreshold(int score);
+
+  /// No description provided for @aiChancesDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculation Details'**
+  String get aiChancesDetails;
+
+  /// No description provided for @aiChancesDetailedStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed AI Strategy'**
+  String get aiChancesDetailedStrategy;
+
+  /// No description provided for @detailErrorFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating favorites'**
+  String get detailErrorFavorites;
+
+  /// No description provided for @aiStrategyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Strategy'**
+  String get aiStrategyTitle;
+
+  /// No description provided for @aiStrategyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal: {university}'**
+  String aiStrategyGoal(String university);
+
+  /// No description provided for @aiStrategyAlternatives.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative Options'**
+  String get aiStrategyAlternatives;
+
+  /// No description provided for @aiStrategyUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'University'**
+  String get aiStrategyUniversity;
+
+  /// No description provided for @aiStrategySpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialty'**
+  String get aiStrategySpecialty;
+
+  /// No description provided for @aiStrategyLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Collecting data and analyzing chances for {university}...\nFind out which topics to improve to guarantee a grant!'**
+  String aiStrategyLoading(String university);
+
+  /// No description provided for @aiStrategyGetPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Detailed Plan'**
+  String get aiStrategyGetPlan;
+
+  /// No description provided for @aiStrategyFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Strategy'**
+  String get aiStrategyFallbackTitle;
+
+  /// No description provided for @authLoginContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to continue your journey'**
+  String get authLoginContinue;
+
+  /// No description provided for @authLoginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'LOGIN'**
+  String get authLoginButton;
+
+  /// No description provided for @authRegisterButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get authRegisterButton;
+
+  /// No description provided for @authTermsIHaveRead.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree with '**
+  String get authTermsIHaveRead;
+
+  /// No description provided for @authTermsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get authTermsLink;
+
+  /// No description provided for @authTermsAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get authTermsAnd;
+
+  /// No description provided for @authPrivacyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get authPrivacyLink;
+
+  /// No description provided for @authGuestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Login as Guest'**
+  String get authGuestTitle;
+
+  /// No description provided for @authGuestWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'In guest mode, access is limited. For full access to the AI consultant and other functions, registration is required.'**
+  String get authGuestWarning;
+
+  /// No description provided for @authContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get authContinue;
+
+  /// No description provided for @authTermsRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'By registering, you agree to the '**
+  String get authTermsRegister;
+
+  /// No description provided for @authRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get authRequired;
+
+  /// No description provided for @validationMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum {count} characters'**
+  String validationMinLength(int count);
+
+  /// No description provided for @validationDigitRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one digit'**
+  String get validationDigitRequired;
+
+  /// No description provided for @detailEstimateChances.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate Chances'**
+  String get detailEstimateChances;
+
+  /// No description provided for @detailRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Recommendations'**
+  String get detailRecommendations;
+
+  /// No description provided for @detailAiThinking.
+  ///
+  /// In en, this message translates to:
+  /// **'AI is generating strategy...'**
+  String get detailAiThinking;
+
+  /// No description provided for @detailAiStrategySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TANDAU AI Strategy'**
+  String get detailAiStrategySubtitle;
+
+  /// No description provided for @profileSavedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your saved universities'**
+  String get profileSavedSubtitle;
+
+  /// No description provided for @adminPanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Panel'**
+  String get adminPanelTitle;
+
+  /// No description provided for @adminPanelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage push and data'**
+  String get adminPanelSubtitle;
+
+  /// No description provided for @authTermsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get authTermsSuffix;
 }
 
 class _AppLocalizationsDelegate

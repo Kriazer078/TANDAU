@@ -130,7 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Log in to continue your journey',
+                      AppLocalizations.of(context)?.authLoginContinue ??
+                          'Log in to continue your journey',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -144,11 +145,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Введите Email';
+                        if (v == null || v.isEmpty) {
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationEmail ??
+                              'Введите Email';
+                        }
                         if (!RegExp(
                           r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                         ).hasMatch(v)) {
-                          return 'Неверный формат Email';
+                          return AppLocalizations.of(
+                                context,
+                              )?.validationEmailFormat ??
+                              'Неверный формат Email';
                         }
                         return null;
                       },
@@ -171,8 +180,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           () => _obscurePassword = !_obscurePassword,
                         ),
                       ),
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Введите пароль' : null,
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? (AppLocalizations.of(context)?.validationPassword ??
+                                'Введите пароль')
+                          : null,
                     ),
 
                     const SizedBox(height: 40),
@@ -203,9 +214,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               builder: (_) => const RegisterScreen(),
                             ),
                           ),
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)?.authRegisterNow ??
+                                'Register',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
@@ -248,9 +260,9 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         child: _isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
-                'LOGIN',
-                style: TextStyle(
+            : Text(
+                AppLocalizations.of(context)?.authLoginButton ?? 'LOGIN',
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
@@ -349,9 +361,10 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Icon(Icons.person_outline, color: AppColors.primary, size: 28),
               const SizedBox(width: 12),
-              const Text(
-                'Войти как гость',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context)?.authGuestTitle ??
+                    'Войти как гость',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -374,7 +387,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'В режиме гостя доступ ограничен. Для полного доступа к AI-консультанту и другим функциям необходима регистрация.',
+                        AppLocalizations.of(context)?.authGuestWarning ??
+                            'В режиме гостя доступ ограничен. Для полного доступа к AI-консультанту и другим функциям необходима регистрация.',
                         style: Theme.of(
                           context,
                         ).textTheme.bodyMedium?.copyWith(height: 1.4),
@@ -420,9 +434,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : Colors.grey[700],
                               ),
                           children: [
-                            const TextSpan(text: 'Я согласен с '),
                             TextSpan(
-                              text: 'Условиями использования',
+                              text:
+                                  AppLocalizations.of(
+                                    context,
+                                  )?.authTermsIHaveRead ??
+                                  'Я согласен с ',
+                            ),
+                            TextSpan(
+                              text:
+                                  AppLocalizations.of(context)?.authTermsLink ??
+                                  'Условиями использования',
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
@@ -438,9 +460,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                 },
                             ),
-                            const TextSpan(text: ' и '),
                             TextSpan(
-                              text: 'Политикой конфиденциальности',
+                              text:
+                                  AppLocalizations.of(context)?.authTermsAnd ??
+                                  ' и ',
+                            ),
+                            TextSpan(
+                              text:
+                                  AppLocalizations.of(
+                                    context,
+                                  )?.authPrivacyLink ??
+                                  'Политикой конфиденциальности',
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
@@ -515,7 +545,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   vertical: 12,
                 ),
               ),
-              child: const Text('Продолжить'),
+              child: Text(
+                AppLocalizations.of(context)?.authContinue ?? 'Продолжить',
+              ),
             ),
           ],
         ),

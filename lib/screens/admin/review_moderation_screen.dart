@@ -175,6 +175,85 @@ class _ReviewModerationScreenState extends State<ReviewModerationScreen> {
     );
   }
 
+  void _showReplyDialog(Review review) {
+    final TextEditingController replyController = TextEditingController(
+      text: review.adminReply ?? '',
+    );
+    bool isSubmitting = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Row(
+              children: [
+                const Icon(Icons.reply_rounded, color: AppColors.primary),
+                const SizedBox(width: 8),
+                const Text('Ответить'),
+              ],
+            ),
+            content: TextField(
+              controller: replyController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: 'Введите ответ от администрации...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: isSubmitting ? null : () => Navigator.pop(ctx),
+                child: const Text('Отмена'),
+              ),
+              ElevatedButton(
+                onPressed: isSubmitting
+                    ? null
+                    : () async {
+                        if (replyController.text.trim().isEmpty) return;
+                        setState(() => isSubmitting = true);
+                        final success = await _reviewService.addReply(
+                          reviewId: review.id,
+                          replyText: replyController.text.trim(),
+                        );
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success ? 'Ответ добавлен' : 'Ошибка',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: isSubmitting
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Сохранить'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // SECURITY: Guard — block non-admin access
@@ -578,6 +657,25 @@ class _ReviewModerationScreenState extends State<ReviewModerationScreen> {
                 ),
                 const SizedBox(width: 8),
 
+                // Reply button
+                InkWell(
+                  onTap: () => _showReplyDialog(review),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.reply_rounded,
+                      color: AppColors.primary,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+
                 // Delete button
                 InkWell(
                   onTap: () => _showDeleteConfirmation(review),
@@ -609,6 +707,37 @@ class _ReviewModerationScreenState extends State<ReviewModerationScreen> {
                 color: isDark ? Colors.white70 : AppColors.textPrimary,
               ),
             ),
+
+            // Helpful & Media Tags
+            if ((review.photoUrls?.isNotEmpty ?? false) ||
+                review.helpfulCount > 0 ||
+                (review.adminReply?.isNotEmpty ?? false)) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  if (review.photoUrls?.isNotEmpty ?? false)
+                    Text(
+                      '📷 Фото: ${review.photoUrls!.length}',
+                      style: const TextStyle(fontSize: 12, color: Colors.blue),
+                    ),
+                  if (review.helpfulCount > 0)
+                    Text(
+                      '🔥 Полезно: ${review.helpfulCount}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange,
+                      ),
+                    ),
+                  if (review.adminReply?.isNotEmpty ?? false)
+                    const Text(
+                      '✅ Ответ дан',
+                      style: TextStyle(fontSize: 12, color: Colors.green),
+                    ),
+                ],
+              ),
+            ],
 
             const SizedBox(height: 8),
 

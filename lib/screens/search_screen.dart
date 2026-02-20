@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../services/university_service.dart';
+import '../utils/guest_guard.dart';
+import '../widgets/compare_picker_sheet.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import 'university_list_screen.dart';
 import '../l10n/app_localizations.dart';
@@ -876,54 +878,89 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: ElevatedButton(
-          onPressed: () => _performSearch(_searchController.text),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.search_rounded, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                l10n?.navSearch ?? 'Поиск',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+      child: Row(
+        children: [
+          // ── Search button ──
+          Expanded(
+            flex: 3,
+            child: SizedBox(
+              height: 52,
+              child: ElevatedButton(
+                onPressed: () => _performSearch(_searchController.text),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.search_rounded, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n?.navSearch ?? 'Поиск',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (_activeFilterCount > 0) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '+$_activeFilterCount',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              if (_activeFilterCount > 0) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '+$_activeFilterCount',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // ── Compare button ──
+          SizedBox(
+            height: 52,
+            width: 52,
+            child: Tooltip(
+              message: l10n?.comparisonTitle ?? 'Compare',
+              child: ElevatedButton(
+                onPressed: () {
+                  if (GuestGuard.check(context)) {
+                    showComparePickerSheet(context);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-              ],
-            ],
+                child: const Icon(Icons.compare_arrows_rounded, size: 24),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -226,5 +226,111 @@
     "homeAdvancedFilter": "Advanced Filter",
     "homeUniversities": "Universities",
     "homeAIAnalysisInProgress": "AI Analysis...",
-    "homeAIAnalyticsTitle": "TANDAU AI Analytics"
+    "homeAIAnalyticsTitle": "TANDAU AI Analytics",
+    "detailBeFirstReview": "Be the first to leave a review!",
+    "reviewEdited": "edited",
+    "reviewAuthRequired": "Please authenticate to rate",
+    "reviewHelpful": "Helpful {count}",
+    "@reviewHelpful": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "reviewOfficialReply": "Official Reply",
+    "commonError": "Error: {error}",
+    "@commonError": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesAnalytics": "SVD Analytics",
+    "aiChancesDataYear": "Data for {year}",
+    "@aiChancesDataYear": {
+        "placeholders": {
+            "year": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesGrant": "chance for grant",
+    "aiChancesRisk": "Risk: {risk}",
+    "@aiChancesRisk": {
+        "placeholders": {
+            "risk": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesEntThreshold": "UNT Threshold for this major: {score} points",
+    "@aiChancesEntThreshold": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "aiChancesDetails": "Calculation Details",
+    "aiChancesDetailedStrategy": "Detailed AI Strategy",
+    "detailErrorFavorites": "Error updating favorites",
+    "aiStrategyTitle": "AI Strategy",
+    "aiStrategyGoal": "Goal: {university}",
+    "@aiStrategyGoal": {
+        "placeholders": {
+            "university": {
+                "type": "String"
+            }
+        }
+    },
+    "aiStrategyAlternatives": "Alternative Options",
+    "aiStrategyUniversity": "University",
+    "aiStrategySpecialty": "Specialty",
+    "aiStrategyLoading": "Collecting data and analyzing chances for {university}...\nFind out which topics to improve to guarantee a grant!",
+    "@aiStrategyLoading": {
+        "placeholders": {
+            "university": {
+                "type": "String"
+            }
+        }
+    },
+    "aiStrategyGetPlan": "Get Detailed Plan",
+    "aiStrategyFallbackTitle": "Admission Strategy",
+    "authLoginContinue": "Log in to continue your journey",
+    "authLoginButton": "LOGIN",
+    "authRegisterButton": "Register",
+    "authTermsIHaveRead": "I agree with ",
+    "authTermsLink": "Terms of Use",
+    "authTermsAnd": " and ",
+    "authPrivacyLink": "Privacy Policy",
+    "authGuestTitle": "Login as Guest",
+    "authGuestWarning": "In guest mode, access is limited. For full access to the AI consultant and other functions, registration is required.",
+    "authContinue": "Continue",
+    "authTermsRegister": "By registering, you agree to the ",
+    "authRequired": "Required",
+    "validationMinLength": "Minimum {count} characters",
+    "@validationMinLength": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "validationDigitRequired": "Password must contain at least one digit",
+    "detailEstimateChances": "Estimate Chances",
+    "detailRecommendations": "💡 Recommendations",
+    "detailAiThinking": "AI is generating strategy...",
+    "detailAiStrategySubtitle": "TANDAU AI Strategy",
+    "tabOverview": "Overview",
+    "tabMajors": "Majors",
+    "tabAdmissions": "Admissions",
+    "tabContact": "Contact",
+    "tabReviews": "Reviews",
+    "profileSavedSubtitle": "Your saved universities",
+    "adminPanelTitle": "Admin Panel",
+    "adminPanelSubtitle": "Manage push and data",
+    "authGuestMessage": "Log in to your account to access all features",
+    "authTermsSuffix": ""
 }

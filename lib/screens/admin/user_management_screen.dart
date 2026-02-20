@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../models/user_model.dart';
 import '../../services/auth_service.dart';
+import '../../services/audit_log_service.dart';
 import '../../theme/app_colors.dart';
 
 /// SECURITY: This screen must only be accessible by admins.
@@ -17,49 +21,188 @@ class UserManagementScreen extends StatefulWidget {
 class _UserManagementScreenState extends State<UserManagementScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
+  // ── Pagination state ──
+  static const int _pageSize = 20;
+  List<UserModel> _users = [];
+  DocumentSnapshot? _lastDoc;
+  bool _isLoading = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  int _totalCount = 0;
+
+  // ── Filters ──
   String _searchQuery = '';
   String _roleFilter = 'all'; // 'all', 'user', 'admin'
   String _sortBy = 'createdAt'; // 'createdAt', 'name'
 
+  // ── Debounce ──
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+    _getTotalCount();
+    _scrollController.addListener(_onScroll);
+  }
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  // ── Get users stream ──
-  Stream<List<UserModel>> _getUsersStream() {
-    Query<Map<String, dynamic>> query = _firestore.collection('users');
+  // ═══════════════════════════════════════════
+  //  DATA LOADING
+  // ═══════════════════════════════════════════
 
-    if (_sortBy == 'createdAt') {
-      query = query.orderBy('createdAt', descending: true);
-    } else {
-      query = query.orderBy('name');
+  /// Load users page. If loadMore=true, appends to existing list.
+  Future<void> _loadUsers({bool loadMore = false}) async {
+    if (_isLoading || (_isLoadingMore && loadMore)) return;
+    if (loadMore && !_hasMore) return;
+
+    setState(() {
+      if (loadMore) {
+        _isLoadingMore = true;
+      } else {
+        _isLoading = true;
+        _users = [];
+        _lastDoc = null;
+        _hasMore = true;
+      }
+    });
+
+    try {
+      // Build Firestore query with ordering + limit
+      Query<Map<String, dynamic>> query = _firestore.collection('users');
+
+      if (_sortBy == 'createdAt') {
+        query = query.orderBy('createdAt', descending: true);
+      } else {
+        query = query.orderBy('name');
+      }
+
+      query = query.limit(_pageSize);
+
+      if (loadMore && _lastDoc != null) {
+        query = query.startAfterDocument(_lastDoc!);
+      }
+
+      final snapshot = await query.get().timeout(const Duration(seconds: 15));
+
+      final List<UserModel> fetched = [];
+      for (final doc in snapshot.docs) {
+        try {
+          fetched.add(UserModel.fromDocument(doc));
+        } catch (e) {
+          debugPrint('⚠️ Error parsing user ${doc.id}: $e');
+        }
+      }
+
+      // Apply client-side filters (role & search)
+      List<UserModel> filtered = _applyFilters(fetched);
+
+      if (mounted) {
+        setState(() {
+          if (loadMore) {
+            _users.addAll(filtered);
+          } else {
+            _users = filtered;
+          }
+
+          if (snapshot.docs.isNotEmpty) {
+            _lastDoc = snapshot.docs.last;
+          }
+          _hasMore = snapshot.docs.length == _pageSize;
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
+
+      // If after filtering we have too few items and there's more, auto-load
+      if (filtered.length < 5 && _hasMore && mounted) {
+        _loadUsers(loadMore: true);
+      }
+    } catch (e) {
+      debugPrint('❌ Error loading users: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка загрузки: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Get total user count for stats header
+  Future<void> _getTotalCount() async {
+    try {
+      final snapshot = await _firestore
+          .collection('users')
+          .count()
+          .get()
+          .timeout(const Duration(seconds: 10));
+      if (mounted) {
+        setState(() {
+          _totalCount = snapshot.count ?? 0;
+        });
+      }
+    } catch (e) {
+      debugPrint('⚠️ Error getting total count: $e');
+    }
+  }
+
+  /// Apply role & search filters on already-fetched documents
+  List<UserModel> _applyFilters(List<UserModel> users) {
+    List<UserModel> result = users;
+
+    // Filter by role
+    if (_roleFilter != 'all') {
+      result = result.where((u) => u.role == _roleFilter).toList();
     }
 
-    return query.snapshots().map((snapshot) {
-      List<UserModel> users = snapshot.docs
-          .map((doc) => UserModel.fromDocument(doc))
-          .toList();
+    // Filter by search
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      result = result.where((u) {
+        return u.name.toLowerCase().contains(q) ||
+            u.email.toLowerCase().contains(q);
+      }).toList();
+    }
 
-      // Filter by role
-      if (_roleFilter != 'all') {
-        users = users.where((u) => u.role == _roleFilter).toList();
-      }
+    return result;
+  }
 
-      // Filter by search
-      if (_searchQuery.isNotEmpty) {
-        final q = _searchQuery.toLowerCase();
-        users = users.where((u) {
-          return u.name.toLowerCase().contains(q) ||
-              u.email.toLowerCase().contains(q);
-        }).toList();
-      }
+  /// Scroll listener for infinite scroll
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _loadUsers(loadMore: true);
+    }
+  }
 
-      return users;
+  /// Debounced search handler
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      setState(() => _searchQuery = value);
+      _loadUsers(); // Reload from scratch with new filter
     });
   }
+
+  // ═══════════════════════════════════════════
+  //  MUTATIONS
+  // ═══════════════════════════════════════════
 
   // ── Change user role ──
   Future<void> _changeRole(UserModel user, String newRole) async {
@@ -99,6 +242,13 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       await _firestore.collection('users').doc(user.uid).update({
         'role': newRole,
       });
+      // 📋 Audit log
+      AuditLogService().log(
+        action: AuditLogService.actionChangeRole,
+        targetUid: user.uid,
+        targetName: user.name,
+        details: '${user.role} → $newRole',
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -112,6 +262,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        _loadUsers(); // Refresh list
       }
     } catch (e) {
       debugPrint('❌ Error changing role: $e');
@@ -191,6 +342,13 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         await batch.commit();
       }
 
+      // 📋 Audit log
+      AuditLogService().log(
+        action: AuditLogService.actionDeleteUser,
+        targetUid: user.uid,
+        targetName: user.name,
+        details: 'Удалены все данные пользователя',
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -202,6 +360,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        _loadUsers(); // Refresh
+        _getTotalCount();
       }
     } catch (e) {
       debugPrint('❌ Error deleting user data: $e');
@@ -228,6 +388,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         'banned': banning,
         'banReason': banning ? (reason ?? 'Нарушение правил') : null,
       });
+      // 📋 Audit log
+      AuditLogService().log(
+        action: banning
+            ? AuditLogService.actionBanUser
+            : AuditLogService.actionUnbanUser,
+        targetUid: user.uid,
+        targetName: user.name,
+        details: banning ? 'Причина: ${reason ?? 'Нарушение правил'}' : null,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -243,6 +412,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             backgroundColor: banning ? Colors.orange : Colors.green,
           ),
         );
+        _loadUsers(); // Refresh
       }
     } catch (e) {
       debugPrint('❌ Error toggling ban: $e');
@@ -253,6 +423,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       }
     }
   }
+
+  // ═══════════════════════════════════════════
+  //  DIALOGS
+  // ═══════════════════════════════════════════
 
   // ── Show ban dialog with reason input ──
   void _showBanDialog(UserModel user) {
@@ -836,6 +1010,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
+  // ═══════════════════════════════════════════
+  //  BUILD
+  // ═══════════════════════════════════════════
+
   @override
   Widget build(BuildContext context) {
     // SECURITY: Guard — if somehow opened by non-admin, block access
@@ -854,6 +1032,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         title: const Text('Пользователи'),
         elevation: 0,
         actions: [
+          // Refresh button
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: () {
+              _loadUsers();
+              _getTotalCount();
+            },
+            tooltip: 'Обновить',
+          ),
           // Sort
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort_rounded),
@@ -861,6 +1048,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               setState(() {
                 _sortBy = value;
               });
+              _loadUsers(); // Reload with new sort
             },
             itemBuilder: (context) => [
               PopupMenuItem(
@@ -906,7 +1094,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
               controller: _searchController,
-              onChanged: (v) => setState(() => _searchQuery = v),
+              onChanged: _onSearchChanged, // ← debounced
               decoration: InputDecoration(
                 hintText: 'Поиск по имени или email...',
                 prefixIcon: const Icon(Icons.search_rounded),
@@ -915,7 +1103,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         icon: const Icon(Icons.clear_rounded),
                         onPressed: () {
                           _searchController.clear();
-                          setState(() => _searchQuery = '');
+                          _onSearchChanged('');
                         },
                       )
                     : null,
@@ -952,133 +1140,218 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
           // Users list
           Expanded(
-            child: StreamBuilder<List<UserModel>>(
-              stream: _getUsersStream(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(height: 12),
-                        Text('Ошибка: ${snapshot.error}'),
-                      ],
-                    ),
-                  );
-                }
-
-                final users = snapshot.data ?? [];
-
-                if (users.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.08),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.people_outline_rounded,
-                            size: 48,
-                            color: AppColors.primary.withValues(alpha: 0.5),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Пользователей не найдено',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? Colors.white54
-                                : AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                // Stats header
-                final int adminsCount = users
-                    .where((u) => u.role == 'admin')
-                    .length;
-
-                return Column(
-                  children: [
-                    // Stats
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : AppColors.primary.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildStatItem(
-                            '👥',
-                            'Всего',
-                            '${users.length}',
-                            isDark,
-                          ),
-                          _buildStatItem(
-                            '🛡️',
-                            'Админы',
-                            '$adminsCount',
-                            isDark,
-                          ),
-                          _buildStatItem(
-                            '👤',
-                            'Пользователи',
-                            '${users.length - adminsCount}',
-                            isDark,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: users.length,
-                        itemBuilder: (context, index) {
-                          return _buildUserCard(users[index], isDark);
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+            child: _isLoading
+                ? _buildShimmerLoading(isDark)
+                : _users.isEmpty
+                ? _buildEmptyState(isDark)
+                : _buildUsersList(isDark),
           ),
         ],
       ),
     );
   }
 
+  // ── User list with pagination ──
+  Widget _buildUsersList(bool isDark) {
+    // Count admins in loaded users for stats
+    final int adminsCount = _users.where((u) => u.role == 'admin').length;
+
+    return Column(
+      children: [
+        // Stats header (uses _totalCount from Firestore .count())
+        Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : AppColors.primary.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildStatItem('👥', 'Всего', '$_totalCount', isDark),
+              _buildStatItem('🛡️', 'Админы', '$adminsCount', isDark),
+              _buildStatItem('📄', 'Загружено', '${_users.length}', isDark),
+            ],
+          ),
+        ),
+
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await _loadUsers();
+              await _getTotalCount();
+            },
+            child: ListView.builder(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _users.length + (_hasMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _users.length) {
+                  // "Load more" indicator at the bottom
+                  return _buildLoadMoreIndicator(isDark);
+                }
+                return _buildUserCard(_users[index], isDark);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Load more indicator ──
+  Widget _buildLoadMoreIndicator(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      alignment: Alignment.center,
+      child: _isLoadingMore
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary.withValues(alpha: 0.5),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Загрузка...',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white38 : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            )
+          : GestureDetector(
+              onTap: () => _loadUsers(loadMore: true),
+              child: Text(
+                'Загрузить ещё',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+    );
+  }
+
+  // ── Empty state ──
+  Widget _buildEmptyState(bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.people_outline_rounded,
+              size: 48,
+              color: AppColors.primary.withValues(alpha: 0.5),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Пользователей не найдено',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white54 : AppColors.textSecondary,
+            ),
+          ),
+          if (_searchQuery.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () {
+                _searchController.clear();
+                _onSearchChanged('');
+              },
+              child: const Text('Сбросить поиск'),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ── Shimmer loading ──
+  Widget _buildShimmerLoading(bool isDark) {
+    return Shimmer.fromColors(
+      baseColor: isDark ? const Color(0xFF2A2A3E) : Colors.grey.shade300,
+      highlightColor: isDark ? const Color(0xFF3A3A50) : Colors.grey.shade100,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 8,
+        itemBuilder: (context, _) => Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              const CircleAvatar(radius: 22, backgroundColor: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 180,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 50,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Filter chips ──
   Widget _buildFilterChip(String label, String value, bool isDark) {
     final bool isSelected = _roleFilter == value;
     return GestureDetector(
-      onTap: () => setState(() => _roleFilter = value),
+      onTap: () {
+        setState(() => _roleFilter = value);
+        _loadUsers(); // Reload with new filter
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(

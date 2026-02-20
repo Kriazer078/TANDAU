@@ -1,4 +1,5 @@
 import '../models/university.dart';
+import '../models/specialty.dart';
 
 import 'firestore_service.dart';
 import 'auth_service.dart';
@@ -163,5 +164,10 @@ class UniversityService {
     final result = await _firestoreService.deleteUniversity(id);
     if (result) clearCache();
     return result;
+  }
+
+  /// Get specialties for a university
+  Stream<List<Specialty>> getSpecialties(String universityId) {
+    return _firestoreService.getSpecialties(universityId);
   }
 }

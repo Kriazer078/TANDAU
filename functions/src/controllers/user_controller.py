@@ -5,7 +5,7 @@ from src.middleware.rate_limit import rate_limit
 from src.models.user import UserCreate, UserUpdate
 from src.services.user_service import UserService
 
-user_bp = Blueprint('user', __name__, url_prefix='/users')
+user_bp = Blueprint('user', __name__)
 user_service = UserService()
 
 @user_bp.route('/me', methods=['GET'])

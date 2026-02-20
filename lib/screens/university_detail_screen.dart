@@ -12,7 +12,9 @@ import '../utils/guest_guard.dart';
 import '../models/student_profile.dart';
 import '../services/ai_consultant_service.dart';
 import '../services/grant_chance_service.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui';
 
 class UniversityDetailScreen extends StatefulWidget {
@@ -30,6 +32,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
   final ReviewService _reviewService = ReviewService();
   final AuthService _authService = AuthService();
   late TabController _tabController;
+
+  AppLocalizations? get l10n => AppLocalizations.of(context);
 
   @override
   void initState() {
@@ -54,7 +58,11 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
       debugPrint('Error toggling favorite: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ошибка обновления избранного')),
+          SnackBar(
+            content: Text(
+              l10n?.detailErrorFavorites ?? 'Ошибка обновления избранного',
+            ),
+          ),
         );
       }
     }
@@ -224,17 +232,17 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                         child: InkWell(
                           onTap: _showAdmissionStrategy,
                           borderRadius: BorderRadius.circular(20),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.analytics_rounded,
                                 color: Colors.white,
                               ),
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
                               Text(
-                                'Оценить шансы',
-                                style: TextStyle(
+                                l10n?.detailEstimateChances ?? 'Оценить шансы',
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -268,12 +276,12 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
-                      tabs: const [
-                        Tab(text: 'Обзор'),
-                        Tab(text: 'Специальности'),
-                        Tab(text: 'Поступление'),
-                        Tab(text: 'Контакты'),
-                        Tab(text: 'Отзывы'),
+                      tabs: [
+                        Tab(text: l10n?.tabOverview ?? 'Обзор'),
+                        Tab(text: l10n?.tabMajors ?? 'Специальности'),
+                        Tab(text: l10n?.tabAdmissions ?? 'Поступление'),
+                        Tab(text: l10n?.tabContact ?? 'Контакты'),
+                        Tab(text: l10n?.tabReviews ?? 'Отзывы'),
                       ],
                     ),
                   ),
@@ -891,6 +899,9 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
     // Avatar color from userName
     final Color avatarColor = _avatarColor(r.userName);
 
+    final currentUserId = _authService.currentUser.value?.uid;
+    final bool isHelpfulByMe = r.helpfulBy.contains(currentUserId);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -1013,6 +1024,169 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                   ),
                 ),
               ],
+            ),
+          ],
+
+          // Photos
+          if (r.photoUrls != null && r.photoUrls!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: r.photoUrls!.length,
+                itemBuilder: (context, idx) {
+                  return Container(
+                    width: 100,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? Colors.white10 : Colors.black12,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: r.photoUrls![idx],
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error, color: Colors.grey),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 12),
+
+          // Helpful Button & Count
+          Row(
+            children: [
+              InkWell(
+                onTap: () async {
+                  if (currentUserId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Аутентифицируйтесь для оценки'),
+                      ),
+                    );
+                    return;
+                  }
+                  await _reviewService.toggleHelpful(r.id);
+                  // Стрим обновит автоматически UI
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isHelpfulByMe
+                        ? AppColors.primary.withValues(alpha: 0.1)
+                        : (isDark
+                              ? Colors.white10
+                              : Colors.grey.withValues(alpha: 0.1)),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isHelpfulByMe
+                            ? Icons.thumb_up
+                            : Icons.thumb_up_alt_outlined,
+                        size: 16,
+                        color: isHelpfulByMe
+                            ? AppColors.primary
+                            : (isDark ? Colors.white54 : Colors.grey),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        l10n?.reviewHelpful(
+                              r.helpfulCount > 0 ? '(${r.helpfulCount})' : '',
+                            ) ??
+                            'Полезно ${r.helpfulCount > 0 ? '(${r.helpfulCount})' : ''}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: isHelpfulByMe
+                              ? AppColors.primary
+                              : (isDark ? Colors.white54 : Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Admin Reply Section
+          if (r.adminReply != null && r.adminReply!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.primary.withValues(alpha: 0.1)
+                    : AppColors.primary.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.shield_rounded,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        r.replierName ??
+                            l10n?.reviewOfficialReply ??
+                            'Официальный ответ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (r.repliedAt != null)
+                        Text(
+                          _formatReviewDate(r.repliedAt!),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark
+                                ? Colors.white38
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    r.adminReply!,
+                    style: TextStyle(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: isDark ? Colors.white70 : AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ],
@@ -1161,6 +1335,8 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
   bool _isLoadingAiStrategy = false;
   String? _aiStrategy;
 
+  AppLocalizations? get l10n => AppLocalizations.of(context);
+
   Color get _riskColor {
     switch (widget.svdResult.riskLevel) {
       case RiskLevel.low:
@@ -1192,9 +1368,11 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoadingAiStrategy = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Ошибка: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n?.commonError(e.toString()) ?? 'Ошибка: $e'),
+          ),
+        );
       }
     }
   }
@@ -1289,7 +1467,7 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'шанс на грант',
+                            l10n?.aiChancesGrant ?? 'шанс на грант',
                             style: TextStyle(
                               fontSize: 13,
                               color: widget.isDark
@@ -1321,7 +1499,8 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Риск: ${r.riskLevel.displayName}',
+                            l10n?.aiChancesRisk(r.riskLevel.displayName) ??
+                                'Риск: ${r.riskLevel.displayName}',
                             style: TextStyle(
                               color: _riskColor,
                               fontWeight: FontWeight.bold,
@@ -1349,7 +1528,8 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Порог ЕНТ для этого направления: ${r.entThreshold} баллов',
+                      l10n?.aiChancesEntThreshold(r.entThreshold) ??
+                          'Порог ЕНТ для этого направления: ${r.entThreshold} баллов',
                       style: TextStyle(
                         fontSize: 13,
                         color: widget.isDark
@@ -1360,9 +1540,9 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                   ),
                   const SizedBox(height: 24),
                   if (r.details.isNotEmpty) ...[
-                    const Text(
-                      'Детали расчёта',
-                      style: TextStyle(
+                    Text(
+                      l10n?.aiChancesDetails ?? 'Детали расчёта',
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
                       ),
@@ -1380,9 +1560,9 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                     const SizedBox(height: 16),
                   ],
                   if (r.recommendations.isNotEmpty) ...[
-                    const Text(
-                      '💡 Рекомендации',
-                      style: TextStyle(
+                    Text(
+                      l10n?.detailRecommendations ?? '💡 Рекомендации',
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
                       ),
@@ -1425,9 +1605,10 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                           Icons.auto_awesome,
                           color: Colors.white,
                         ),
-                        label: const Text(
-                          'Подробная AI стратегия',
-                          style: TextStyle(
+                        label: Text(
+                          l10n?.aiChancesDetailedStrategy ??
+                              'Подробная AI стратегия',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -1443,16 +1624,19 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                       ),
                     ),
                   if (_isLoadingAiStrategy)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
                       child: Center(
                         child: Column(
                           children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 16),
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 16),
                             Text(
-                              'AI формирует стратегию...',
-                              style: TextStyle(color: AppColors.textSecondary),
+                              l10n?.detailAiThinking ??
+                                  'AI формирует стратегию...',
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -1468,7 +1652,8 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'AI Стратегия TANDAU',
+                          l10n?.detailAiStrategySubtitle ??
+                              'AI Стратегия TANDAU',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),

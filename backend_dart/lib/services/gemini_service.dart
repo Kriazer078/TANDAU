@@ -15,12 +15,15 @@ class GeminiService {
 
   GeminiService(this._apiKey);
 
-  Future<String> _generate(String prompt) async {
+  Future<String> _generateAdvanced({
+    String? systemInstruction,
+    required List<Map<String, dynamic>> contents,
+  }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) {
       return 'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.';
     }
 
-    stderr.write('Sending prompt to Gemini... ');
+    stderr.write('Sending advanced prompt to Gemini... ');
 
     int lastStatusCode = 0;
 
@@ -28,18 +31,22 @@ class GeminiService {
       try {
         final modelName = endpoint.split('/models/').last.split(':').first;
 
+        final Map<String, dynamic> requestBody = {
+          'contents': contents,
+        };
+
+        if (systemInstruction != null && systemInstruction.isNotEmpty) {
+          requestBody['system_instruction'] = {
+            'parts': [
+              {'text': systemInstruction}
+            ]
+          };
+        }
+
         final response = await http.post(
           Uri.parse('$endpoint?key=$_apiKey'),
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'contents': [
-              {
-                'parts': [
-                  {'text': prompt}
-                ]
-              }
-            ]
-          }),
+          body: jsonEncode(requestBody),
         );
 
         lastStatusCode = response.statusCode;
@@ -50,8 +57,6 @@ class GeminiService {
               'Извините, я не смог сгенерировать ответ. Попробуйте перефразировать вопрос.';
         } else {
           stderr.writeln('Model $modelName failed: ${response.statusCode}');
-          // If it's a 429, we might want to try another model as quotas sometimes differ,
-          // but usually it's per project. We continue anyway.
         }
       } catch (e) {
         stderr.writeln('Connection Error: $e');
@@ -65,16 +70,46 @@ class GeminiService {
     return 'Извините, сервис временно недоступен. Пожалуйста, попробуйте отправить сообщение еще раз через минуту.';
   }
 
-  Future<String> generateChat(String question) async {
-    final prompt = '''
+  // Backward compatibility
+  Future<String> _generate(String prompt) async {
+    return _generateAdvanced(contents: [
+      {
+        'role': 'user',
+        'parts': [
+          {'text': prompt}
+        ]
+      }
+    ]);
+  }
+
+  Future<String> generateChat(String question,
+      {List<Map<String, dynamic>>? history}) async {
+    final systemPrompt = '''
 You are "TANDAU AI", a helpful university consultant for students in Kazakhstan. 
 Role: Answer questions about universities, grants, and admission.
 Tone: Friendly, professional, encouraging.
 Language: Answer in the same language as the question (Russian, Kazakh, or English).
-
-User Question: $question
 ''';
-    return _generate(prompt);
+
+    final List<Map<String, dynamic>> contents = [];
+
+    // Add history if present
+    if (history != null && history.isNotEmpty) {
+      contents.addAll(history);
+    }
+
+    // Add current question
+    contents.add({
+      'role': 'user',
+      'parts': [
+        {'text': question}
+      ]
+    });
+
+    return _generateAdvanced(
+      systemInstruction: systemPrompt,
+      contents: contents,
+    );
   }
 
   Future<String> generateRecommendation({

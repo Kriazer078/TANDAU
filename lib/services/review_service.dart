@@ -35,6 +35,7 @@ class ReviewService {
     required String universityId,
     required int rating,
     required String comment,
+    List<String>? photoUrls,
   }) async {
     try {
       final user = _authService.currentUser.value;
@@ -71,6 +72,7 @@ class ReviewService {
           reviewId: existingReview.id,
           rating: rating,
           comment: sanitizedComment,
+          photoUrls: photoUrls ?? existingReview.photoUrls,
         );
       }
 
@@ -83,6 +85,7 @@ class ReviewService {
         rating: rating,
         comment: sanitizedComment,
         createdAt: DateTime.now(),
+        photoUrls: photoUrls,
       );
 
       // Добавляем в Firestore
@@ -111,6 +114,7 @@ class ReviewService {
     required String reviewId,
     required int rating,
     required String comment,
+    List<String>? photoUrls,
   }) async {
     try {
       // Валидация
@@ -154,11 +158,20 @@ class ReviewService {
       }
 
       // Обновляем отзыв
-      await _firestore.collection(_reviewsCollection).doc(reviewId).update({
+      final updateData = <String, dynamic>{
         'rating': rating,
         'comment': sanitizedComment,
         'updatedAt': Timestamp.fromDate(DateTime.now()),
-      });
+      };
+
+      if (photoUrls != null) {
+        updateData['photoUrls'] = photoUrls;
+      }
+
+      await _firestore
+          .collection(_reviewsCollection)
+          .doc(reviewId)
+          .update(updateData);
 
       debugPrint('✅ Review updated');
 
@@ -225,10 +238,11 @@ class ReviewService {
     try {
       debugPrint('📊 Recalculating rating for university: $universityId');
 
-      // Получаем все отзывы университета
+      // Получаем все отзывы университета (ОГРАНИЧЕНО 1000 для предотвращения квот, в будущем перейти на AggregateQuery)
       final reviewsSnapshot = await _firestore
           .collection(_reviewsCollection)
           .where('universityId', isEqualTo: universityId)
+          .limit(1000)
           .get();
 
       final reviews = reviewsSnapshot.docs
@@ -268,6 +282,76 @@ class ReviewService {
       );
     } catch (e) {
       debugPrint('❌ Error updating university rating: $e');
+    }
+  }
+
+  /// Голосование за полезность отзыва (toggle)
+  Future<bool> toggleHelpful(String reviewId) async {
+    try {
+      final userId = _authService.currentUser.value?.uid;
+      if (userId == null) return false;
+
+      final reviewRef = _firestore.collection(_reviewsCollection).doc(reviewId);
+
+      return await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(reviewRef);
+        if (!snapshot.exists) return false;
+
+        final review = Review.fromDocument(snapshot);
+        final isHelpful = review.helpfulBy.contains(userId);
+
+        if (isHelpful) {
+          // Удалить лайк полезности
+          transaction.update(reviewRef, {
+            'helpfulBy': FieldValue.arrayRemove([userId]),
+            'helpfulCount': FieldValue.increment(-1),
+          });
+          return false; // Теперь не полезно
+        } else {
+          // Добавить лайк полезности
+          transaction.update(reviewRef, {
+            'helpfulBy': FieldValue.arrayUnion([userId]),
+            'helpfulCount': FieldValue.increment(1),
+          });
+          return true; // Теперь полезно
+        }
+      });
+    } catch (e) {
+      debugPrint('Error toggling helpful: $e');
+      return false;
+    }
+  }
+
+  /// Официальный ответ администрации на отзыв
+  Future<bool> addReply({
+    required String reviewId,
+    required String replyText,
+  }) async {
+    try {
+      final user = _authService.currentUser.value;
+      if (user == null || !_authService.isAdmin) {
+        debugPrint('❌ Not authorized to reply');
+        return false;
+      }
+
+      final sanitizedReply = _sanitizeInput(replyText);
+      if (sanitizedReply.isEmpty) return false;
+
+      final reviewRef = _firestore.collection(_reviewsCollection).doc(reviewId);
+
+      await reviewRef.update({
+        'adminReply': sanitizedReply,
+        'repliedAt': FieldValue.serverTimestamp(),
+        'replierName': user.name.isNotEmpty
+            ? user.name
+            : 'Администрация TANDAU',
+      });
+
+      debugPrint('✅ Reply added to $reviewId');
+      return true;
+    } catch (e) {
+      debugPrint('❌ Error adding reply: $e');
+      return false;
     }
   }
 

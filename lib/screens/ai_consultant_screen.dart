@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../theme/app_colors.dart';
 import '../l10n/app_localizations.dart';
@@ -77,9 +78,21 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     // Get current user profile for context
     final user = AuthService().currentUser.value;
 
+    // Prepare history
+    final history = _messages
+        .where((m) => m != _messages.last) // Skip the message we just added
+        .map((m) => {'text': m.text, 'isUser': m.isUser})
+        .toList();
+
+    // Limit history to last 10 messages for performance and token limits
+    final recentHistory = history.length > 10
+        ? history.sublist(history.length - 10)
+        : history;
+
     try {
       final response = await _aiService.sendMessage(
         messageText,
+        history: recentHistory,
         entScore: user?.untScore,
         ieltsScore: user?.ieltsScore,
         gpa: user?.gpa,
@@ -541,12 +554,64 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
               left: isUser ? 0 : 4,
               right: isUser ? 4 : 0,
             ),
-            child: Text(
-              _formatTime(msg.time),
-              style: TextStyle(
-                color: isDark ? Colors.white24 : AppColors.textHint,
-                fontSize: 10,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _formatTime(msg.time),
+                  style: TextStyle(
+                    color: isDark ? Colors.white24 : AppColors.textHint,
+                    fontSize: 10,
+                  ),
+                ),
+                if (!isUser) ...[
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: msg.text));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Рекомендация скопирована'),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.copy_rounded,
+                            size: 12,
+                            color: isDark
+                                ? Colors.white54
+                                : AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Скопировать',
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white54
+                                  : AppColors.textSecondary,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ],

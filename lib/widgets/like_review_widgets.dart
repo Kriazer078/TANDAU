@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import '../services/like_service.dart';
 import '../services/review_service.dart';
 import '../utils/guest_guard.dart';
@@ -183,9 +187,12 @@ class _AddReviewDialogState extends State<AddReviewDialog>
     with SingleTickerProviderStateMixin {
   final ReviewService _reviewService = ReviewService();
   final TextEditingController _commentController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+
   late AnimationController _animController;
   late Animation<double> _slideAnimation;
 
+  List<File> _selectedImages = [];
   int _rating = 0;
   bool _isLoading = false;
 
@@ -220,6 +227,74 @@ class _AddReviewDialogState extends State<AddReviewDialog>
     super.dispose();
   }
 
+  Future<void> _pickImages() async {
+    try {
+      final List<XFile> images = await _picker.pickMultiImage(
+        imageQuality: 70, // сжимаем для экономии места
+      );
+
+      if (images.isNotEmpty) {
+        // Ограничиваем количество до 3 штук
+        final toAdd = images
+            .take(3 - _selectedImages.length)
+            .map((e) => File(e.path));
+        setState(() {
+          _selectedImages.addAll(toAdd);
+          if (_selectedImages.length > 3) {
+            _selectedImages = _selectedImages.sublist(0, 3);
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking images: $e');
+    }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
+  Future<List<String>> _uploadImages() async {
+    final List<String> urls = [];
+    const String apiKey = String.fromEnvironment(
+      'IMGBB_API_KEY',
+      defaultValue: '16ea590b6156b5c9fbc737026770d231',
+    );
+
+    for (var i = 0; i < _selectedImages.length; i++) {
+      final file = _selectedImages[i];
+      try {
+        final request = http.MultipartRequest(
+          'POST',
+          Uri.parse('https://api.imgbb.com/1/upload'),
+        );
+        request.fields['key'] = apiKey;
+        request.files.add(
+          await http.MultipartFile.fromPath('image', file.path),
+        );
+
+        final response = await request.send().timeout(
+          const Duration(seconds: 30),
+        );
+        if (response.statusCode == 200) {
+          final resBody = await response.stream.bytesToString();
+          final data = jsonDecode(resBody);
+          final String? downloadUrl = data['data']?['url'];
+          if (downloadUrl != null) {
+            urls.add(downloadUrl);
+          }
+        } else {
+          debugPrint('ImgBB Error status: ${response.statusCode}');
+        }
+      } catch (e) {
+        debugPrint('ImgBB upload error: $e');
+      }
+    }
+    return urls;
+  }
+
   Future<void> _submitReview() async {
     if (_rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -251,38 +326,60 @@ class _AddReviewDialogState extends State<AddReviewDialog>
 
     setState(() => _isLoading = true);
 
-    final success = await _reviewService.addReview(
-      universityId: widget.universityId,
-      rating: _rating,
-      comment: _commentController.text.trim(),
-    );
+    try {
+      List<String>? photoUrls;
+      if (_selectedImages.isNotEmpty) {
+        photoUrls = await _uploadImages();
+      }
 
-    if (mounted) {
-      if (success) {
-        Navigator.of(context).pop(true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 12),
-                const Text('Отзыв успешно добавлен!'),
-              ],
+      final success = await _reviewService.addReview(
+        universityId: widget.universityId,
+        rating: _rating,
+        comment: _commentController.text.trim(),
+        photoUrls: photoUrls,
+      );
+
+      if (mounted) {
+        if (success) {
+          Navigator.of(context).pop(true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 12),
+                  const Text('Отзыв успешно добавлен!'),
+                ],
+              ),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.green,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+          );
+        } else {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Не удалось отправить. Проверьте текст на нецензурные слова.',
+              ),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-          ),
-        );
-      } else {
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              'Не удалось отправить. Проверьте текст на нецензурные слова.',
-            ),
+            content: Text('Произошла ошибка: $e'),
             behavior: SnackBarBehavior.floating,
             backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(
@@ -488,6 +585,89 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                     contentPadding: const EdgeInsets.all(16),
                     counterStyle: TextStyle(
                       color: isDark ? Colors.white38 : AppColors.textHint,
+                    ),
+                  ),
+                ),
+
+                // Photo attachments UI
+                const SizedBox(height: 16),
+                if (_selectedImages.isNotEmpty)
+                  SizedBox(
+                    height: 80,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _selectedImages.length,
+                      itemBuilder: (context, index) {
+                        return Stack(
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              margin: const EdgeInsets.only(right: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                image: DecorationImage(
+                                  image: FileImage(_selectedImages[index]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 16,
+                              child: GestureDetector(
+                                onTap: () => _removeImage(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                if (_selectedImages.isNotEmpty) const SizedBox(height: 16),
+
+                // Add photo button
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: _selectedImages.length >= 3 ? null : _pickImages,
+                    icon: Icon(
+                      Icons.camera_alt_outlined,
+                      color: _selectedImages.length >= 3
+                          ? Colors.grey
+                          : AppColors.primary,
+                    ),
+                    label: Text(
+                      'Прикрепить фото (${_selectedImages.length}/3)',
+                      style: TextStyle(
+                        color: _selectedImages.length >= 3
+                            ? Colors.grey
+                            : AppColors.primary,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      backgroundColor: isDark
+                          ? AppColors.primary.withValues(alpha: 0.1)
+                          : AppColors.primary.withValues(alpha: 0.05),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),

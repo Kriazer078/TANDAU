@@ -28,5 +28,19 @@ service firebase.storage {
                    && request.auth.uid == userId 
                    && isNotBanned();
     }
+
+    // ═══════════════════════════════════════
+    // REVIEWS STORAGE
+    // ═══════════════════════════════════════
+    match /reviews/{imageId} {
+      // Фото отзывов публичные
+      allow read: if true;
+      
+      // Загружать могут только зарегистрированные и не забаненные
+      // Ограничение: размер файла не более 5 МБ
+      allow write: if isSignedIn() 
+                   && isNotBanned()
+                   && request.resource.size < 5 * 1024 * 1024;
+    }
   }
 }

@@ -5,6 +5,7 @@ import 'dart:convert';
 import '../models/user_model.dart';
 import '../models/notification.dart';
 import 'auth_service.dart';
+import 'audit_log_service.dart';
 
 class AdminService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -24,7 +25,11 @@ class AdminService {
   Future<List<UserModel>> getAllUsers() async {
     try {
       _requireAdmin();
-      final snapshot = await _firestore.collection('users').get();
+      final snapshot = await _firestore
+          .collection('users')
+          .limit(100)
+          .get()
+          .timeout(const Duration(seconds: 10));
       return snapshot.docs
           .map((doc) {
             try {
@@ -47,7 +52,11 @@ class AdminService {
     try {
       _requireAdmin();
       final lowercaseQuery = query.toLowerCase();
-      final snapshot = await _firestore.collection('users').get();
+      final snapshot = await _firestore
+          .collection('users')
+          .limit(100)
+          .get()
+          .timeout(const Duration(seconds: 10));
       return snapshot.docs
           .map((doc) {
             try {
@@ -114,6 +123,13 @@ class AdminService {
         debugPrint('⚠️ In-app saved, but PUSH failed: $e');
         // We don't return false here because the primary action (saving to DB) succeeded.
       }
+
+      // 📋 Audit log
+      AuditLogService().log(
+        action: AuditLogService.actionSendNotification,
+        targetUid: targetUserId,
+        details: 'Тема: $sanitizedTitle',
+      );
 
       return true;
     } catch (e) {
@@ -182,6 +198,12 @@ class AdminService {
       } catch (e) {
         debugPrint('⚠️ In-app saved, but BROADCAST PUSH failed: $e');
       }
+
+      // 📋 Audit log
+      AuditLogService().log(
+        action: AuditLogService.actionBroadcastNotification,
+        details: 'Тема: $sanitizedTitle — отправлено $successCount юзерам',
+      );
 
       return successCount;
     } catch (e) {

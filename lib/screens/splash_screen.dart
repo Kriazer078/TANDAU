@@ -7,6 +7,7 @@ import '../../screens/main_navigation_screen.dart';
 import 'banned_screen.dart';
 import '../services/auth_service.dart';
 import 'register_screen.dart';
+import 'onboarding_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -49,6 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       final prefs = await SharedPreferences.getInstance();
       final bool termsAccepted = prefs.getBool('terms_accepted') ?? false;
+      final bool onboardingDone = prefs.getBool('onboarding_done') ?? false;
       final bool loggedIn = AuthService().isLoggedIn.value;
 
       // 🚫 Check if user was banned during session restore
@@ -67,6 +69,11 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(
               builder: (context) => const MainNavigationScreen(),
             ),
+          );
+        } else if (!onboardingDone && !termsAccepted) {
+          // 🎉 First launch — show beautiful onboarding
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const OnboardingScreen()),
           );
         } else if (!termsAccepted) {
           Navigator.of(context).pushReplacement(

@@ -228,5 +228,90 @@
     "homeAdvancedFilter": "Расширенный фильтр",
     "homeUniversities": "Университеты",
     "homeAIAnalysisInProgress": "AI Анализ...",
-    "homeAIAnalyticsTitle": "AI Аналитика TANDAU"
+    "homeAIAnalyticsTitle": "AI Аналитика TANDAU",
+    "detailBeFirstReview": "Будьте первым, кто оставит отзыв!",
+    "reviewEdited": "изменено",
+    "reviewAuthRequired": "Аутентифицируйтесь для оценки",
+    "reviewHelpful": "Полезно {count}",
+    "@reviewHelpful": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "reviewOfficialReply": "Официальный ответ",
+    "commonError": "Ошибка: {error}",
+    "@commonError": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesAnalytics": "СВД Аналитика",
+    "aiChancesDataYear": "Данные {year}",
+    "@aiChancesDataYear": {
+        "placeholders": {
+            "year": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesGrant": "шанс на грант",
+    "aiChancesRisk": "Риск: {risk}",
+    "@aiChancesRisk": {
+        "placeholders": {
+            "risk": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesEntThreshold": "Порог ЕНТ для этого направления: {score} баллов",
+    "@aiChancesEntThreshold": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "aiChancesDetails": "Детали расчёта",
+    "aiChancesDetailedStrategy": "Подробная AI стратегия",
+    "detailErrorFavorites": "Ошибка обновления избранного",
+    "aiStrategyTitle": "AI Стратегия",
+    "aiStrategyGoal": "Цель: {university}",
+    "aiStrategyAlternatives": "Альтернативные варианты",
+    "aiStrategyUniversity": "Вуз",
+    "aiStrategySpecialty": "Специальность",
+    "aiStrategyLoading": "Сбор данных и анализ шансов для {university}...\nУзнайте, какие темы стоит подтянуть, чтобы гарантировать грант!",
+    "aiStrategyGetPlan": "Получить детальный план",
+    "aiStrategyFallbackTitle": "Стратегия поступления",
+    "authLoginContinue": "Войдите, чтобы продолжить путь",
+    "authLoginButton": "ВОЙТИ",
+    "authRegisterButton": "Зарегистрироваться",
+    "authTermsIHaveRead": "Я согласен с ",
+    "authTermsLink": "Условиями использования",
+    "authTermsAnd": " и ",
+    "authPrivacyLink": "Политикой конфиденциальности",
+    "authGuestTitle": "Войти как гость",
+    "authGuestWarning": "В режиме гостя доступ ограничен. Для полного доступа к AI-консультанту и другим функциям необходима регистрация.",
+    "authContinue": "Продолжить",
+    "authTermsRegister": "Регистрируясь, вы соглашаетесь с ",
+    "authRequired": "Обязательно",
+    "validationMinLength": "Минимум {count} символов",
+    "validationDigitRequired": "Пароль должен содержать хотя бы одну цифру",
+    "detailEstimateChances": "Оценить шансы",
+    "detailRecommendations": "💡 Рекомендации",
+    "detailAiThinking": "AI формирует стратегию...",
+    "detailAiStrategySubtitle": "AI Стратегия TANDAU",
+    "tabOverview": "Обзор",
+    "tabMajors": "Специальности",
+    "tabAdmissions": "Поступление",
+    "tabContact": "Контакты",
+    "tabReviews": "Отзывы",
+    "profileSavedSubtitle": "Ваши сохранённые университеты",
+    "adminPanelTitle": "Админ панель",
+    "adminPanelSubtitle": "Управление пушем и данными",
+    "authGuestMessage": "Войдите в аккаунт, чтобы получить доступ ко всем функциям",
+    "authTermsSuffix": ""
 }

@@ -532,7 +532,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get authGuestMessage => 'Log in to access all features';
+  String get authGuestMessage =>
+      'Log in to your account to access all features';
 
   @override
   String get editProfileTitle => 'Edit Profile';
@@ -627,4 +628,154 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeAIAnalyticsTitle => 'TANDAU AI Analytics';
+
+  @override
+  String get detailBeFirstReview => 'Be the first to leave a review!';
+
+  @override
+  String get reviewEdited => 'edited';
+
+  @override
+  String get reviewAuthRequired => 'Please authenticate to rate';
+
+  @override
+  String reviewHelpful(String count) {
+    return 'Helpful $count';
+  }
+
+  @override
+  String get reviewOfficialReply => 'Official Reply';
+
+  @override
+  String commonError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get aiChancesAnalytics => 'SVD Analytics';
+
+  @override
+  String aiChancesDataYear(String year) {
+    return 'Data for $year';
+  }
+
+  @override
+  String get aiChancesGrant => 'chance for grant';
+
+  @override
+  String aiChancesRisk(String risk) {
+    return 'Risk: $risk';
+  }
+
+  @override
+  String aiChancesEntThreshold(int score) {
+    return 'UNT Threshold for this major: $score points';
+  }
+
+  @override
+  String get aiChancesDetails => 'Calculation Details';
+
+  @override
+  String get aiChancesDetailedStrategy => 'Detailed AI Strategy';
+
+  @override
+  String get detailErrorFavorites => 'Error updating favorites';
+
+  @override
+  String get aiStrategyTitle => 'AI Strategy';
+
+  @override
+  String aiStrategyGoal(String university) {
+    return 'Goal: $university';
+  }
+
+  @override
+  String get aiStrategyAlternatives => 'Alternative Options';
+
+  @override
+  String get aiStrategyUniversity => 'University';
+
+  @override
+  String get aiStrategySpecialty => 'Specialty';
+
+  @override
+  String aiStrategyLoading(String university) {
+    return 'Collecting data and analyzing chances for $university...\nFind out which topics to improve to guarantee a grant!';
+  }
+
+  @override
+  String get aiStrategyGetPlan => 'Get Detailed Plan';
+
+  @override
+  String get aiStrategyFallbackTitle => 'Admission Strategy';
+
+  @override
+  String get authLoginContinue => 'Log in to continue your journey';
+
+  @override
+  String get authLoginButton => 'LOGIN';
+
+  @override
+  String get authRegisterButton => 'Register';
+
+  @override
+  String get authTermsIHaveRead => 'I agree with ';
+
+  @override
+  String get authTermsLink => 'Terms of Use';
+
+  @override
+  String get authTermsAnd => ' and ';
+
+  @override
+  String get authPrivacyLink => 'Privacy Policy';
+
+  @override
+  String get authGuestTitle => 'Login as Guest';
+
+  @override
+  String get authGuestWarning =>
+      'In guest mode, access is limited. For full access to the AI consultant and other functions, registration is required.';
+
+  @override
+  String get authContinue => 'Continue';
+
+  @override
+  String get authTermsRegister => 'By registering, you agree to the ';
+
+  @override
+  String get authRequired => 'Required';
+
+  @override
+  String validationMinLength(int count) {
+    return 'Minimum $count characters';
+  }
+
+  @override
+  String get validationDigitRequired =>
+      'Password must contain at least one digit';
+
+  @override
+  String get detailEstimateChances => 'Estimate Chances';
+
+  @override
+  String get detailRecommendations => '💡 Recommendations';
+
+  @override
+  String get detailAiThinking => 'AI is generating strategy...';
+
+  @override
+  String get detailAiStrategySubtitle => 'TANDAU AI Strategy';
+
+  @override
+  String get profileSavedSubtitle => 'Your saved universities';
+
+  @override
+  String get adminPanelTitle => 'Admin Panel';
+
+  @override
+  String get adminPanelSubtitle => 'Manage push and data';
+
+  @override
+  String get authTermsSuffix => '';
 }
