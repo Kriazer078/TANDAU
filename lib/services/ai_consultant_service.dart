@@ -8,6 +8,11 @@ import 'grant_chance_service.dart';
 
 import 'moderation_service.dart';
 
+class OutOfTokensException implements Exception {
+  final String message;
+  const OutOfTokensException([this.message = '']);
+}
+
 /// AI-консультант для помощи студентам в выборе университета
 class AIConsultantService {
   static final AIConsultantService _instance = AIConsultantService._internal();
@@ -95,6 +100,9 @@ $jsonInput
 
       return await sendMessage(strategyPrompt, isInternalStrategyCall: true);
     } catch (e) {
+      if (e is OutOfTokensException) {
+        rethrow;
+      }
       return '📍 **Ошибка генерации стратегии.**\n\nНе удалось получить расчет от AI. Пожалуйста, попробуйте еще раз через минуту.';
     }
   }
@@ -131,21 +139,32 @@ $jsonInput
     Map<String, int>? subjectScores,
   }) async {
     try {
+      final currentUser = AuthService().currentUser.value;
+      final requestBody = {
+        'user_unt_score': untScore,
+        'specialty_id': specialtyId,
+        'university_id': universityId,
+        'user_subjects_scores': subjectScores ?? {},
+      };
+
+      if (currentUser != null) {
+        requestBody['uid'] = currentUser.uid;
+      }
+
       final response = await http
           .post(
             Uri.parse('$_baseUrl/ai/getAIStrategy'),
             headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'user_unt_score': untScore,
-              'specialty_id': specialtyId,
-              'university_id': universityId,
-              'user_subjects_scores': subjectScores ?? {},
-            }),
+            body: jsonEncode(requestBody),
           )
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
-        return jsonDecode(utf8.decode(response.bodyBytes));
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        if (data['outOfTokens'] == true) {
+          throw OutOfTokensException(data['description'] ?? '');
+        }
+        return data;
       } else {
         throw Exception('Failed to load AI strategy: ${response.statusCode}');
       }
@@ -209,6 +228,11 @@ $jsonInput
 
       final bodyData = <String, dynamic>{'question': fullMessage};
 
+      final currentUser = AuthService().currentUser.value;
+      if (currentUser != null) {
+        bodyData['uid'] = currentUser.uid;
+      }
+
       if (history != null && history.isNotEmpty) {
         bodyData['history'] = history;
       }
@@ -223,10 +247,16 @@ $jsonInput
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
+        if (data['outOfTokens'] == true) {
+          throw OutOfTokensException(data['answer'] ?? '');
+        }
         return data['answer'] ?? 'Извините, ответ не получен.';
       }
       return '📍 **Проблема с подключением.**\n\nСервер TANDAU сейчас перегружен или недоступен (Код: ${response.statusCode}). Пожалуйста, попробуйте позже.';
     } catch (e) {
+      if (e is OutOfTokensException) {
+        rethrow;
+      }
       return '📍 **Ошибка сети.**\n\nПроверьте ваше интернет-соединение и попробуйте снова.';
     }
   }

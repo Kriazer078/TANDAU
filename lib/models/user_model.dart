@@ -21,6 +21,11 @@ class UserModel {
   final bool banned; // 🚫 Забанен ли пользователь
   final String? banReason; // 📝 Причина бана
 
+  // 💎 Subscription & AI Limits
+  final String subscriptionPlan; // 'free', 'pro', 'premium'
+  final int aiTokensRemaining;
+  final DateTime? lastTokenResetDate;
+
   UserModel({
     required this.uid,
     required this.name,
@@ -41,6 +46,9 @@ class UserModel {
     this.role = 'user',
     this.banned = false,
     this.banReason,
+    this.subscriptionPlan = 'free',
+    this.aiTokensRemaining = 5, // Default for free users
+    this.lastTokenResetDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -64,6 +72,11 @@ class UserModel {
       'role': role,
       'banned': banned,
       'banReason': banReason,
+      'subscriptionPlan': subscriptionPlan,
+      'aiTokensRemaining': aiTokensRemaining,
+      'lastTokenResetDate': lastTokenResetDate != null
+          ? Timestamp.fromDate(lastTokenResetDate!)
+          : null,
     };
   }
 
@@ -100,11 +113,16 @@ class UserModel {
       role: map['role'] ?? 'user',
       banned: map['banned'] ?? false,
       banReason: map['banReason'],
+      subscriptionPlan: map['subscriptionPlan'] ?? 'free',
+      aiTokensRemaining: map['aiTokensRemaining'] ?? 5,
+      lastTokenResetDate: map['lastTokenResetDate'] != null
+          ? (map['lastTokenResetDate'] as Timestamp).toDate()
+          : null,
     );
   }
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>? ?? {};
     return UserModel.fromMap(data);
   }
 
@@ -128,6 +146,9 @@ class UserModel {
     String? role, // 🔐
     bool? banned, // 🚫
     String? banReason, // 📝
+    String? subscriptionPlan,
+    int? aiTokensRemaining,
+    DateTime? lastTokenResetDate,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -149,6 +170,9 @@ class UserModel {
       role: role ?? this.role,
       banned: banned ?? this.banned,
       banReason: banReason ?? this.banReason,
+      subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
+      aiTokensRemaining: aiTokensRemaining ?? this.aiTokensRemaining,
+      lastTokenResetDate: lastTokenResetDate ?? this.lastTokenResetDate,
     );
   }
 }

@@ -25,6 +25,7 @@ class UniversityController {
       final body = await request.readAsString();
       final data = jsonDecode(body);
       final question = data['question'] as String?;
+      final uid = data['uid'] as String?; // Added to identify user for limits
 
       // Parse history if available
       final rawHistory = data['history'] as List<dynamic>?;
@@ -46,7 +47,68 @@ class UniversityController {
         return Response.badRequest(body: 'Missing question');
       }
 
+      // --- 💎 AI LIMITS LOGIC START ---
+      bool shouldDeductToken = false;
+      if (uid != null) {
+        final userDoc = await _firebaseService.getUserDocument(uid);
+        if (userDoc != null) {
+          final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
+          int tokens = userDoc['aiTokensRemaining'] as int? ?? 5; // default 5
+          final lastResetStr = userDoc['lastTokenResetDate'] as String?;
+
+          DateTime now = DateTime.now().toUtc();
+          DateTime? lastResetDate;
+          if (lastResetStr != null) {
+            lastResetDate = DateTime.tryParse(lastResetStr);
+          }
+
+          // Check if we need to reset tokens (different day)
+          bool isNewDay = true;
+          if (lastResetDate != null) {
+            isNewDay = now.day != lastResetDate.day ||
+                now.month != lastResetDate.month ||
+                now.year != lastResetDate.year;
+          }
+
+          if (isNewDay) {
+            // Reset logic based on plan
+            tokens = plan == 'free' ? 5 : (plan == 'pro' ? 100 : 9999);
+            // Update immediately to prevent race conditions (simple approach)
+            await _firebaseService.updateUserFields(
+                uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
+          }
+
+          if (plan == 'free' && tokens <= 0) {
+            return Response.ok(
+              jsonEncode({
+                'answer':
+                    '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные ИИ-запросы на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить больше возможностей и открыть генератор стратегии НЦТ 🚀',
+                'outOfTokens': true
+              }),
+              headers: {'Content-Type': 'application/json'},
+            );
+          }
+
+          if (plan != 'premium') {
+            shouldDeductToken = true;
+          }
+        }
+      }
+      // --- 💎 AI LIMITS LOGIC END ---
+
       final answer = await _aiService.generateChat(question, history: history);
+
+      // Deduct token if successful and not premium
+      if (shouldDeductToken && uid != null) {
+        final userDoc = await _firebaseService.getUserDocument(uid);
+        if (userDoc != null) {
+          int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
+          if (currentTokens > 0) {
+            await _firebaseService.updateUserFields(
+                uid, {'aiTokensRemaining': currentTokens - 1});
+          }
+        }
+      }
 
       return Response.ok(
         jsonEncode({'answer': answer}),
@@ -143,10 +205,64 @@ class UniversityController {
       final specialtyId = data['specialty_id'] as String? ?? 'unknown';
       final subjectScores =
           Map<String, int>.from(data['user_subjects_scores'] ?? {});
+      final uid = data['uid'] as String?;
 
       if (universityId == null) {
         return Response.badRequest(body: 'Missing university_id');
       }
+
+      // --- 💎 AI LIMITS LOGIC START ---
+      bool shouldDeductToken = false;
+      if (uid != null) {
+        final userDoc = await _firebaseService.getUserDocument(uid);
+        if (userDoc != null) {
+          final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
+          int tokens = userDoc['aiTokensRemaining'] as int? ?? 5; // default 5
+          final lastResetStr = userDoc['lastTokenResetDate'] as String?;
+
+          DateTime now = DateTime.now().toUtc();
+          DateTime? lastResetDate;
+          if (lastResetStr != null) {
+            lastResetDate = DateTime.tryParse(lastResetStr);
+          }
+
+          // Check if we need to reset tokens (different day)
+          bool isNewDay = true;
+          if (lastResetDate != null) {
+            isNewDay = now.day != lastResetDate.day ||
+                now.month != lastResetDate.month ||
+                now.year != lastResetDate.year;
+          }
+
+          if (isNewDay) {
+            // Reset logic based on plan
+            tokens = plan == 'free' ? 5 : (plan == 'pro' ? 100 : 9999);
+            // Update immediately to prevent race conditions
+            await _firebaseService.updateUserFields(
+                uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
+          }
+
+          if (plan == 'free' && tokens <= 0) {
+            return Response.ok(
+              jsonEncode({
+                'title': 'Лимит исчерпан',
+                'description':
+                    '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные генерации стратегий на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить безлимитный доступ 🚀',
+                'outOfTokens': true, // FLAG FOR FRONTEND
+                'alternative_options': [
+                  {'name': 'Перейти на PRO', 'icon': 'workspace_premium'},
+                ]
+              }),
+              headers: {'Content-Type': 'application/json; charset=utf-8'},
+            );
+          }
+
+          if (plan != 'premium') {
+            shouldDeductToken = true;
+          }
+        }
+      }
+      // --- 💎 AI LIMITS LOGIC END ---
 
       // Fetch university name
       final universities = await _firebaseService.getUniversities();
@@ -170,6 +286,18 @@ class UniversityController {
         specialty: specialtyId,
         subjectScores: subjectScores,
       );
+
+      // Deduct token if successful and not premium
+      if (shouldDeductToken && uid != null) {
+        final userDoc = await _firebaseService.getUserDocument(uid);
+        if (userDoc != null) {
+          int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
+          if (currentTokens > 0) {
+            await _firebaseService.updateUserFields(
+                uid, {'aiTokensRemaining': currentTokens - 1});
+          }
+        }
+      }
 
       return Response.ok(
         jsonEncode({

@@ -11,6 +11,7 @@ import '../services/ai_consultant_service.dart';
 import '../services/university_service.dart';
 import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
+import 'paywall_screen.dart';
 
 class GrantPredictionResultsScreen extends ConsumerWidget {
   final int entScore;
@@ -497,6 +498,15 @@ class _ResultUniCardState extends State<_ResultUniCard> {
           );
           return;
         }
+      } on OutOfTokensException catch (_) {
+        if (mounted) {
+          setState(() => _isLoadingStrategy = false);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PaywallScreen()),
+          );
+        }
+        return; // Important: do not fall back to local strategy
       } catch (_) {
         // Бэкенд недоступен → используем локальную стратегию
         debugPrint('⚠️ Backend unavailable, using local strategy');

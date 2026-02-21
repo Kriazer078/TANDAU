@@ -11,6 +11,7 @@ import 'notifications_settings_screen.dart';
 import 'help_support_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'favorites_screen.dart';
+import 'paywall_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -535,7 +536,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 24),
+          _buildSubscriptionCard(context, user),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionCard(BuildContext context, UserModel user) {
+    final isPro =
+        user.subscriptionPlan == 'pro' || user.subscriptionPlan == 'premium';
+    final planName = user.subscriptionPlan.toUpperCase();
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaywallScreen()),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: isPro
+              ? const LinearGradient(
+                  colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : LinearGradient(
+                  colors: [
+                    Theme.of(context).cardTheme.color ?? Colors.white,
+                    Theme.of(context).cardTheme.color ?? Colors.white,
+                  ],
+                ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isPro
+                ? Colors.transparent
+                : Theme.of(context).primaryColor.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+          boxShadow: isPro
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF8E2DE2).withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isPro
+                    ? Colors.white.withValues(alpha: 0.2)
+                    : Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isPro
+                    ? Icons.workspace_premium_rounded
+                    : Icons.star_outline_rounded,
+                color: isPro ? Colors.white : Theme.of(context).primaryColor,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'TANDAU $planName',
+                    style: TextStyle(
+                      color: isPro
+                          ? Colors.white
+                          : Theme.of(context).textTheme.titleLarge?.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Осталось ИИ-запросов: ${user.aiTokensRemaining}',
+                    style: TextStyle(
+                      color: isPro
+                          ? Colors.white70
+                          : Theme.of(context).textTheme.bodyMedium?.color
+                                ?.withValues(alpha: 0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: isPro
+                  ? Colors.white70
+                  : Theme.of(context).iconTheme.color?.withValues(alpha: 0.5),
+              size: 16,
+            ),
+          ],
+        ),
       ),
     );
   }

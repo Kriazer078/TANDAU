@@ -578,6 +578,34 @@ class AuthService {
     return currentUser.value?.favoriteUniversities ?? [];
   }
 
+  /// Update user subscription plan (Free, Pro, Premium)
+  Future<bool> updateSubscriptionPlan(String plan, int initialTokens) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null || currentUser.value == null) return false;
+
+      final now = DateTime.now().toUtc();
+
+      await _firestore.collection('users').doc(user.uid).update({
+        'subscriptionPlan': plan,
+        'aiTokensRemaining': initialTokens,
+        'lastTokenResetDate': now,
+      });
+
+      // Update local state
+      currentUser.value = currentUser.value!.copyWith(
+        subscriptionPlan: plan,
+        aiTokensRemaining: initialTokens,
+        lastTokenResetDate: now,
+      );
+
+      return true;
+    } catch (e) {
+      debugPrint('Error updating subscription plan: $e');
+      return false;
+    }
+  }
+
   /// Logout
   Future<void> logout() async {
     try {

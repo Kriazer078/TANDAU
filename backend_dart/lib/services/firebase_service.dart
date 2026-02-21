@@ -161,4 +161,69 @@ class FirebaseService {
       return false;
     }
   }
+
+  /// Get user document by UID
+  Future<Map<String, dynamic>?> getUserDocument(String uid) async {
+    final name =
+        'projects/$_projectId/databases/(default)/documents/users/$uid';
+    try {
+      final doc = await _firestoreApi.projects.databases.documents.get(name);
+
+      if (doc.fields == null) return null;
+
+      // Extract map
+      dynamic getValue(Value v) {
+        if (v.stringValue != null) return v.stringValue;
+        if (v.integerValue != null) return int.tryParse(v.integerValue!) ?? 0;
+        if (v.doubleValue != null) return v.doubleValue;
+        if (v.booleanValue != null) return v.booleanValue;
+        if (v.timestampValue != null) return v.timestampValue;
+        return null; // Simplified for this case
+      }
+
+      Map<String, dynamic> userMap = {};
+      doc.fields!.forEach((key, val) {
+        userMap[key] = getValue(val);
+      });
+      return userMap;
+    } catch (e) {
+      // If document not found (404), return null instead of throwing
+      if (e.toString().contains('NOT_FOUND')) return null;
+      stderr.writeln('Error fetching user $uid: $e');
+      return null;
+    }
+  }
+
+  /// Update user fields (e.g. decrement tokens)
+  Future<bool> updateUserFields(
+      String uid, Map<String, dynamic> fieldsToUpdate) async {
+    final name =
+        'projects/$_projectId/databases/(default)/documents/users/$uid';
+    try {
+      // Construct fields object
+      final fields = <String, Value>{};
+
+      fieldsToUpdate.forEach((key, val) {
+        if (val is int) {
+          fields[key] = Value(integerValue: val.toString());
+        } else if (val is String) {
+          fields[key] = Value(stringValue: val);
+        } else if (val is bool) {
+          fields[key] = Value(booleanValue: val);
+        } else if (val is DateTime) {
+          fields[key] = Value(timestampValue: val.toUtc().toIso8601String());
+        }
+      });
+
+      final document = Document(name: name, fields: fields);
+
+      await _firestoreApi.projects.databases.documents.patch(document, name,
+          updateMask_fieldPaths: fieldsToUpdate.keys.toList());
+
+      return true;
+    } catch (e) {
+      stderr.writeln('Error updating user $uid: $e');
+      return false;
+    }
+  }
 }

@@ -6,6 +6,8 @@ import '../l10n/app_localizations.dart';
 import '../services/ai_consultant_service.dart';
 import '../services/auth_service.dart';
 import '../services/moderation_service.dart';
+import '../models/user_model.dart';
+import 'paywall_screen.dart';
 
 class AIConsultantScreen extends StatefulWidget {
   const AIConsultantScreen({super.key});
@@ -110,6 +112,26 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           );
         });
         _scrollToBottom();
+      }
+    } on OutOfTokensException catch (e) {
+      if (mounted) {
+        setState(() {
+          _isTyping = false;
+          _messages.add(
+            _ChatMessage(text: e.message, isUser: false, time: DateTime.now()),
+          );
+        });
+        _scrollToBottom();
+
+        // Show Paywall
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PaywallScreen()),
+            );
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -216,6 +238,64 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           ],
         ),
         actions: [
+          ValueListenableBuilder<UserModel?>(
+            valueListenable: AuthService().currentUser,
+            builder: (context, user, _) {
+              if (user == null) return const SizedBox.shrink();
+              final isPremium = user.subscriptionPlan == 'premium';
+              final isPro = user.subscriptionPlan == 'pro' || isPremium;
+
+              return GestureDetector(
+                onTap: () {
+                  if (!isPremium) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PaywallScreen()),
+                    );
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isPro
+                        ? const Color(0xFF6366F1).withValues(alpha: 0.1)
+                        : Colors.orange.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isPro
+                          ? const Color(0xFF6366F1).withValues(alpha: 0.3)
+                          : Colors.orange.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isPro ? Icons.workspace_premium : Icons.stars_rounded,
+                        size: 14,
+                        color: isPro ? const Color(0xFF6366F1) : Colors.orange,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isPremium ? '∞' : '${user.aiTokensRemaining}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: isPro
+                              ? const Color(0xFF6366F1)
+                              : Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           PopupMenuButton<String>(
             icon: Icon(
               Icons.more_horiz_rounded,
