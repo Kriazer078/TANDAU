@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../services/university_service.dart';
-import '../utils/guest_guard.dart';
-import '../widgets/compare_picker_sheet.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import 'university_list_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/app_localizations.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -162,10 +161,15 @@ class _SearchScreenState extends State<SearchScreen> {
     try {
       final cities = await _service.getUniqueCities();
       final majors = await _service.getUniqueMajors();
+      final prefs = await SharedPreferences.getInstance();
+      final savedHistory = prefs.getStringList('search_history') ?? [];
+
       if (mounted) {
         setState(() {
           _cities = cities;
           _majors = majors.map((m) => {'name': m}).toList();
+          _searchHistory.clear();
+          _searchHistory.addAll(savedHistory);
           _isLoading = false;
         });
       }
@@ -175,14 +179,19 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  void _performSearch(String query) {
+  void _performSearch(String query) async {
+    FocusScope.of(context).unfocus();
     // Save to history
     if (query.isNotEmpty && !_searchHistory.contains(query)) {
       setState(() {
         _searchHistory.insert(0, query);
         if (_searchHistory.length > 5) _searchHistory.removeLast();
       });
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('search_history', _searchHistory);
     }
+
+    if (!mounted) return;
 
     Navigator.push(
       context,
@@ -256,49 +265,67 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(l10n?.navSearch ?? 'Search'),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ═══ Search Bar + Filter Button ═══
-                  _buildSearchBar(isDark, theme, l10n),
+          : Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ═══ Search Bar + Filter Button ═══
+                        _buildSearchBar(isDark, theme, l10n),
 
-                  // ═══ Active Filters Chips ═══
-                  if (_activeFilterCount > 0)
-                    _buildActiveFilters(isDark, theme, l10n),
+                        // ═══ Active Filters Chips ═══
+                        if (_activeFilterCount > 0)
+                          _buildActiveFilters(isDark, theme, l10n),
 
-                  // ═══ Quick Departments ═══
-                  _buildSectionHeader(labelDepartments, isDark, theme),
-                  const SizedBox(height: 12),
-                  _buildDepartmentGrid(isDark),
+                        // ═══ Quick Departments ═══
+                        _buildSectionHeader(labelDepartments, isDark, theme),
+                        const SizedBox(height: 12),
+                        _buildDepartmentGrid(isDark),
 
-                  const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                  // ═══ Popular Cities ═══
-                  _buildSectionHeader(labelPopularCities, isDark, theme),
-                  const SizedBox(height: 12),
-                  _buildCityChips(isDark, theme),
+                        // ═══ Popular Cities ═══
+                        _buildSectionHeader(labelPopularCities, isDark, theme),
+                        const SizedBox(height: 12),
+                        _buildCityChips(isDark, theme),
 
-                  const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                  // ═══ Search History ═══
-                  if (_searchHistory.isNotEmpty) ...[
-                    _buildHistorySection(labelHistory, isDark, theme, l10n),
-                  ],
+                        // ═══ Search History ═══
+                        if (_searchHistory.isNotEmpty) ...[
+                          _buildHistorySection(
+                            labelHistory,
+                            isDark,
+                            theme,
+                            l10n,
+                          ),
+                        ],
 
-                  const SizedBox(height: 100), // padding for bottom button
-                ],
-              ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+                // ═══ Fixed Search Button at the bottom ═══
+                Container(
+                  color: theme.scaffoldBackgroundColor,
+                  padding: const EdgeInsets.only(top: 16, bottom: 24),
+                  child: _buildSearchButton(isDark, l10n),
+                ),
+              ],
             ),
-      // ═══ Bottom Search Button ═══
-      bottomNavigationBar: _buildSearchButton(isDark, l10n),
     );
   }
 
@@ -801,8 +828,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   setState(() => _searchHistory.clear());
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('search_history');
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.error,
@@ -863,104 +892,56 @@ class _SearchScreenState extends State<SearchScreen> {
   // BOTTOM SEARCH BUTTON
   // ═════════════════════════════════════════
   Widget _buildSearchButton(bool isDark, AppLocalizations? l10n) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        12,
-        20,
-        12 + MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: isDark ? Colors.white10 : Colors.grey.shade200,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        height: 52,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () => _performSearch(_searchController.text),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.search_rounded, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                l10n?.navSearch ?? 'Поиск',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (_activeFilterCount > 0) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '+$_activeFilterCount',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          // ── Search button ──
-          Expanded(
-            flex: 3,
-            child: SizedBox(
-              height: 52,
-              child: ElevatedButton(
-                onPressed: () => _performSearch(_searchController.text),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.search_rounded, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      l10n?.navSearch ?? 'Поиск',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (_activeFilterCount > 0) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.25),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          '+$_activeFilterCount',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 12),
-
-          // ── Compare button ──
-          SizedBox(
-            height: 52,
-            width: 52,
-            child: Tooltip(
-              message: l10n?.comparisonTitle ?? 'Compare',
-              child: ElevatedButton(
-                onPressed: () {
-                  if (GuestGuard.check(context)) {
-                    showComparePickerSheet(context);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF10B981),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Icon(Icons.compare_arrows_rounded, size: 24),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

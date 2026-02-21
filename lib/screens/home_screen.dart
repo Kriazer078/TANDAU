@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:ui';
+// dart:ui removed — BackdropFilter replaced with lightweight frosted glass
 import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import '../utils/guest_guard.dart';
@@ -11,7 +11,6 @@ import 'filter_screen.dart';
 import '../providers/grant_predictor_provider.dart';
 import 'grant_prediction_results_screen.dart';
 import 'university_list_screen.dart';
-import '../widgets/premium_background.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -66,23 +65,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         child: Stack(
           children: [
-            // Premium Design Background
-            Positioned.fill(child: PremiumBackground(isDark: isDark)),
-
-            // Background Blobs Decor
-            Positioned(
-              top: -50,
-              left: -50,
-              child: Container(
-                width: 250,
-                height: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                ),
-              ),
-            ),
-
             // Main Content
             CustomScrollView(
               physics: const BouncingScrollPhysics(),
@@ -130,44 +112,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   SliverAppBar _buildAppBar(ThemeData theme, bool isDark) {
     return SliverAppBar(
+      automaticallyImplyLeading: false,
       expandedHeight: 120,
       floating: true,
       pinned: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
-      flexibleSpace: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: FlexibleSpaceBar(
-            titlePadding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 16,
+      flexibleSpace: FlexibleSpaceBar(
+        titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
             ),
-            title: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.school_rounded,
-                    color: AppColors.primary,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  AppLocalizations.of(context)?.appTitle ?? 'TANDAU',
-                  style: TextStyle(
-                    color: isDark ? Colors.white : AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            const SizedBox(width: 12),
+            Text(
+              AppLocalizations.of(context)?.appTitle ?? 'TANDAU',
+              style: TextStyle(
+                color: isDark ? Colors.white : AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -250,35 +225,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     ThemeData theme,
     bool isDark,
   ) {
-    final hour = DateTime.now().hour;
-    final greeting = (hour < 12)
-        ? (l10n?.homeGreetingMorning ?? 'Доброе утро')
-        : (hour < 18)
-        ? (l10n?.homeGreetingAfternoon ?? 'Добрый день')
-        : (l10n?.homeGreetingEvening ?? 'Добрый вечер');
+    return StreamBuilder(
+      stream: Stream.periodic(const Duration(minutes: 1)),
+      builder: (context, _) {
+        final hour = DateTime.now().hour;
+        String greeting;
+        if (hour >= 5 && hour < 12) {
+          greeting = l10n?.homeGreetingMorning ?? 'Доброе утро';
+        } else if (hour >= 12 && hour < 17) {
+          greeting = l10n?.homeGreetingAfternoon ?? 'Добрый день';
+        } else if (hour >= 17 && hour < 23) {
+          greeting = l10n?.homeGreetingEvening ?? 'Добрый вечер';
+        } else {
+          greeting = 'Доброй ночи';
+        }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          greeting,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          l10n?.homeSubtitle ?? 'Найди свой путь в будущее',
-          style: theme.textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : AppColors.textPrimary,
-            height: 1.1,
-            letterSpacing: -0.8,
-          ),
-        ),
-      ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              greeting,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: isDark ? Colors.white60 : Colors.black54,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n?.homeSubtitle ?? 'Найди свой путь в будущее',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+                height: 1.1,
+                letterSpacing: -0.8,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -364,7 +349,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         const SizedBox(height: 24),
         PremiumButton(
           text: l10n?.detailChances ?? 'Оценить шансы',
-          icon: Icons.auto_awesome,
+          icon: Icons.insights_rounded,
           onPressed: () {
             Navigator.push(
               context,

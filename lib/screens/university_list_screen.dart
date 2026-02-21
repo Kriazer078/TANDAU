@@ -8,6 +8,7 @@ import '../services/comparison_service.dart';
 import '../widgets/university_card.dart';
 import '../widgets/filter_bottom_sheet.dart';
 import 'university_detail_screen.dart';
+import 'comparison_screen.dart';
 import '../l10n/app_localizations.dart';
 
 import '../services/auth_service.dart';
@@ -224,6 +225,8 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           final favoriteIds = user?.favoriteUniversities ?? [];
 
                           return ListView.builder(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             itemCount: _universities.length,
                             addRepaintBoundaries: true,
@@ -270,9 +273,36 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                                     await _comparisonService
                                         .removeFromComparison(uni.id);
                                   } else {
-                                    await _comparisonService.addToComparison(
-                                      uni.id,
-                                    );
+                                    final success = await _comparisonService
+                                        .addToComparison(uni.id);
+                                    if (!success) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              AppLocalizations.of(
+                                                    context,
+                                                  )?.comparisonFull(2) ??
+                                                  'Вы не можете добавить больше 2 университетов',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      final count = await _comparisonService
+                                          .getComparisonCount();
+                                      if (count == 2 && context.mounted) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ComparisonScreen(),
+                                          ),
+                                        );
+                                      }
+                                    }
                                   }
                                 },
                               );

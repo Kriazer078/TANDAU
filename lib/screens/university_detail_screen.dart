@@ -15,7 +15,7 @@ import '../services/grant_chance_service.dart';
 import '../l10n/app_localizations.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'dart:ui';
+// dart:ui removed — replaced BackdropFilter with lightweight containers
 
 class UniversityDetailScreen extends StatefulWidget {
   final University university;
@@ -87,49 +87,41 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                 : AppColors.background,
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ClipOval(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    color: Colors.black26,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.black26,
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
                 ),
               ),
             ),
             actions: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ClipOval(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      color: Colors.black26,
-                      child: ValueListenableBuilder<UserModel?>(
-                        valueListenable: _authService.currentUser,
-                        builder: (context, user, child) {
-                          final isFavorite =
-                              user?.favoriteUniversities.contains(
-                                widget.university.id,
-                              ) ??
-                              false;
-                          return IconButton(
-                            icon: Icon(
-                              isFavorite
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_border,
-                              color: isFavorite
-                                  ? AppColors.accent
-                                  : Colors.white,
-                            ),
-                            onPressed: _toggleFavorite,
-                          );
-                        },
-                      ),
-                    ),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black26,
+                    shape: BoxShape.circle,
+                  ),
+                  child: ValueListenableBuilder<UserModel?>(
+                    valueListenable: _authService.currentUser,
+                    builder: (context, user, child) {
+                      final isFavorite =
+                          user?.favoriteUniversities.contains(
+                            widget.university.id,
+                          ) ??
+                          false;
+                      return IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                          color: isFavorite ? AppColors.accent : Colors.white,
+                        ),
+                        onPressed: _toggleFavorite,
+                      );
+                    },
                   ),
                 ),
               ),

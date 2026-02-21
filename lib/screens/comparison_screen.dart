@@ -256,59 +256,80 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               ],
         border: Border.all(color: isDark ? Colors.white10 : AppColors.border),
       ),
-      child: Column(
+      child: Stack(
         children: [
-          // Logo
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: uni.logoUrl.isNotEmpty
-                ? CachedNetworkImage(
-                    imageUrl: uni.logoUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const Icon(
-                      Icons.school_rounded,
-                      color: AppColors.primary,
-                      size: 28,
-                    ),
-                    errorWidget: (context, url, error) => const Icon(
-                      Icons.school_rounded,
-                      color: AppColors.primary,
-                      size: 28,
-                    ),
-                  )
-                : const Icon(
-                    Icons.school_rounded,
-                    color: AppColors.primary,
-                    size: 28,
-                  ),
+          Column(
+            children: [
+              // Logo
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: uni.logoUrl.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: uni.logoUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const Icon(
+                          Icons.school_rounded,
+                          color: AppColors.primary,
+                          size: 28,
+                        ),
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.school_rounded,
+                          color: AppColors.primary,
+                          size: 28,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.school_rounded,
+                        color: AppColors.primary,
+                        size: 28,
+                      ),
+              ),
+              const SizedBox(height: 12),
+              // Name
+              Text(
+                uni.name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 4),
+              // City
+              Text(
+                uni.city,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? Colors.white54 : AppColors.textSecondary,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          // Name
-          Text(
-            uni.name,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.textPrimary,
-              height: 1.2,
-            ),
-          ),
-          const SizedBox(height: 4),
-          // City
-          Text(
-            uni.city,
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark ? Colors.white54 : AppColors.textSecondary,
+          Positioned(
+            top: -12,
+            right: -12,
+            child: IconButton(
+              onPressed: () async {
+                await _comparisonService.removeFromComparison(uni.id);
+                // Reload or navigate back if less than 2
+                _loadUniversities();
+                final count = await _comparisonService.getComparisonCount();
+                if (count < 2 && mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(Icons.cancel, color: Colors.grey),
+              tooltip: 'Удалить из сравнения',
             ),
           ),
         ],

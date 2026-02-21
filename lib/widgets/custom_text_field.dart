@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextCapitalization textCapitalization;
   final int? maxLines;
+  final String? hintText;
 
   const CustomTextField({
     super.key,
@@ -28,6 +29,7 @@ class CustomTextField extends StatelessWidget {
     this.inputFormatters,
     this.textCapitalization = TextCapitalization.none,
     this.maxLines = 1,
+    this.hintText,
   });
 
   @override
@@ -63,6 +65,11 @@ class CustomTextField extends StatelessWidget {
           labelText: label,
           labelStyle: TextStyle(
             color: isDark ? Colors.white60 : AppColors.textSecondary,
+          ),
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: isDark ? Colors.white24 : Colors.grey.shade400,
+            fontSize: 14,
           ),
           prefixIcon: Icon(icon, color: AppColors.primary),
           suffixIcon: suffixIcon,

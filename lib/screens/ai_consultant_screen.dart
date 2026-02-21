@@ -176,7 +176,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 ],
               ),
               child: const Icon(
-                Icons.auto_awesome,
+                Icons.smart_toy_rounded,
                 size: 18,
                 color: Colors.white,
               ),
@@ -320,7 +320,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 ],
               ),
               child: const Icon(
-                Icons.auto_awesome,
+                Icons.smart_toy_rounded,
                 size: 48,
                 color: Colors.white,
               ),
@@ -768,7 +768,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.auto_awesome, color: AppColors.primary),
+            const Icon(Icons.smart_toy_rounded, color: AppColors.primary),
             const SizedBox(width: 12),
             Text(l10n?.aiAbout ?? 'TANDAU AI'),
           ],

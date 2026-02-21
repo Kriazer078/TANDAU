@@ -52,6 +52,9 @@ class _TandauAppState extends State<TandauApp> {
   void initState() {
     super.initState();
 
+    // Pass navigator key to notification service (once, not on every rebuild)
+    NotificationService().setNavigatorKey(TandauApp.navigatorKey);
+
     // Listen for ban events globally — navigate to BannedScreen if banned
     AuthService().bannedReason.addListener(_onBanStateChanged);
   }
@@ -80,9 +83,6 @@ class _TandauAppState extends State<TandauApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Pass navigator key to notification service
-    NotificationService().setNavigatorKey(TandauApp.navigatorKey);
-
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeManager().themeMode,
       builder: (context, themeMode, child) {

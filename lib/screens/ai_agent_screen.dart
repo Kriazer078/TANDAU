@@ -111,7 +111,11 @@ class AIAgentScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, color: Colors.white, size: 28),
+              const Icon(
+                Icons.smart_toy_rounded,
+                color: Colors.white,
+                size: 28,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(

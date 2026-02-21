@@ -60,10 +60,22 @@ class _ComparePickerSheetState extends State<ComparePickerSheet> {
   Future<void> _loadUniversities() async {
     try {
       final universities = await _service.getAllUniversities();
+      final comparison = await ComparisonService().getUserComparison();
+      final savedIds = comparison?.universityIds ?? [];
+
+      final Set<University> initialSelected = {};
+      if (savedIds.isNotEmpty) {
+        for (var id in savedIds) {
+          final match = universities.where((u) => u.id == id).toList();
+          if (match.isNotEmpty) initialSelected.add(match.first);
+        }
+      }
+
       if (mounted) {
         setState(() {
           _universities = universities;
           _filteredUniversities = universities;
+          _selected.addAll(initialSelected);
           _isLoading = false;
         });
       }

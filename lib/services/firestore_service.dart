@@ -19,7 +19,9 @@ class FirestoreService {
   /// Get all universities from Firestore
   Future<List<University>> getAllUniversities() async {
     try {
-      final snapshot = await universitiesCollection.get();
+      final snapshot = await universitiesCollection.get().timeout(
+        const Duration(seconds: 15),
+      );
       return snapshot.docs
           .map((doc) => University.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
@@ -169,7 +171,9 @@ class FirestoreService {
   /// Get unique cities from Firestore
   Future<List<String>> getUniqueCities() async {
     try {
-      final snapshot = await universitiesCollection.get();
+      final snapshot = await universitiesCollection.get().timeout(
+        const Duration(seconds: 15),
+      );
       final cities = snapshot.docs
           .map((doc) => (doc.data() as Map<String, dynamic>)['city'] as String)
           .toSet()
@@ -185,7 +189,9 @@ class FirestoreService {
   /// Get unique majors from Firestore
   Future<List<String>> getUniqueMajors() async {
     try {
-      final snapshot = await universitiesCollection.get();
+      final snapshot = await universitiesCollection.get().timeout(
+        const Duration(seconds: 15),
+      );
       final majors = <String>{};
 
       for (var doc in snapshot.docs) {

@@ -8,6 +8,7 @@ import '../utils/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../l10n/app_localizations.dart';
+import '../theme/app_colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -18,7 +19,8 @@ class EditProfileScreen extends StatefulWidget {
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _emailController;
@@ -32,11 +34,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _selectedCityDropdown;
   String? _selectedEducation;
   bool _isLoading = false;
+  bool _hasChanges = false;
+
+  late AnimationController _animController;
+  late Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _animController.forward();
   }
 
   void _initializeControllers() {
@@ -57,6 +70,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       text: widget.user.mathScore?.toString() ?? '',
     );
 
+    // Track changes
+    _nameController.addListener(_markChanged);
+    _ageController.addListener(_markChanged);
+    _cityController.addListener(_markChanged);
+    _untScoreController.addListener(_markChanged);
+    _ieltsScoreController.addListener(_markChanged);
+    _gpaController.addListener(_markChanged);
+    _mathScoreController.addListener(_markChanged);
+
     // Initialize Education
     if (widget.user.education != null &&
         AppConstants.educationOptions.contains(widget.user.education)) {
@@ -74,8 +96,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  void _markChanged() {
+    if (!_hasChanges) setState(() => _hasChanges = true);
+  }
+
+  /// How complete is the profile (0.0 – 1.0)
+  double get _completionProgress {
+    int filled = 0;
+    int total = 7; // name, age, education, city, unt, ielts/gpa, mathScore
+    if (_nameController.text.trim().isNotEmpty) filled++;
+    if (_ageController.text.isNotEmpty) filled++;
+    if (_selectedEducation != null) filled++;
+    if (_cityController.text.trim().isNotEmpty) filled++;
+    if (_untScoreController.text.trim().isNotEmpty) filled++;
+    if (_gpaController.text.trim().isNotEmpty ||
+        _ieltsScoreController.text.trim().isNotEmpty) {
+      filled++;
+    }
+    if (_mathScoreController.text.trim().isNotEmpty) filled++;
+    return filled / total;
+  }
+
   @override
   void dispose() {
+    _animController.dispose();
     _nameController.dispose();
     _emailController.dispose();
     _ageController.dispose();
@@ -106,13 +150,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (mounted) {
         if (success) {
+          _hasChanges = false;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                AppLocalizations.of(context)?.profileUpdated ??
-                    'Profile updated successfully',
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)?.profileUpdated ??
+                        'Профиль успешно обновлён',
+                  ),
+                ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: const Color(0xFF22C55E),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.all(16),
             ),
           );
           Navigator.pop(context);
@@ -132,38 +188,187 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 8),
+            Flexible(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+      ),
     );
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!_hasChanges) return true;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.amber.shade700,
+                size: 28,
+              ),
+              const SizedBox(width: 10),
+              const Flexible(
+                child: Text(
+                  'Несохранённые изменения',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'У вас есть несохранённые изменения. '
+            'Вы уверены, что хотите выйти?',
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.grey.shade700,
+              fontSize: 14,
+              height: 1.5,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              style: TextButton.styleFrom(
+                foregroundColor: isDark ? Colors.white70 : Colors.grey.shade600,
+              ),
+              child: const Text('Остаться'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red.shade400,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text('Выйти'),
+            ),
+          ],
+        );
+      },
+    );
+    return result ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            AppLocalizations.of(context)?.editProfileTitle ?? 'Edit Profile',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+
+    return PopScope(
+      canPop: !_hasChanges,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldPop = await _onWillPop();
+        if (shouldPop && context.mounted) {
+          Navigator.pop(context);
+        }
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          appBar: AppBar(
+            title: Text(
+              AppLocalizations.of(context)?.editProfileTitle ??
+                  'Редактировать профиль',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 18,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                ),
+              ),
+              onPressed: () async {
+                final shouldPop = await _onWillPop();
+                if (shouldPop && context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
           ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          physics: const BouncingScrollPhysics(),
-          child: Form(
-            key: _formKey,
+          body: FadeTransition(
+            opacity: _fadeAnim,
             child: Column(
               children: [
-                _buildAvatarSection(),
-                const SizedBox(height: 32),
-                _buildFormFields(),
-                const SizedBox(height: 40),
-                _buildSaveButton(),
+                // ═══ Scrollable content ═══
+                Expanded(
+                  child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    physics: const BouncingScrollPhysics(),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildAvatarSection(isDark),
+                          const SizedBox(height: 24),
+                          _buildCompletionBar(isDark),
+                          const SizedBox(height: 28),
+                          _buildSectionHeader(
+                            icon: Icons.person_outline,
+                            title: 'Личные данные',
+                            isDark: isDark,
+                          ),
+                          const SizedBox(height: 14),
+                          _buildPersonalFields(),
+                          const SizedBox(height: 28),
+                          _buildSectionHeader(
+                            icon: Icons.location_on_outlined,
+                            title:
+                                AppLocalizations.of(context)?.profileCity ??
+                                'Город',
+                            isDark: isDark,
+                          ),
+                          const SizedBox(height: 14),
+                          _buildCityFields(),
+                          const SizedBox(height: 28),
+                          _buildSectionHeader(
+                            icon: Icons.school_outlined,
+                            title: 'Академические баллы',
+                            isDark: isDark,
+                          ),
+                          const SizedBox(height: 14),
+                          _buildAcademicFields(),
+                          const SizedBox(height: 32),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // ═══ Fixed Save Button at the bottom ═══
+                _buildBottomSaveBar(isDark),
               ],
             ),
           ),
@@ -172,7 +377,165 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildAvatarSection() {
+  // ═══════════════════════════════════════════
+  // COMPLETION BAR
+  // ═══════════════════════════════════════════
+  Widget _buildCompletionBar(bool isDark) {
+    final progress = _completionProgress;
+    final percent = (progress * 100).round();
+    final Color barColor;
+    final String label;
+
+    if (percent < 40) {
+      barColor = Colors.red.shade400;
+      label = 'Заполните профиль для лучших рекомендаций';
+    } else if (percent < 80) {
+      barColor = Colors.amber.shade600;
+      label = 'Почти готово! Добавьте оставшиеся данные';
+    } else {
+      barColor = const Color(0xFF22C55E);
+      label = 'Отличная работа! Профиль заполнен';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.grey.shade100,
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    percent == 100
+                        ? Icons.check_circle_rounded
+                        : Icons.auto_graph_rounded,
+                    color: barColor,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Заполнение профиля',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: barColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '$percent%',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: barColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: progress),
+              duration: const Duration(milliseconds: 800),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, child) {
+                return LinearProgressIndicator(
+                  value: value,
+                  backgroundColor: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation(barColor),
+                  minHeight: 6,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.white38 : Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  // SECTION HEADER
+  // ═══════════════════════════════════════════
+  Widget _buildSectionHeader({
+    required IconData icon,
+    required String title,
+    required bool isDark,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary.withValues(alpha: 0.15),
+                AppColors.primary.withValues(alpha: 0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: AppColors.primary, size: 18),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white : AppColors.textPrimary,
+            letterSpacing: -0.2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  // AVATAR SECTION
+  // ═══════════════════════════════════════════
+  Widget _buildAvatarSection(bool isDark) {
     return ValueListenableBuilder<UserModel?>(
       valueListenable: AuthService().currentUser,
       builder: (context, user, child) {
@@ -181,88 +544,97 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             displayUser.photoUrl != null && displayUser.photoUrl!.isNotEmpty;
 
         return Center(
-          child: Stack(
+          child: Column(
             children: [
-              Container(
-                width: 130,
-                height: 130,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _isLoading
-                      ? Colors.grey.shade300
-                      : (hasPhoto ? Colors.transparent : Colors.blue.shade300),
-                  image: hasPhoto && !_isLoading
-                      ? DecorationImage(
-                          image: NetworkImage(displayUser.photoUrl!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
+              // Avatar with gradient ring
+              GestureDetector(
+                onTap: () => _showImagePicker(context),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        Color(0xFF60A5FA),
+                        Color(0xFF818CF8),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ],
-                ),
-                child: !hasPhoto && !_isLoading
-                    ? Center(
-                        child: Text(
-                          displayUser.name.isNotEmpty
-                              ? displayUser.name[0].toUpperCase()
-                              : '?',
-                          style: const TextStyle(
-                            fontSize: 48,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )
-                    : null,
-              ),
-              if (_isLoading)
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: Theme.of(context).primaryColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () => _showImagePicker(context),
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    width: 120,
+                    height: 120,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
                       shape: BoxShape.circle,
+                      color: isDark ? const Color(0xFF0F172A) : Colors.white,
                       border: Border.all(
-                        color: Theme.of(context).scaffoldBackgroundColor,
+                        color: isDark ? const Color(0xFF0F172A) : Colors.white,
                         width: 3,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      image: hasPhoto && !_isLoading
+                          ? DecorationImage(
+                              image: NetworkImage(displayUser.photoUrl!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                     ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: 22,
-                    ),
+                    child: _isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: AppColors.primary,
+                            ),
+                          )
+                        : !hasPhoto
+                        ? Center(
+                            child: Text(
+                              displayUser.name.isNotEmpty
+                                  ? displayUser.name[0].toUpperCase()
+                                  : '?',
+                              style: TextStyle(
+                                fontSize: 44,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? Colors.white
+                                    : AppColors.primary,
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // „Change photo" text
+              GestureDetector(
+                onTap: () => _showImagePicker(context),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.camera_alt_rounded,
+                      size: 16,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Изменить фото',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -272,10 +644,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildFormFields() {
+  // ═══════════════════════════════════════════
+  // PERSONAL FIELDS
+  // ═══════════════════════════════════════════
+  Widget _buildPersonalFields() {
     final l10n = AppLocalizations.of(context);
-
-    // Initial value for dropdowns
     final ageValue =
         _ageController.text.isNotEmpty &&
             AppConstants.ageOptions.contains(_ageController.text)
@@ -285,22 +658,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Column(
       children: [
         CustomTextField(
-          label: l10n?.authFullName ?? 'Full Name',
+          label: l10n?.authFullName ?? 'ФИО',
           controller: _nameController,
           icon: Icons.person_outline,
           textCapitalization: TextCapitalization.words,
           validator: (v) =>
-              v!.isEmpty ? (l10n?.validationName ?? 'Name is required') : null,
+              v!.isEmpty ? (l10n?.validationName ?? 'Введите имя') : null,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         CustomTextField(
           label: l10n?.authEmail ?? 'Email',
           controller: _emailController,
           icon: Icons.email_outlined,
           readOnly: true,
-          suffixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+          suffixIcon: Icon(
+            Icons.lock_outline,
+            color: Colors.grey.shade400,
+            size: 20,
+          ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         Row(
           children: [
             Expanded(
@@ -308,30 +685,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 value: ageValue,
                 items: AppConstants.ageOptions,
                 label: l10n?.profileAge ?? 'Возраст',
-                icon: Icons.calendar_today,
+                icon: Icons.calendar_today_outlined,
                 onChanged: (v) {
-                  if (v != null) setState(() => _ageController.text = v);
+                  if (v != null) {
+                    setState(() => _ageController.text = v);
+                    _markChanged();
+                  }
                 },
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomDropdown(
                 value: _selectedEducation,
                 items: AppConstants.educationOptions,
                 label: l10n?.profileEducation ?? 'Учёба',
-                icon: Icons.school,
-                onChanged: (v) => setState(() => _selectedEducation = v),
+                icon: Icons.school_outlined,
+                onChanged: (v) {
+                  setState(() => _selectedEducation = v);
+                  _markChanged();
+                },
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  // CITY FIELDS
+  // ═══════════════════════════════════════════
+  Widget _buildCityFields() {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      children: [
         CustomDropdown(
           value: _selectedCityDropdown,
           items: AppConstants.cities,
           label: l10n?.profileCity ?? 'Город',
-          icon: Icons.location_city,
+          icon: Icons.location_city_outlined,
           onChanged: (v) {
             setState(() {
               _selectedCityDropdown = v;
@@ -341,31 +735,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _cityController.clear();
               }
             });
+            _markChanged();
           },
         ),
         if (_selectedCityDropdown == 'Другой') ...[
           const SizedBox(height: 12),
           CustomTextField(
-            label: l10n?.profileCity ?? 'Введите название города',
+            label: 'Введите название города',
             controller: _cityController,
-            icon: Icons.location_city,
+            icon: Icons.edit_location_alt_outlined,
             textCapitalization: TextCapitalization.words,
             validator: (v) {
               if (v == null || v.trim().isEmpty) {
-                return l10n?.validationName ?? 'Введите город';
+                return 'Введите город';
               }
               return null;
             },
           ),
         ],
-        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  // ═══════════════════════════════════════════
+  // ACADEMIC FIELDS
+  // ═══════════════════════════════════════════
+  Widget _buildAcademicFields() {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      children: [
         Row(
           children: [
             Expanded(
               child: CustomTextField(
                 label: l10n?.profileUntScore ?? 'Баллы ЕНТ',
+                hintText: '0 – 140',
                 controller: _untScoreController,
-                icon: Icons.score,
+                icon: Icons.score_outlined,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -379,17 +786,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
                 label: l10n?.profileIeltsScore ?? 'IELTS',
+                hintText: '0.0 – 9.0',
                 controller: _ieltsScoreController,
-                icon: Icons.language,
+                icon: Icons.language_outlined,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,1}(\.\d{0,1})?'),
+                  ),
                 ],
                 validator: (v) {
                   if (v == null || v.isEmpty) return null;
@@ -401,19 +811,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
         Row(
           children: [
             Expanded(
               child: CustomTextField(
-                label: 'GPA (max 4.0)',
+                label: 'GPA',
+                hintText: '0.00 – 4.00',
                 controller: _gpaController,
-                icon: Icons.grade,
+                icon: Icons.star_outline_rounded,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,1}(\.\d{0,2})?'),
+                  ),
                 ],
                 validator: (v) {
                   if (v == null || v.isEmpty) return null;
@@ -423,12 +836,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
                 label: 'Мат. (проф)',
+                hintText: '0 – 50',
                 controller: _mathScoreController,
-                icon: Icons.calculate,
+                icon: Icons.calculate_outlined,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -448,50 +862,89 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _saveProfile,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+  // ═══════════════════════════════════════════
+  // BOTTOM SAVE BAR
+  // ═══════════════════════════════════════════
+  Widget _buildBottomSaveBar(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        border: Border(
+          top: BorderSide(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.grey.shade200,
           ),
-          elevation: 2,
-          shadowColor: Theme.of(context).primaryColor.withValues(alpha: 0.4),
         ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2.5,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -4),
                 ),
-              )
-            : Text(
-                AppLocalizations.of(context)?.saveChanges ?? 'Save Changes',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              ],
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        height: 54,
+        child: ElevatedButton(
+          onPressed: _isLoading ? null : _saveProfile,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            elevation: 0,
+          ),
+          child: _isLoading
+              ? const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2.5,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.save_rounded, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)?.saveChanges ??
+                          'Сохранить изменения',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+        ),
       ),
     );
   }
 
+  // ═══════════════════════════════════════════
+  // IMAGE PICKER
+  // ═══════════════════════════════════════════
   Future<void> _showImagePicker(BuildContext context) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -499,43 +952,88 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.15)
+                      : Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
+              const SizedBox(height: 20),
+              Text(
+                'Выберите источник',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: 16),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPickerOption(
+                      icon: Icons.photo_library_rounded,
+                      label: 'Галерея',
+                      color: const Color(0xFF3B82F6),
+                      isDark: isDark,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _handleImageSelection(ImageSource.gallery);
+                      },
+                    ),
                   ),
-                  child: const Icon(Icons.photo_library, color: Colors.blue),
-                ),
-                title: const Text('Галерея'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _handleImageSelection(ImageSource.gallery);
-                },
-              ),
-              ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.purple.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildPickerOption(
+                      icon: Icons.camera_alt_rounded,
+                      label: 'Камера',
+                      color: const Color(0xFF8B5CF6),
+                      isDark: isDark,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _handleImageSelection(ImageSource.camera);
+                      },
+                    ),
                   ),
-                  child: const Icon(Icons.camera_alt, color: Colors.purple),
-                ),
-                title: const Text('Камера'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _handleImageSelection(ImageSource.camera);
-                },
+                ],
               ),
+              const SizedBox(height: 8),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPickerOption({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: isDark ? 0.15 : 0.08),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isDark ? Colors.white : AppColors.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -568,9 +1066,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (success) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Фото успешно обновлено!'),
-                backgroundColor: Colors.green,
+              SnackBar(
+                content: const Row(
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text('Фото успешно обновлено!'),
+                  ],
+                ),
+                backgroundColor: const Color(0xFF22C55E),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.all(16),
               ),
             );
           }

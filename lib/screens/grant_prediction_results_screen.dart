@@ -10,7 +10,6 @@ import '../services/auth_service.dart';
 import '../services/ai_consultant_service.dart';
 import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
-import 'dart:ui';
 
 class GrantPredictionResultsScreen extends ConsumerWidget {
   final int entScore;
@@ -117,20 +116,22 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
         ),
         onPressed: () => Navigator.pop(context),
       ),
-      flexibleSpace: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: FlexibleSpaceBar(
-            title: Text(
-              l10n?.homeChanceEstimation ?? 'Результаты анализа',
-              style: TextStyle(
-                color: isDark ? Colors.white : AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.black.withValues(alpha: 0.4)
+              : Colors.white.withValues(alpha: 0.65),
+        ),
+        child: FlexibleSpaceBar(
+          title: Text(
+            l10n?.homeChanceEstimation ?? 'Результаты анализа',
+            style: TextStyle(
+              color: isDark ? Colors.white : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
-            centerTitle: true,
           ),
+          centerTitle: true,
         ),
       ),
     );

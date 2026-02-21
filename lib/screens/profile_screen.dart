@@ -37,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(AppLocalizations.of(context)?.profileTitle ?? 'Профиль'),
         elevation: 0,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,

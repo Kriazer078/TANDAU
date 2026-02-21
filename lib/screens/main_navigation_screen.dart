@@ -16,23 +16,38 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
+  // ⚡ Track which tabs have been visited for lazy loading
+  final Set<int> _visitedTabs = {0}; // Home is visited by default
+
   void setIndex(int index) {
     setState(() {
       _currentIndex = index;
+      _visitedTabs.add(index);
     });
   }
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    SearchScreen(),
-    AIConsultantScreen(),
-    ProfileScreen(),
-  ];
+  /// Build a tab only if it has been visited; otherwise show empty
+  Widget _buildTab(int index, Widget child) {
+    if (!_visitedTabs.contains(index)) {
+      return const SizedBox.shrink();
+    }
+    return Offstage(
+      offstage: _currentIndex != index,
+      child: TickerMode(enabled: _currentIndex == index, child: child),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: Stack(
+        children: [
+          _buildTab(0, const HomeScreen()),
+          _buildTab(1, const SearchScreen()),
+          _buildTab(2, const AIConsultantScreen()),
+          _buildTab(3, const ProfileScreen()),
+        ],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -55,6 +70,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
             setState(() {
               _currentIndex = index;
+              _visitedTabs.add(index);
             });
           },
           destinations: [

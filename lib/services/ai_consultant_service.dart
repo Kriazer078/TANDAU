@@ -131,16 +131,18 @@ $jsonInput
     Map<String, int>? subjectScores,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/ai/getAIStrategy'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'user_unt_score': untScore,
-          'specialty_id': specialtyId,
-          'university_id': universityId,
-          'user_subjects_scores': subjectScores ?? {},
-        }),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/ai/getAIStrategy'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'user_unt_score': untScore,
+              'specialty_id': specialtyId,
+              'university_id': universityId,
+              'user_subjects_scores': subjectScores ?? {},
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         return jsonDecode(utf8.decode(response.bodyBytes));
@@ -211,11 +213,13 @@ $jsonInput
         bodyData['history'] = history;
       }
 
-      final response = await http.post(
-        Uri.parse('$_baseUrl/chat'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(bodyData),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/chat'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(bodyData),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));

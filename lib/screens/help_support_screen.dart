@@ -1,8 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_colors.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
+
+  Future<void> _sendEmail(BuildContext context) async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'tandau.app.help@gmail.com',
+      query: encodeQueryParameters(<String, String>{
+        'subject': 'Поддержка TANDAU: [Вопрос]',
+      }),
+    );
+
+    try {
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Не удалось открыть почтовый клиент. Напишите нам на: tandau.app.help@gmail.com',
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Напишите нам на: tandau.app.help@gmail.com'),
+          ),
+        );
+      }
+    }
+  }
+
+  String encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map(
+          (MapEntry<String, String> e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
+        .join('&');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +61,10 @@ class HelpSupportScreen extends StatelessWidget {
               context,
               icon: Icons.chat_bubble_outline,
               title: 'Служба поддержки',
-              subtitle: 'Мы ответим в течение 24 часов',
+              subtitle:
+                  'Мы ответим в течение 24 часов\ntandau.app.help@gmail.com',
               buttonLabel: 'Написать нам',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Открытие чата поддержки...')),
-                );
-              },
+              onTap: () => _sendEmail(context),
             ),
             const SizedBox(height: 32),
             const Text(
