@@ -565,6 +565,29 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
   }
 
   Widget _buildContact(bool isDark) {
+    // Вытаскиваем телефон из описания (если мы его туда вшили с эмодзи 📞)
+    String phone = 'Не указан';
+    final RegExp phoneRegex = RegExp(r'📞 Байланыс: (.*)');
+    final match = phoneRegex.firstMatch(widget.university.description);
+    if (match != null && match.groupCount >= 1) {
+      phone = match.group(1)!.trim();
+    } else {
+      // Примерные номера для известных вузов (Астана/Алматы),
+      // пока они не будут добавлены в БД окончательно.
+      if (widget.university.id == '1') phone = '+7 (7172) 70 66 88'; // NU
+      if (widget.university.id == '2') phone = '+7 (7172) 64 57 10'; // AITU
+      if (widget.university.id == '3') phone = '+7 (7172) 70 95 00'; // ENU
+      if (widget.university.id == '4') phone = '+7 (727) 377 33 33'; // KazNU
+      if (widget.university.id == '5') phone = '+7 (727) 292 28 01'; // Satbayev
+      if (widget.university.id == '6') phone = '+7 (727) 291 57 68'; // KazNPU
+      if (widget.university.id == '7') phone = '+7 (727) 357 42 42'; // KBTU
+      if (widget.university.id == '8') phone = '+7 (727) 377 19 00'; // Narxoz
+    }
+
+    final website = widget.university.website.isNotEmpty
+        ? widget.university.website
+        : 'Сайт не указан';
+
     return _buildCard(
       isDark: isDark,
       child: Column(
@@ -579,20 +602,12 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1),
           ),
-          _buildContactRow(
-            Icons.language_rounded,
-            'Веб-сайт',
-            'www.${widget.university.id}.kz',
-          ),
+          _buildContactRow(Icons.language_rounded, 'Веб-сайт', website),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1),
           ),
-          _buildContactRow(
-            Icons.phone_rounded,
-            'Телефон',
-            '+7 (777) 000-00-00',
-          ),
+          _buildContactRow(Icons.phone_rounded, 'Телефон', phone),
         ],
       ),
     );

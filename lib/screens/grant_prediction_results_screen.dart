@@ -8,6 +8,7 @@ import '../providers/grant_predictor_provider.dart';
 import '../services/grant_chance_service.dart';
 import '../services/auth_service.dart';
 import '../services/ai_consultant_service.dart';
+import '../services/university_service.dart';
 import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
 
@@ -64,11 +65,53 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                       ),
                     );
                   }
+
+                  // 🔥 Сортировка университетов по шансам поступления (по убыванию)
+                  final chanceService = GrantChanceService();
+                  final user = AuthService().currentUser.value;
+
+                  final sortedUniversities = List<University>.from(
+                    universities,
+                  );
+                  sortedUniversities.sort((a, b) {
+                    final catA = a.majors.isNotEmpty
+                        ? chanceService.detectCategory(a.majors.first)
+                        : MajorCategory.other;
+                    final chanceA = chanceService.calculate(
+                      entScore: entScore,
+                      universityId: a.id,
+                      majorCategory: catA,
+                      gpa: user?.gpa,
+                      ieltsScore: user?.ieltsScore,
+                      achievements: user?.achievements ?? [],
+                      userCity: user?.city,
+                      universityCity: a.city,
+                    );
+
+                    final catB = b.majors.isNotEmpty
+                        ? chanceService.detectCategory(b.majors.first)
+                        : MajorCategory.other;
+                    final chanceB = chanceService.calculate(
+                      entScore: entScore,
+                      universityId: b.id,
+                      majorCategory: catB,
+                      gpa: user?.gpa,
+                      ieltsScore: user?.ieltsScore,
+                      achievements: user?.achievements ?? [],
+                      userCity: user?.city,
+                      universityCity: b.city,
+                    );
+
+                    return chanceB.chancePercent.compareTo(
+                      chanceA.chancePercent,
+                    );
+                  });
+
                   return SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        final uni = universities[index];
+                        final uni = sortedUniversities[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: _ResultUniCard(
@@ -77,7 +120,7 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                             untScore: entScore,
                           ),
                         );
-                      }, childCount: universities.length),
+                      }, childCount: sortedUniversities.length),
                     ),
                   );
                 },
@@ -226,10 +269,22 @@ class _ResultUniCardState extends State<_ResultUniCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final chanceService = GrantChanceService();
+    final user = AuthService().currentUser.value;
+
+    // 🔧 Правильно определяем категорию специальности из данных вуза
+    final MajorCategory category = widget.uni.majors.isNotEmpty
+        ? chanceService.detectCategory(widget.uni.majors.first)
+        : MajorCategory.other;
+
     final chanceResult = chanceService.calculate(
       entScore: widget.untScore,
       universityId: widget.uni.id,
-      majorCategory: MajorCategory.other,
+      majorCategory: category,
+      gpa: user?.gpa,
+      ieltsScore: user?.ieltsScore,
+      achievements: user?.achievements ?? [],
+      userCity: user?.city,
+      universityCity: widget.uni.city,
     );
 
     final chanceColor = chanceResult.chancePercent >= 70
@@ -406,27 +461,168 @@ class _ResultUniCardState extends State<_ResultUniCard> {
       final user = AuthService().currentUser.value;
       final aiService = AIConsultantService();
 
-      final strategyData = await aiService.getAIStrategy(
+      // Попытка получить стратегию от бэкенда
+      try {
+        final strategyData = await aiService.getAIStrategy(
+          universityId: widget.uni.id,
+          untScore: widget.untScore,
+          specialtyId: widget.uni.majors.isNotEmpty
+              ? widget.uni.majors.first
+              : 'unknown',
+          subjectScores: user?.mathScore != null
+              ? {'Математика': user!.mathScore!}
+              : null,
+        );
+
+        if (strategyData['description'] != null &&
+            strategyData['description'].toString().contains(
+              'сервис временно недоступен',
+            )) {
+          throw Exception('Backend returned explicit unavailable message');
+        }
+
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AIAgentScreen(
+                title:
+                    strategyData['title'] ??
+                    (l10n?.aiStrategyFallbackTitle ?? 'Стратегия поступления'),
+                description: strategyData['description'] ?? '',
+                alternativeOptions: strategyData['alternative_options'] ?? [],
+                targetUniversity: widget.uni,
+              ),
+            ),
+          );
+          return;
+        }
+      } catch (_) {
+        // Бэкенд недоступен → используем локальную стратегию
+        debugPrint('⚠️ Backend unavailable, using local strategy');
+      }
+
+      // ═══════════════════════════════════════════
+      // 🔄 ЛОКАЛЬНАЯ СТРАТЕГИЯ (без бэкенда)
+      // Использует верифицированные данные МОН РК 2025
+      // ═══════════════════════════════════════════
+      final chanceService = GrantChanceService();
+      final MajorCategory category = widget.uni.majors.isNotEmpty
+          ? chanceService.detectCategory(widget.uni.majors.first)
+          : MajorCategory.other;
+
+      final GrantChanceResult result = chanceService.calculate(
+        entScore: widget.untScore,
         universityId: widget.uni.id,
-        untScore: widget.untScore,
-        specialtyId: widget.uni.majors.isNotEmpty
-            ? widget.uni.majors.first
-            : 'unknown',
-        subjectScores: user?.mathScore != null
-            ? {'Математика': user!.mathScore!}
-            : null,
+        majorCategory: category,
+        gpa: user?.gpa,
+        ieltsScore: user?.ieltsScore,
+        achievements: user?.achievements ?? [],
+        userCity: user?.city,
+        universityCity: widget.uni.city,
       );
+
+      // Формируем описание стратегии из данных СВД
+      final StringBuffer strategy = StringBuffer();
+
+      strategy.writeln('## 📌 Анализ вашего профиля\n');
+      strategy.writeln('- **Ваш балл ЕНТ:** ${widget.untScore} из 140');
+      strategy.writeln(
+        '- **Пороговый балл:** ${result.entThreshold} (${category.displayName})',
+      );
+      strategy.writeln('- **Шанс на грант:** ${result.chancePercent}%');
+      strategy.writeln(
+        '- **Уровень риска:** ${result.riskLevel.emoji} ${result.riskLevel.displayName}',
+      );
+      if (user?.gpa != null) {
+        strategy.writeln('- **GPA:** ${user!.gpa}');
+      }
+      if (user?.ieltsScore != null) {
+        strategy.writeln('- **IELTS:** ${user!.ieltsScore}');
+      }
+
+      strategy.writeln(
+        '\n## 📊 Детальный анализ (данные МОН РК ${result.dataYear})\n',
+      );
+      for (final detail in result.details) {
+        strategy.writeln('- $detail');
+      }
+
+      strategy.writeln('\n## 🎯 Вердикт\n');
+      strategy.writeln('**${result.verdict}**');
+
+      if (result.recommendations.isNotEmpty) {
+        strategy.writeln('\n## 🚀 Рекомендации\n');
+        for (int i = 0; i < result.recommendations.length; i++) {
+          strategy.writeln('${i + 1}. ${result.recommendations[i]}');
+        }
+      }
+
+      // Добавляем информацию о университете
+      strategy.writeln('\n## 🏛️ О ${widget.uni.name}\n');
+      strategy.writeln('- **Город:** ${widget.uni.city}');
+      strategy.writeln('- **Стоимость:** ${widget.uni.tuitionRange}');
+      strategy.writeln(
+        '- **Общежитие:** ${widget.uni.hasDormitory ? "✅ Есть" : "❌ Нет"}',
+      );
+      strategy.writeln(
+        '- **Гранты:** ${widget.uni.hasGrants ? "✅ Доступны" : "❌ Не доступны"}',
+      );
+      if (widget.uni.studentCount > 0) {
+        strategy.writeln('- **Студенты:** ${widget.uni.studentCount}');
+      }
+      strategy.writeln(
+        '- **Специальности:** ${widget.uni.majors.take(5).join(", ")}',
+      );
+
+      // Генерируем альтернативные варианты из локальных данных
+      final List<Map<String, dynamic>> alternatives = [];
+      // Импортируем данные из sampleUniversities
+      final allUniversities = (await UniversityService().getAllUniversities())
+          .where((u) => u.id != widget.uni.id)
+          .toList();
+
+      for (final altUni in allUniversities) {
+        final altCategory = altUni.majors.isNotEmpty
+            ? chanceService.detectCategory(altUni.majors.first)
+            : MajorCategory.other;
+
+        final altResult = chanceService.calculate(
+          entScore: widget.untScore,
+          universityId: altUni.id,
+          majorCategory: altCategory,
+          gpa: user?.gpa,
+          ieltsScore: user?.ieltsScore,
+          achievements: user?.achievements ?? [],
+          userCity: user?.city,
+          universityCity: altUni.city,
+        );
+
+        if (altResult.chancePercent > result.chancePercent) {
+          alternatives.add({
+            'university_name': altUni.name,
+            'specialty_name': altUni.majors.isNotEmpty
+                ? altUni.majors.first
+                : 'Жалпы',
+            'probability': altResult.chancePercent,
+          });
+        }
+      }
+
+      // Сортируем по шансу (убывание) и берём топ-3
+      alternatives.sort(
+        (a, b) => (b['probability'] as int).compareTo(a['probability'] as int),
+      );
+      final topAlternatives = alternatives.take(3).toList();
 
       if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => AIAgentScreen(
-              title:
-                  strategyData['title'] ??
-                  (l10n?.aiStrategyFallbackTitle ?? 'Стратегия поступления'),
-              description: strategyData['description'] ?? '',
-              alternativeOptions: strategyData['alternative_options'] ?? [],
+              title: 'Стратегия: ${widget.uni.name}',
+              description: strategy.toString(),
+              alternativeOptions: topAlternatives,
               targetUniversity: widget.uni,
             ),
           ),

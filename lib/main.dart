@@ -14,6 +14,7 @@ import 'services/notification_service.dart';
 import 'services/ai_consultant_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'utils/firestore_upload_script.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,9 @@ void main() async {
   await AuthService().init();
   await NotificationService().init();
   AIConsultantService().init(); // Fire-and-forget warm-up
+
+  // 🔄 One-time upload of verified university data to Firestore
+  FirestoreUploadScript.uploadAllUniversities();
 
   // System UI overlay will be set dynamically per-screen via AnnotatedRegion
   SystemChrome.setSystemUIOverlayStyle(

@@ -48,17 +48,16 @@ class GrantChanceService {
   };
 
   /// Национальные вузы (повышенный порог = 65)
+  /// ID-шки соответствуют sampleUniversities в lib/data/universities.dart
   static const Set<String> nationalUniversities = {
-    'kaznu',
-    'enu',
-    'kbtu',
-    'satbayev',
-    'kaznmu',
-    'kaznau',
-    'kazgasa',
-    'nu', // Nazarbayev University (свой порог, но включён для полноты)
-    'aitu',
-    'iitu',
+    '1', // Назарбаев Университеті
+    '2', // Astana IT University
+    '3', // ЕНУ Гумилева
+    '4', // Әл-Фараби ҚазҰУ
+    '5', // Сатбаев Университеті
+    '6', // Абай ҚазҰПУ
+    '7', // KBTU
+    '11', // Әуезов университеті (региональный ирі ЖОО)
   };
 
   // ═══════════════════════════════════════════
@@ -91,9 +90,7 @@ class GrantChanceService {
     }
 
     final int threshold = _getThreshold(universityId, majorCategory);
-    final bool isNational = nationalUniversities.contains(
-      universityId.toLowerCase(),
-    );
+    final bool isNational = nationalUniversities.contains(universityId);
 
     final List<String> details = [];
     final List<String> recommendations = [];
@@ -297,9 +294,7 @@ class GrantChanceService {
 
   /// Определить порог с учётом категории и вуза
   int _getThreshold(String universityId, MajorCategory category) {
-    final bool isNational = nationalUniversities.contains(
-      universityId.toLowerCase(),
-    );
+    final bool isNational = nationalUniversities.contains(universityId);
 
     // Берём порог по категории специальности
     final int categoryThreshold =
@@ -322,7 +317,7 @@ class GrantChanceService {
     if (_matchesAny(lower, [
       'it',
       'информац',
-      'информатик', // ← добавлено: 'Информатика', 'Информатика и системы'
+      'информатик',
       'программ',
       'computer',
       'software',
@@ -330,6 +325,14 @@ class GrantChanceService {
       'digital',
       'data',
       'вычислит',
+      // 🇰🇿 Казахские ключевые слова
+      'компьютерлік',
+      'бағдарламалық',
+      'ақпараттық',
+      'жасанды интеллект',
+      'киберқауіпсіздік',
+      'smart',
+      'big data',
     ])) {
       return MajorCategory.it;
     }
@@ -343,6 +346,15 @@ class GrantChanceService {
       'электр',
       'нефт',
       'горн',
+      // 🇰🇿
+      'инженерия',
+      'тау-кен',
+      'мұнай',
+      'робототехника',
+      'сәулет',
+      'металлургия',
+      'құрылыс',
+      'көлік',
     ])) {
       return MajorCategory.engineering;
     }
@@ -355,6 +367,9 @@ class GrantChanceService {
       'бухгалтер',
       'аудит',
       'business',
+      // 🇰🇿
+      'қаржы',
+      'экономика',
     ])) {
       return MajorCategory.business;
     }
@@ -364,10 +379,23 @@ class GrantChanceService {
       'образован',
       'дошкольн',
       'воспит',
+      // 🇰🇿
+      'педагогика',
+      'филология',
+      'тарих',
+      'шет тілдер',
     ])) {
       return MajorCategory.pedagogy;
     }
-    if (_matchesAny(lower, ['юрид', 'прав', 'law', 'юриспруд'])) {
+    if (_matchesAny(lower, [
+      'юрид',
+      'прав',
+      'law',
+      'юриспруд',
+      // 🇰🇿
+      'заң',
+      'құқық',
+    ])) {
       return MajorCategory.law;
     }
     if (_matchesAny(lower, [
@@ -379,6 +407,11 @@ class GrantChanceService {
       'педиатр',
       'сестрин',
       'здравоохранен',
+      // 🇰🇿
+      'медицина',
+      'фармация',
+      'мейірбике',
+      'денсаулық',
     ])) {
       return MajorCategory.medicine;
     }
@@ -399,6 +432,8 @@ class GrantChanceService {
       'театр',
       'кино',
       'хореограф',
+      // 🇰🇿
+      'өнер',
     ])) {
       return MajorCategory.arts;
     }
@@ -409,6 +444,11 @@ class GrantChanceService {
       'биолог',
       'географ',
       'геолог',
+      // 🇰🇿
+      'математика',
+      'физика',
+      'биология',
+      'табиғат',
     ])) {
       return MajorCategory.sciences;
     }

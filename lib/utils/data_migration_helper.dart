@@ -9,22 +9,31 @@ class DataMigrationHelper {
   final FirestoreService _firestoreService = FirestoreService();
 
   /// Migrate all local university data to Firestore
-  /// This is a one-time operation that should be run when setting up Firestore
-  Future<bool> migrateUniversitiesToFirestore() async {
+  /// This will OVERWRITE existing data with fresh data from universities.dart
+  Future<bool> migrateUniversitiesToFirestore({
+    bool forceOverwrite = false,
+  }) async {
     try {
       debugPrint('Starting university data migration to Firestore...');
 
       // Check if universities already exist in Firestore
       final existingUniversities = await _firestoreService.getAllUniversities();
 
-      if (existingUniversities.isNotEmpty) {
+      if (existingUniversities.isNotEmpty && !forceOverwrite) {
         debugPrint(
-          'Universities already exist in Firestore (${existingUniversities.length} found)',
+          'Universities already exist in Firestore '
+          '(${existingUniversities.length} found)',
         );
-        debugPrint(
-          'Skipping migration. If you want to re-migrate, delete the collection first.',
-        );
+        debugPrint('Use forceOverwrite=true to replace existing data.');
         return true;
+      }
+
+      if (forceOverwrite && existingUniversities.isNotEmpty) {
+        debugPrint(
+          '⚠️ Force overwrite: clearing ${existingUniversities.length} '
+          'existing universities...',
+        );
+        await clearUniversitiesFromFirestore();
       }
 
       // Migrate universities
@@ -33,7 +42,10 @@ class DataMigrationHelper {
       );
 
       if (success) {
-        debugPrint('✅ Successfully migrated universities to Firestore');
+        debugPrint(
+          '✅ Successfully migrated ${sampleUniversities.length} '
+          'universities to Firestore',
+        );
         return true;
       } else {
         debugPrint('❌ Failed to migrate universities to Firestore');
@@ -54,7 +66,7 @@ class DataMigrationHelper {
       debugPrint('Total universities in Firestore: ${universities.length}');
 
       final cities = await _firestoreService.getUniqueCities();
-      debugPrint('Unique cities: ${cities.length}');
+      debugPrint('Unique cities: ${cities.length} — $cities');
 
       final majors = await _firestoreService.getUniqueMajors();
       debugPrint('Unique majors: ${majors.length}');

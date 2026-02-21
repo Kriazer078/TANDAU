@@ -89,7 +89,7 @@ service cloud.firestore {
     // 👤 ПОЛЬЗОВАТЕЛИ
     // ═══════════════════════════════════════
     match /users/{userId} {
-      allow read: if true;
+      allow read: if isOwner(userId) || isAdmin();
       // При создании нельзя сразу стать админом или снять бан
       allow create: if isOwner(userId)
                     && request.resource.data.get('role', 'user') == 'user'

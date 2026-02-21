@@ -17,8 +17,7 @@ void main(List<String> args) async {
   }
 
   final projectId = env['FIREBASE_PROJECT_ID'] ?? 'your-project-id';
-  final geminiKey =
-      env['GEMINI_API_KEY'] ?? 'AIzaSyBFZryqzAj8Uu_bnlsO16od7XKmSLLS-LM';
+  final geminiKey = env['GEMINI_API_KEY'] ?? '';
   final port = int.parse(env['PORT'] ?? '8080');
 
   // Initialize Services
