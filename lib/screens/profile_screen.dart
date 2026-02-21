@@ -271,12 +271,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.volunteer_activism_rounded,
-              title: 'Поддержать команду TANDAU',
+              title: 'Поддержать команду TANDAU ❤️',
               subtitle: 'Прямой перевод на Kaspi',
-              trailing: const Icon(
-                Icons.favorite,
+              trailing: Icon(
+                Icons.arrow_forward_ios,
                 size: 16,
-                color: Colors.redAccent,
+                color: Theme.of(
+                  context,
+                ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () => _showKaspiSupportDialog(context),
             ),

@@ -50,55 +50,17 @@ class AIConsultantService {
     bool isPro = false,
   }) async {
     try {
-      // 1. Определяем категорию специальности
-      final MajorCategory category = university.majors.isNotEmpty
-          ? GrantChanceService().detectCategory(university.majors.first)
-          : MajorCategory.other;
-
-      final user = AuthService().currentUser.value;
-
-      // 2. Рассчитать шансы через СВД (верифицированные данные 2025)
-      final GrantChanceResult svdResult = GrantChanceService().calculate(
-        entScore: profile.entScore,
+      // 1. Используем специализированный endpoint бэкенда для стратегии
+      final Map<String, dynamic> result = await getAIStrategy(
         universityId: university.id,
-        majorCategory: category,
-        gpa: profile.gpa,
-        ieltsScore: profile.ieltsScore,
-        achievements: profile.achievements,
-        mathScore: profile.mathScore,
-        userCity: user?.city,
-        universityCity: university.city,
+        untScore: profile.entScore ?? 0,
+        specialtyId: university.majors.isNotEmpty
+            ? university.majors.first
+            : 'Другое',
       );
 
-      // 3. Подготовить JSON для AI с результатами СВД
-      final Map<String, dynamic> inputData = {
-        "student": {
-          "gpa": profile.gpa,
-          "ielts": profile.ieltsScore,
-          "mathScore": profile.mathScore,
-          "entScore": profile.entScore,
-          "achievements": profile.achievements,
-        },
-        "university": {
-          "name": university.name,
-          "requiredScore": university.passingScore,
-          "majors": university.majors.take(5).toList(),
-        },
-        "svdResult": svdResult.toJson(),
-        "subscription": isPro ? "PRO" : "FREE",
-      };
-
-      final String jsonInput = jsonEncode(inputData);
-
-      final String strategyPrompt =
-          '''
-$_strategySystemInstruction
-
-Input data (JSON):
-$jsonInput
-''';
-
-      return await sendMessage(strategyPrompt, isInternalStrategyCall: true);
+      return result['description'] ??
+          'Извините, стратегия не была сформирована.';
     } catch (e) {
       if (e is OutOfTokensException) {
         rethrow;
@@ -262,36 +224,5 @@ $jsonInput
   }
 
   // --- SYSTEM INSTRUCTIONS ---
-
-  static const String _strategySystemInstruction = '''
-ТЫ — TANDAU AI AGENT, стратег по поступлению. Используй данные СВД (Системы Вычисления Шансов) — она работает на верифицированных данных МОН РК 2025:
-- Макс. ЕНТ: 140 баллов
-- Нац. вузы порог: 65, остальные: 50
-- Педагогика/Право: 75, Медицина: 70
-
-В JSON ты получишь svdResult с полями: chancePercent, riskLevel, verdict, details, recommendations.
-
-СТРУКТУРА ТВОЕГО ОТВЕТА:
-
-📌 Резюме ситуации:
-[Честный анализ профиля. Ссылайся на svdResult.chancePercent и entThreshold.]
-
-📊 Аналитика шансов (данные СВД 2025):
-- Шанс: [svdResult.chancePercent]%
-- Уровень риска: [svdResult.riskLevel]
-- Порог для этого направления: [svdResult.entThreshold] баллов
-
-❌ Критические точки:
-[Перечисли из svdResult.details только ❌ и ⚠️ пункты]
-
-🚀 План "Победа" (3-5 шагов):
-1. [Конкретное действие на основе svdResult.recommendations]
-2. [Совет по документам или квотам]
-3. [Стратегия выбора комбинации специальностей]
-
-💡 Альтернативный маршрут:
-[Если риск high/critical — предложи 2 вуза-дублера]
-
-Язык: Русский. Тон: Экспертный стратег. Будь объективен.
-''';
+  // (Removed unused strategy instructions as we moved logic to backend)
 }

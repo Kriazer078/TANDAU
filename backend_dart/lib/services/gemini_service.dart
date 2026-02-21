@@ -8,10 +8,10 @@ class GeminiService {
 
   // List of models available to current key (Prioritizing stable models)
   static const List<String> _endpoints = [
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent',
   ];
 
   GeminiService(this._apiKey);
