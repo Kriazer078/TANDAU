@@ -242,12 +242,12 @@ class UniversityController {
                 uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
           }
 
-          if (plan == 'free' && tokens <= 0) {
+          if (plan == 'free') {
             return Response.ok(
               jsonEncode({
-                'title': 'Лимит исчерпан',
+                'title': 'Доступно в PRO',
                 'description':
-                    '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные генерации стратегий на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить безлимитный доступ 🚀',
+                    '💎 **Функция требует подписки.**\n\nГенератор стратегии «Алгоритм 4-х вузов» доступен только в подписках **TANDAU+**. Обновите подписку для доступа к самым точным планам поступления 🚀',
                 'outOfTokens': true, // FLAG FOR FRONTEND
                 'alternative_options': [
                   {'name': 'Перейти на PRO', 'icon': 'workspace_premium'},
