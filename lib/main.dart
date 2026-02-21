@@ -14,7 +14,6 @@ import 'services/notification_service.dart';
 import 'services/ai_consultant_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'utils/firestore_upload_script.dart';
 import 'services/revenuecat_service.dart';
 
 void main() async {
@@ -29,11 +28,22 @@ void main() async {
   await LocaleManager().init();
   await AuthService().init();
   await NotificationService().init();
-  await RevenueCatService().init();
+  // RevenueCat: wrapped in try-catch to prevent crash from invalid/test API key
+  try {
+    await RevenueCatService().init().timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        debugPrint('⚠️ RevenueCat init timed out, skipping');
+      },
+    );
+  } catch (e) {
+    debugPrint('⚠️ RevenueCat init failed: $e');
+  }
   AIConsultantService().init(); // Fire-and-forget warm-up
 
-  // 🔄 One-time upload of verified university data to Firestore
-  FirestoreUploadScript.uploadAllUniversities();
+  // ⚠️ FirestoreUploadScript removed from startup — was causing
+  // Firestore contention on every launch, contributing to registration ANR.
+  // Run manually from admin panel when needed.
 
   // System UI overlay will be set dynamically per-screen via AnnotatedRegion
   SystemChrome.setSystemUIOverlayStyle(

@@ -18,19 +18,23 @@ class RevenueCatService {
     // RevenueCat не работает в Web (только iOS и Android)
     if (kIsWeb) return;
 
-    // Включаем подробные логи для дебага
-    await Purchases.setLogLevel(LogLevel.debug);
+    try {
+      // Включаем подробные логи для дебага
+      await Purchases.setLogLevel(LogLevel.debug);
 
-    PurchasesConfiguration? configuration;
+      PurchasesConfiguration? configuration;
 
-    if (Platform.isAndroid) {
-      configuration = PurchasesConfiguration(_googleApiKey);
-    } else if (Platform.isIOS && _appleApiKey.isNotEmpty) {
-      configuration = PurchasesConfiguration(_appleApiKey);
-    }
+      if (Platform.isAndroid) {
+        configuration = PurchasesConfiguration(_googleApiKey);
+      } else if (Platform.isIOS && _appleApiKey.isNotEmpty) {
+        configuration = PurchasesConfiguration(_appleApiKey);
+      }
 
-    if (configuration != null) {
-      await Purchases.configure(configuration);
+      if (configuration != null) {
+        await Purchases.configure(configuration);
+      }
+    } catch (e) {
+      debugPrint('⚠️ RevenueCat configure error: $e');
     }
   }
 

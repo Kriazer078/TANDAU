@@ -60,10 +60,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _passwordController.text, // 🛡️ Security: do not trim passwords
             )
             .timeout(
-              const Duration(seconds: 40),
+              const Duration(seconds: 20),
               onTimeout: () {
                 debugPrint('🔴 REGSCR: Таймаут вызова register!');
-                return 'Превышено время ожидания регистрации';
+                return 'Превышено время ожидания. Проверьте интернет.';
               },
             );
 

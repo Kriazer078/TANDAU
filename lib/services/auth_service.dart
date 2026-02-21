@@ -335,11 +335,11 @@ class AuthService {
       debugPrint('📝 AUTH: START Registration process');
 
       // 1. Create User in Firebase Auth
-      // ⏱️ Timeout prevents infinite hang on poor connectivity
+      // ⏱️ Reduced timeout from 30s→15s to prevent ANR
       final credential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .timeout(
-            const Duration(seconds: 30),
+            const Duration(seconds: 15),
             onTimeout: () =>
                 throw TimeoutException('Превышено время ожидания регистрации'),
           );
@@ -356,33 +356,32 @@ class AuthService {
         createdAt: DateTime.now(),
       );
 
-      // 3. Update Profile & Firestore in Parallel
-      final firestoreTask = _firestore
-          .collection('users')
-          .doc(uid)
-          .set(userModel.toMap())
-          .catchError((e) => debugPrint('⚠️ Firestore error: $e'));
-
-      final displayNameTask = credential.user!
-          .updateDisplayName(name)
-          .catchError((e) => debugPrint('⚠️ Display name error: $e'));
-
-      try {
-        await Future.wait([
-          firestoreTask,
-          displayNameTask,
-        ]).timeout(const Duration(seconds: 10));
-        debugPrint('✅ AUTH: Profile data saved');
-      } catch (e) {
-        debugPrint('⚠️ Profile setup partially failed or timed out: $e');
-      }
-
-      // 4. Set local state
+      // 3. Set local state FIRST — so UI can navigate immediately
       currentUser.value = userModel;
-      isLoggedIn.value =
-          true; // 🔑 Fix: mark as logged in so UI updates properly
+      isLoggedIn.value = true;
+      debugPrint('✅ AUTH: Local state set, UI can navigate now');
 
-      // Save FCM Token (fire & forget with timeout so it never blocks)
+      // 4. Update Profile & Firestore in parallel (non-blocking with short timeout)
+      // These run in background — even if they fail, user is logged in
+      () async {
+        try {
+          await Future.wait([
+            _firestore
+                .collection('users')
+                .doc(uid)
+                .set(userModel.toMap())
+                .catchError((e) => debugPrint('⚠️ Firestore error: $e')),
+            credential.user!
+                .updateDisplayName(name)
+                .catchError((e) => debugPrint('⚠️ Display name error: $e')),
+          ]).timeout(const Duration(seconds: 8));
+          debugPrint('✅ AUTH: Profile data saved');
+        } catch (e) {
+          debugPrint('⚠️ Profile setup partially failed or timed out: $e');
+        }
+      }();
+
+      // 5. Save FCM Token (fire & forget)
       () async {
         try {
           final token = await NotificationService().getToken().timeout(
@@ -406,7 +405,11 @@ class AuthService {
       debugPrint('❌ AUTH: Критическая ошибка: $e');
       return 'Произошла ошибка. Попробуйте позже';
     } finally {
-      _isRegistering = false;
+      // Keep _isRegistering = true briefly to prevent authStateChanges
+      // from re-triggering _loadUserData (which causes duplicate Firestore reads)
+      Future.delayed(const Duration(seconds: 2), () {
+        _isRegistering = false;
+      });
     }
   }
 
