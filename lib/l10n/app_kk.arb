@@ -324,5 +324,64 @@
     "adminPanelTitle": "Админ панелі",
     "adminPanelSubtitle": "Пуш пен деректерді басқару",
     "authGuestMessage": "Барлық функцияларға қол жеткізу үшін есептік жазбаңызға кіріңіз",
-    "authTermsSuffix": " келісемін"
+    "authTermsSuffix": " келісемін",
+
+    "homeGreetingNight": "Қайырлы түн",
+    "homeEntScore": "Сіздің ҰБТ балыңыз:",
+
+    "promoCodeTitle": "Промокод енгізу",
+    "promoCodeSubtitle": "PRO немесе Premium жазылымды белсендіру",
+    "promoCodeActivation": "Промокод белсендіру",
+    "promoCodeHint": "Жазылымды белсендіру үшін промокодты енгізіңіз:",
+    "promoCodeActivate": "Белсендіру",
+    "promoCodeSuccess": "Промокод сәтті белсендірілді!",
+
+    "supportTitle": "TANDAU командасын қолдау ❤️",
+    "supportSubtitle": "Kaspi арқылы тікелей аударым",
+    "supportProject": "Жобаны қолдау",
+    "supportDescription": "Кез келген қолдауға ризамыз! Барлық қаржы AI серверлерін төлеуге және TANDAU-ды дамытуға жұмсалады.",
+    "supportOpenKaspi": "Kaspi қосымшасын ашу",
+    "supportNumberCopied": "Нөмір буферге көшірілді",
+
+    "aiTokensRemaining": "Қалған AI-сұраулар: {count}",
+    "@aiTokensRemaining": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+
+    "detailAboutUniversity": "Университет туралы",
+    "detailPassingScoreTitle": "Өту балы",
+    "detailPoints": "балл",
+    "detailBasedOnLastYear": "Өткен жылғы деректер негізінде",
+    "detailAdmissionRequirements": "Түсу үшін не қажет",
+    "detailApplicationDeadline": "Өтінім беру мерзімі",
+    "detailPhoneNotProvided": "Көрсетілмеген",
+    "detailWebsiteNotProvided": "Сайт көрсетілмеген",
+    "detailAddressLabel": "Мекенжай",
+    "detailWebsiteLabel": "Веб-сайт",
+    "detailPhoneLabelFull": "Телефон",
+    "detailLeaveReviewBtn": "Пікір қалдыру",
+    "detailNoReviewsYet": "Әзірге пікірлер жоқ",
+    "detailBeFirstReviewer": "Бірінші болып пікір қалдырыңыз!",
+    "detailReviewsCount": "{count} пікір",
+    "@detailReviewsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "detailJustNow": "жаңа ғана",
+    "reviewEditedLabel": "өзгертілген",
+    "reviewAuthRequiredMsg": "Бағалау үшін жүйеге кіріңіз",
+    "reviewHelpfulLabel": "Пайдалы",
+    "reviewOfficialReplyLabel": "Ресми жауап",
+
+    "majorBusiness": "Бизнес",
+    "majorLaw": "Заң",
+
+    "commonOr": "Немесе"
 }

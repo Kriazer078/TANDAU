@@ -1587,6 +1587,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **''**
   String get authTermsSuffix;
+
+  /// No description provided for @homeGreetingNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Night'**
+  String get homeGreetingNight;
+
+  /// No description provided for @homeEntScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your UNT Score:'**
+  String get homeEntScore;
+
+  /// No description provided for @promoCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Promo Code'**
+  String get promoCodeTitle;
+
+  /// No description provided for @promoCodeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate PRO or Premium subscription'**
+  String get promoCodeSubtitle;
+
+  /// No description provided for @promoCodeActivation.
+  ///
+  /// In en, this message translates to:
+  /// **'Promo Code Activation'**
+  String get promoCodeActivation;
+
+  /// No description provided for @promoCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter promo code to activate subscription:'**
+  String get promoCodeHint;
+
+  /// No description provided for @promoCodeActivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get promoCodeActivate;
+
+  /// No description provided for @promoCodeSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Promo code successfully activated!'**
+  String get promoCodeSuccess;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support TANDAU Team ❤️'**
+  String get supportTitle;
+
+  /// No description provided for @supportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct transfer via Kaspi'**
+  String get supportSubtitle;
+
+  /// No description provided for @supportProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Support the project'**
+  String get supportProject;
+
+  /// No description provided for @supportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We appreciate any support! All funds go to AI server costs and TANDAU development.'**
+  String get supportDescription;
+
+  /// No description provided for @supportOpenKaspi.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Kaspi app'**
+  String get supportOpenKaspi;
+
+  /// No description provided for @supportNumberCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Number copied to clipboard'**
+  String get supportNumberCopied;
+
+  /// No description provided for @aiTokensRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'AI requests left: {count}'**
+  String aiTokensRemaining(int count);
+
+  /// No description provided for @detailAboutUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'About University'**
+  String get detailAboutUniversity;
+
+  /// No description provided for @detailPassingScoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Passing Score'**
+  String get detailPassingScoreTitle;
+
+  /// No description provided for @detailPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'points'**
+  String get detailPoints;
+
+  /// No description provided for @detailBasedOnLastYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on last year\'s data'**
+  String get detailBasedOnLastYear;
+
+  /// No description provided for @detailAdmissionRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Admission Requirements'**
+  String get detailAdmissionRequirements;
+
+  /// No description provided for @detailApplicationDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Deadline'**
+  String get detailApplicationDeadline;
+
+  /// No description provided for @detailPhoneNotProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'Not provided'**
+  String get detailPhoneNotProvided;
+
+  /// No description provided for @detailWebsiteNotProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'Website not provided'**
+  String get detailWebsiteNotProvided;
+
+  /// No description provided for @detailAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get detailAddressLabel;
+
+  /// No description provided for @detailWebsiteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get detailWebsiteLabel;
+
+  /// No description provided for @detailPhoneLabelFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get detailPhoneLabelFull;
+
+  /// No description provided for @detailLeaveReviewBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a Review'**
+  String get detailLeaveReviewBtn;
+
+  /// No description provided for @detailNoReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get detailNoReviewsYet;
+
+  /// No description provided for @detailBeFirstReviewer.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to leave a review!'**
+  String get detailBeFirstReviewer;
+
+  /// No description provided for @detailReviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String detailReviewsCount(int count);
+
+  /// No description provided for @detailJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get detailJustNow;
+
+  /// No description provided for @reviewEditedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'edited'**
+  String get reviewEditedLabel;
+
+  /// No description provided for @reviewAuthRequiredMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate to rate'**
+  String get reviewAuthRequiredMsg;
+
+  /// No description provided for @reviewHelpfulLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Helpful'**
+  String get reviewHelpfulLabel;
+
+  /// No description provided for @reviewOfficialReplyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Official Reply'**
+  String get reviewOfficialReplyLabel;
+
+  /// No description provided for @majorBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get majorBusiness;
+
+  /// No description provided for @majorLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Law'**
+  String get majorLaw;
+
+  /// No description provided for @commonOr.
+  ///
+  /// In en, this message translates to:
+  /// **'Or'**
+  String get commonOr;
 }
 
 class _AppLocalizationsDelegate

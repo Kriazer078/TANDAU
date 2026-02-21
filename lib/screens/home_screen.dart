@@ -237,7 +237,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         } else if (hour >= 17 && hour < 23) {
           greeting = l10n?.homeGreetingEvening ?? 'Добрый вечер';
         } else {
-          greeting = 'Доброй ночи';
+          greeting = l10n?.homeGreetingNight ?? 'Доброй ночи';
         }
 
         return Column(
@@ -273,16 +273,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.white.withValues(alpha: 0.8),
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.1)
-                  : Colors.white,
+                  : AppColors.border,
               width: 1,
             ),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Ваш балл ЕНТ:',
+                    l10n?.homeEntScore ?? 'Ваш балл ЕНТ:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -304,15 +311,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     height: 50,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E40AF).withValues(alpha: 0.4),
+                      color: isDark
+                          ? const Color(0xFF1E40AF).withValues(alpha: 0.4)
+                          : AppColors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
                       '$untScore',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF60A5FA),
+                        color: isDark
+                            ? const Color(0xFF60A5FA)
+                            : AppColors.primary,
                       ),
                     ),
                   ),

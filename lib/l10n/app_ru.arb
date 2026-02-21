@@ -323,5 +323,64 @@
     "adminPanelTitle": "Админ панель",
     "adminPanelSubtitle": "Управление пушем и данными",
     "authGuestMessage": "Войдите в аккаунт, чтобы получить доступ ко всем функциям",
-    "authTermsSuffix": ""
+    "authTermsSuffix": "",
+
+    "homeGreetingNight": "Доброй ночи",
+    "homeEntScore": "Ваш балл ЕНТ:",
+
+    "promoCodeTitle": "Ввести промокод",
+    "promoCodeSubtitle": "Активировать PRO или Premium подписку",
+    "promoCodeActivation": "Активация промокода",
+    "promoCodeHint": "Введите промокод для активации подписки:",
+    "promoCodeActivate": "Активировать",
+    "promoCodeSuccess": "Промокод успешно активирован!",
+
+    "supportTitle": "Поддержать команду TANDAU ❤️",
+    "supportSubtitle": "Прямой перевод на Kaspi",
+    "supportProject": "Поддержать проект",
+    "supportDescription": "Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.",
+    "supportOpenKaspi": "Открыть приложение Kaspi",
+    "supportNumberCopied": "Номер скопирован в буфер обмена",
+
+    "aiTokensRemaining": "Осталось ИИ-запросов: {count}",
+    "@aiTokensRemaining": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+
+    "detailAboutUniversity": "Об университете",
+    "detailPassingScoreTitle": "Проходной балл",
+    "detailPoints": "баллов",
+    "detailBasedOnLastYear": "На основе данных прошлого года",
+    "detailAdmissionRequirements": "Что нужно для поступления",
+    "detailApplicationDeadline": "Крайний срок подачи",
+    "detailPhoneNotProvided": "Не указан",
+    "detailWebsiteNotProvided": "Сайт не указан",
+    "detailAddressLabel": "Адрес",
+    "detailWebsiteLabel": "Веб-сайт",
+    "detailPhoneLabelFull": "Телефон",
+    "detailLeaveReviewBtn": "Оставить отзыв",
+    "detailNoReviewsYet": "Пока нет отзывов",
+    "detailBeFirstReviewer": "Будьте первым, кто оставит отзыв!",
+    "detailReviewsCount": "{count} отзывов",
+    "@detailReviewsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "detailJustNow": "только что",
+    "reviewEditedLabel": "изменено",
+    "reviewAuthRequiredMsg": "Аутентифицируйтесь для оценки",
+    "reviewHelpfulLabel": "Полезно",
+    "reviewOfficialReplyLabel": "Официальный ответ",
+
+    "majorBusiness": "Бизнес",
+    "majorLaw": "Право",
+
+    "commonOr": "Или"
 }

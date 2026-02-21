@@ -342,5 +342,64 @@
     "adminPanelTitle": "Admin Panel",
     "adminPanelSubtitle": "Manage push and data",
     "authGuestMessage": "Log in to your account to access all features",
-    "authTermsSuffix": ""
+    "authTermsSuffix": "",
+
+    "homeGreetingNight": "Good Night",
+    "homeEntScore": "Your UNT Score:",
+
+    "promoCodeTitle": "Enter Promo Code",
+    "promoCodeSubtitle": "Activate PRO or Premium subscription",
+    "promoCodeActivation": "Promo Code Activation",
+    "promoCodeHint": "Enter promo code to activate subscription:",
+    "promoCodeActivate": "Activate",
+    "promoCodeSuccess": "Promo code successfully activated!",
+
+    "supportTitle": "Support TANDAU Team ❤️",
+    "supportSubtitle": "Direct transfer via Kaspi",
+    "supportProject": "Support the project",
+    "supportDescription": "We appreciate any support! All funds go to AI server costs and TANDAU development.",
+    "supportOpenKaspi": "Open Kaspi app",
+    "supportNumberCopied": "Number copied to clipboard",
+
+    "aiTokensRemaining": "AI requests left: {count}",
+    "@aiTokensRemaining": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+
+    "detailAboutUniversity": "About University",
+    "detailPassingScoreTitle": "Passing Score",
+    "detailPoints": "points",
+    "detailBasedOnLastYear": "Based on last year's data",
+    "detailAdmissionRequirements": "Admission Requirements",
+    "detailApplicationDeadline": "Application Deadline",
+    "detailPhoneNotProvided": "Not provided",
+    "detailWebsiteNotProvided": "Website not provided",
+    "detailAddressLabel": "Address",
+    "detailWebsiteLabel": "Website",
+    "detailPhoneLabelFull": "Phone",
+    "detailLeaveReviewBtn": "Leave a Review",
+    "detailNoReviewsYet": "No reviews yet",
+    "detailBeFirstReviewer": "Be the first to leave a review!",
+    "detailReviewsCount": "{count} reviews",
+    "@detailReviewsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "detailJustNow": "just now",
+    "reviewEditedLabel": "edited",
+    "reviewAuthRequiredMsg": "Please authenticate to rate",
+    "reviewHelpfulLabel": "Helpful",
+    "reviewOfficialReplyLabel": "Official Reply",
+
+    "majorBusiness": "Business",
+    "majorLaw": "Law",
+
+    "commonOr": "Or"
 }

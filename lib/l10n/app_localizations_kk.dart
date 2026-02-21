@@ -788,4 +788,123 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get authTermsSuffix => ' келісемін';
+
+  @override
+  String get homeGreetingNight => 'Қайырлы түн';
+
+  @override
+  String get homeEntScore => 'Сіздің ҰБТ балыңыз:';
+
+  @override
+  String get promoCodeTitle => 'Промокод енгізу';
+
+  @override
+  String get promoCodeSubtitle => 'PRO немесе Premium жазылымды белсендіру';
+
+  @override
+  String get promoCodeActivation => 'Промокод белсендіру';
+
+  @override
+  String get promoCodeHint => 'Жазылымды белсендіру үшін промокодты енгізіңіз:';
+
+  @override
+  String get promoCodeActivate => 'Белсендіру';
+
+  @override
+  String get promoCodeSuccess => 'Промокод сәтті белсендірілді!';
+
+  @override
+  String get supportTitle => 'TANDAU командасын қолдау ❤️';
+
+  @override
+  String get supportSubtitle => 'Kaspi арқылы тікелей аударым';
+
+  @override
+  String get supportProject => 'Жобаны қолдау';
+
+  @override
+  String get supportDescription =>
+      'Кез келген қолдауға ризамыз! Барлық қаржы AI серверлерін төлеуге және TANDAU-ды дамытуға жұмсалады.';
+
+  @override
+  String get supportOpenKaspi => 'Kaspi қосымшасын ашу';
+
+  @override
+  String get supportNumberCopied => 'Нөмір буферге көшірілді';
+
+  @override
+  String aiTokensRemaining(int count) {
+    return 'Қалған AI-сұраулар: $count';
+  }
+
+  @override
+  String get detailAboutUniversity => 'Университет туралы';
+
+  @override
+  String get detailPassingScoreTitle => 'Өту балы';
+
+  @override
+  String get detailPoints => 'балл';
+
+  @override
+  String get detailBasedOnLastYear => 'Өткен жылғы деректер негізінде';
+
+  @override
+  String get detailAdmissionRequirements => 'Түсу үшін не қажет';
+
+  @override
+  String get detailApplicationDeadline => 'Өтінім беру мерзімі';
+
+  @override
+  String get detailPhoneNotProvided => 'Көрсетілмеген';
+
+  @override
+  String get detailWebsiteNotProvided => 'Сайт көрсетілмеген';
+
+  @override
+  String get detailAddressLabel => 'Мекенжай';
+
+  @override
+  String get detailWebsiteLabel => 'Веб-сайт';
+
+  @override
+  String get detailPhoneLabelFull => 'Телефон';
+
+  @override
+  String get detailLeaveReviewBtn => 'Пікір қалдыру';
+
+  @override
+  String get detailNoReviewsYet => 'Әзірге пікірлер жоқ';
+
+  @override
+  String get detailBeFirstReviewer => 'Бірінші болып пікір қалдырыңыз!';
+
+  @override
+  String detailReviewsCount(int count) {
+    return '$count пікір';
+  }
+
+  @override
+  String get detailJustNow => 'жаңа ғана';
+
+  @override
+  String get reviewEditedLabel => 'өзгертілген';
+
+  @override
+  String get reviewAuthRequiredMsg => 'Бағалау үшін жүйеге кіріңіз';
+
+  @override
+  String get reviewHelpfulLabel => 'Пайдалы';
+
+  @override
+  String get reviewOfficialReplyLabel => 'Ресми жауап';
+
+  @override
+  String get majorBusiness => 'Бизнес';
+
+  @override
+  String get majorLaw => 'Заң';
+
+  @override
+  String get commonOr => 'Немесе';
 }

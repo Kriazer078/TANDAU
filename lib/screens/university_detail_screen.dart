@@ -338,12 +338,15 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.info_outline_rounded, color: AppColors.primary),
-                SizedBox(width: 8),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 8),
                 Text(
-                  'О университете',
+                  l10n?.detailAboutUniversity ?? 'About University',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ],
@@ -420,8 +423,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             isDark: isDark,
             child: Column(
               children: [
-                const Text(
-                  'Проходной балл',
+                Text(
+                  l10n?.detailPassingScoreTitle ?? 'Passing Score',
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColors.textSecondary,
@@ -444,7 +447,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'баллов',
+                      l10n?.detailPoints ?? 'points',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -456,8 +459,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'На основе данных прошлого года',
+                Text(
+                  l10n?.detailBasedOnLastYear ?? 'Based on last year\'s data',
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -482,7 +485,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Что нужно для поступления',
+                          l10n?.detailAdmissionRequirements ??
+                              'Admission Requirements',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -538,8 +542,9 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Крайний срок подачи',
+                      Text(
+                        l10n?.detailApplicationDeadline ??
+                            'Application Deadline',
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
@@ -566,7 +571,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
 
   Widget _buildContact(bool isDark) {
     // Вытаскиваем телефон из описания (если мы его туда вшили с эмодзи 📞)
-    String phone = 'Не указан';
+    String phone = l10n?.detailPhoneNotProvided ?? 'Not provided';
     final RegExp phoneRegex = RegExp(r'📞 Байланыс: (.*)');
     final match = phoneRegex.firstMatch(widget.university.description);
     if (match != null && match.groupCount >= 1) {
@@ -586,7 +591,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
 
     final website = widget.university.website.isNotEmpty
         ? widget.university.website
-        : 'Сайт не указан';
+        : l10n?.detailWebsiteNotProvided ?? 'Website not provided';
 
     return _buildCard(
       isDark: isDark,
@@ -595,19 +600,27 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
         children: [
           _buildContactRow(
             Icons.location_on_rounded,
-            'Адрес',
+            l10n?.detailAddressLabel ?? 'Address',
             widget.university.address,
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1),
           ),
-          _buildContactRow(Icons.language_rounded, 'Веб-сайт', website),
+          _buildContactRow(
+            Icons.language_rounded,
+            l10n?.detailWebsiteLabel ?? 'Website',
+            website,
+          ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1),
           ),
-          _buildContactRow(Icons.phone_rounded, 'Телефон', phone),
+          _buildContactRow(
+            Icons.phone_rounded,
+            l10n?.detailPhoneLabelFull ?? 'Phone',
+            phone,
+          ),
         ],
       ),
     );
@@ -683,8 +696,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                 size: 20,
                 color: Colors.white,
               ),
-              label: const Text(
-                'Оставить отзыв',
+              label: Text(
+                l10n?.detailLeaveReviewBtn ?? 'Leave a Review',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -758,7 +771,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             ),
             const SizedBox(height: 20),
             Text(
-              'Пока нет отзывов',
+              l10n?.detailNoReviewsYet ?? 'No reviews yet',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -767,7 +780,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'Будьте первым, кто оставит отзыв!',
+              l10n?.detailBeFirstReviewer ?? 'Be the first to leave a review!',
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.white38 : AppColors.textSecondary,
@@ -841,7 +854,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$total отзывов',
+                  l10n?.detailReviewsCount(total) ?? '$total reviews',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.white38 : AppColors.textSecondary,
@@ -1023,7 +1036,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'изменено',
+                  l10n?.reviewEditedLabel ?? 'edited',
                   style: TextStyle(
                     fontSize: 11,
                     fontStyle: FontStyle.italic,
@@ -1079,8 +1092,11 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                 onTap: () async {
                   if (currentUserId == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Аутентифицируйтесь для оценки'),
+                      SnackBar(
+                        content: Text(
+                          l10n?.reviewAuthRequiredMsg ??
+                              'Please authenticate to rate',
+                        ),
                       ),
                     );
                     return;

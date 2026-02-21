@@ -176,8 +176,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.card_giftcard,
-              title: 'Ввести промокод',
-              subtitle: 'Активировать PRO или Premium подписку',
+              title:
+                  AppLocalizations.of(context)?.promoCodeTitle ??
+                  'Ввести промокод',
+              subtitle:
+                  AppLocalizations.of(context)?.promoCodeSubtitle ??
+                  'Активировать PRO или Premium подписку',
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
@@ -271,8 +275,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.volunteer_activism_rounded,
-              title: 'Поддержать команду TANDAU ❤️',
-              subtitle: 'Прямой перевод на Kaspi',
+              title:
+                  AppLocalizations.of(context)?.supportTitle ??
+                  'Поддержать команду TANDAU ❤️',
+              subtitle:
+                  AppLocalizations.of(context)?.supportSubtitle ??
+                  'Прямой перевод на Kaspi',
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
@@ -527,14 +535,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Поддержать проект',
+                AppLocalizations.of(context)?.supportProject ??
+                    'Поддержать проект',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
-                'Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.',
+                AppLocalizations.of(context)?.supportDescription ??
+                    'Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(
@@ -595,8 +605,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const ClipboardData(text: kaspiNumber),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Номер скопирован в буфер обмена'),
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(
+                                    context,
+                                  )?.supportNumberCopied ??
+                                  'Номер скопирован в буфер обмена',
+                            ),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -630,9 +645,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }
                   },
-                  child: const Text(
-                    'Открыть приложение Kaspi',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)?.supportOpenKaspi ??
+                        'Открыть приложение Kaspi',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -654,11 +673,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Активация промокода'),
+              title: Text(
+                AppLocalizations.of(context)?.promoCodeActivation ??
+                    'Активация промокода',
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Введите промокод для активации подписки:'),
+                  Text(
+                    AppLocalizations.of(context)?.promoCodeHint ??
+                        'Введите промокод для активации подписки:',
+                  ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: promoController,
@@ -695,9 +720,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             if (error == null) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'Промокод успешно активирован!',
+                                    AppLocalizations.of(
+                                          context,
+                                        )?.promoCodeSuccess ??
+                                        'Промокод успешно активирован!',
                                   ),
                                   backgroundColor: Colors.green,
                                 ),
@@ -712,7 +740,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }
                           }
                         },
-                  child: const Text('Активировать'),
+                  child: Text(
+                    AppLocalizations.of(context)?.promoCodeActivate ??
+                        'Активировать',
+                  ),
                 ),
               ],
             );
@@ -892,7 +923,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Осталось ИИ-запросов: ${user.aiTokensRemaining}',
+                    AppLocalizations.of(
+                          context,
+                        )?.aiTokensRemaining(user.aiTokensRemaining) ??
+                        'Осталось ИИ-запросов: ${user.aiTokensRemaining}',
                     style: TextStyle(
                       color: isPro
                           ? Colors.white70

@@ -34,6 +34,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _register() async {
+    // 🛡️ Отключаем клавиатуру перед валидацией и запросом
+    FocusScope.of(context).unfocus();
+
     if (!_termsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -46,9 +49,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
+
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       debugPrint('🔵 REGSCR: Начало процесса регистрации...');
+
+      // ✅ Даем время UI отрисовать индикатор загрузки (CircularProgressIndicator)
+      // И гарантированно завершить анимацию скрытия клавиатуры до тяжелого запроса Firebase.
+      // Это предотвращает ANR (Application Not Responding) и зависание главного потока.
+      await Future.delayed(const Duration(milliseconds: 150));
+
       String? registerError;
       try {
         debugPrint('🔵 REGSCR: Вызов AuthService().register...');
@@ -190,7 +200,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               'Введите Email';
                         }
                         if (!RegExp(
-                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
                         ).hasMatch(v)) {
                           return AppLocalizations.of(
                                 context,

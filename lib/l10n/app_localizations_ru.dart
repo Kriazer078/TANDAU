@@ -792,4 +792,123 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get authTermsSuffix => '';
+
+  @override
+  String get homeGreetingNight => 'Доброй ночи';
+
+  @override
+  String get homeEntScore => 'Ваш балл ЕНТ:';
+
+  @override
+  String get promoCodeTitle => 'Ввести промокод';
+
+  @override
+  String get promoCodeSubtitle => 'Активировать PRO или Premium подписку';
+
+  @override
+  String get promoCodeActivation => 'Активация промокода';
+
+  @override
+  String get promoCodeHint => 'Введите промокод для активации подписки:';
+
+  @override
+  String get promoCodeActivate => 'Активировать';
+
+  @override
+  String get promoCodeSuccess => 'Промокод успешно активирован!';
+
+  @override
+  String get supportTitle => 'Поддержать команду TANDAU ❤️';
+
+  @override
+  String get supportSubtitle => 'Прямой перевод на Kaspi';
+
+  @override
+  String get supportProject => 'Поддержать проект';
+
+  @override
+  String get supportDescription =>
+      'Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.';
+
+  @override
+  String get supportOpenKaspi => 'Открыть приложение Kaspi';
+
+  @override
+  String get supportNumberCopied => 'Номер скопирован в буфер обмена';
+
+  @override
+  String aiTokensRemaining(int count) {
+    return 'Осталось ИИ-запросов: $count';
+  }
+
+  @override
+  String get detailAboutUniversity => 'Об университете';
+
+  @override
+  String get detailPassingScoreTitle => 'Проходной балл';
+
+  @override
+  String get detailPoints => 'баллов';
+
+  @override
+  String get detailBasedOnLastYear => 'На основе данных прошлого года';
+
+  @override
+  String get detailAdmissionRequirements => 'Что нужно для поступления';
+
+  @override
+  String get detailApplicationDeadline => 'Крайний срок подачи';
+
+  @override
+  String get detailPhoneNotProvided => 'Не указан';
+
+  @override
+  String get detailWebsiteNotProvided => 'Сайт не указан';
+
+  @override
+  String get detailAddressLabel => 'Адрес';
+
+  @override
+  String get detailWebsiteLabel => 'Веб-сайт';
+
+  @override
+  String get detailPhoneLabelFull => 'Телефон';
+
+  @override
+  String get detailLeaveReviewBtn => 'Оставить отзыв';
+
+  @override
+  String get detailNoReviewsYet => 'Пока нет отзывов';
+
+  @override
+  String get detailBeFirstReviewer => 'Будьте первым, кто оставит отзыв!';
+
+  @override
+  String detailReviewsCount(int count) {
+    return '$count отзывов';
+  }
+
+  @override
+  String get detailJustNow => 'только что';
+
+  @override
+  String get reviewEditedLabel => 'изменено';
+
+  @override
+  String get reviewAuthRequiredMsg => 'Аутентифицируйтесь для оценки';
+
+  @override
+  String get reviewHelpfulLabel => 'Полезно';
+
+  @override
+  String get reviewOfficialReplyLabel => 'Официальный ответ';
+
+  @override
+  String get majorBusiness => 'Бизнес';
+
+  @override
+  String get majorLaw => 'Право';
+
+  @override
+  String get commonOr => 'Или';
 }

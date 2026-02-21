@@ -789,4 +789,123 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authTermsSuffix => '';
+
+  @override
+  String get homeGreetingNight => 'Good Night';
+
+  @override
+  String get homeEntScore => 'Your UNT Score:';
+
+  @override
+  String get promoCodeTitle => 'Enter Promo Code';
+
+  @override
+  String get promoCodeSubtitle => 'Activate PRO or Premium subscription';
+
+  @override
+  String get promoCodeActivation => 'Promo Code Activation';
+
+  @override
+  String get promoCodeHint => 'Enter promo code to activate subscription:';
+
+  @override
+  String get promoCodeActivate => 'Activate';
+
+  @override
+  String get promoCodeSuccess => 'Promo code successfully activated!';
+
+  @override
+  String get supportTitle => 'Support TANDAU Team ❤️';
+
+  @override
+  String get supportSubtitle => 'Direct transfer via Kaspi';
+
+  @override
+  String get supportProject => 'Support the project';
+
+  @override
+  String get supportDescription =>
+      'We appreciate any support! All funds go to AI server costs and TANDAU development.';
+
+  @override
+  String get supportOpenKaspi => 'Open Kaspi app';
+
+  @override
+  String get supportNumberCopied => 'Number copied to clipboard';
+
+  @override
+  String aiTokensRemaining(int count) {
+    return 'AI requests left: $count';
+  }
+
+  @override
+  String get detailAboutUniversity => 'About University';
+
+  @override
+  String get detailPassingScoreTitle => 'Passing Score';
+
+  @override
+  String get detailPoints => 'points';
+
+  @override
+  String get detailBasedOnLastYear => 'Based on last year\'s data';
+
+  @override
+  String get detailAdmissionRequirements => 'Admission Requirements';
+
+  @override
+  String get detailApplicationDeadline => 'Application Deadline';
+
+  @override
+  String get detailPhoneNotProvided => 'Not provided';
+
+  @override
+  String get detailWebsiteNotProvided => 'Website not provided';
+
+  @override
+  String get detailAddressLabel => 'Address';
+
+  @override
+  String get detailWebsiteLabel => 'Website';
+
+  @override
+  String get detailPhoneLabelFull => 'Phone';
+
+  @override
+  String get detailLeaveReviewBtn => 'Leave a Review';
+
+  @override
+  String get detailNoReviewsYet => 'No reviews yet';
+
+  @override
+  String get detailBeFirstReviewer => 'Be the first to leave a review!';
+
+  @override
+  String detailReviewsCount(int count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get detailJustNow => 'just now';
+
+  @override
+  String get reviewEditedLabel => 'edited';
+
+  @override
+  String get reviewAuthRequiredMsg => 'Please authenticate to rate';
+
+  @override
+  String get reviewHelpfulLabel => 'Helpful';
+
+  @override
+  String get reviewOfficialReplyLabel => 'Official Reply';
+
+  @override
+  String get majorBusiness => 'Business';
+
+  @override
+  String get majorLaw => 'Law';
+
+  @override
+  String get commonOr => 'Or';
 }
