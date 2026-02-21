@@ -124,15 +124,6 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════
-    // 🎁 ПРОМОКОДЫ
-    // ═══════════════════════════════════════
-    match /promo_codes/{codeId} {
-      allow read: if isSignedIn();
-      allow update: if isAuth(); // transactions allow users to increment them
-      allow create, delete: if isAdmin();
-    }
-
-    // ═══════════════════════════════════════
     // 🛡️ АДМИН-ДОСТУП КО ВСЕМУ (CATCH-ALL)
     // ═══════════════════════════════════════
     match /{path=**} {
