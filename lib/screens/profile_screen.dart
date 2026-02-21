@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/theme_manager.dart';
 import '../services/locale_manager.dart';
 import '../services/auth_service.dart';
@@ -264,6 +266,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
+            const SizedBox(height: 12),
+
+            _buildSettingCard(
+              context,
+              icon: Icons.volunteer_activism_rounded,
+              title: 'Поддержать команду TANDAU',
+              subtitle: 'Прямой перевод на Kaspi',
+              trailing: const Icon(
+                Icons.favorite,
+                size: 16,
+                color: Colors.redAccent,
+              ),
+              onTap: () => _showKaspiSupportDialog(context),
+            ),
             const SizedBox(height: 32),
 
             ValueListenableBuilder<UserModel?>(
@@ -467,6 +483,162 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showKaspiSupportDialog(BuildContext context) {
+    // Номер и имя для переводов Kaspi
+    const String kaspiNumber = "+7 705 136 92 31";
+    const String kaspiName = "Нұрдәулет А.";
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 48,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.favorite,
+                  color: Colors.redAccent,
+                  size: 48,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Поддержать проект',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).dividerColor.withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Image.network(
+                      'https://w7.pngwing.com/pngs/154/428/png-transparent-kaspi-bank-hd-logo.png',
+                      width: 40,
+                      height: 40,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.credit_card,
+                        size: 40,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            kaspiName,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            kaspiNumber,
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.color
+                                  ?.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.copy, color: Colors.blue),
+                      onPressed: () {
+                        Clipboard.setData(
+                          const ClipboardData(text: kaspiNumber),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Номер скопирован в буфер обмена'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF14635), // Kaspi Red
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final Uri kaspiUrl = Uri.parse('kaspi://');
+                    if (await canLaunchUrl(kaspiUrl)) {
+                      await launchUrl(kaspiUrl);
+                    } else {
+                      // Fallback to web link if Kaspi app is not installed
+                      final Uri kaspiWebUrl = Uri.parse('https://kaspi.kz/');
+                      await launchUrl(
+                        kaspiWebUrl,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Открыть приложение Kaspi',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
     );
   }
 
