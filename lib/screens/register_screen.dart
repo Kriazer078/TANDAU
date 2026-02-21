@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import 'login_screen.dart';
 import 'legal/terms_screen.dart';
 import 'privacy_policy_screen.dart';
+import 'main_navigation_screen.dart';
 import '../widgets/custom_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -56,7 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .register(
               _nameController.text.trim(),
               _emailController.text.trim(),
-              _passwordController.text.trim(),
+              _passwordController.text, // 🛡️ Security: do not trim passwords
             )
             .timeout(
               const Duration(seconds: 40),
@@ -71,8 +72,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (mounted) {
           setState(() => _isLoading = false);
           if (registerError == null) {
-            debugPrint(
-              '🟢 REGSCR: Регистрация успешна! Ожидаем авто-перехода...',
+            debugPrint('🟢 REGSCR: Регистрация успешна! Переход...');
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => const MainNavigationScreen(),
+              ),
+              (route) => false,
             );
           } else {
             debugPrint('🟠 REGSCR: Ошибка регистрации: $registerError');

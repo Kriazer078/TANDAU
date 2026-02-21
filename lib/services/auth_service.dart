@@ -379,6 +379,8 @@ class AuthService {
 
       // 4. Set local state
       currentUser.value = userModel;
+      isLoggedIn.value =
+          true; // 🔑 Fix: mark as logged in so UI updates properly
 
       // Save FCM Token (fire & forget with timeout so it never blocks)
       () async {
