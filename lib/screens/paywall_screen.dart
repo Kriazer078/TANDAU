@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../services/auth_service.dart';
+import '../services/revenuecat_service.dart';
 
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
@@ -11,37 +13,86 @@ class PaywallScreen extends StatefulWidget {
 
 class _PaywallScreenState extends State<PaywallScreen> {
   bool _isLoading = false;
+  List<Package> _packages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOfferings();
+  }
+
+  Future<void> _fetchOfferings() async {
+    final packages = await RevenueCatService().getOfferings();
+    if (mounted) {
+      setState(() {
+        _packages = packages;
+      });
+    }
+  }
 
   Future<void> _purchasePlan(String plan, int initialTokens) async {
     setState(() => _isLoading = true);
 
-    // Имитация задержки сети (заглушка для RevenueCat)
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // ПРОВЕРКА REVENUECAT: Если мы смогли вытащить реальные товары из магазина (Google Play/AppStore)
+      if (_packages.isNotEmpty) {
+        // Берем первый доступный пакет (для PRO плана)
+        final packageToBuy = _packages.first;
+        final isPro = await RevenueCatService().makePurchase(packageToBuy);
 
-    final success = await AuthService().updateSubscriptionPlan(
-      plan,
-      initialTokens,
-    );
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Успешно! Ваш план изменен на ${plan.toUpperCase()}'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
+        if (isPro) {
+          // Если RevenueCat подтвердил оплату, обновляем статус в нашей базе Firebase
+          await AuthService().updateSubscriptionPlan('pro', 100);
+          _showSuccessAndPop(plan);
+        } else {
+          _showError('Покупка отменена или произошла ошибка.');
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Ошибка при обновлении подписки'),
-            backgroundColor: Colors.red,
-          ),
+        // --------------------------------------------------------------------------
+        // FALLBACK (ЗАГЛУШКА): Пока ты не создал товары в Google Play Console,
+        // RevenueCat будет возвращать 0 пакетов. Поэтому здесь мы оставляем эмуляцию
+        // покупки, чтобы ты мог тестировать Алгоритм 4-х вузов уже сейчас!
+        // --------------------------------------------------------------------------
+        debugPrint(
+          'RevenueCat: Пакеты не найдены. Использую тестовую заглушку покупки.',
         );
+        await Future.delayed(const Duration(seconds: 2));
+        final success = await AuthService().updateSubscriptionPlan(
+          plan,
+          initialTokens,
+        );
+
+        if (success) {
+          _showSuccessAndPop(plan);
+        } else {
+          _showError('Ошибка при обновлении подписки в базе');
+        }
+      }
+    } catch (e) {
+      _showError('Произошла непредвиденная ошибка: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _showSuccessAndPop(String plan) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Успешно! Ваш план изменен на ${plan.toUpperCase()}'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    Navigator.pop(context);
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
   }
 
   @override

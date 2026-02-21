@@ -168,6 +168,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
+            const SizedBox(height: 12),
+
+            // Promo Code
+            _buildSettingCard(
+              context,
+              icon: Icons.card_giftcard,
+              title: 'Ввести промокод',
+              subtitle: 'Активировать PRO или Premium подписку',
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Theme.of(
+                  context,
+                ).iconTheme.color?.withValues(alpha: 0.5),
+              ),
+              onTap: () => _showPromoCodeDialog(context),
+            ),
             const SizedBox(height: 32),
 
             // About Section
@@ -450,6 +467,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showPromoCodeDialog(BuildContext context) {
+    final TextEditingController promoController = TextEditingController();
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Активация промокода'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Введите промокод для активации подписки:'),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: promoController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'PROMO123',
+                    ),
+                    textCapitalization: TextCapitalization.characters,
+                  ),
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: const Text('Отмена'),
+                ),
+                ElevatedButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          setState(() => isLoading = true);
+                          final code = promoController.text;
+                          final error = await AuthService().redeemPromoCode(
+                            code,
+                          );
+
+                          if (context.mounted) {
+                            setState(() => isLoading = false);
+                            if (error == null) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Промокод успешно активирован!',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(error),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: const Text('Активировать'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

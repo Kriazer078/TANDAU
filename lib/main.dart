@@ -15,6 +15,7 @@ import 'services/ai_consultant_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'utils/firestore_upload_script.dart';
+import 'services/revenuecat_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ void main() async {
   await LocaleManager().init();
   await AuthService().init();
   await NotificationService().init();
+  await RevenueCatService().init();
   AIConsultantService().init(); // Fire-and-forget warm-up
 
   // 🔄 One-time upload of verified university data to Firestore
