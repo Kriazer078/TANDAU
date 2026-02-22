@@ -618,7 +618,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homeChanceEstimation => 'Оценка шансов';
 
   @override
-  String get homeChanceAnalysis => 'Анализ поступления на грант 2025';
+  String get homeChanceAnalysis => 'Анализ поступления на грант 2026';
 
   @override
   String get homeAdvancedFilter => 'Расширенный фильтр';

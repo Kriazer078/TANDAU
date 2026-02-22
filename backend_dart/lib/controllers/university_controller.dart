@@ -280,8 +280,14 @@ class UniversityController {
                 rating: 0,
               ));
 
+      // 💡 NEW: AI CONTEXT INJECTION
+      // Determine threshold score to inject into context to reduce hallucinations
+      final minScoreCtx = university.minScore > 0
+          ? 'Пороговый балл в этот вуз: ${university.minScore}.'
+          : '';
+
       final strategy = await _aiService.generateAIStrategy(
-        universityName: university.name,
+        universityName: '${university.name} $minScoreCtx', // INJECTING CONTEXT
         untScore: untScore,
         specialty: specialtyId,
         subjectScores: subjectScores,

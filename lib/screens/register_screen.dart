@@ -134,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           Positioned(
-            bottom: 100,
+            top: MediaQuery.of(context).size.height - 200,
             right: -30,
             child: CircleAvatar(
               radius: 80,
@@ -144,6 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           SafeArea(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(24),
               child: Form(
                 key: _formKey,
@@ -181,6 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           AppLocalizations.of(context)?.authFullName ??
                           'Full Name',
                       icon: Icons.person_outline,
+                      textInputAction: TextInputAction.next,
                       validator: (v) => v!.isEmpty
                           ? (AppLocalizations.of(context)?.authRequired ??
                                 'Required')
@@ -192,6 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       label: AppLocalizations.of(context)?.authEmail ?? 'Email',
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
                       validator: (v) {
                         if (v == null || v.isEmpty) {
                           return AppLocalizations.of(
@@ -218,6 +221,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           'Password',
                       icon: Icons.lock_outline,
                       obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) {
+                        if (!_isLoading) _register();
+                      },
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword

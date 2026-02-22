@@ -1279,7 +1279,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeChanceAnalysis.
   ///
   /// In en, this message translates to:
-  /// **'Grant Admission Analysis 2025'**
+  /// **'Grant Admission Analysis 2026'**
   String get homeChanceAnalysis;
 
   /// No description provided for @homeAdvancedFilter.

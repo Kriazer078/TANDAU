@@ -1,14 +1,14 @@
 /// СВД — Система Вычисления Шансов на Грант
-/// Использует верифицированные данные МОН РК 2025 года.
+/// Использует верифицированные данные МОН РК 2026 года.
 ///
 /// Источники:
 /// - gov.kz (приказ МОН РК)
 /// - nur.kz, newtimes.kz (сводки)
 ///
 /// Макс. балл ЕНТ: 140 (120 заданий)
-/// Основное ЕНТ: 16 мая — 5 июля 2025
-/// Подача на грант: 13-20 июля 2025
-/// Результаты: до 10 августа 2025
+/// Основное ЕНТ: 16 мая — 5 июля 2026
+/// Подача на грант: 13-20 июля 2026
+/// Результаты: до 10 августа 2026
 class GrantChanceService {
   // Singleton
   static final GrantChanceService _instance = GrantChanceService._internal();
@@ -16,10 +16,10 @@ class GrantChanceService {
   GrantChanceService._internal();
 
   // ═══════════════════════════════════════════
-  //  ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ 2025
+  //  ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ 2026
   // ═══════════════════════════════════════════
 
-  /// Максимальный балл ЕНТ 2025
+  /// Максимальный балл ЕНТ 2026
   static const int maxEntScore = 140;
 
   /// Минимальные пороговые баллы для участия в конкурсе на грант
@@ -85,7 +85,7 @@ class GrantChanceService {
         details: [],
         recommendations: ['Заполните балл ЕНТ в профиле'],
         entThreshold: _getThreshold(universityId, majorCategory),
-        dataYear: '2025',
+        dataYear: '2026',
       );
     }
 
@@ -288,7 +288,7 @@ class GrantChanceService {
       details: details,
       recommendations: recommendations,
       entThreshold: threshold,
-      dataYear: '2025',
+      dataYear: '2026',
     );
   }
 

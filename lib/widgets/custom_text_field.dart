@@ -15,6 +15,8 @@ class CustomTextField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final int? maxLines;
   final String? hintText;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
 
   const CustomTextField({
     super.key,
@@ -30,6 +32,8 @@ class CustomTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.maxLines = 1,
     this.hintText,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -57,6 +61,8 @@ class CustomTextField extends StatelessWidget {
         inputFormatters: inputFormatters,
         textCapitalization: textCapitalization,
         maxLines: maxLines,
+        textInputAction: textInputAction ?? TextInputAction.next,
+        onFieldSubmitted: onFieldSubmitted,
         style: TextStyle(
           color: isDark ? Colors.white : AppColors.textPrimary,
           fontSize: 16,

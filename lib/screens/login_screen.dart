@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Positioned(
-            bottom: -50,
+            top: MediaQuery.of(context).size.height - 150,
             left: -50,
             child: CircleAvatar(
               radius: 100,
@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           SafeArea(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(24),
               child: Form(
                 key: _formKey,
@@ -144,6 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       label: AppLocalizations.of(context)?.authEmail ?? 'Email',
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
                       validator: (v) {
                         if (v == null || v.isEmpty) {
                           return AppLocalizations.of(
@@ -170,6 +172,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           'Password',
                       icon: Icons.lock_outline,
                       obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _login(),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword

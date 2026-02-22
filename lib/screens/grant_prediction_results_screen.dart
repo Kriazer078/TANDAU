@@ -211,7 +211,7 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n?.homeChanceAnalysis ?? 'Анализ шансов 2025',
+                  l10n?.homeChanceAnalysis ?? 'Анализ шансов 2026',
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
@@ -514,7 +514,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
 
       // ═══════════════════════════════════════════
       // 🔄 ЛОКАЛЬНАЯ СТРАТЕГИЯ (без бэкенда)
-      // Использует верифицированные данные МОН РК 2025
+      // Использует верифицированные данные МОН РК 2026
       // ═══════════════════════════════════════════
       final chanceService = GrantChanceService();
       final MajorCategory category = widget.uni.majors.isNotEmpty

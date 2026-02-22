@@ -614,7 +614,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get homeChanceEstimation => 'Шанстарды бағалау';
 
   @override
-  String get homeChanceAnalysis => '2025 грантқа түсу талдауы';
+  String get homeChanceAnalysis => '2026 грантқа түсу талдауы';
 
   @override
   String get homeAdvancedFilter => 'Кеңейтілген сүзгі';

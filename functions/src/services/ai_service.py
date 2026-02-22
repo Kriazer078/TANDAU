@@ -10,22 +10,22 @@ class AIService:
 
         # 1. GAP Analysis & Simulation (In real app, fetch from Firestore)
         # Mock predicted score for testing
-        predicted_min_score_2025 = 95
+        predicted_min_score_2026 = 95
         specialty_name = "Computer Science"
         university_name = "Tech University"
         
-        gap = predicted_min_score_2025 - user_unt_score
+        gap = predicted_min_score_2026 - user_unt_score
         
         description = ""
         alternative_options = []
 
         if gap <= 0:
             title = "Отличные шансы на поступление!"
-            description += f"Твой текущий балл ({user_unt_score}) уже превышает прогнозируемый проходной балл ({predicted_min_score_2025}) на специальность {specialty_name}.\n\n"
+            description += f"Твой текущий балл ({user_unt_score}) уже превышает прогнозируемый проходной балл ({predicted_min_score_2026}) на специальность {specialty_name}.\n\n"
             description += "Продолжай в том же духе. Повторяй пройденный материал и не забывай про отдых, чтобы не перегореть.\n"
         else:
             title = "Стратегия подготовки: Нужно поднажать!"
-            description += f"Тебе не хватает около {gap} баллов до прогнозируемого проходного балла ({predicted_min_score_2025}) на специальность {specialty_name}.\n\n"
+            description += f"Тебе не хватает около {gap} баллов до прогнозируемого проходного балла ({predicted_min_score_2026}) на специальность {specialty_name}.\n\n"
             
             # Subject-specific advice
             if user_subjects_scores:

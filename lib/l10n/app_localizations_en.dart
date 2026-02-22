@@ -615,7 +615,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeChanceEstimation => 'Chance Estimation';
 
   @override
-  String get homeChanceAnalysis => 'Grant Admission Analysis 2025';
+  String get homeChanceAnalysis => 'Grant Admission Analysis 2026';
 
   @override
   String get homeAdvancedFilter => 'Advanced Filter';
