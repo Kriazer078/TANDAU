@@ -4,8 +4,6 @@
   <h1>🌟 TANDAU</h1>
   <p><strong>Talent Analysis & Navigation for Dream University</strong></p>
   <p><em>Инновационный навигатор для абитуриентов Казахстана, помогающий уверенно выбрать университет мечты и оценить шансы на грант.</em></p>
-  
-  <p><em>🏆 Номинант <b>Digital Qazaqstan Awards 2026</b> в категории <b>"AI for Social Impact"</b></em></p>
 
   <p>
     <a href="https://flutter.dev/"><img src="https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"></a>
