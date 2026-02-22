@@ -622,6 +622,14 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                             ? Colors.white70
                             : AppColors.textSecondary,
                       ),
+                      horizontalRuleDecoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: isDark ? Colors.white24 : Colors.black12,
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
           ),

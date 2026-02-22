@@ -165,6 +165,14 @@ class AIAgentScreen extends StatelessWidget {
           listBullet: TextStyle(
             color: isDark ? Colors.white54 : Colors.black54,
           ),
+          horizontalRuleDecoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: isDark ? Colors.white24 : Colors.black12,
+                width: 1.0,
+              ),
+            ),
+          ),
         ),
       ),
     );

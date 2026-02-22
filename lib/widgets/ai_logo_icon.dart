@@ -9,7 +9,7 @@ class AILogoIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Icon(
-      Icons.psychology_outlined,
+      Icons.auto_awesome,
       size: size,
       color: color ?? Theme.of(context).primaryColor,
     );
