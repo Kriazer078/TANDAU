@@ -6,6 +6,7 @@ class FilterChipWidget extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
   final IconData? icon;
+  final Widget? iconWidget;
 
   const FilterChipWidget({
     super.key,
@@ -13,6 +14,7 @@ class FilterChipWidget extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     this.icon,
+    this.iconWidget,
   });
 
   @override
@@ -50,7 +52,10 @@ class FilterChipWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
+            if (iconWidget != null) ...[
+              iconWidget!,
+              const SizedBox(width: 10),
+            ] else if (icon != null) ...[
               Icon(
                 icon,
                 size: 20,

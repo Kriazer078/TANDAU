@@ -15,6 +15,7 @@ import '../services/grant_chance_service.dart';
 import '../l10n/app_localizations.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../widgets/ai_logo_icon.dart';
 // dart:ui removed — replaced BackdropFilter with lightweight containers
 
 class UniversityDetailScreen extends StatefulWidget {
@@ -1624,10 +1625,7 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                       height: 56,
                       child: ElevatedButton.icon(
                         onPressed: _loadAiStrategy,
-                        icon: const Icon(
-                          Icons.auto_awesome,
-                          color: Colors.white,
-                        ),
+                        icon: const AILogoIcon(color: Colors.white),
                         label: Text(
                           l10n?.aiChancesDetailedStrategy ??
                               'Подробная AI стратегия',
@@ -1669,10 +1667,7 @@ class _SvdResultSheetState extends State<_SvdResultSheet> {
                     const Divider(height: 32),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.auto_awesome,
-                          color: AppColors.primary,
-                        ),
+                        const AILogoIcon(color: AppColors.primary),
                         const SizedBox(width: 8),
                         Text(
                           l10n?.detailAiStrategySubtitle ??

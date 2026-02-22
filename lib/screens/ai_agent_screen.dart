@@ -3,6 +3,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../theme/app_colors.dart';
 import '../models/university.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/ai_logo_icon.dart';
+import 'university_detail_screen.dart';
 
 class AIAgentScreen extends StatelessWidget {
   final String title;
@@ -41,7 +43,7 @@ class AIAgentScreen extends StatelessWidget {
                   _buildAlternativesHeader(theme, isDark, l10n),
                   const SizedBox(height: 16),
                   ...alternativeOptions.map(
-                    (opt) => _buildAlternativeCard(opt, isDark, l10n),
+                    (opt) => _buildAlternativeCard(context, opt, isDark, l10n),
                   ),
                 ],
                 const SizedBox(height: 48),
@@ -111,11 +113,7 @@ class AIAgentScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.smart_toy_rounded,
-                color: Colors.white,
-                size: 28,
-              ),
+              const AILogoIcon(color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -187,6 +185,7 @@ class AIAgentScreen extends StatelessWidget {
   }
 
   Widget _buildAlternativeCard(
+    BuildContext context,
     dynamic opt,
     bool isDark,
     AppLocalizations l10n,
@@ -197,7 +196,6 @@ class AIAgentScreen extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
@@ -209,48 +207,71 @@ class AIAgentScreen extends StatelessWidget {
               : Colors.grey.withValues(alpha: 0.1),
         ),
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '$prob%',
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            if (opt['university'] != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      UniversityDetailScreen(university: opt['university']),
+                ),
+              );
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                Text(
-                  uniName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: isDark ? Colors.white : Colors.black87,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$prob%',
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-                Text(
-                  majorName,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? Colors.white54 : Colors.black54,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        uniName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        majorName,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                const Icon(Icons.chevron_right_rounded, color: Colors.grey),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: Colors.grey),
-        ],
+        ),
       ),
     );
   }

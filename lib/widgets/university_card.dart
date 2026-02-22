@@ -3,6 +3,7 @@ import '../theme/app_colors.dart';
 import '../widgets/like_review_widgets.dart';
 import '../utils/guest_guard.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'ai_logo_icon.dart';
 
 class UniversityCard extends StatelessWidget {
   final String universityId;
@@ -161,15 +162,16 @@ class UniversityCard extends StatelessWidget {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
-                                      isGrant
-                                          ? Icons.auto_awesome
-                                          : Icons.payments,
-                                      size: 12,
-                                      color: isGrant
-                                          ? AppColors.accent
-                                          : AppColors.primary,
-                                    ),
+                                    isGrant
+                                        ? AILogoIcon(
+                                            size: 12,
+                                            color: AppColors.accent,
+                                          )
+                                        : const Icon(
+                                            Icons.payments,
+                                            size: 12,
+                                            color: AppColors.primary,
+                                          ),
                                     const SizedBox(width: 4),
                                     Text(
                                       feature,

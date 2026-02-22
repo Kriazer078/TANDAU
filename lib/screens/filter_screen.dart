@@ -5,6 +5,7 @@ import '../services/university_service.dart';
 import 'university_list_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/l10n_extensions.dart';
+import '../widgets/ai_logo_icon.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
@@ -267,7 +268,14 @@ class _FilterScreenState extends State<FilterScreen> {
           label: l10n.filterGrant,
           isSelected: _onlyGrants,
           onTap: () => setState(() => _onlyGrants = !_onlyGrants),
-          icon: Icons.auto_awesome,
+          iconWidget: AILogoIcon(
+            size: 20,
+            color: _onlyGrants
+                ? Colors.white
+                : (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white70
+                      : AppColors.textPrimary),
+          ),
         ),
         const SizedBox(height: 16),
         FilterChipWidget(

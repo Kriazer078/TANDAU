@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../services/moderation_service.dart';
 import '../models/user_model.dart';
 import 'paywall_screen.dart';
+import '../widgets/ai_logo_icon.dart';
 
 class AIConsultantScreen extends StatefulWidget {
   const AIConsultantScreen({super.key});
@@ -197,11 +198,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.smart_toy_rounded,
-                size: 18,
-                color: Colors.white,
-              ),
+              child: const AILogoIcon(size: 18, color: Colors.white),
             ),
             const SizedBox(width: 10),
             Column(
@@ -848,7 +845,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.smart_toy_rounded, color: AppColors.primary),
+            const AILogoIcon(color: AppColors.primary),
             const SizedBox(width: 12),
             Text(l10n?.aiAbout ?? 'TANDAU AI'),
           ],

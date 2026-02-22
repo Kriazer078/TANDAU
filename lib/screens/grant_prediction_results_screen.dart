@@ -12,6 +12,7 @@ import '../services/university_service.dart';
 import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
 import 'paywall_screen.dart';
+import '../widgets/ai_logo_icon.dart';
 
 class GrantPredictionResultsScreen extends ConsumerWidget {
   final int entScore;
@@ -436,7 +437,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.auto_awesome, color: Colors.white, size: 18),
+                AILogoIcon(size: 18, color: Colors.white),
                 SizedBox(width: 8),
                 Text(
                   'AI Strategy',
@@ -461,6 +462,61 @@ class _ResultUniCardState extends State<_ResultUniCard> {
     try {
       final user = AuthService().currentUser.value;
       final aiService = AIConsultantService();
+      final chanceService = GrantChanceService();
+
+      // Генерация альтернатив заранее для обоих случаев (онлайн и оффлайн)
+      final MajorCategory category = widget.uni.majors.isNotEmpty
+          ? chanceService.detectCategory(widget.uni.majors.first)
+          : MajorCategory.other;
+
+      final result = chanceService.calculate(
+        entScore: widget.untScore,
+        universityId: widget.uni.id,
+        majorCategory: category,
+        gpa: user?.gpa,
+        ieltsScore: user?.ieltsScore,
+        achievements: user?.achievements ?? [],
+        userCity: user?.city,
+        universityCity: widget.uni.city,
+      );
+
+      final List<Map<String, dynamic>> alternatives = [];
+      final allUniversities = (await UniversityService().getAllUniversities())
+          .where((u) => u.id != widget.uni.id)
+          .toList();
+
+      for (final altUni in allUniversities) {
+        final altCategory = altUni.majors.isNotEmpty
+            ? chanceService.detectCategory(altUni.majors.first)
+            : MajorCategory.other;
+
+        final altResult = chanceService.calculate(
+          entScore: widget.untScore,
+          universityId: altUni.id,
+          majorCategory: altCategory,
+          gpa: user?.gpa,
+          ieltsScore: user?.ieltsScore,
+          achievements: user?.achievements ?? [],
+          userCity: user?.city,
+          universityCity: altUni.city,
+        );
+
+        if (altResult.chancePercent > result.chancePercent) {
+          alternatives.add({
+            'university': altUni,
+            'university_name': altUni.name,
+            'specialty_name': altUni.majors.isNotEmpty
+                ? altUni.majors.first
+                : 'Жалпы',
+            'probability': altResult.chancePercent,
+          });
+        }
+      }
+
+      alternatives.sort(
+        (a, b) => (b['probability'] as int).compareTo(a['probability'] as int),
+      );
+      final topAlternatives = alternatives.take(3).toList();
 
       // Попытка получить стратегию от бэкенда
       try {
@@ -491,7 +547,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
                     strategyData['title'] ??
                     (l10n?.aiStrategyFallbackTitle ?? 'Стратегия поступления'),
                 description: strategyData['description'] ?? '',
-                alternativeOptions: strategyData['alternative_options'] ?? [],
+                alternativeOptions: topAlternatives,
                 targetUniversity: widget.uni,
               ),
             ),
@@ -516,21 +572,8 @@ class _ResultUniCardState extends State<_ResultUniCard> {
       // 🔄 ЛОКАЛЬНАЯ СТРАТЕГИЯ (без бэкенда)
       // Использует верифицированные данные МОН РК 2026
       // ═══════════════════════════════════════════
-      final chanceService = GrantChanceService();
-      final MajorCategory category = widget.uni.majors.isNotEmpty
-          ? chanceService.detectCategory(widget.uni.majors.first)
-          : MajorCategory.other;
-
-      final GrantChanceResult result = chanceService.calculate(
-        entScore: widget.untScore,
-        universityId: widget.uni.id,
-        majorCategory: category,
-        gpa: user?.gpa,
-        ieltsScore: user?.ieltsScore,
-        achievements: user?.achievements ?? [],
-        userCity: user?.city,
-        universityCity: widget.uni.city,
-      );
+      // Использует верифицированные данные МОН РК 2026
+      // ═══════════════════════════════════════════
 
       // Формируем описание стратегии из данных СВД
       final StringBuffer strategy = StringBuffer();
@@ -585,45 +628,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
         '- **Специальности:** ${widget.uni.majors.take(5).join(", ")}',
       );
 
-      // Генерируем альтернативные варианты из локальных данных
-      final List<Map<String, dynamic>> alternatives = [];
-      // Импортируем данные из sampleUniversities
-      final allUniversities = (await UniversityService().getAllUniversities())
-          .where((u) => u.id != widget.uni.id)
-          .toList();
-
-      for (final altUni in allUniversities) {
-        final altCategory = altUni.majors.isNotEmpty
-            ? chanceService.detectCategory(altUni.majors.first)
-            : MajorCategory.other;
-
-        final altResult = chanceService.calculate(
-          entScore: widget.untScore,
-          universityId: altUni.id,
-          majorCategory: altCategory,
-          gpa: user?.gpa,
-          ieltsScore: user?.ieltsScore,
-          achievements: user?.achievements ?? [],
-          userCity: user?.city,
-          universityCity: altUni.city,
-        );
-
-        if (altResult.chancePercent > result.chancePercent) {
-          alternatives.add({
-            'university_name': altUni.name,
-            'specialty_name': altUni.majors.isNotEmpty
-                ? altUni.majors.first
-                : 'Жалпы',
-            'probability': altResult.chancePercent,
-          });
-        }
-      }
-
-      // Сортируем по шансу (убывание) и берём топ-3
-      alternatives.sort(
-        (a, b) => (b['probability'] as int).compareTo(a['probability'] as int),
-      );
-      final topAlternatives = alternatives.take(3).toList();
+      // Альтернативные варианты уже сгенерированы выше
 
       if (mounted) {
         Navigator.push(

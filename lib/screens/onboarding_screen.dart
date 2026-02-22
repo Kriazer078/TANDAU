@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_logo_icon.dart';
 import 'register_screen.dart';
 
 /// Onboarding — показывается только при первом запуске.
@@ -21,21 +22,29 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   static const List<_OnboardingPage> _pages = [
     _OnboardingPage(
-      icon: Icons.auto_awesome_rounded,
+      iconWidget: AILogoIcon(size: 56, color: Colors.white),
       gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
       title: 'AI Консультант',
       subtitle:
           'Задай любой вопрос о поступлении.\nТвой персональный AI советник доступен 24/7.',
     ),
     _OnboardingPage(
-      icon: Icons.military_tech_rounded,
+      iconWidget: Icon(
+        Icons.military_tech_rounded,
+        size: 56,
+        color: Colors.white,
+      ),
       gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
       title: 'Расчёт шансов на грант',
       subtitle:
           'Введи баллы ЕНТ — и узнай свой шанс на грант\nв любом из вузов Казахстана.',
     ),
     _OnboardingPage(
-      icon: Icons.compare_arrows_rounded,
+      iconWidget: Icon(
+        Icons.compare_arrows_rounded,
+        size: 56,
+        color: Colors.white,
+      ),
       gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
       title: 'Сравнение вузов',
       subtitle:
@@ -229,7 +238,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 ),
               ],
             ),
-            child: Icon(page.icon, size: 56, color: Colors.white),
+            child: page.iconWidget,
           ),
           const SizedBox(height: 48),
 
@@ -266,13 +275,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 // DATA MODEL
 // ═══════════════════════════════════════════
 class _OnboardingPage {
-  final IconData icon;
+  final Widget iconWidget;
   final List<Color> gradientColors;
   final String title;
   final String subtitle;
 
   const _OnboardingPage({
-    required this.icon,
+    required this.iconWidget,
     required this.gradientColors,
     required this.title,
     required this.subtitle,

@@ -3,6 +3,7 @@ import '../../models/university.dart';
 import '../../theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'ai_logo_icon.dart';
 
 class UniversityHeader extends StatelessWidget {
   final University university;
@@ -69,7 +70,11 @@ class UniversityHeader extends StatelessWidget {
               children: [
                 _buildModernChip(
                   context,
-                  Icons.people_alt_rounded,
+                  Icon(
+                    Icons.people_alt_rounded,
+                    size: 14,
+                    color: AppColors.primary,
+                  ),
                   AppLocalizations.of(
                         context,
                       )?.universityStudentCount(university.studentCount) ??
@@ -80,7 +85,11 @@ class UniversityHeader extends StatelessWidget {
                 if (university.hasDormitory)
                   _buildModernChip(
                     context,
-                    Icons.bedtime_rounded,
+                    const Icon(
+                      Icons.bedtime_rounded,
+                      size: 14,
+                      color: Color(0xFF10B981),
+                    ),
                     AppLocalizations.of(context)?.universityDormitory ??
                         'Общежитие',
                     const Color(0xFF10B981), // Emerald 500
@@ -89,7 +98,7 @@ class UniversityHeader extends StatelessWidget {
                 if (university.hasGrants)
                   _buildModernChip(
                     context,
-                    Icons.auto_awesome_rounded,
+                    const AILogoIcon(size: 14, color: AppColors.gold),
                     AppLocalizations.of(context)?.universityGrant ?? 'Гранты',
                     AppColors.gold,
                   ),
@@ -103,7 +112,7 @@ class UniversityHeader extends StatelessWidget {
 
   Widget _buildModernChip(
     BuildContext context,
-    IconData icon,
+    Widget icon,
     String label,
     Color color,
   ) {
@@ -136,7 +145,7 @@ class UniversityHeader extends StatelessWidget {
               color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 14, color: color),
+            child: icon,
           ),
           const SizedBox(width: 8),
           Text(

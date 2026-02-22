@@ -3,6 +3,7 @@ import '../theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import '../services/notification_service.dart';
 import '../models/notification.dart';
+import '../widgets/ai_logo_icon.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -169,25 +170,25 @@ class _NotificationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    IconData icon;
+    Widget iconWidget;
     Color color;
 
     switch (notification.type) {
       case NotificationType.grant:
-        icon = Icons.emoji_events_outlined;
         color = Colors.orange;
+        iconWidget = Icon(Icons.emoji_events_outlined, color: color, size: 22);
         break;
       case NotificationType.news:
-        icon = Icons.school_outlined;
         color = Colors.blue;
+        iconWidget = Icon(Icons.school_outlined, color: color, size: 22);
         break;
       case NotificationType.ai:
-        icon = Icons.auto_awesome;
         color = AppColors.primary;
+        iconWidget = AILogoIcon(size: 22, color: color);
         break;
       case NotificationType.alert:
-        icon = Icons.warning_amber_rounded;
         color = Colors.redAccent;
+        iconWidget = Icon(Icons.warning_amber_rounded, color: color, size: 22);
         break;
     }
 
@@ -228,7 +229,7 @@ class _NotificationItem extends StatelessWidget {
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Icon(icon, color: color, size: 22),
+                      child: iconWidget,
                     ),
                     if (!notification.isRead)
                       Positioned(

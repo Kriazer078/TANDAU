@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/ai_logo_icon.dart';
 import '../screens/home_screen.dart';
 import '../screens/search_screen.dart';
 import '../screens/ai_consultant_screen.dart';
@@ -85,8 +86,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               label: AppLocalizations.of(context)?.navSearch ?? 'Search',
             ),
             NavigationDestination(
-              icon: const Icon(Icons.smart_toy_outlined),
-              selectedIcon: const Icon(Icons.smart_toy),
+              icon: const Opacity(opacity: 0.6, child: AILogoIcon(size: 24)),
+              selectedIcon: const AILogoIcon(size: 24),
               label: AppLocalizations.of(context)?.navAgent ?? 'AI',
             ),
             NavigationDestination(
