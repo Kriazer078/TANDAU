@@ -170,6 +170,7 @@ Instructions:
     required String specialty,
     required Map<String, int> subjectScores,
     required String alternativesCtx,
+    required String language,
   }) async {
     final scoresText = subjectScores.entries
         .map((e) => "${e.key}: ${e.value} баллов")
@@ -216,6 +217,8 @@ $scoresText
 📍 **Target Alternatives База:** $alternativesCtx
 
 ${untScore < 65 ? '🚨 ВНИМАНИЕ: Метрики ниже среднего. Активировать протокол социального лифта: агрессивно предлагать «Серпін», сельские/социальные квоты и региональные вузы с низким порогом из базы альтернатив.' : '💡 ВНИМАНИЕ: Метрики конкурентоспособны. Оптимизировать стратегию для прохождения в топовые Национальные университеты и максимизации вероятности гранта.'}
+
+IMPORTANT: Translate your final response (including the headers like ВЕРДИКТ, АНАЛИТИКА, АЛЬТЕРНАТИВЫ, NEXT STEPS) strictly into the following language: ${language == 'kk' ? 'Kazakh' : (language == 'en' ? 'English' : 'Russian')}. Do not change the Markdown formatting.
 ''';
 
     return _generateAdvanced(

@@ -5,6 +5,7 @@ import '../models/university.dart';
 import '../models/student_profile.dart';
 import 'auth_service.dart';
 import 'grant_chance_service.dart';
+import 'locale_manager.dart';
 
 import 'moderation_service.dart';
 
@@ -102,11 +103,13 @@ class AIConsultantService {
   }) async {
     try {
       final currentUser = AuthService().currentUser.value;
+      final language = LocaleManager().locale.value?.languageCode ?? 'ru';
       final requestBody = {
         'user_unt_score': untScore,
         'specialty_id': specialtyId,
         'university_id': universityId,
         'user_subjects_scores': subjectScores ?? {},
+        'language': language,
       };
 
       if (currentUser != null) {

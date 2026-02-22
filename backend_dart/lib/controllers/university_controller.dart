@@ -207,6 +207,7 @@ class UniversityController {
       final subjectScores =
           Map<String, int>.from(data['user_subjects_scores'] ?? {});
       final uid = data['uid'] as String?;
+      final language = data['language'] as String? ?? 'ru';
 
       if (universityId == null) {
         return Response.badRequest(body: 'Missing university_id');
@@ -302,6 +303,7 @@ class UniversityController {
         subjectScores: subjectScores,
         alternativesCtx:
             alternativesCtx.isNotEmpty ? alternativesCtx : 'Нет данных',
+        language: language,
       );
 
       // Deduct token if successful and not premium
