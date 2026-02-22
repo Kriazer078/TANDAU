@@ -1,8 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-import '../services/auth_service.dart';
-import '../services/revenuecat_service.dart';
 
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
@@ -12,86 +9,50 @@ class PaywallScreen extends StatefulWidget {
 }
 
 class _PaywallScreenState extends State<PaywallScreen> {
-  bool _isLoading = false;
-  List<Package> _packages = [];
+  final bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchOfferings();
-  }
-
-  Future<void> _fetchOfferings() async {
-    final packages = await RevenueCatService().getOfferings();
-    if (mounted) {
-      setState(() {
-        _packages = packages;
-      });
-    }
   }
 
   Future<void> _purchasePlan(String plan, int initialTokens) async {
-    setState(() => _isLoading = true);
-
-    try {
-      // ПРОВЕРКА REVENUECAT: Если мы смогли вытащить реальные товары из магазина (Google Play/AppStore)
-      if (_packages.isNotEmpty) {
-        // Берем первый доступный пакет (для PRO плана)
-        final packageToBuy = _packages.first;
-        final isPro = await RevenueCatService().makePurchase(packageToBuy);
-
-        if (isPro) {
-          // Если RevenueCat подтвердил оплату, обновляем статус в нашей базе Firebase
-          await AuthService().updateSubscriptionPlan('pro', 100);
-          _showSuccessAndPop(plan);
-        } else {
-          _showError('Покупка отменена или произошла ошибка.');
-        }
-      } else {
-        // --------------------------------------------------------------------------
-        // FALLBACK (ЗАГЛУШКА): Пока ты не создал товары в Google Play Console,
-        // RevenueCat будет возвращать 0 пакетов. Поэтому здесь мы оставляем эмуляцию
-        // покупки, чтобы ты мог тестировать Алгоритм 4-х вузов уже сейчас!
-        // --------------------------------------------------------------------------
-        debugPrint(
-          'RevenueCat: Пакеты не найдены. Использую тестовую заглушку покупки.',
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1E1E2C),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.info_outline, color: Colors.amber),
+              SizedBox(width: 10),
+              Text(
+                'Скоро',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Подписки пока недоступны.\n\nВ честь запуска мы дарим 1000 бесплатных ИИ-запросов каждому пользователю!',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Понятно',
+                style: TextStyle(color: Color(0xFF8E2DE2)),
+              ),
+            ),
+          ],
         );
-        await Future.delayed(const Duration(seconds: 2));
-        final success = await AuthService().updateSubscriptionPlan(
-          plan,
-          initialTokens,
-        );
-
-        if (success) {
-          _showSuccessAndPop(plan);
-        } else {
-          _showError('Ошибка при обновлении подписки в базе');
-        }
-      }
-    } catch (e) {
-      _showError('Произошла непредвиденная ошибка: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  void _showSuccessAndPop(String plan) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Успешно! Ваш план изменен на ${plan.toUpperCase()}'),
-        backgroundColor: Colors.green,
-      ),
-    );
-    Navigator.pop(context);
-  }
-
-  void _showError(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      },
     );
   }
 

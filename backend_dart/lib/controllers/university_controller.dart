@@ -236,25 +236,10 @@ class UniversityController {
 
           if (isNewDay) {
             // Reset logic based on plan
-            tokens = plan == 'free' ? 5 : (plan == 'pro' ? 100 : 9999);
+            tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 100 : 9999);
             // Update immediately to prevent race conditions
             await _firebaseService.updateUserFields(
                 uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
-          }
-
-          if (plan == 'free') {
-            return Response.ok(
-              jsonEncode({
-                'title': 'Доступно в PRO',
-                'description':
-                    '💎 **Функция требует подписки.**\n\nГенератор стратегии «Алгоритм 4-х вузов» доступен только в подписках **TANDAU+**. Обновите подписку для доступа к самым точным планам поступления 🚀',
-                'outOfTokens': true, // FLAG FOR FRONTEND
-                'alternative_options': [
-                  {'name': 'Перейти на PRO', 'icon': 'workspace_premium'},
-                ]
-              }),
-              headers: {'Content-Type': 'application/json; charset=utf-8'},
-            );
           }
 
           if (plan != 'premium') {
