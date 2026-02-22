@@ -265,17 +265,30 @@ class UniversityController {
                 rating: 0,
               ));
 
-      // 💡 NEW: AI CONTEXT INJECTION
-      // Determine threshold score to inject into context to reduce hallucinations
+      // 💡 NEW: AI CONTEXT INJECTION (Threshold scores and alternatives)
       final minScoreCtx = university.minScore > 0
           ? 'Пороговый балл в этот вуз: ${university.minScore}.'
           : '';
+
+      // Find alternatives that require equal or less score and have grants
+      final alternativeList = universities.where((u) {
+        if (u.id == universityId) return false;
+        if (untScore < 50) return u.minScore <= 50; // Give anything accessible
+        return u.minScore > 0 && u.minScore <= untScore + 10;
+      }).toList();
+      alternativeList.shuffle(); // Randomize a bit
+      final alternativesCtx = alternativeList
+          .take(3)
+          .map((u) => '${u.name} (Порог ЕНТ: ${u.minScore})')
+          .join(', ');
 
       final strategy = await _aiService.generateAIStrategy(
         universityName: '${university.name} $minScoreCtx', // INJECTING CONTEXT
         untScore: untScore,
         specialty: specialtyId,
         subjectScores: subjectScores,
+        alternativesCtx:
+            alternativesCtx.isNotEmpty ? alternativesCtx : 'Нет данных',
       );
 
       // Deduct token if successful and not premium
