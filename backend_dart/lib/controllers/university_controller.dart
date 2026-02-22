@@ -53,7 +53,8 @@ class UniversityController {
         final userDoc = await _firebaseService.getUserDocument(uid);
         if (userDoc != null) {
           final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
-          int tokens = userDoc['aiTokensRemaining'] as int? ?? 5; // default 5
+          int tokens =
+              userDoc['aiTokensRemaining'] as int? ?? 1000; // default 1000
           final lastResetStr = userDoc['lastTokenResetDate'] as String?;
 
           DateTime now = DateTime.now().toUtc();
@@ -72,7 +73,7 @@ class UniversityController {
 
           if (isNewDay) {
             // Reset logic based on plan
-            tokens = plan == 'free' ? 5 : (plan == 'pro' ? 100 : 9999);
+            tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 1000 : 9999);
             // Update immediately to prevent race conditions (simple approach)
             await _firebaseService.updateUserFields(
                 uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
@@ -217,7 +218,8 @@ class UniversityController {
         final userDoc = await _firebaseService.getUserDocument(uid);
         if (userDoc != null) {
           final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
-          int tokens = userDoc['aiTokensRemaining'] as int? ?? 5; // default 5
+          int tokens =
+              userDoc['aiTokensRemaining'] as int? ?? 1000; // default 1000
           final lastResetStr = userDoc['lastTokenResetDate'] as String?;
 
           DateTime now = DateTime.now().toUtc();
@@ -236,10 +238,21 @@ class UniversityController {
 
           if (isNewDay) {
             // Reset logic based on plan
-            tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 100 : 9999);
+            tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 1000 : 9999);
             // Update immediately to prevent race conditions
             await _firebaseService.updateUserFields(
                 uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
+          }
+
+          if (plan == 'free' && tokens <= 0) {
+            return Response.ok(
+              jsonEncode({
+                'success': false,
+                'outOfTokens': true,
+                'message': 'No free tokens left.'
+              }),
+              headers: {'Content-Type': 'application/json'},
+            );
           }
 
           if (plan != 'premium') {
