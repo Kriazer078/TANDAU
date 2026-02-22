@@ -8,7 +8,8 @@ class ThemeManager {
   ThemeManager._internal();
 
   // ValueNotifier to listen to theme changes
-  final ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.light);
+  // ⚡ Default to dark theme for all new users
+  final ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.dark);
 
   // Key for storing theme preference
   static const String _themeKey = 'theme_mode';
@@ -16,7 +17,8 @@ class ThemeManager {
   /// Initialize and load saved theme preference
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
-    final isDark = prefs.getBool(_themeKey) ?? false;
+    // Default to true (dark) for new users who haven't set a preference
+    final isDark = prefs.getBool(_themeKey) ?? true;
     themeMode.value = isDark ? ThemeMode.dark : ThemeMode.light;
   }
 
