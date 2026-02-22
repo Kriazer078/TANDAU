@@ -8,8 +8,8 @@ class RevenueCatService {
   factory RevenueCatService() => _instance;
   RevenueCatService._internal();
 
-  // Это тестовый ключ, который ты прислал. Позже мы заменим его на настоящий goog_ ключ
-  static const String _googleApiKey = 'test_HsseJxfavRaAXasUrMgVNOVEtuu';
+  // Настоящий публичный API ключ RevenueCat для Android
+  static const String _googleApiKey = 'goog_bxSHqzYutnwEVzWtyOioRDAFFqh';
 
   // Ключ для iOS (App Store) в будущем добавится сюда (appl_...)
   static const String _appleApiKey = '';
@@ -24,9 +24,13 @@ class RevenueCatService {
 
       PurchasesConfiguration? configuration;
 
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid &&
+          _googleApiKey.isNotEmpty &&
+          !_googleApiKey.startsWith('test_')) {
         configuration = PurchasesConfiguration(_googleApiKey);
-      } else if (Platform.isIOS && _appleApiKey.isNotEmpty) {
+      } else if (Platform.isIOS &&
+          _appleApiKey.isNotEmpty &&
+          !_appleApiKey.startsWith('test_')) {
         configuration = PurchasesConfiguration(_appleApiKey);
       }
 
