@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/images/app_icon.jpg" width="150" height="150" alt="TANDAU Logo">
+  <img src="assets/images/icon.jpg" width="150" height="150" alt="TANDAU Logo">
   <h1>TANDAU</h1>
   <p><strong>Talent Analysis & Navigation for Dream University</strong></p>
   <p><em>Инновационный навигатор для абитуриентов Казахстана, помогающий уверенно выбрать университет мечты и оценить шансы на грант.</em></p>

@@ -8,19 +8,10 @@ class AILogoIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(size * 0.25),
-      child: Container(
-        width: size,
-        height: size,
-        color: Colors.white, // Forces clean white background for the logo
-        child: Padding(
-          padding: EdgeInsets.all(
-            size * 0.1,
-          ), // Built-in padding for breathing room
-          child: Image.asset('assets/images/icon.jpg', fit: BoxFit.contain),
-        ),
-      ),
+    return Icon(
+      Icons.psychology_outlined, // Иконка мозга/интеллекта вместо звездочек
+      size: size,
+      color: color ?? Theme.of(context).primaryColor,
     );
   }
 }
