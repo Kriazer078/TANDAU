@@ -1,14 +1,16 @@
 <div align="center">
   <img src="assets/images/app_icon.jpg" width="150" height="150" alt="TANDAU Logo">
   <h1>TANDAU</h1>
-  <p><strong>AI-driven Educational Navigator for Kazakhstani Applicants</strong></p>
+  <p><strong>Talent Analysis & Navigation for Dream University</strong></p>
+  <p><em>Инновационный навигатор для абитуриентов Казахстана, помогающий уверенно выбрать университет мечты и оценить шансы на грант.</em></p>
   <p><em>Номинант <b>Digital Qazaqstan Awards 2026</b> в категории <b>"AI for Social Impact"</b></em></p>
-  <p><em>Инновационное EdTech-приложение, использующее искусственный интеллект для демократизации доступа к качественной профориентации, оценки шансов на грант и снижения стресса выпускников.</em></p>
 
   [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev/)
   [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)](https://dart.dev/)
   [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore-FFCA28?logo=firebase)](https://firebase.google.com/)
   [![Riverpod](https://img.shields.io/badge/State_Management-Riverpod-1A1A1A?logo=dart)](https://riverpod.dev/)
+
+  <h3>🚀 <a href="https://github.com/Kriazer078/TANDAU/releases/latest/download/app-release.apk">Скачать приложение TANDAU (Android APK)</a></h3>
 
 </div>
 
