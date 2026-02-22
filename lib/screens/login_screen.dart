@@ -62,15 +62,15 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           // Decorative background circles
           Positioned(
-            top: -100,
-            right: -100,
+            top: -50,
+            right: -50,
             child: CircleAvatar(
               radius: 150,
               backgroundColor: AppColors.primary.withValues(alpha: 0.1),
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height - 150,
+            top: MediaQuery.of(context).size.height * 0.7,
             left: -50,
             child: CircleAvatar(
               radius: 100,
@@ -331,11 +331,12 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             // Google Icon
             Image.network(
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png',
+              'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
               height: 24,
               width: 24,
+              scale: 1, // High resolution crisp png
               errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.g_mobiledata, size: 32, color: Colors.red),
+                  const Icon(Icons.g_mobiledata, size: 32, color: Colors.blue),
             ),
             const SizedBox(width: 8),
             Text(

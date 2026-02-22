@@ -127,15 +127,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Decorative background elements
           Positioned(
             top: -50,
-            left: -50,
+            right: -50,
             child: CircleAvatar(
               radius: 120,
               backgroundColor: AppColors.primary.withValues(alpha: 0.08),
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height - 200,
-            right: -30,
+            top: MediaQuery.of(context).size.height * 0.7,
+            left: -30,
             child: CircleAvatar(
               radius: 80,
               backgroundColor: AppColors.secondary.withValues(alpha: 0.08),
