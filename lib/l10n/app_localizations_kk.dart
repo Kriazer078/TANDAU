@@ -907,4 +907,133 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get commonOr => 'Немесе';
+
+  @override
+  String get commonDone => 'Дайын';
+
+  @override
+  String get commonClose => 'Жабу';
+
+  @override
+  String get scoreInputTitle => 'ҰБТ балын енгізіңіз';
+
+  @override
+  String get scoreInputHint => '0 – 140';
+
+  @override
+  String get scoreInputError => '0-ден 140-қа дейін сан енгізіңіз';
+
+  @override
+  String get scoreInputTapHint => 'Нақты енгізу үшін санды басыңыз';
+
+  @override
+  String get reviewTitle => 'Пікір қалдыру';
+
+  @override
+  String get reviewRateQuestion => 'Қалай бағалайсыз?';
+
+  @override
+  String get reviewSelectRating => 'Бағаңызды таңдаңыз';
+
+  @override
+  String get reviewWriteComment => 'Пікіріңізді жазыңыз';
+
+  @override
+  String get reviewCommentHint => 'Тәжірибеңіз туралы айтып беріңіз...';
+
+  @override
+  String get reviewSubmit => 'Жіберу';
+
+  @override
+  String get reviewSuccess => 'Пікір сәтті қосылды!';
+
+  @override
+  String get reviewModerationFail =>
+      'Жіберу мүмкін болмады. Мәтінді сөгіс сөздерге тексеріңіз.';
+
+  @override
+  String reviewAttachPhoto(int current) {
+    return 'Фото қосу ($current/3)';
+  }
+
+  @override
+  String get reviewRatingBad => 'Нашар';
+
+  @override
+  String get reviewRatingPoor => 'Жаман';
+
+  @override
+  String get reviewRatingOk => 'Қалыпты';
+
+  @override
+  String get reviewRatingGood => 'Жақсы';
+
+  @override
+  String get reviewRatingExcellent => 'Тамаша!';
+
+  @override
+  String get paywallTitle => 'Мүмкіндіктеріңізді\nтолық ашыңыз';
+
+  @override
+  String get paywallSubtitle =>
+      'Сізге сәйкес жоспарды таңдап, грантқа сенімді түсіңіз.';
+
+  @override
+  String get paywallFree => 'Тегін';
+
+  @override
+  String get paywallCurrentPlan => 'Сіздің ағымдағы жоспарыңыз';
+
+  @override
+  String get paywallChoosePro => 'PRO таңдау';
+
+  @override
+  String get paywallChoosePremium => 'Premium таңдау';
+
+  @override
+  String get paywallProSubtitle => '11-сынып оқушыларына арналған';
+
+  @override
+  String get paywallFeatureAiRequests => '100 AI-сұраулар';
+
+  @override
+  String get paywallFeatureBasicChances => 'Негізгі мүмкіндіктерді бағалау';
+
+  @override
+  String get paywallFeatureUniversityDb =>
+      'Университеттер базасына қолжетімділік';
+
+  @override
+  String get paywallFeatureAiDaily => 'Күніне 100 AI-сұрау';
+
+  @override
+  String get paywallFeatureStrategy =>
+      'Стратегия генераторы (4 ЖОО алгоритмі) 🔥';
+
+  @override
+  String get paywallFeatureDetailedChances =>
+      'Егжей-тегжейлі мүмкіндіктерді бағалау';
+
+  @override
+  String get paywallFeaturePriority => 'Басым қолжетімділік';
+
+  @override
+  String get paywallFeatureUnlimited => 'Шексіз AI-сұраулар ♾️';
+
+  @override
+  String get paywallFeatureParents => 'Ата-аналарға арналған аналитика';
+
+  @override
+  String get paywallFeaturePersonalSupport => 'Жеке қолдау';
+
+  @override
+  String paywallPerMonth(String price) {
+    return '$price ₸ / ай';
+  }
+
+  @override
+  String get notificationTitle => 'Хабарламалар';
+
+  @override
+  String get notificationEmpty => 'Хабарламалар жоқ';
 }

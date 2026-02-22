@@ -7,48 +7,59 @@ class ModerationService {
   DateTime? _lastMessageTime;
   static const int _spamIntervalSeconds = 2; // Cooldown between messages
 
-  // Enhanced Profanity lists
-  final List<String> _profanityEn = [
-    'fuck',
-    'shit',
-    'asshole',
-    'bitch',
-    'dick',
-    'pussy',
-    'bastard',
-    'cunt',
-    'whore',
-    'slut',
-    'faggot',
-    'nigger',
-    'nigga',
-    'cock',
-    'sucker',
-    'motherfucker',
+  // ==========================================
+  // PROFANITY DICTIONARIES
+  // ==========================================
+
+  // Strong roots that trigger on ANY partial match (rarely have false positives)
+  final List<String> _strongRootsRu = [
+    'хуй',
+    'хуя',
+    'пизд',
+    'ебан',
+    'ёбан',
+    'ебуч',
+    'бляд',
+    'блят',
+    'гандон',
+    'гондон',
+    'залуп',
+    'шлюх',
+    'мудак',
+    'пидор',
+    'пидр',
+    'еблан',
+    'долбоеб',
+    'долбоёб',
+    'уебок',
+    'уёбок',
   ];
 
-  final List<String> _profanityRu = [
-    'хуй',
-    'пизда',
-    'ебать',
-    'сука',
+  // Words that MUST match exactly to avoid false positives (e.g., 'бля' in 'рубля')
+  final List<String> _exactWordsRu = [
     'бля',
-    'блядь',
-    'гандон',
-    'мудак',
-    'уебок',
-    'пидор',
-    'дрочить',
+    'сука',
+    'суки',
+    'сучку',
+    'сучка',
     'хер',
     'манда',
-    'залупа',
-    'долбоеб',
-    'еблан',
-    'шлюха',
+    'ебать',
+    'хня',
+    'суку',
+    'мразь',
+    'мрази',
   ];
 
-  final List<String> _profanityKk = [
+  final List<String> _strongRootsKk = [
     'қотақ',
+    'жалеп',
+    'амда',
+    'шешенді',
+    'қотақбас',
+  ];
+
+  final List<String> _exactWordsKk = [
     'ам',
     'сігу',
     'кеще',
@@ -56,11 +67,33 @@ class ModerationService {
     'қатын',
     'көт',
     'сіге',
-    'жалеп',
     'емше',
-    'қотақбас',
     'шүш',
-    'сука',
+    'шешең',
+    'шешен',
+    'сигу',
+    'котак',
+    'котакбас',
+  ];
+
+  final List<String> _strongRootsEn = [
+    'fuck',
+    'shit',
+    'bitch',
+    'cunt',
+    'nigg',
+    'whore',
+    'slut',
+    'fagg',
+    'pussy',
+  ];
+
+  final List<String> _exactWordsEn = [
+    'ass',
+    'dick',
+    'cock',
+    'sucker',
+    'bastard',
   ];
 
   /// Checks if the message is sent too fast
@@ -101,7 +134,7 @@ class ModerationService {
   bool hasProfanity(String text) {
     if (text.isEmpty) return false;
 
-    // 1. Check original text broken into words
+    // 1. Check original text
     if (_checkWords(text.toLowerCase())) return true;
 
     // 2. Check normalized text (handles leetspeak: h3llo -> hello)
@@ -119,39 +152,22 @@ class ModerationService {
       final cleanWord = word.replaceAll(RegExp(r'[^\wа-яёәіңғүұқөһ]'), '');
       if (cleanWord.isEmpty) continue;
 
-      // Exact match
-      if (_profanityEn.contains(cleanWord) ||
-          _profanityRu.contains(cleanWord) ||
-          _profanityKk.contains(cleanWord)) {
+      // 1. Exact matches
+      if (_exactWordsEn.contains(cleanWord) ||
+          _exactWordsRu.contains(cleanWord) ||
+          _exactWordsKk.contains(cleanWord)) {
         return true;
       }
 
-      // Partial match for longer words (avoid false positives like "bass", "shoe")
-      if (cleanWord.length > 3) {
-        // Only trigger partial match if it's a known strong bad word
-        for (final bad in _profanityEn) {
-          // Avoid "shitt" match, but "bullshit" is ok.
-          // Simple contains is risky: "class" contain "ass".
-          // So we check if it is part of compound logic only if strictly needed.
-          // For now, strict contains only for specific roots.
-          if (bad.length > 3 && cleanWord.contains(bad)) {
-            // Exception: "classic", "assembly"
-            if (bad == 'ass' &&
-                (cleanWord.contains('class') ||
-                    cleanWord.contains('pass') ||
-                    cleanWord.contains('mass') ||
-                    cleanWord.contains('bass'))) {
-              continue;
-            }
-            return true;
-          }
-        }
-        for (final bad in _profanityRu) {
-          if (cleanWord.contains(bad)) return true;
-        }
-        for (final bad in _profanityKk) {
-          if (cleanWord.contains(bad)) return true;
-        }
+      // 2. Partial strong roots match
+      for (final root in _strongRootsRu) {
+        if (cleanWord.contains(root)) return true;
+      }
+      for (final root in _strongRootsKk) {
+        if (cleanWord.contains(root)) return true;
+      }
+      for (final root in _strongRootsEn) {
+        if (cleanWord.contains(root)) return true;
       }
     }
     return false;

@@ -14,6 +14,7 @@ import 'help_support_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'favorites_screen.dart';
 import 'paywall_screen.dart';
+import '../widgets/like_review_widgets.dart'; // ⚡ For clearing like cache on logout
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -313,6 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 56,
                       child: OutlinedButton.icon(
                         onPressed: () async {
+                          LikeButton.clearCache(); // ⚡ Clear like cache
                           await AuthService().logout();
                           if (context.mounted) {
                             Navigator.of(context).pushAndRemoveUntil(
@@ -479,7 +481,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showKaspiSupportDialog(BuildContext context) {
     // Номер и имя для переводов Kaspi
     const String kaspiNumber = "+7 705 136 92 31";
-    const String kaspiName = "Нұрдәулет А.";
+    const String kaspiName = "TANDAU Team";
 
     showModalBottomSheet(
       context: context,
@@ -546,14 +548,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Row(
                   children: [
-                    Image.network(
-                      'https://w7.pngwing.com/pngs/154/428/png-transparent-kaspi-bank-hd-logo.png',
+                    Container(
                       width: 40,
                       height: 40,
-                      errorBuilder: (_, _, _) => const Icon(
-                        Icons.credit_card,
-                        size: 40,
-                        color: Colors.redAccent,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF14635).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.account_balance_wallet_rounded,
+                        color: Color(0xFFF14635),
+                        size: 24,
                       ),
                     ),
                     const SizedBox(width: 16),

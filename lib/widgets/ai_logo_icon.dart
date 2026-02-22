@@ -9,7 +9,7 @@ class AILogoIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Icon(
-      Icons.auto_awesome,
+      Icons.smart_toy_rounded,
       size: size,
       color: color ?? Theme.of(context).primaryColor,
     );

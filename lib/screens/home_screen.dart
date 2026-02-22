@@ -306,30 +306,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       letterSpacing: 0.3,
                     ),
                   ),
-                  Container(
-                    width: 70,
-                    height: 50,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF1E40AF).withValues(alpha: 0.4)
-                          : AppColors.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      '$untScore',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                  // Tappable score badge for precise input
+                  GestureDetector(
+                    onTap: () => _showScoreInputDialog(untScore),
+                    child: Container(
+                      width: 70,
+                      height: 50,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
                         color: isDark
-                            ? const Color(0xFF60A5FA)
-                            : AppColors.primary,
+                            ? const Color(0xFF1E40AF).withValues(alpha: 0.4)
+                            : AppColors.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        '$untScore',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: isDark
+                              ? const Color(0xFF60A5FA)
+                              : AppColors.primary,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 8),
+              // Hint to tap
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Нажмите на число для точного ввода',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: isDark ? Colors.white30 : Colors.black26,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
               SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: const Color(0xFF38BDF8),
@@ -350,7 +366,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   max: 140,
                   divisions: 140,
                   onChanged: (value) {
-                    ref.read(untScoreProvider.notifier).state = value.toInt();
+                    ref.read(untScoreProvider.notifier).state = value.round();
                   },
                 ),
               ),
@@ -373,6 +389,97 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       ],
     );
+  }
+
+  /// Dialog for precise ENT score entry
+  void _showScoreInputDialog(int currentScore) {
+    final controller = TextEditingController(text: '$currentScore');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Введите балл ЕНТ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : AppColors.textPrimary,
+          ),
+        ),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(3),
+          ],
+          decoration: InputDecoration(
+            hintText: '0 – 140',
+            hintStyle: TextStyle(
+              color: isDark ? Colors.white38 : Colors.black26,
+            ),
+            filled: true,
+            fillColor: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.grey.shade100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : AppColors.textPrimary,
+          ),
+          textAlign: TextAlign.center,
+          onSubmitted: (value) {
+            _applyScoreFromText(value, ctx);
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              'Отмена',
+              style: TextStyle(color: isDark ? Colors.white54 : Colors.grey),
+            ),
+          ),
+          FilledButton(
+            onPressed: () => _applyScoreFromText(controller.text, ctx),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('Готово'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _applyScoreFromText(String text, BuildContext dialogCtx) {
+    final parsed = int.tryParse(text.trim());
+    if (parsed != null && parsed >= 0 && parsed <= 140) {
+      ref.read(untScoreProvider.notifier).state = parsed;
+      Navigator.pop(dialogCtx);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Введите число от 0 до 140'),
+          backgroundColor: Colors.red.shade400,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildActionCard(

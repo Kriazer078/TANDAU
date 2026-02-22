@@ -155,7 +155,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           title: 'TANDAU Basic',
                           price: 'Бесплатно',
                           features: [
-                            '5 ИИ-запросов в день',
+                            '100 ИИ-запросов',
                             'Базовая оценка шансов',
                             'Доступ к базе университетов',
                           ],

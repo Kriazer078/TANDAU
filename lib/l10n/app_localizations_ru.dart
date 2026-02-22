@@ -911,4 +911,131 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get commonOr => 'Или';
+
+  @override
+  String get commonDone => 'Готово';
+
+  @override
+  String get commonClose => 'Закрыть';
+
+  @override
+  String get scoreInputTitle => 'Введите балл ЕНТ';
+
+  @override
+  String get scoreInputHint => '0 – 140';
+
+  @override
+  String get scoreInputError => 'Введите число от 0 до 140';
+
+  @override
+  String get scoreInputTapHint => 'Нажмите на число для точного ввода';
+
+  @override
+  String get reviewTitle => 'Оставить отзыв';
+
+  @override
+  String get reviewRateQuestion => 'Как вы оцениваете?';
+
+  @override
+  String get reviewSelectRating => 'Выберите оценку';
+
+  @override
+  String get reviewWriteComment => 'Напишите комментарий';
+
+  @override
+  String get reviewCommentHint => 'Расскажите о своём опыте...';
+
+  @override
+  String get reviewSubmit => 'Отправить';
+
+  @override
+  String get reviewSuccess => 'Отзыв успешно добавлен!';
+
+  @override
+  String get reviewModerationFail =>
+      'Не удалось отправить. Проверьте текст на нецензурные слова.';
+
+  @override
+  String reviewAttachPhoto(int current) {
+    return 'Прикрепить фото ($current/3)';
+  }
+
+  @override
+  String get reviewRatingBad => 'Ужасно';
+
+  @override
+  String get reviewRatingPoor => 'Плохо';
+
+  @override
+  String get reviewRatingOk => 'Нормально';
+
+  @override
+  String get reviewRatingGood => 'Хорошо';
+
+  @override
+  String get reviewRatingExcellent => 'Отлично!';
+
+  @override
+  String get paywallTitle => 'Раскройте свой\nпотенциал на максимум';
+
+  @override
+  String get paywallSubtitle =>
+      'Выберите план, который подходит именно вам, и поступите на грант с уверенностью.';
+
+  @override
+  String get paywallFree => 'Бесплатно';
+
+  @override
+  String get paywallCurrentPlan => 'Ваш текущий план';
+
+  @override
+  String get paywallChoosePro => 'Выбрать PRO';
+
+  @override
+  String get paywallChoosePremium => 'Выбрать Premium';
+
+  @override
+  String get paywallProSubtitle => 'Идеально для 11-классников';
+
+  @override
+  String get paywallFeatureAiRequests => '100 ИИ-запросов';
+
+  @override
+  String get paywallFeatureBasicChances => 'Базовая оценка шансов';
+
+  @override
+  String get paywallFeatureUniversityDb => 'Доступ к базе университетов';
+
+  @override
+  String get paywallFeatureAiDaily => '100 ИИ-запросов в день';
+
+  @override
+  String get paywallFeatureStrategy =>
+      'Генератор стратегии (Алгоритм 4-х вузов) 🔥';
+
+  @override
+  String get paywallFeatureDetailedChances => 'Детализированная оценка шансов';
+
+  @override
+  String get paywallFeaturePriority => 'Приоритетный доступ';
+
+  @override
+  String get paywallFeatureUnlimited => 'Безлимитные ИИ-запросы ♾️';
+
+  @override
+  String get paywallFeatureParents => 'Аналитика для родителей';
+
+  @override
+  String get paywallFeaturePersonalSupport => 'Персональная поддержка';
+
+  @override
+  String paywallPerMonth(String price) {
+    return '$price ₸ / месяц';
+  }
+
+  @override
+  String get notificationTitle => 'Уведомления';
+
+  @override
+  String get notificationEmpty => 'Нет уведомлений';
 }

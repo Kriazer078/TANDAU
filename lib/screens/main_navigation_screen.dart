@@ -6,6 +6,7 @@ import '../screens/search_screen.dart';
 import '../screens/ai_consultant_screen.dart';
 import '../screens/profile_screen.dart';
 import '../utils/guest_guard.dart'; // ⭐ Import GuestGuard
+import '../widgets/like_review_widgets.dart'; // ⚡ For preloading likes
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -19,6 +20,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   // ⚡ Track which tabs have been visited for lazy loading
   final Set<int> _visitedTabs = {0}; // Home is visited by default
+
+  @override
+  void initState() {
+    super.initState();
+    // ⚡ Pre-load all liked IDs once instead of per-card reads
+    LikeButton.preloadLikes();
+  }
 
   void setIndex(int index) {
     setState(() {

@@ -21,6 +21,27 @@ class LikeButton extends StatefulWidget {
     this.initialIsLiked,
   });
 
+  // ⚡ Static cache: load once, check many times
+  static Set<String>? _likedIdsCache;
+  static bool _cacheLoading = false;
+
+  /// Pre-load all liked IDs for current user (call once)
+  static Future<void> preloadLikes() async {
+    if (_cacheLoading) return;
+    _cacheLoading = true;
+    try {
+      final ids = await LikeService().getUserLikedUniversities();
+      _likedIdsCache = ids.toSet();
+    } catch (_) {
+      _likedIdsCache = {};
+    } finally {
+      _cacheLoading = false;
+    }
+  }
+
+  /// Clear cache on logout
+  static void clearCache() => _likedIdsCache = null;
+
   @override
   State<LikeButton> createState() => _LikeButtonState();
 }
@@ -57,7 +78,18 @@ class _LikeButtonState extends State<LikeButton>
     super.dispose();
   }
 
+  /// ⚡ Check like status from cache first, fallback to Firestore
   Future<void> _checkLikeStatus() async {
+    // Use cache if available (no Firestore read)
+    if (LikeButton._likedIdsCache != null) {
+      if (mounted) {
+        setState(() {
+          _isLiked = LikeButton._likedIdsCache!.contains(widget.universityId);
+        });
+      }
+      return;
+    }
+    // Fallback to individual read only if cache not loaded yet
     final liked = await _likeService.isLiked(widget.universityId);
     if (mounted) {
       setState(() {
@@ -81,6 +113,15 @@ class _LikeButtonState extends State<LikeButton>
     _controller.forward().then((_) => _controller.reverse());
 
     final success = await _likeService.toggleLike(widget.universityId);
+
+    // Update static cache
+    if (success && LikeButton._likedIdsCache != null) {
+      if (_isLiked) {
+        LikeButton._likedIdsCache!.add(widget.universityId);
+      } else {
+        LikeButton._likedIdsCache!.remove(widget.universityId);
+      }
+    }
 
     if (!success && mounted) {
       setState(() {

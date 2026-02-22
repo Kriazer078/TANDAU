@@ -401,5 +401,59 @@
     "majorBusiness": "Business",
     "majorLaw": "Law",
 
-    "commonOr": "Or"
+    "commonOr": "Or",
+    "commonDone": "Done",
+    "commonClose": "Close",
+
+    "scoreInputTitle": "Enter UNT Score",
+    "scoreInputHint": "0 – 140",
+    "scoreInputError": "Enter a number from 0 to 140",
+    "scoreInputTapHint": "Tap the number for precise input",
+
+    "reviewTitle": "Leave a Review",
+    "reviewRateQuestion": "How do you rate it?",
+    "reviewSelectRating": "Select a rating",
+    "reviewWriteComment": "Write a comment",
+    "reviewCommentHint": "Tell us about your experience...",
+    "reviewSubmit": "Submit",
+    "reviewSuccess": "Review added successfully!",
+    "reviewModerationFail": "Could not submit. Check text for inappropriate language.",
+    "reviewAttachPhoto": "Attach photo ({current}/3)",
+    "@reviewAttachPhoto": {
+        "placeholders": {
+            "current": { "type": "int" }
+        }
+    },
+    "reviewRatingBad": "Terrible",
+    "reviewRatingPoor": "Bad",
+    "reviewRatingOk": "OK",
+    "reviewRatingGood": "Good",
+    "reviewRatingExcellent": "Excellent!",
+
+    "paywallTitle": "Unlock your\nfull potential",
+    "paywallSubtitle": "Choose the plan that suits you and get admitted on a grant with confidence.",
+    "paywallFree": "Free",
+    "paywallCurrentPlan": "Your current plan",
+    "paywallChoosePro": "Choose PRO",
+    "paywallChoosePremium": "Choose Premium",
+    "paywallProSubtitle": "Perfect for 11th graders",
+    "paywallFeatureAiRequests": "100 AI requests",
+    "paywallFeatureBasicChances": "Basic chance estimation",
+    "paywallFeatureUniversityDb": "Access to university database",
+    "paywallFeatureAiDaily": "100 AI requests per day",
+    "paywallFeatureStrategy": "Strategy generator (4-university algorithm) 🔥",
+    "paywallFeatureDetailedChances": "Detailed chance estimation",
+    "paywallFeaturePriority": "Priority access",
+    "paywallFeatureUnlimited": "Unlimited AI requests ♾️",
+    "paywallFeatureParents": "Analytics for parents",
+    "paywallFeaturePersonalSupport": "Personal support",
+    "paywallPerMonth": "{price} ₸ / month",
+    "@paywallPerMonth": {
+        "placeholders": {
+            "price": { "type": "String" }
+        }
+    },
+
+    "notificationTitle": "Notifications",
+    "notificationEmpty": "No notifications"
 }

@@ -1815,6 +1815,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Or'**
   String get commonOr;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @scoreInputTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter UNT Score'**
+  String get scoreInputTitle;
+
+  /// No description provided for @scoreInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'0 – 140'**
+  String get scoreInputHint;
+
+  /// No description provided for @scoreInputError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number from 0 to 140'**
+  String get scoreInputError;
+
+  /// No description provided for @scoreInputTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the number for precise input'**
+  String get scoreInputTapHint;
+
+  /// No description provided for @reviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a Review'**
+  String get reviewTitle;
+
+  /// No description provided for @reviewRateQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you rate it?'**
+  String get reviewRateQuestion;
+
+  /// No description provided for @reviewSelectRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a rating'**
+  String get reviewSelectRating;
+
+  /// No description provided for @reviewWriteComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a comment'**
+  String get reviewWriteComment;
+
+  /// No description provided for @reviewCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your experience...'**
+  String get reviewCommentHint;
+
+  /// No description provided for @reviewSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get reviewSubmit;
+
+  /// No description provided for @reviewSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Review added successfully!'**
+  String get reviewSuccess;
+
+  /// No description provided for @reviewModerationFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not submit. Check text for inappropriate language.'**
+  String get reviewModerationFail;
+
+  /// No description provided for @reviewAttachPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach photo ({current}/3)'**
+  String reviewAttachPhoto(int current);
+
+  /// No description provided for @reviewRatingBad.
+  ///
+  /// In en, this message translates to:
+  /// **'Terrible'**
+  String get reviewRatingBad;
+
+  /// No description provided for @reviewRatingPoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Bad'**
+  String get reviewRatingPoor;
+
+  /// No description provided for @reviewRatingOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get reviewRatingOk;
+
+  /// No description provided for @reviewRatingGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get reviewRatingGood;
+
+  /// No description provided for @reviewRatingExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent!'**
+  String get reviewRatingExcellent;
+
+  /// No description provided for @paywallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your\nfull potential'**
+  String get paywallTitle;
+
+  /// No description provided for @paywallSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the plan that suits you and get admitted on a grant with confidence.'**
+  String get paywallSubtitle;
+
+  /// No description provided for @paywallFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get paywallFree;
+
+  /// No description provided for @paywallCurrentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current plan'**
+  String get paywallCurrentPlan;
+
+  /// No description provided for @paywallChoosePro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose PRO'**
+  String get paywallChoosePro;
+
+  /// No description provided for @paywallChoosePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Premium'**
+  String get paywallChoosePremium;
+
+  /// No description provided for @paywallProSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect for 11th graders'**
+  String get paywallProSubtitle;
+
+  /// No description provided for @paywallFeatureAiRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'100 AI requests'**
+  String get paywallFeatureAiRequests;
+
+  /// No description provided for @paywallFeatureBasicChances.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic chance estimation'**
+  String get paywallFeatureBasicChances;
+
+  /// No description provided for @paywallFeatureUniversityDb.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to university database'**
+  String get paywallFeatureUniversityDb;
+
+  /// No description provided for @paywallFeatureAiDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'100 AI requests per day'**
+  String get paywallFeatureAiDaily;
+
+  /// No description provided for @paywallFeatureStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Strategy generator (4-university algorithm) 🔥'**
+  String get paywallFeatureStrategy;
+
+  /// No description provided for @paywallFeatureDetailedChances.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed chance estimation'**
+  String get paywallFeatureDetailedChances;
+
+  /// No description provided for @paywallFeaturePriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority access'**
+  String get paywallFeaturePriority;
+
+  /// No description provided for @paywallFeatureUnlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited AI requests ♾️'**
+  String get paywallFeatureUnlimited;
+
+  /// No description provided for @paywallFeatureParents.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics for parents'**
+  String get paywallFeatureParents;
+
+  /// No description provided for @paywallFeaturePersonalSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal support'**
+  String get paywallFeaturePersonalSupport;
+
+  /// No description provided for @paywallPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} ₸ / month'**
+  String paywallPerMonth(String price);
+
+  /// No description provided for @notificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationTitle;
+
+  /// No description provided for @notificationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get notificationEmpty;
 }
 
 class _AppLocalizationsDelegate

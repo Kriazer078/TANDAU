@@ -908,4 +908,131 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonOr => 'Or';
+
+  @override
+  String get commonDone => 'Done';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get scoreInputTitle => 'Enter UNT Score';
+
+  @override
+  String get scoreInputHint => '0 – 140';
+
+  @override
+  String get scoreInputError => 'Enter a number from 0 to 140';
+
+  @override
+  String get scoreInputTapHint => 'Tap the number for precise input';
+
+  @override
+  String get reviewTitle => 'Leave a Review';
+
+  @override
+  String get reviewRateQuestion => 'How do you rate it?';
+
+  @override
+  String get reviewSelectRating => 'Select a rating';
+
+  @override
+  String get reviewWriteComment => 'Write a comment';
+
+  @override
+  String get reviewCommentHint => 'Tell us about your experience...';
+
+  @override
+  String get reviewSubmit => 'Submit';
+
+  @override
+  String get reviewSuccess => 'Review added successfully!';
+
+  @override
+  String get reviewModerationFail =>
+      'Could not submit. Check text for inappropriate language.';
+
+  @override
+  String reviewAttachPhoto(int current) {
+    return 'Attach photo ($current/3)';
+  }
+
+  @override
+  String get reviewRatingBad => 'Terrible';
+
+  @override
+  String get reviewRatingPoor => 'Bad';
+
+  @override
+  String get reviewRatingOk => 'OK';
+
+  @override
+  String get reviewRatingGood => 'Good';
+
+  @override
+  String get reviewRatingExcellent => 'Excellent!';
+
+  @override
+  String get paywallTitle => 'Unlock your\nfull potential';
+
+  @override
+  String get paywallSubtitle =>
+      'Choose the plan that suits you and get admitted on a grant with confidence.';
+
+  @override
+  String get paywallFree => 'Free';
+
+  @override
+  String get paywallCurrentPlan => 'Your current plan';
+
+  @override
+  String get paywallChoosePro => 'Choose PRO';
+
+  @override
+  String get paywallChoosePremium => 'Choose Premium';
+
+  @override
+  String get paywallProSubtitle => 'Perfect for 11th graders';
+
+  @override
+  String get paywallFeatureAiRequests => '100 AI requests';
+
+  @override
+  String get paywallFeatureBasicChances => 'Basic chance estimation';
+
+  @override
+  String get paywallFeatureUniversityDb => 'Access to university database';
+
+  @override
+  String get paywallFeatureAiDaily => '100 AI requests per day';
+
+  @override
+  String get paywallFeatureStrategy =>
+      'Strategy generator (4-university algorithm) 🔥';
+
+  @override
+  String get paywallFeatureDetailedChances => 'Detailed chance estimation';
+
+  @override
+  String get paywallFeaturePriority => 'Priority access';
+
+  @override
+  String get paywallFeatureUnlimited => 'Unlimited AI requests ♾️';
+
+  @override
+  String get paywallFeatureParents => 'Analytics for parents';
+
+  @override
+  String get paywallFeaturePersonalSupport => 'Personal support';
+
+  @override
+  String paywallPerMonth(String price) {
+    return '$price ₸ / month';
+  }
+
+  @override
+  String get notificationTitle => 'Notifications';
+
+  @override
+  String get notificationEmpty => 'No notifications';
 }

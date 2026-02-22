@@ -383,5 +383,59 @@
     "majorBusiness": "Бизнес",
     "majorLaw": "Заң",
 
-    "commonOr": "Немесе"
+    "commonOr": "Немесе",
+    "commonDone": "Дайын",
+    "commonClose": "Жабу",
+
+    "scoreInputTitle": "ҰБТ балын енгізіңіз",
+    "scoreInputHint": "0 – 140",
+    "scoreInputError": "0-ден 140-қа дейін сан енгізіңіз",
+    "scoreInputTapHint": "Нақты енгізу үшін санды басыңыз",
+
+    "reviewTitle": "Пікір қалдыру",
+    "reviewRateQuestion": "Қалай бағалайсыз?",
+    "reviewSelectRating": "Бағаңызды таңдаңыз",
+    "reviewWriteComment": "Пікіріңізді жазыңыз",
+    "reviewCommentHint": "Тәжірибеңіз туралы айтып беріңіз...",
+    "reviewSubmit": "Жіберу",
+    "reviewSuccess": "Пікір сәтті қосылды!",
+    "reviewModerationFail": "Жіберу мүмкін болмады. Мәтінді сөгіс сөздерге тексеріңіз.",
+    "reviewAttachPhoto": "Фото қосу ({current}/3)",
+    "@reviewAttachPhoto": {
+        "placeholders": {
+            "current": { "type": "int" }
+        }
+    },
+    "reviewRatingBad": "Нашар",
+    "reviewRatingPoor": "Жаман",
+    "reviewRatingOk": "Қалыпты",
+    "reviewRatingGood": "Жақсы",
+    "reviewRatingExcellent": "Тамаша!",
+
+    "paywallTitle": "Мүмкіндіктеріңізді\nтолық ашыңыз",
+    "paywallSubtitle": "Сізге сәйкес жоспарды таңдап, грантқа сенімді түсіңіз.",
+    "paywallFree": "Тегін",
+    "paywallCurrentPlan": "Сіздің ағымдағы жоспарыңыз",
+    "paywallChoosePro": "PRO таңдау",
+    "paywallChoosePremium": "Premium таңдау",
+    "paywallProSubtitle": "11-сынып оқушыларына арналған",
+    "paywallFeatureAiRequests": "100 AI-сұраулар",
+    "paywallFeatureBasicChances": "Негізгі мүмкіндіктерді бағалау",
+    "paywallFeatureUniversityDb": "Университеттер базасына қолжетімділік",
+    "paywallFeatureAiDaily": "Күніне 100 AI-сұрау",
+    "paywallFeatureStrategy": "Стратегия генераторы (4 ЖОО алгоритмі) 🔥",
+    "paywallFeatureDetailedChances": "Егжей-тегжейлі мүмкіндіктерді бағалау",
+    "paywallFeaturePriority": "Басым қолжетімділік",
+    "paywallFeatureUnlimited": "Шексіз AI-сұраулар ♾️",
+    "paywallFeatureParents": "Ата-аналарға арналған аналитика",
+    "paywallFeaturePersonalSupport": "Жеке қолдау",
+    "paywallPerMonth": "{price} ₸ / ай",
+    "@paywallPerMonth": {
+        "placeholders": {
+            "price": { "type": "String" }
+        }
+    },
+
+    "notificationTitle": "Хабарламалар",
+    "notificationEmpty": "Хабарламалар жоқ"
 }

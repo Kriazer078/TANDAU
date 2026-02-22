@@ -47,7 +47,7 @@ class UserModel {
     this.banned = false,
     this.banReason,
     this.subscriptionPlan = 'free',
-    this.aiTokensRemaining = 5, // Default for free users
+    this.aiTokensRemaining = 100, // Default for free users
     this.lastTokenResetDate,
   });
 
@@ -114,7 +114,7 @@ class UserModel {
       banned: map['banned'] ?? false,
       banReason: map['banReason'],
       subscriptionPlan: map['subscriptionPlan'] ?? 'free',
-      aiTokensRemaining: map['aiTokensRemaining'] ?? 5,
+      aiTokensRemaining: map['aiTokensRemaining'] ?? 100,
       lastTokenResetDate: map['lastTokenResetDate'] != null
           ? (map['lastTokenResetDate'] as Timestamp).toDate()
           : null,

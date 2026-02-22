@@ -293,100 +293,102 @@ class _ResultUniCardState extends State<_ResultUniCard> {
         ? Colors.green
         : (chanceResult.chancePercent >= 40 ? Colors.orange : Colors.red);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: widget.isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
           color: widget.isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : AppColors.border,
-          width: 1.5,
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          UniversityDetailScreen(university: widget.uni),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                  ),
-                  child: const Icon(
-                    Icons.account_balance,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.uni.name,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: widget.isDark
-                            ? Colors.white
-                            : AppColors.textPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.uni.city,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: widget.isDark
-                            ? Colors.white54
-                            : AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              CircularPercentIndicator(
-                radius: 26.0,
-                lineWidth: 5.0,
-                animation: true,
-                percent: chanceResult.chancePercent / 100,
-                center: Text(
-                  '${chanceResult.chancePercent}%',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor: chanceColor,
-                backgroundColor: widget.isDark
-                    ? Colors.white12
-                    : Colors.black12,
-              ),
-            ],
+              : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: widget.isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : AppColors.border,
+            width: 1.5,
           ),
-          const SizedBox(height: 20),
-          _buildActionButton(l10n),
-        ],
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            UniversityDetailScreen(university: widget.uni),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                    ),
+                    child: const Icon(
+                      Icons.account_balance,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.uni.name,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: widget.isDark
+                              ? Colors.white
+                              : AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.uni.city,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: widget.isDark
+                              ? Colors.white54
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                CircularPercentIndicator(
+                  radius: 26.0,
+                  lineWidth: 5.0,
+                  animation: true,
+                  percent: chanceResult.chancePercent / 100,
+                  center: Text(
+                    '${chanceResult.chancePercent}%',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor: chanceColor,
+                  backgroundColor: widget.isDark
+                      ? Colors.white12
+                      : Colors.black12,
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildActionButton(l10n),
+          ],
+        ),
       ),
     );
   }

@@ -382,5 +382,59 @@
     "majorBusiness": "Бизнес",
     "majorLaw": "Право",
 
-    "commonOr": "Или"
+    "commonOr": "Или",
+    "commonDone": "Готово",
+    "commonClose": "Закрыть",
+
+    "scoreInputTitle": "Введите балл ЕНТ",
+    "scoreInputHint": "0 – 140",
+    "scoreInputError": "Введите число от 0 до 140",
+    "scoreInputTapHint": "Нажмите на число для точного ввода",
+
+    "reviewTitle": "Оставить отзыв",
+    "reviewRateQuestion": "Как вы оцениваете?",
+    "reviewSelectRating": "Выберите оценку",
+    "reviewWriteComment": "Напишите комментарий",
+    "reviewCommentHint": "Расскажите о своём опыте...",
+    "reviewSubmit": "Отправить",
+    "reviewSuccess": "Отзыв успешно добавлен!",
+    "reviewModerationFail": "Не удалось отправить. Проверьте текст на нецензурные слова.",
+    "reviewAttachPhoto": "Прикрепить фото ({current}/3)",
+    "@reviewAttachPhoto": {
+        "placeholders": {
+            "current": { "type": "int" }
+        }
+    },
+    "reviewRatingBad": "Ужасно",
+    "reviewRatingPoor": "Плохо",
+    "reviewRatingOk": "Нормально",
+    "reviewRatingGood": "Хорошо",
+    "reviewRatingExcellent": "Отлично!",
+
+    "paywallTitle": "Раскройте свой\nпотенциал на максимум",
+    "paywallSubtitle": "Выберите план, который подходит именно вам, и поступите на грант с уверенностью.",
+    "paywallFree": "Бесплатно",
+    "paywallCurrentPlan": "Ваш текущий план",
+    "paywallChoosePro": "Выбрать PRO",
+    "paywallChoosePremium": "Выбрать Premium",
+    "paywallProSubtitle": "Идеально для 11-классников",
+    "paywallFeatureAiRequests": "100 ИИ-запросов",
+    "paywallFeatureBasicChances": "Базовая оценка шансов",
+    "paywallFeatureUniversityDb": "Доступ к базе университетов",
+    "paywallFeatureAiDaily": "100 ИИ-запросов в день",
+    "paywallFeatureStrategy": "Генератор стратегии (Алгоритм 4-х вузов) 🔥",
+    "paywallFeatureDetailedChances": "Детализированная оценка шансов",
+    "paywallFeaturePriority": "Приоритетный доступ",
+    "paywallFeatureUnlimited": "Безлимитные ИИ-запросы ♾️",
+    "paywallFeatureParents": "Аналитика для родителей",
+    "paywallFeaturePersonalSupport": "Персональная поддержка",
+    "paywallPerMonth": "{price} ₸ / месяц",
+    "@paywallPerMonth": {
+        "placeholders": {
+            "price": { "type": "String" }
+        }
+    },
+
+    "notificationTitle": "Уведомления",
+    "notificationEmpty": "Нет уведомлений"
 }

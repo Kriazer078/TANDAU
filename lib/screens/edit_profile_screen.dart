@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
+import '../services/moderation_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -133,6 +134,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (ModerationService().hasProfanity(_nameController.text.trim())) {
+      _showError('Имя содержит недопустимые слова (мат/оскорбления).');
+      return;
+    }
 
     setState(() => _isLoading = true);
 

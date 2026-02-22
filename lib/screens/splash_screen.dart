@@ -98,9 +98,11 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             // App Logo
             Image.asset(
-              'assets/images/app_icon.jpg',
+              'assets/images/icon.jpg',
               width: 120,
               height: 120,
+              cacheWidth: 360, // 120 * 3 for retina
+              cacheHeight: 360,
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 32),
