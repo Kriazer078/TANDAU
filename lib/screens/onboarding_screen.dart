@@ -129,7 +129,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   itemCount: _pages.length,
                   onPageChanged: (i) {
                     setState(() => _currentPage = i);
-                    _animController.forward(from: 0);
                   },
                   itemBuilder: (context, index) {
                     return _buildPage(_pages[index], isDark);
@@ -167,7 +166,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     SizedBox(
                       width: double.infinity,
                       height: 56,
-                      child: DecoratedBox(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.easeInOutCubic,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: _pages[_currentPage].gradientColors,

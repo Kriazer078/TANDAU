@@ -11,7 +11,6 @@ import '../services/ai_consultant_service.dart';
 import '../services/university_service.dart';
 import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
-import 'paywall_screen.dart';
 import '../widgets/ai_logo_icon.dart';
 
 class GrantPredictionResultsScreen extends ConsumerWidget {
@@ -82,8 +81,10 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     final chanceA = chanceService.calculate(
                       entScore: entScore,
                       universityId: a.id,
+                      universityPassingScore: a.passingScore,
                       majorCategory: catA,
                       gpa: user?.gpa,
+                      
                       ieltsScore: user?.ieltsScore,
                       achievements: user?.achievements ?? [],
                       userCity: user?.city,
@@ -96,6 +97,7 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     final chanceB = chanceService.calculate(
                       entScore: entScore,
                       universityId: b.id,
+                      universityPassingScore: b.passingScore,
                       majorCategory: catB,
                       gpa: user?.gpa,
                       ieltsScore: user?.ieltsScore,
@@ -281,6 +283,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
     final chanceResult = chanceService.calculate(
       entScore: widget.untScore,
       universityId: widget.uni.id,
+      universityPassingScore: widget.uni.passingScore,
       majorCategory: category,
       gpa: user?.gpa,
       ieltsScore: user?.ieltsScore,
@@ -401,15 +404,20 @@ class _ResultUniCardState extends State<_ResultUniCard> {
           color: AppColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Center(
-          child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: AppColors.primary,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primary,
+              ),
             ),
-          ),
+            const SizedBox(width: 12),
+            _AnimatedTypingIndicator(isDark: widget.isDark),
+          ],
         ),
       );
     }
@@ -556,18 +564,11 @@ class _ResultUniCardState extends State<_ResultUniCard> {
           );
           return;
         }
-      } on OutOfTokensException catch (_) {
-        if (mounted) {
-          setState(() => _isLoadingStrategy = false);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const PaywallScreen()),
-          );
-        }
-        return; // Important: do not fall back to local strategy
       } catch (_) {
-        // Бэкенд недоступен → используем локальную стратегию
-        debugPrint('⚠️ Backend unavailable, using local strategy');
+        // Бэкенд недоступен или токены закончились → используем локальную стратегию
+        debugPrint(
+          '⚠️ Backend unavailable or out of tokens, using local strategy',
+        );
       }
 
       // ═══════════════════════════════════════════
@@ -656,5 +657,66 @@ class _ResultUniCardState extends State<_ResultUniCard> {
     } finally {
       if (mounted) setState(() => _isLoadingStrategy = false);
     }
+  }
+}
+
+// ═══════════════════════════════════════════
+//  ANIMATED TYPING INDICATOR
+// ═══════════════════════════════════════════
+class _AnimatedTypingIndicator extends StatefulWidget {
+  final bool isDark;
+  const _AnimatedTypingIndicator({required this.isDark});
+
+  @override
+  State<_AnimatedTypingIndicator> createState() =>
+      _AnimatedTypingIndicatorState();
+}
+
+class _AnimatedTypingIndicatorState extends State<_AnimatedTypingIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final val = _controller.value;
+        String dots = '';
+        if (val < 0.25) {
+          dots = '';
+        } else if (val < 0.5) {
+          dots = '.';
+        } else if (val < 0.75) {
+          dots = '..';
+        } else {
+          dots = '...';
+        }
+
+        return Text(
+          'Создаю AI стратегию$dots',
+          style: TextStyle(
+            color: widget.isDark ? Colors.white54 : AppColors.primary,
+            fontSize: 13,
+            fontStyle: FontStyle.italic,
+          ),
+        );
+      },
+    );
   }
 }

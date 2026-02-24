@@ -102,7 +102,7 @@ class AIConsultantService {
     Map<String, int>? subjectScores,
   }) async {
     try {
-      final currentUser = AuthService().currentUser.value;
+      // final currentUser = AuthService().currentUser.value;
       final language = LocaleManager().locale.value?.languageCode ?? 'ru';
       final requestBody = {
         'user_unt_score': untScore,
@@ -112,9 +112,9 @@ class AIConsultantService {
         'language': language,
       };
 
-      if (currentUser != null) {
-        requestBody['uid'] = currentUser.uid;
-      }
+      // if (currentUser != null) {
+      //   requestBody['uid'] = currentUser.uid;
+      // }
 
       final response = await http
           .post(
@@ -193,10 +193,10 @@ class AIConsultantService {
 
       final bodyData = <String, dynamic>{'question': fullMessage};
 
-      final currentUser = AuthService().currentUser.value;
-      if (currentUser != null) {
-        bodyData['uid'] = currentUser.uid;
-      }
+      // final currentUser = AuthService().currentUser.value;
+      // if (currentUser != null) {
+      //   bodyData['uid'] = currentUser.uid;
+      // }
 
       if (history != null && history.isNotEmpty) {
         bodyData['history'] = history;

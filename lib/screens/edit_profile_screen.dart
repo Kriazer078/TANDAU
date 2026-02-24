@@ -135,6 +135,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
+    if (_completionProgress < 1.0) {
+      _showError(
+        'Пожалуйста, заполните все данные профиля (включая имя и академические баллы).',
+      );
+      return;
+    }
+
     if (ModerationService().hasProfanity(_nameController.text.trim())) {
       _showError('Имя содержит недопустимые слова (мат/оскорбления).');
       return;

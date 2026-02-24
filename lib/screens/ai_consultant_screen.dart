@@ -1,13 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../theme/app_colors.dart';
 import '../l10n/app_localizations.dart';
 import '../services/ai_consultant_service.dart';
 import '../services/auth_service.dart';
 import '../services/moderation_service.dart';
-import '../models/user_model.dart';
-import 'paywall_screen.dart';
 import '../widgets/ai_logo_icon.dart';
 
 class AIConsultantScreen extends StatefulWidget {
@@ -27,15 +27,63 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
   bool _isTyping = false;
   late AnimationController _fadeController;
 
+  static const _historyPrefsKey = 'ai_chat_history';
+
   @override
   void initState() {
     super.initState();
     _aiService.init();
+    _loadHistory();
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
     _fadeController.forward();
+  }
+
+  Future<void> _saveHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = _messages
+          .map(
+            (m) => {
+              'text': m.text,
+              'isUser': m.isUser,
+              'time': m.time.toIso8601String(),
+            },
+          )
+          .toList();
+      await prefs.setString(_historyPrefsKey, jsonEncode(list));
+    } catch (e) {
+      debugPrint('Failed to save history: $e');
+    }
+  }
+
+  Future<void> _loadHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final str = prefs.getString(_historyPrefsKey);
+      if (str != null) {
+        final list = jsonDecode(str) as List;
+        setState(() {
+          _messages.clear();
+          for (final item in list) {
+            _messages.add(
+              _ChatMessage(
+                text: item['text'],
+                isUser: item['isUser'] ?? false,
+                time: item['time'] != null
+                    ? DateTime.parse(item['time'])
+                    : DateTime.now(),
+              ),
+            );
+          }
+        });
+        _scrollToBottom();
+      }
+    } catch (e) {
+      debugPrint('Failed to load history: $e');
+    }
   }
 
   @override
@@ -75,6 +123,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       _isTyping = true;
     });
 
+    _saveHistory();
+
     _messageController.clear();
     _scrollToBottom();
 
@@ -112,6 +162,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _ChatMessage(text: response, isUser: false, time: DateTime.now()),
           );
         });
+        _saveHistory();
         _scrollToBottom();
       }
     } on OutOfTokensException catch (e) {
@@ -122,17 +173,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _ChatMessage(text: e.message, isUser: false, time: DateTime.now()),
           );
         });
+        _saveHistory();
         _scrollToBottom();
-
-        // Show Paywall
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PaywallScreen()),
-            );
-          }
-        });
       }
     } catch (e) {
       if (mounted) {
@@ -146,6 +188,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             ),
           );
         });
+        _saveHistory();
         _scrollToBottom();
       }
     }
@@ -235,64 +278,6 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           ],
         ),
         actions: [
-          ValueListenableBuilder<UserModel?>(
-            valueListenable: AuthService().currentUser,
-            builder: (context, user, _) {
-              if (user == null) return const SizedBox.shrink();
-              final isPremium = user.subscriptionPlan == 'premium';
-              final isPro = user.subscriptionPlan == 'pro' || isPremium;
-
-              return GestureDetector(
-                onTap: () {
-                  if (!isPremium) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const PaywallScreen()),
-                    );
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isPro
-                        ? const Color(0xFF6366F1).withValues(alpha: 0.1)
-                        : Colors.orange.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isPro
-                          ? const Color(0xFF6366F1).withValues(alpha: 0.3)
-                          : Colors.orange.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isPro ? Icons.workspace_premium : Icons.stars_rounded,
-                        size: 14,
-                        color: isPro ? const Color(0xFF6366F1) : Colors.orange,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isPremium ? '∞' : '${user.aiTokensRemaining}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: isPro
-                              ? const Color(0xFF6366F1)
-                              : Colors.orange,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
           PopupMenuButton<String>(
             icon: Icon(
               Icons.more_horiz_rounded,
@@ -543,13 +528,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  AppLocalizations.of(context)?.aiTyping ?? 'Думаю...',
-                  style: TextStyle(
-                    color: isDark ? Colors.white54 : AppColors.textHint,
-                    fontSize: 13,
-                  ),
-                ),
+                _AnimatedTypingIndicator(isDark: isDark),
               ],
             ),
           ),
@@ -833,6 +812,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           TextButton(
             onPressed: () {
               setState(() => _messages.clear());
+              _saveHistory();
               Navigator.pop(ctx);
             },
             child: Text(
@@ -893,4 +873,65 @@ class _ChatMessage {
     required this.isUser,
     required this.time,
   });
+}
+
+// ═══════════════════════════════════════════
+//  ANIMATED TYPING INDICATOR
+// ═══════════════════════════════════════════
+class _AnimatedTypingIndicator extends StatefulWidget {
+  final bool isDark;
+  const _AnimatedTypingIndicator({required this.isDark});
+
+  @override
+  State<_AnimatedTypingIndicator> createState() =>
+      _AnimatedTypingIndicatorState();
+}
+
+class _AnimatedTypingIndicatorState extends State<_AnimatedTypingIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final val = _controller.value;
+        String dots = '';
+        if (val < 0.25) {
+          dots = '';
+        } else if (val < 0.5) {
+          dots = '.';
+        } else if (val < 0.75) {
+          dots = '..';
+        } else {
+          dots = '...';
+        }
+
+        return Text(
+          'Анализирую и генерирую ответ$dots',
+          style: TextStyle(
+            color: widget.isDark ? Colors.white54 : AppColors.textHint,
+            fontSize: 13,
+            fontStyle: FontStyle.italic,
+          ),
+        );
+      },
+    );
+  }
 }

@@ -114,22 +114,7 @@ class _NotificationsSettingsScreenState
             ],
           ),
           const SizedBox(height: 24),
-          _buildNotificationSection(
-            title: 'TANDAU AI',
-            children: [
-              _buildSwitchTile(
-                title: 'Советы по карьере',
-                subtitle: 'Персональные рекомендации от ИИ',
-                value: _aiCareerAdvice,
-                onChanged: (val) => _updatePreference(
-                  'notif_aiCareerAdvice',
-                  val,
-                  'ai_career_advice',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+
           _buildNotificationSection(
             title: 'Другое',
             children: [

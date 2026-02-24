@@ -76,3 +76,7 @@ backend_dart/service_account.json
 *.p12
 creds.json
 gcloud-keys.json
+
+# Agents
+.agent/
+.agents/

@@ -153,26 +153,26 @@ class AdminService {
         throw Exception('Заголовок или сообщение пусты');
       }
 
-      final users = await getAllUsers();
-      if (users.isEmpty) {
+      final snapshot = await _firestore.collection('users').get();
+      if (snapshot.docs.isEmpty) {
         debugPrint('⚠️ No users found to broadcast to.');
         return 0;
       }
 
-      debugPrint('🚀 Broadcasting to ${users.length} users...');
+      debugPrint('🚀 Broadcasting to ${snapshot.docs.length} users...');
 
       // 1. Write to Firestore (In-App Notification) - Batch Processing
       const int batchLimit = 500;
       int successCount = 0;
 
-      for (int i = 0; i < users.length; i += batchLimit) {
+      for (int i = 0; i < snapshot.docs.length; i += batchLimit) {
         final batch = _firestore.batch();
-        final chunk = users.skip(i).take(batchLimit);
+        final chunk = snapshot.docs.skip(i).take(batchLimit);
 
-        for (var user in chunk) {
+        for (var doc in chunk) {
           final ref = _firestore
               .collection('users')
-              .doc(user.uid)
+              .doc(doc.id)
               .collection('notifications')
               .doc();
 

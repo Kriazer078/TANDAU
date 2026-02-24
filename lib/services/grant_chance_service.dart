@@ -69,6 +69,8 @@ class GrantChanceService {
     required int? entScore,
     required String universityId,
     MajorCategory majorCategory = MajorCategory.other,
+    int universityPassingScore =
+        0, // 🔥 Новое поле для реального проходного балла
     double? gpa,
     double? ieltsScore,
     List<String> achievements = const [],
@@ -97,34 +99,60 @@ class GrantChanceService {
 
     // ── 1. Базовый расчёт (60% веса) ──
     double baseChance;
+
+    // 🔥 NEW: Use targetScore instead of threshold to be more realistic
+    final int targetScore = universityPassingScore > 0
+        ? universityPassingScore
+        : threshold;
+
     if (entScore < threshold) {
-      // Ниже порога — шанс очень низкий
+      // Ниже строгого МОН порога — шанса нет (по закону нельзя подать)
       final deficit = threshold - entScore;
-      baseChance = (entScore / threshold * 30).clamp(0, 30);
+      baseChance = 0;
       details.add(
-        '❌ ЕНТ $entScore — ниже порога $threshold на $deficit баллов',
+        '❌ ЕНТ $entScore — төмен шекті балл ($threshold). Грантқа қатысу мүмкін емес.',
       );
       recommendations.add(
-        'Повысить ЕНТ минимум до $threshold (сейчас не хватает $deficit баллов)',
+        'Шекті баллдан өту үшін кемінде $deficit балл қосу керек.',
+      );
+    } else if (entScore < targetScore) {
+      // Выше порога МОН, но ниже реального проходного
+      final deficit = targetScore - entScore;
+
+      // Делаем штраф нелинейным, чтобы шансы сильнее отличались при нехватке баллов
+      final double ratio = entScore / targetScore;
+      final double nonLinearRatio =
+          ratio * ratio * ratio * ratio * ratio; // x^5 (более крутой штраф)
+
+      // Макс база для тех, кто не дотянул до среднего = 35%
+      baseChance = (nonLinearRatio * 35).clamp(0, 35);
+
+      details.add(
+        '⚠️ ЕНТ $entScore шекті баллдан өткен, бірақ осы университеттің орташа ұпайынан төмен ($targetScore).',
+      );
+      recommendations.add(
+        'Грантқа түсу үшін шамамен $deficit балл жетіспейді.',
       );
     } else {
-      // Выше или равен порогу
-      final surplus = entScore - threshold;
-      baseChance = 40 + (surplus / (maxEntScore - threshold) * 40).clamp(0, 40);
-      if (surplus >= 30) {
+      // Выше реального проходного балла вуза
+      final surplus = entScore - targetScore;
+      // В диапазоне от targetScore до maxEntScore (140)
+      final maxPossibleSurplus = (maxEntScore - targetScore).clamp(1, 140);
+
+      // Даем от 40 до 85 шанса, чтобы в сумме могло доходить до ~98%
+      baseChance = 40 + (surplus / maxPossibleSurplus * 45).clamp(0, 45);
+
+      if (surplus >= 20) {
         details.add(
-          '✅ ЕНТ $entScore — превышает порог на $surplus баллов (отлично!)',
+          '✅ ЕНТ $entScore — орташа ұпайдан жоғары ($targetScore). Грантқа түсу мүмкіндігі өте жоғары!',
         );
-      } else if (surplus >= 15) {
+      } else if (surplus >= 5) {
         details.add(
-          '✅ ЕНТ $entScore — выше порога на $surplus (хороший запас)',
+          '✅ ЕНТ $entScore — орташа ұпайдан сәл жоғары ($targetScore). Жақсы мүмкіндік.',
         );
       } else {
         details.add(
-          '⚠️ ЕНТ $entScore — выше порога на $surplus (минимальный запас)',
-        );
-        recommendations.add(
-          'Желательно набрать ещё ${15 - surplus} баллов для уверенного прохождения',
+          '⚠️ ЕНТ $entScore — орташа ұпаймен ($targetScore) бірдей. Конкуренцияға байланысты.',
         );
       }
     }
@@ -253,9 +281,23 @@ class GrantChanceService {
     }
 
     // ── Итого ──
-    final double totalChance =
-        (baseChance + gpaBonus + ieltsBonus + achievementBonus + regionModifier)
-            .clamp(0, 98);
+    double totalChance = 0.0;
+
+    // Если по закону ниже порога — шанс строго 0 (и бонусы не работают)
+    // Либо дадим символические 1-2%, чтобы график не был совсем пустым?
+    // Оставим 0, чтобы не вводить в заблуждение
+    if (entScore < threshold) {
+      totalChance = 0;
+    } else {
+      totalChance =
+          (baseChance +
+                  gpaBonus +
+                  ieltsBonus +
+                  achievementBonus +
+                  regionModifier)
+              .clamp(0, 98);
+    }
+
     final int chancePercent = totalChance.round();
 
     // Определение уровня риска
