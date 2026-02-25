@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:collection';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
@@ -175,9 +176,77 @@ void main(List<String> args) async {
         headers: {'content-type': 'text/html; charset=utf-8'});
   });
 
+  // ── CORS middleware ──────────────────────────────────
+  Middleware corsMiddleware() {
+    const allowedOrigins = {
+      'https://tandau.kz',
+      'https://www.tandau.kz',
+      'http://localhost',
+    };
+    return (Handler innerHandler) {
+      return (Request request) async {
+        final origin = request.requestedUri.origin;
+        final corsHeaders = <String, String>{
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        };
+        if (allowedOrigins.contains(origin)) {
+          corsHeaders['Access-Control-Allow-Origin'] = origin;
+        }
+        // Pre-flight
+        if (request.method == 'OPTIONS') {
+          return Response.ok('', headers: corsHeaders);
+        }
+        final response = await innerHandler(request);
+        return response.change(headers: corsHeaders);
+      };
+    };
+  }
+
+  // ── Rate-limiting middleware (60 requests per minute per IP) ──
+  final Map<String, Queue<DateTime>> rateLimitMap = {};
+  const int maxRequests = 60;
+  const Duration rateLimitWindow = Duration(minutes: 1);
+
+  Middleware rateLimitMiddleware() {
+    return (Handler innerHandler) {
+      return (Request request) async {
+        final ip =
+            (request.context['shelf.io.connection_info'] as HttpConnectionInfo?)
+                    ?.remoteAddress
+                    .address ??
+                'unknown';
+
+        final now = DateTime.now();
+        final queue = rateLimitMap.putIfAbsent(ip, () => Queue<DateTime>());
+
+        // Remove entries outside the window
+        while (
+            queue.isNotEmpty && now.difference(queue.first) > rateLimitWindow) {
+          queue.removeFirst();
+        }
+
+        if (queue.length >= maxRequests) {
+          return Response(
+            429,
+            body: 'Too many requests. Try again later.',
+            headers: {'Retry-After': '60'},
+          );
+        }
+
+        queue.addLast(now);
+        return innerHandler(request);
+      };
+    };
+  }
+
   // Middleware pipeline
-  final handler =
-      Pipeline().addMiddleware(logRequests()).addHandler(router.call);
+  final handler = Pipeline()
+      .addMiddleware(corsMiddleware())
+      .addMiddleware(rateLimitMiddleware())
+      .addMiddleware(logRequests())
+      .addHandler(router.call);
 
   // Start Server
   final server = await io.serve(handler, '0.0.0.0', port);

@@ -43,8 +43,13 @@ class UniversityController {
         }).toList();
       }
 
-      if (question == null) {
+      if (question == null || question.trim().isEmpty) {
         return Response.badRequest(body: 'Missing question');
+      }
+
+      // SECURITY: Limit input length to prevent prompt injection / abuse
+      if (question.length > 5000) {
+        return Response.badRequest(body: 'Question too long (max 5000 chars)');
       }
 
       // --- 💎 AI LIMITS LOGIC START ---
@@ -333,7 +338,11 @@ class UniversityController {
       );
     } catch (e, stack) {
       stderr.writeln('AI Strategy Error: $e\n$stack');
-      return Response.internalServerError(body: 'Internal Server Error: $e');
+      // SECURITY: Do NOT expose error details to client
+      return Response.internalServerError(
+        body: jsonEncode({'error': 'Internal Server Error'}),
+        headers: {'Content-Type': 'application/json'},
+      );
     }
   }
 }

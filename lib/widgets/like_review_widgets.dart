@@ -299,10 +299,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
 
   Future<List<String>> _uploadImages() async {
     final List<String> urls = [];
-    const String apiKey = String.fromEnvironment(
-      'IMGBB_API_KEY',
-      defaultValue: '16ea590b6156b5c9fbc737026770d231',
-    );
+    // SECURITY: Use centralized API key from AuthService (loaded via --dart-define)
+    const String apiKey = String.fromEnvironment('IMGBB_API_KEY');
 
     for (var i = 0; i < _selectedImages.length; i++) {
       final file = _selectedImages[i];

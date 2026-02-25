@@ -100,10 +100,6 @@ class AuthService {
         }
 
         currentUser.value = user;
-
-        // Auto-sync: if email is in admin whitelist but Firestore role != 'admin',
-        // automatically set role='admin' in Firestore for consistency
-        _syncAdminRoleIfNeeded(currentUser.value!);
       }
     } catch (e) {
       debugPrint(
@@ -112,22 +108,7 @@ class AuthService {
     }
   }
 
-  /// Auto-sync admin role for whitelisted emails
-  Future<void> _syncAdminRoleIfNeeded(UserModel user) async {
-    try {
-      final String email = user.email.toLowerCase();
-      if (_adminEmails.contains(email) && user.role != 'admin') {
-        debugPrint('🛡️ Auto-syncing admin role for ${user.email}');
-        await _firestore.collection('users').doc(user.uid).update({
-          'role': 'admin',
-        });
-        // Update local model too
-        currentUser.value = user.copyWith(role: 'admin');
-      }
-    } catch (e) {
-      debugPrint('⚠️ Failed to auto-sync admin role: $e');
-    }
-  }
+  // Admin role is managed via Firestore only — no client-side auto-sync.
 
   /// Login with email and password
   /// Returns null on success, error message on failure
@@ -471,12 +452,9 @@ class AuthService {
   }
 
   // SECURITY: API key loaded from --dart-define at build time.
-  // Usage: flutter run --dart-define=IMGBB_API_KEY=your_key_here
-  // Fallback hardcoded key for local development only.
-  static const String _imgbbApiKey = String.fromEnvironment(
-    'IMGBB_API_KEY',
-    defaultValue: '16ea590b6156b5c9fbc737026770d231',
-  );
+  // Usage: flutter build apk --dart-define=IMGBB_API_KEY=your_key_here
+  // ⚠️ No fallback — key MUST be provided via --dart-define.
+  static const String _imgbbApiKey = String.fromEnvironment('IMGBB_API_KEY');
 
   /// Upload profile photo to ImgBB (Free storage)
   Future<String?> uploadProfilePhoto(File file) async {
@@ -694,22 +672,10 @@ class AuthService {
     return _auth.currentUser?.isAnonymous ?? false;
   }
 
-  /// Admin email whitelist (fallback when Firestore role is unavailable)
-  static const List<String> _adminEmails = [
-    'nurdauletabutalip02@gmail.com',
-    'orazhannurik00@gmail.com',
-  ];
-
   /// Check if current user is admin.
-  /// First checks UserModel 'role' field, then falls back to email whitelist.
+  /// Relies solely on Firestore 'role' field — no hardcoded email list.
   bool get isAdmin {
-    // 1. Check role from loaded UserModel (set by backend/admin in Firestore)
-    if (currentUser.value?.role == 'admin') return true;
-
-    // 2. Fallback: check email whitelist
-    final String? email = _auth.currentUser?.email;
-    if (email == null) return false;
-    return _adminEmails.contains(email.toLowerCase());
+    return currentUser.value?.role == 'admin';
   }
 
   /// Track new user on backend

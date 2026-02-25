@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/university.dart';
 import '../models/specialty.dart';
-
 import 'firestore_service.dart';
 import 'auth_service.dart';
 
@@ -22,6 +26,10 @@ class UniversityService {
   DateTime? _lastCacheTime;
   final Duration _cacheDuration = const Duration(minutes: 15);
 
+  // SharedPreferences keys for disk cache
+  static const String _diskCacheKey = 'cached_universities';
+  static const String _diskCacheTimeKey = 'cached_universities_time';
+
   bool _isCacheValid() {
     if (_cachedAllUniversities == null || _lastCacheTime == null) return false;
     return DateTime.now().difference(_lastCacheTime!) < _cacheDuration;
@@ -34,21 +42,79 @@ class UniversityService {
     _lastCacheTime = null;
   }
 
-  /// Get all universities (with caching)
+  // ── Disk persistence ──────────────────────────────────
+
+  /// Save universities to SharedPreferences as JSON.
+  Future<void> _saveToDisk(List<University> universities) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final List<Map<String, dynamic>> jsonList = universities
+          .map((u) => u.toMap())
+          .toList();
+      await prefs.setString(_diskCacheKey, jsonEncode(jsonList));
+      await prefs.setString(
+        _diskCacheTimeKey,
+        DateTime.now().toIso8601String(),
+      );
+    } catch (e) {
+      debugPrint('💾 Failed to save universities to disk: $e');
+    }
+  }
+
+  /// Load universities from SharedPreferences disk cache.
+  Future<List<University>?> _loadFromDisk() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? raw = prefs.getString(_diskCacheKey);
+      if (raw == null || raw.isEmpty) return null;
+
+      final List<dynamic> jsonList = jsonDecode(raw) as List<dynamic>;
+      return jsonList
+          .map((e) => University.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('💾 Failed to load universities from disk: $e');
+      return null;
+    }
+  }
+
+  /// Get all universities (with caching + offline persistence)
   Future<List<University>> getAllUniversities({
     bool forceRefresh = false,
   }) async {
+    // 1. Fast path — in-memory cache
     if (!forceRefresh && _isCacheValid()) {
       return _cachedAllUniversities!;
     }
 
+    // 2. Try Firestore
     try {
-      final universities = await _firestoreService.getAllUniversities();
+      final List<University> universities = await _firestoreService
+          .getAllUniversities();
       _cachedAllUniversities = universities;
       _lastCacheTime = DateTime.now();
+
+      // Persist to disk in background (non-blocking)
+      _saveToDisk(universities);
+
       return universities;
     } catch (e) {
-      return _cachedAllUniversities ?? [];
+      debugPrint('🌐 Firestore fetch failed: $e');
+
+      // 3a. In-memory fallback
+      if (_cachedAllUniversities != null) {
+        return _cachedAllUniversities!;
+      }
+
+      // 3b. Disk fallback
+      final List<University>? diskData = await _loadFromDisk();
+      if (diskData != null && diskData.isNotEmpty) {
+        _cachedAllUniversities = diskData;
+        debugPrint('💾 Loaded ${diskData.length} universities from disk cache');
+        return diskData;
+      }
+
+      return [];
     }
   }
 

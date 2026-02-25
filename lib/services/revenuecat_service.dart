@@ -19,8 +19,8 @@ class RevenueCatService {
     if (kIsWeb) return;
 
     try {
-      // Включаем подробные логи для дебага
-      await Purchases.setLogLevel(LogLevel.debug);
+      // SECURITY: Only enable verbose logs in debug mode
+      await Purchases.setLogLevel(kDebugMode ? LogLevel.debug : LogLevel.error);
 
       PurchasesConfiguration? configuration;
 

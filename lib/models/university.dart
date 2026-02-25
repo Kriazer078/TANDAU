@@ -22,6 +22,10 @@ class University {
   final int reviewsCount; // Количество отзывов
   final double averageRating; // Средний рейтинг из отзывов (1-5)
 
+  // 📞 Контактные данные
+  final String contactPhone; // Телефон университета
+  final String email; // Email университета
+
   University({
     required this.id,
     required this.name,
@@ -43,6 +47,8 @@ class University {
     this.likesCount = 0, // По умолчанию 0
     this.reviewsCount = 0, // По умолчанию 0
     this.averageRating = 0.0, // По умолчанию 0.0
+    this.contactPhone = '', // По умолчанию пусто
+    this.email = '', // По умолчанию пусто
   });
 
   // Convert University to Map for Firestore
@@ -68,6 +74,8 @@ class University {
       'likesCount': likesCount,
       'reviewsCount': reviewsCount,
       'averageRating': averageRating,
+      'contactPhone': contactPhone,
+      'email': email,
     };
   }
 
@@ -94,6 +102,8 @@ class University {
       likesCount: map['likesCount'] ?? 0,
       reviewsCount: map['reviewsCount'] ?? 0,
       averageRating: (map['averageRating'] ?? 0.0).toDouble(),
+      contactPhone: map['contactPhone'] ?? '',
+      email: map['email'] ?? '',
     );
   }
 
