@@ -312,24 +312,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: double.infinity,
                       height: 56,
                       child: OutlinedButton.icon(
-                        onPressed: () async {
-                          final Uri url = Uri.parse(
-                            'https://tandau-backend.onrender.com/delete-account',
-                          );
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(
-                              url,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Не удалось открыть ссылку'),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Удалить аккаунт?'),
+                              content: const Text(
+                                'Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Отмена'),
                                 ),
-                              );
-                            }
-                          }
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(ctx);
+                                    final Uri url = Uri.parse(
+                                      'https://tandau-backend.onrender.com/delete-account',
+                                    );
+                                    if (await canLaunchUrl(url)) {
+                                      await launchUrl(
+                                        url,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Не удалось открыть ссылку',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Удалить',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                         },
                         icon: const Icon(
                           Icons.person_remove,
