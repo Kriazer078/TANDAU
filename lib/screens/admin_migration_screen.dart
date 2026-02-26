@@ -44,7 +44,66 @@ class _AdminMigrationScreenState extends State<AdminMigrationScreen> {
         _statusMessage = '❌ Ошибка: $e';
         _hasError = true;
       });
-  
+    } finally {
+      setState(() {
+        _isMigrating = false;
+      });
+    }
+  }
+
+  Future<void> _forceUpdateData() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('🔄 Обновление данных'),
+        content: const Text(
+          'Это перезапишет ВСЕ данные университетов в Firestore '
+          'актуальными данными из приложения.\n\n'
+          'Контакты, адреса и другие данные будут обновлены.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.orange),
+            child: const Text('Обновить'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() {
+      _isMigrating = true;
+      _statusMessage = 'Обновление данных в Firestore...';
+      _hasError = false;
+    });
+
+    try {
+      final success = await _migrationHelper.migrateUniversitiesToFirestore(
+        forceOverwrite: true,
+      );
+
+      if (success) {
+        setState(() {
+          _statusMessage = '✅ Данные успешно обновлены в Firestore!';
+          _hasError = false;
+        });
+      } else {
+        setState(() {
+          _statusMessage = '⚠️ Обновление завершилось с ошибками';
+          _hasError = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _statusMessage = '❌ Ошибка обновления: $e';
+        _hasError = true;
+      });
     } finally {
       setState(() {
         _isMigrating = false;
@@ -249,6 +308,21 @@ class _AdminMigrationScreenState extends State<AdminMigrationScreen> {
                 style: const TextStyle(fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Force Update Button (overwrites Firestore with local data)
+            ElevatedButton.icon(
+              onPressed: _isMigrating ? null : _forceUpdateData,
+              icon: const Icon(Icons.sync, color: Colors.white),
+              label: const Text(
+                'Обновить данные (Перезапись)',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),

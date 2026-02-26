@@ -19,7 +19,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              'Обновлено: 16 февраля 2026',
+              'Обновлено: 24 февраля 2026',
               style: TextStyle(color: Colors.grey),
             ),
             Divider(height: 32),

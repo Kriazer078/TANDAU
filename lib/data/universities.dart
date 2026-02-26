@@ -20,13 +20,15 @@ final List<University> sampleUniversities = [
       'Табиғат ғылымдары',
     ],
     passingScore: 85,
-    tuitionRange: 'Грант немесе ~7,260,000 ₸/жыл (15 000 USD)',
+    tuitionRange: 'Грант немесе ~7,775,000 ₸/жыл (15 000 USD)',
     hasDormitory: true,
     hasGrants: true,
     description:
         'Назарбаев Университеті — Қазақстандағы алғашқы зерттеу университеті. '
         'Халықаралық стандарттарға сәйкес білім береді, ағылшын тілінде оқытады. '
-        '7 189 студент оқиды.',
+        '~6 000 студент оқиды.',
+    contactPhone: '+7 (7172) 70-66-88',
+    email: 'nu@nu.edu.kz',
     requirements: [
       'ЕНТ ағылшын тілі 85+',
       'GPA 4.0/5.0',
@@ -38,7 +40,7 @@ final List<University> sampleUniversities = [
     address: 'Қабанбай батыр даңғылы 53, Астана',
     website: 'nu.edu.kz',
     rating: 4.8,
-    studentCount: 7189,
+    studentCount: 6045,
   ),
   University(
     id: '2',
@@ -65,6 +67,8 @@ final List<University> sampleUniversities = [
         'Astana IT University — IT саласына мамандандырылған заманауи университет. '
         'EXPO аумағында орналасқан. AITU Excellence Test арқылы қабылдау жүргізіледі. '
         'Алтын белгі иегерлеріне 30% жеңілдік.',
+    contactPhone: '+7 (7172) 645-716',
+    email: 'info@astanait.edu.kz',
     requirements: [
       'AITU Excellence Test (25-50 балл)',
       'ЕНТ сертификаты',
@@ -100,8 +104,10 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         'Л.Н. Гумилев атындағы Еуразия ұлттық университеті — Астанадағы ірі '
-        'классикалық университет. 160+ білім беру бағдарламасы, 21 970 студент. '
+        'классикалық университет. 160+ білім беру бағдарламасы, ~20 350 студент. '
         'QS рейтингінде Қазақстанның үздік университеттерінің бірі.',
+    contactPhone: '+7 (7172) 709-500',
+    email: 'enu@enu.kz',
     requirements: [
       'ЕНТ 65+ (ұлттық ЖОО үшін)',
       'Құжаттар топтамасы',
@@ -111,7 +117,7 @@ final List<University> sampleUniversities = [
     address: 'Сәтпаев көшесі 2, Астана',
     website: 'enu.kz',
     rating: 4.5,
-    studentCount: 21970,
+    studentCount: 20350,
   ),
 
   // ═══════════════════════════════════════════════════════════════
@@ -137,13 +143,15 @@ final List<University> sampleUniversities = [
       'Журналистика',
     ],
     passingScore: 65,
-    tuitionRange: 'Грант немесе 1,100,000 - 1,200,000 ₸/жыл',
+    tuitionRange: 'Грант немесе 1,100,000 - 1,900,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
     description:
         'Әл-Фараби атындағы Қазақ ұлттық университеті — Қазақстандағы ең ірі '
         'және ең көне университет (1934 ж.). 16 факультет, 550+ білім беру '
-        'бағдарламасы, ~20 000 студент.',
+        'бағдарламасы, ~25 000 студент.',
+    contactPhone: '+7 (727) 377-33-33',
+    email: 'info@kaznu.edu.kz',
     requirements: [
       'ЕНТ 65+ (ұлттық ЖОО)',
       'Құжаттар топтамасы',
@@ -153,7 +161,7 @@ final List<University> sampleUniversities = [
     address: 'Әл-Фараби даңғылы 71, Алматы',
     website: 'kaznu.kz',
     rating: 4.6,
-    studentCount: 20000,
+    studentCount: 25000,
   ),
   University(
     id: '5',
@@ -179,6 +187,8 @@ final List<University> sampleUniversities = [
         'Сәтбаев Университеті — техникалық және инженерлік мамандықтарға '
         'мамандандырылған ірі университет. ~9 000 студент. '
         'QS World University Rankings рейтингінде беделді орынға ие.',
+    contactPhone: '+7 (727) 292-60-25',
+    email: 'info@satbayev.university',
     requirements: [
       'ЕНТ 65+ (ұлттық ЖОО)',
       'Физика және математика бойынша жоғары балл',
@@ -214,9 +224,11 @@ final List<University> sampleUniversities = [
     description:
         'Қазақ ұлттық педагогикалық университеті — Қазақстандағы ең ірі '
         'педагогикалық ЖОО. 12 843 студент. QS Asia 2026 рейтингінде 131-орын.',
+    contactPhone: '+7 (727) 291-57-68',
+    email: 'rector@abaiuniversity.edu.kz',
     requirements: ['ЕНТ 65+ (ұлттық ЖОО)', 'Педагогика және заң 75+'],
     applicationDeadline: '20 шілде, 2026',
-    address: 'Төле би көшесі 86, Алматы',
+    address: 'Достық даңғылы 13, Алматы',
     website: 'kaznpu.kz',
     rating: 4.4,
     studentCount: 12843,
@@ -243,8 +255,10 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         'KBTU — Британдық білім беру стандарттарымен жұмыс істейтін '
-        'техникалық университет. ~7 746 студент. 80% студент гранттармен '
+        'техникалық университет. ~6 182 студент. 80% студент гранттармен '
         'оқиды. IELTS сертификаты қажет.',
+    contactPhone: '+7 (727) 357-42-51',
+    email: 'info@kbtu.kz',
     requirements: [
       'ЕНТ 70-110+ (мамандыққа байланысты)',
       'IELTS 5.5+ немесе STEP KBTU B1',
@@ -253,7 +267,7 @@ final List<University> sampleUniversities = [
     address: 'Төле би көшесі 59, Алматы',
     website: 'kbtu.kz',
     rating: 4.6,
-    studentCount: 7746,
+    studentCount: 6182,
   ),
   University(
     id: '8',
@@ -272,7 +286,7 @@ final List<University> sampleUniversities = [
       'Психология',
       'Саясаттану',
     ],
-    passingScore: 85, // Реалистичный балл для Нархоза
+    passingScore: 50, // Минимальный балл, основные мамандықтар 75+
     tuitionRange: 'Грант немесе ~1,500,000 - 2,000,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
@@ -280,6 +294,8 @@ final List<University> sampleUniversities = [
         'Нархоз Университеті — экономика, бизнес және қоғамдық ғылымдарға '
         'мамандандырылған университет. ~7 000 студент. '
         'Ағылшын тілін білу қажет (B1/B2) — кейбір мамандықтар үшін.',
+    contactPhone: '+7 (727) 377-12-55',
+    email: 'narxoz@narxoz.kz',
     requirements: [
       'ЕНТ 50+ (жалпы)',
       'ЕНТ 75+ (негізгі мамандықтар)',
@@ -309,14 +325,16 @@ final List<University> sampleUniversities = [
       'Қоғамдық денсаулық сақтау',
       'Фармация',
     ],
-    passingScore: 90,
-    tuitionRange: '900,000 - 1,200,000 ₸/жыл',
+    passingScore: 75,
+    tuitionRange: '900,000 - 1,800,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
     description:
         'Оңтүстік Қазақстан медицина академиясы — 1979 жылы құрылған жеке '
         'меншік медициналық жоғары оқу орны. Жатақхана — 75 000 ₸/жыл. '
-        '~5 000 студент.\n\n📞 Байланыс: 8 (725) 239-57-57',
+        '~5 000 студент.',
+    contactPhone: '8 (725) 239-57-57',
+    email: 'medacadem@rambler.ru',
     requirements: [
       'Паспорт',
       'Аттестат/Диплом',
@@ -324,7 +342,7 @@ final List<University> sampleUniversities = [
       'Медициналық анықтама (086-У)',
     ],
     applicationDeadline: '22 тамыз, 2026',
-    address: 'Әл-Фараби алаңы, 1, Шымкент',
+    address: 'Әл-Фараби алаңы, 1/1, Шымкент',
     website: 'skma.edu.kz',
     rating: 4.3,
     studentCount: 5000,
@@ -350,7 +368,9 @@ final List<University> sampleUniversities = [
     description:
         'Өзбекәлі Жәнібеков атындағы Оңтүстік Қазақстан педагогикалық университеті. ОҚ-да '
         'мұғалімдер даярлау саласының көшбасшысы. ~5 773 студент. '
-        'Жатақхана — 100 000 ₸/жыл.\n\n📞 Байланыс: 8 (725) 221-40-06',
+        'Жатақхана — 100 000 ₸/жыл.',
+    contactPhone: '8 (725) 221-40-06',
+    email: 'info@okmpu.kz',
     requirements: [
       'Паспорт',
       'Аттестат/Диплом',
@@ -384,7 +404,9 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         '1943 жылы құрылған ұлттық мәртебесі бар ірі университет — ОҚ-дағы ең ірі '
-        'ЖОО. ~17 303 студент. Жатақхана — 120 000-180 000 ₸/жыл.\n\n📞 Байланыс: 8 (725) 221-08-94',
+        'ЖОО. ~17 303 студент. Жатақхана — 120 000-180 000 ₸/жыл.',
+    contactPhone: '8 (725) 221-08-94',
+    email: 'pk_ukgu@mail.ru',
     requirements: [
       'Паспорт',
       'Аттестат/Диплом',
@@ -411,7 +433,9 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         '1997 жылы құрылған жеке меншік университет. ~5 471 студент. '
-        'Жатақхана бар. Қабылдау комиссиясының мақұлдау көрсеткіші жоғары.\n\n📞 Байланыс: 8 (725) 233-77-77',
+        'Жатақхана бар. Қабылдау комиссиясының мақұлдау көрсеткіші жоғары.',
+    contactPhone: '8 (725) 233-77-77',
+    email: 'info@miras.edu.kz',
     requirements: [
       'Жеке куәлік',
       'Аттестат/Диплом',
@@ -420,7 +444,7 @@ final List<University> sampleUniversities = [
       '6 фото 3×4',
     ],
     applicationDeadline: '25 тамыз, 2026',
-    address: 'Сапақ Датқа көшесі, 2, Шымкент',
+    address: 'Ғ. Иляев көшесі, 3, Шымкент',
     website: 'miras.edu.kz / miras.app',
     rating: 4.1,
     studentCount: 5471,
@@ -447,7 +471,9 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         '2001 жылы құрылған жеке меншік университет. ~5 500 студент. '
-        'Жатақхана — 150 000-220 000 ₸/жыл.\n\n📞 Байланыс: 8 (725) 255-58-61',
+        'Жатақхана — 150 000-220 000 ₸/жыл.',
+    contactPhone: '8 (725) 255-58-61',
+    email: 'shu2050@mail.ru',
     requirements: [
       'Жеке куәлік',
       'Аттестат/Диплом',
@@ -475,7 +501,9 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         'Жаңа форматтағы заманауи университет (CAIU). 30+ мамандық. '
-        '~12 000-13 000 студент. Жатақхана бар. Әскери кафедра бар.\n\n📞 Байланыс: 8 (725) 237-12-37',
+        '~12 000-13 000 студент. Жатақхана бар. Әскери кафедра бар.',
+    contactPhone: '8 (725) 237-12-37',
+    email: 'ukgi2002@mail.ru',
     requirements: [
       'Өтініш',
       'Аттестат/Диплом',
@@ -509,7 +537,9 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         '2000 жылы құрылған жеке меншік университет. ~8 500 студент. '
-        'Жатақхана бар. Әскери кафедра жоқ.\n\n📞 Байланыс: 8 (725) 295-25-21',
+        'Жатақхана бар. Әскери кафедра жоқ.',
+    contactPhone: '8 (725) 295-25-21',
+    email: 'info@kipudn.kz',
     requirements: [
       'Аттестат/Диплом',
       '6 фото 3×4',
@@ -542,7 +572,9 @@ final List<University> sampleUniversities = [
     hasGrants: true,
     description:
         '1998 жылы құрылған университет. ~6 000 студент. '
-        'Жатақхана — 180 000-250 000 ₸/жыл. Көпжақты оқу бағдарламалары.\n\n📞 Байланыс: 8 (776) 104-70-70',
+        'Жатақхана — 180 000-250 000 ₸/жыл. Көпжақты оқу бағдарламалары.',
+    contactPhone: '8 (776) 104-70-70',
+    email: 'info@tashenev.edu.kz',
     requirements: [
       'Аттестат/Диплом',
       '6 фото 3×4',

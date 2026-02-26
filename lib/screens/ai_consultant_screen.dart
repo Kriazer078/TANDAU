@@ -674,6 +674,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  _FeedbackButtons(isDark: isDark),
                 ],
               ],
             ),
@@ -932,6 +934,97 @@ class _AnimatedTypingIndicatorState extends State<_AnimatedTypingIndicator>
           ),
         );
       },
+    );
+  }
+}
+
+// ═══════════════════════════════════════════
+//  FEEDBACK BUTTONS (👍👎)
+// ═══════════════════════════════════════════
+class _FeedbackButtons extends StatefulWidget {
+  final bool isDark;
+  const _FeedbackButtons({required this.isDark});
+
+  @override
+  State<_FeedbackButtons> createState() => _FeedbackButtonsState();
+}
+
+class _FeedbackButtonsState extends State<_FeedbackButtons> {
+  bool? _isHelpful; // true for 👍, false for 👎, null for none
+
+  void _handleFeedback(bool isHelpful) {
+    if (_isHelpful != null) return; // Prevent double feedback
+    setState(() => _isHelpful = isHelpful);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isHelpful ? 'Спасибо за отзыв! 👍' : 'Спасибо, мы учтём это! 👎',
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: widget.isDark
+            ? AppColors.surfaceDark
+            : AppColors.primary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isHelpful != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Row(
+          children: [
+            Icon(
+              _isHelpful!
+                  ? Icons.thumb_up_alt_rounded
+                  : Icons.thumb_down_alt_rounded,
+              size: 14,
+              color: _isHelpful! ? Colors.green : Colors.red,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'Оценено',
+              style: TextStyle(
+                color: widget.isDark ? Colors.white54 : AppColors.textSecondary,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        InkWell(
+          onTap: () => _handleFeedback(true),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Icon(
+              Icons.thumb_up_alt_outlined,
+              size: 14,
+              color: widget.isDark ? Colors.white54 : AppColors.textSecondary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+        InkWell(
+          onTap: () => _handleFeedback(false),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Icon(
+              Icons.thumb_down_alt_outlined,
+              size: 14,
+              color: widget.isDark ? Colors.white54 : AppColors.textSecondary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
