@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Animated progress bar showing profile completion percentage.
 class ProfileCompletionBar extends StatelessWidget {
@@ -18,16 +19,22 @@ class ProfileCompletionBar extends StatelessWidget {
     final int percent = (progress * 100).round();
     final Color barColor;
     final String label;
+    final AppLocalizations? l10n = AppLocalizations.of(context);
 
     if (percent < 40) {
       barColor = Colors.red.shade400;
-      label = 'Заполните профиль для лучших рекомендаций';
+      label =
+          l10n?.profileCompletionLow ??
+          'Заполните профиль для лучших рекомендаций';
     } else if (percent < 80) {
       barColor = Colors.amber.shade600;
-      label = 'Почти готово! Добавьте оставшиеся данные';
+      label =
+          l10n?.profileCompletionMedium ??
+          'Почти готово! Добавьте оставшиеся данные';
     } else {
       barColor = const Color(0xFF22C55E);
-      label = 'Отличная работа! Профиль заполнен';
+      label =
+          l10n?.profileCompletionHigh ?? 'Отличная работа! Профиль заполнен';
     }
 
     return Container(
@@ -67,7 +74,7 @@ class ProfileCompletionBar extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Заполнение профиля',
+                    l10n?.profileCompletionTitle ?? 'Заполнение профиля',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

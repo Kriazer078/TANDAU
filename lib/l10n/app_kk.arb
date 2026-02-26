@@ -512,5 +512,76 @@
     "wizardAchScience": "Ғылыми жоба",
     "wizardAchNone": "Жетістік жоқ",
 
-    "wizardCityAny": "Кез келген қала"
+    "wizardCityAny": "Кез келген қала",
+
+    "svdAnalyticsTitle": "СБЖ Аналитика",
+    "svdDataSource": "Деректер: БҒМ РҚ, {year}",
+    "@svdDataSource": {
+        "placeholders": {
+            "year": { "type": "String" }
+        }
+    },
+    "svdHowWeCalculateTitle": "Қалай есептейміз? 📝",
+    "svdHowWeCalculateBody": "4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейіндік пәндерді және ҚР БҒМ-нің өткен жылдардағы шекті балл статистикасын талдайды.\n\nБіз сіздің мамандығыңыздағы бәсекені ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжаттарды тапсыру кезінде 4 ЖОО-ны бөлудің оңтайлы стратегиясын таңдауға мүмкіндік береді.",
+    "svdUnderstood": "Түсінікті",
+    "svdDisclaimer": "⚠️ Есептеу ұсыныс сипатында. Грант беру туралы түпкілікті шешім әрқашан ҚР БҒМ қабылдау комиссиясында қалады.",
+
+    "reviewDateJustNow": "жаңа ғана",
+    "reviewDateMinAgo": "{min} мин бұрын",
+    "@reviewDateMinAgo": {
+        "placeholders": { "min": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} сағ бұрын",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} күн бұрын",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "қаң",
+    "reviewMonthFeb": "ақп",
+    "reviewMonthMar": "нау",
+    "reviewMonthApr": "сәу",
+    "reviewMonthMay": "мам",
+    "reviewMonthJun": "мау",
+    "reviewMonthJul": "шіл",
+    "reviewMonthAug": "там",
+    "reviewMonthSep": "қыр",
+    "reviewMonthOct": "қаз",
+    "reviewMonthNov": "қар",
+    "reviewMonthDec": "жел",
+
+    "reviewLeaveTitle": "Пікір қалдыру",
+    "reviewRateQuestion": "Қалай бағалайсыз?",
+    "reviewCommentHint": "Тәжірибеңіз туралы айтыңыз...",
+    "reviewAttachPhotoLabel": "Фото қосу ({current}/3)",
+    "@reviewAttachPhotoLabel": {
+        "placeholders": { "current": { "type": "int" } }
+    },
+    "reviewCancelBtn": "Болдырмау",
+    "reviewSubmitBtn": "Жіберу",
+    "reviewSelectRatingError": "Бағаңызды таңдаңыз",
+    "reviewWriteCommentError": "Пікіріңізді жазыңыз",
+    "reviewSuccessMsg": "Пікір сәтті қосылды!",
+    "reviewModerationFailMsg": "Жіберу мүмкін болмады. Мәтінді сөгіс сөздерге тексеріңіз.",
+    "reviewErrorGeneric": "Қате пайда болды: {error}",
+    "@reviewErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "profileCompletionTitle": "Профильді толтыру",
+    "profileCompletionLow": "Жақсырақ ұсыныстар үшін профильді толтырыңыз",
+    "profileCompletionMedium": "Аз қалды! Қалған деректерді қосыңыз",
+    "profileCompletionHigh": "Тамаша жұмыс! Профиль толтырылды",
+
+    "pickerChooseSource": "Көзді таңдаңыз",
+    "pickerGallery": "Галерея",
+    "pickerCamera": "Камера",
+    "pickerErrorUpdateLink": "Профильдегі сілтемені жаңарту қатесі",
+    "pickerErrorUploadCloud": "Бұлтқа жүктеу қатесі",
+    "pickerErrorGeneric": "Қате: {error}",
+    "@pickerErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    }
 }

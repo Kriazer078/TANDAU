@@ -1231,4 +1231,173 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get wizardCityAny => 'Любой город';
+
+  @override
+  String get svdAnalyticsTitle => 'СВД Аналитика';
+
+  @override
+  String svdDataSource(String year) {
+    return 'Данные: МОН РК, $year';
+  }
+
+  @override
+  String get svdHowWeCalculateTitle => 'Как мы считаем? 📝';
+
+  @override
+  String get svdHowWeCalculateBody =>
+      'Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от \"Высокого\" до \"Низкого\").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.';
+
+  @override
+  String get svdUnderstood => 'Понятно';
+
+  @override
+  String get svdDisclaimer =>
+      '⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.';
+
+  @override
+  String get reviewDateJustNow => 'только что';
+
+  @override
+  String reviewDateMinAgo(int min) {
+    return '$min мин назад';
+  }
+
+  @override
+  String reviewDateHoursAgo(int hours) {
+    return '$hours ч назад';
+  }
+
+  @override
+  String reviewDateDaysAgo(int days) {
+    return '$days дн назад';
+  }
+
+  @override
+  String get reviewMonthJan => 'янв';
+
+  @override
+  String get reviewMonthFeb => 'фев';
+
+  @override
+  String get reviewMonthMar => 'мар';
+
+  @override
+  String get reviewMonthApr => 'апр';
+
+  @override
+  String get reviewMonthMay => 'май';
+
+  @override
+  String get reviewMonthJun => 'июн';
+
+  @override
+  String get reviewMonthJul => 'июл';
+
+  @override
+  String get reviewMonthAug => 'авг';
+
+  @override
+  String get reviewMonthSep => 'сен';
+
+  @override
+  String get reviewMonthOct => 'окт';
+
+  @override
+  String get reviewMonthNov => 'ноя';
+
+  @override
+  String get reviewMonthDec => 'дек';
+
+  @override
+  String get reviewLeaveTitle => 'Оставить отзыв';
+
+  @override
+  String reviewAttachPhotoLabel(int current) {
+    return 'Прикрепить фото ($current/3)';
+  }
+
+  @override
+  String get reviewCancelBtn => 'Отмена';
+
+  @override
+  String get reviewSubmitBtn => 'Отправить';
+
+  @override
+  String get reviewSelectRatingError => 'Выберите оценку';
+
+  @override
+  String get reviewWriteCommentError => 'Напишите комментарий';
+
+  @override
+  String get reviewSuccessMsg => 'Отзыв успешно добавлен!';
+
+  @override
+  String get reviewModerationFailMsg =>
+      'Не удалось отправить. Проверьте текст на нецензурные слова.';
+
+  @override
+  String reviewErrorGeneric(String error) {
+    return 'Произошла ошибка: $error';
+  }
+
+  @override
+  String get profileCompletionTitle => 'Заполнение профиля';
+
+  @override
+  String get profileCompletionLow =>
+      'Заполните профиль для лучших рекомендаций';
+
+  @override
+  String get profileCompletionMedium =>
+      'Почти готово! Добавьте оставшиеся данные';
+
+  @override
+  String get profileCompletionHigh => 'Отличная работа! Профиль заполнен';
+
+  @override
+  String get pickerChooseSource => 'Выберите источник';
+
+  @override
+  String get pickerGallery => 'Галерея';
+
+  @override
+  String get pickerCamera => 'Камера';
+
+  @override
+  String get pickerErrorUpdateLink => 'Ошибка обновления ссылки в профиле';
+
+  @override
+  String get pickerErrorUploadCloud => 'Ошибка загрузки в облако';
+
+  @override
+  String pickerErrorGeneric(String error) {
+    return 'Ошибка: $error';
+  }
+
+  @override
+  String get profileDeleteAccount => 'Удалить аккаунт';
+
+  @override
+  String get profileDeleteAccountTitle => 'Удалить аккаунт?';
+
+  @override
+  String get profileDeleteAccountContent =>
+      'Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.';
+
+  @override
+  String get profileDeleteAccountCancel => 'Отмена';
+
+  @override
+  String get profileDeleteAccountConfirm => 'Удалить';
+
+  @override
+  String get profileDeleteAccountErrorLink => 'Не удалось открыть ссылку';
+
+  @override
+  String get errorTimeout => 'Превышено время ожидания. Проверьте интернет.';
+
+  @override
+  String errorCritical(String error) {
+    return 'Критическая ошибка: $error';
+  }
 }

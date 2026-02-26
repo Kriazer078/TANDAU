@@ -511,5 +511,89 @@
     "wizardAchScience": "Научный проект",
     "wizardAchNone": "Нет достижений",
 
-    "wizardCityAny": "Любой город"
+    "wizardCityAny": "Любой город",
+
+    "svdAnalyticsTitle": "СВД Аналитика",
+    "svdDataSource": "Данные: МОН РК, {year}",
+    "@svdDataSource": {
+        "placeholders": {
+            "year": { "type": "String" }
+        }
+    },
+    "svdHowWeCalculateTitle": "Как мы считаем? 📝",
+    "svdHowWeCalculateBody": "Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от \"Высокого\" до \"Низкого\").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.",
+    "svdUnderstood": "Понятно",
+    "svdDisclaimer": "⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.",
+
+    "reviewDateJustNow": "только что",
+    "reviewDateMinAgo": "{min} мин назад",
+    "@reviewDateMinAgo": {
+        "placeholders": { "min": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} ч назад",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} дн назад",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "янв",
+    "reviewMonthFeb": "фев",
+    "reviewMonthMar": "мар",
+    "reviewMonthApr": "апр",
+    "reviewMonthMay": "май",
+    "reviewMonthJun": "июн",
+    "reviewMonthJul": "июл",
+    "reviewMonthAug": "авг",
+    "reviewMonthSep": "сен",
+    "reviewMonthOct": "окт",
+    "reviewMonthNov": "ноя",
+    "reviewMonthDec": "дек",
+
+    "reviewLeaveTitle": "Оставить отзыв",
+    "reviewRateQuestion": "Как вы оцениваете?",
+    "reviewCommentHint": "Расскажите о своём опыте...",
+    "reviewAttachPhotoLabel": "Прикрепить фото ({current}/3)",
+    "@reviewAttachPhotoLabel": {
+        "placeholders": { "current": { "type": "int" } }
+    },
+    "reviewCancelBtn": "Отмена",
+    "reviewSubmitBtn": "Отправить",
+    "reviewSelectRatingError": "Выберите оценку",
+    "reviewWriteCommentError": "Напишите комментарий",
+    "reviewSuccessMsg": "Отзыв успешно добавлен!",
+    "reviewModerationFailMsg": "Не удалось отправить. Проверьте текст на нецензурные слова.",
+    "reviewErrorGeneric": "Произошла ошибка: {error}",
+    "@reviewErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "profileCompletionTitle": "Заполнение профиля",
+    "profileCompletionLow": "Заполните профиль для лучших рекомендаций",
+    "profileCompletionMedium": "Почти готово! Добавьте оставшиеся данные",
+    "profileCompletionHigh": "Отличная работа! Профиль заполнен",
+
+    "pickerChooseSource": "Выберите источник",
+    "pickerGallery": "Галерея",
+    "pickerCamera": "Камера",
+    "pickerErrorUpdateLink": "Ошибка обновления ссылки в профиле",
+    "pickerErrorUploadCloud": "Ошибка загрузки в облако",
+    "pickerErrorGeneric": "Ошибка: {error}",
+    "@pickerErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "profileDeleteAccount": "Удалить аккаунт",
+    "profileDeleteAccountTitle": "Удалить аккаунт?",
+    "profileDeleteAccountContent": "Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.",
+    "profileDeleteAccountCancel": "Отмена",
+    "profileDeleteAccountConfirm": "Удалить",
+    "profileDeleteAccountErrorLink": "Не удалось открыть ссылку",
+    "errorTimeout": "Превышено время ожидания. Проверьте интернет.",
+    "errorCritical": "Критическая ошибка: {error}",
+    "@errorCritical": {
+        "placeholders": {
+            "error": { "type": "String" }
+        }
+    }
 }

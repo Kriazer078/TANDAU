@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'firebase_service.dart';
 
 /// Service that searches the knowledge base for relevant context

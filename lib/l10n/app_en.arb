@@ -530,5 +530,89 @@
     "wizardAchScience": "Research project",
     "wizardAchNone": "No achievements",
 
-    "wizardCityAny": "Any city"
+    "wizardCityAny": "Any city",
+
+    "svdAnalyticsTitle": "SVD Analytics",
+    "svdDataSource": "Data: MON RK, {year}",
+    "@svdDataSource": {
+        "placeholders": {
+            "year": { "type": "String" }
+        }
+    },
+    "svdHowWeCalculateTitle": "How do we calculate? 📝",
+    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.",
+    "svdUnderstood": "Got it",
+    "svdDisclaimer": "⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.",
+
+    "reviewDateJustNow": "just now",
+    "reviewDateMinAgo": "{min} min ago",
+    "@reviewDateMinAgo": {
+        "placeholders": { "min": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} h ago",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} d ago",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "Jan",
+    "reviewMonthFeb": "Feb",
+    "reviewMonthMar": "Mar",
+    "reviewMonthApr": "Apr",
+    "reviewMonthMay": "May",
+    "reviewMonthJun": "Jun",
+    "reviewMonthJul": "Jul",
+    "reviewMonthAug": "Aug",
+    "reviewMonthSep": "Sep",
+    "reviewMonthOct": "Oct",
+    "reviewMonthNov": "Nov",
+    "reviewMonthDec": "Dec",
+
+    "reviewLeaveTitle": "Leave a Review",
+    "reviewRateQuestion": "How do you rate it?",
+    "reviewCommentHint": "Tell us about your experience...",
+    "reviewAttachPhotoLabel": "Attach photo ({current}/3)",
+    "@reviewAttachPhotoLabel": {
+        "placeholders": { "current": { "type": "int" } }
+    },
+    "reviewCancelBtn": "Cancel",
+    "reviewSubmitBtn": "Submit",
+    "reviewSelectRatingError": "Select a rating",
+    "reviewWriteCommentError": "Write a comment",
+    "reviewSuccessMsg": "Review added successfully!",
+    "reviewModerationFailMsg": "Could not submit. Check text for inappropriate language.",
+    "reviewErrorGeneric": "An error occurred: {error}",
+    "@reviewErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "profileCompletionTitle": "Profile completion",
+    "profileCompletionLow": "Complete your profile for better recommendations",
+    "profileCompletionMedium": "Almost done! Add missing data",
+    "profileCompletionHigh": "Great job! Profile is complete",
+
+    "pickerChooseSource": "Choose source",
+    "pickerGallery": "Gallery",
+    "pickerCamera": "Camera",
+    "pickerErrorUpdateLink": "Error updating link in profile",
+    "pickerErrorUploadCloud": "Error uploading to cloud",
+    "pickerErrorGeneric": "Error: {error}",
+    "@pickerErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "profileDeleteAccount": "Delete Account",
+    "profileDeleteAccountTitle": "Delete Account?",
+    "profileDeleteAccountContent": "Are you sure you want to delete your account? All your data will be permanently deleted.",
+    "profileDeleteAccountCancel": "Cancel",
+    "profileDeleteAccountConfirm": "Delete",
+    "profileDeleteAccountErrorLink": "Could not open link",
+    "errorTimeout": "Connection timed out. Check your internet connection.",
+    "errorCritical": "Critical error: {error}",
+    "@errorCritical": {
+        "placeholders": {
+            "error": { "type": "String" }
+        }
+    }
 }

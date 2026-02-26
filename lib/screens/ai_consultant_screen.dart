@@ -222,9 +222,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         ieltsScore: user?.ieltsScore,
         mathScore: user?.mathScore,
         city: user?.city,
-        preferredMajors: user?.preferredMajors?.join(', '),
+        preferredMajors: user?.preferredMajors.join(', '),
         currentEducation: user?.education,
-        achievements: user?.achievements?.join(', '),
+        achievements: user?.achievements.join(', '),
       );
 
       if (mounted) {

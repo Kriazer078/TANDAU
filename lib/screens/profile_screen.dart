@@ -316,14 +316,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           showDialog(
                             context: context,
                             builder: (ctx) => AlertDialog(
-                              title: const Text('Удалить аккаунт?'),
-                              content: const Text(
-                                'Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.',
+                              title: Text(
+                                l10n?.profileDeleteAccountTitle ??
+                                    'Удалить аккаунт?',
+                              ),
+                              content: Text(
+                                l10n?.profileDeleteAccountContent ??
+                                    'Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.',
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx),
-                                  child: const Text('Отмена'),
+                                  child: Text(
+                                    l10n?.profileDeleteAccountCancel ??
+                                        'Отмена',
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () async {
@@ -341,18 +348,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                             content: Text(
-                                              'Не удалось открыть ссылку',
+                                              l10n?.profileDeleteAccountErrorLink ??
+                                                  'Не удалось открыть ссылку',
                                             ),
                                           ),
                                         );
                                       }
                                     }
                                   },
-                                  child: const Text(
-                                    'Удалить',
-                                    style: TextStyle(color: Colors.red),
+                                  child: Text(
+                                    l10n?.profileDeleteAccountConfirm ??
+                                        'Удалить',
+                                    style: const TextStyle(color: Colors.red),
                                   ),
                                 ),
                               ],
@@ -363,9 +372,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Icons.person_remove,
                           color: Colors.grey,
                         ),
-                        label: const Text(
-                          'Удалить аккаунт',
-                          style: TextStyle(
+                        label: Text(
+                          l10n?.profileDeleteAccount ?? 'Удалить аккаунт',
+                          style: const TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),

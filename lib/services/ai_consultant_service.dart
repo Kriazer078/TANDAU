@@ -261,8 +261,9 @@ class AIConsultantService {
       if (ieltsScore != null) bodyData['ieltsScore'] = ieltsScore;
       if (mathScore != null) bodyData['mathScore'] = mathScore;
       if (city != null) bodyData['city'] = city;
-      if (preferredMajors != null)
+      if (preferredMajors != null) {
         bodyData['preferredMajors'] = preferredMajors;
+      }
       if (currentEducation != null) {
         bodyData['currentEducation'] = currentEducation;
       }

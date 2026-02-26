@@ -142,7 +142,7 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'СВД Аналитика',
+                          l10n?.svdAnalyticsTitle ?? 'СВД Аналитика',
                           style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
@@ -166,7 +166,8 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Данные: МОН РК, ${r.dataYear}',
+                              l10n?.svdDataSource(r.dataYear) ??
+                                  'Данные: МОН РК, ${r.dataYear}',
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontSize: 12,
@@ -185,17 +186,19 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Как мы считаем? 📝'),
-                              content: const Text(
-                                'Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\n'
-                                'Мы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от "Высокого" до "Низкого").\n\n'
-                                'Это позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.',
-                                style: TextStyle(height: 1.5),
+                              title: Text(
+                                l10n?.svdHowWeCalculateTitle ??
+                                    'Как мы считаем? 📝',
+                              ),
+                              content: Text(
+                                l10n?.svdHowWeCalculateBody ??
+                                    'Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от "Высокого" до "Низкого").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.',
+                                style: const TextStyle(height: 1.5),
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text('Понятно'),
+                                  child: Text(l10n?.svdUnderstood ?? 'Понятно'),
                                 ),
                               ],
                             ),
@@ -223,7 +226,8 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            '⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.',
+                            l10n?.svdDisclaimer ??
+                                '⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.',
                             style: TextStyle(
                               fontSize: 13,
                               color: widget.isDark

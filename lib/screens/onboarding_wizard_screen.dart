@@ -713,7 +713,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF6366F1),
+            activeTrackColor: const Color(0xFF6366F1),
           ),
         ],
       ),

@@ -1230,4 +1230,173 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wizardCityAny => 'Any city';
+
+  @override
+  String get svdAnalyticsTitle => 'SVD Analytics';
+
+  @override
+  String svdDataSource(String year) {
+    return 'Data: MON RK, $year';
+  }
+
+  @override
+  String get svdHowWeCalculateTitle => 'How do we calculate? 📝';
+
+  @override
+  String get svdHowWeCalculateBody =>
+      'The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.';
+
+  @override
+  String get svdUnderstood => 'Got it';
+
+  @override
+  String get svdDisclaimer =>
+      '⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.';
+
+  @override
+  String get reviewDateJustNow => 'just now';
+
+  @override
+  String reviewDateMinAgo(int min) {
+    return '$min min ago';
+  }
+
+  @override
+  String reviewDateHoursAgo(int hours) {
+    return '$hours h ago';
+  }
+
+  @override
+  String reviewDateDaysAgo(int days) {
+    return '$days d ago';
+  }
+
+  @override
+  String get reviewMonthJan => 'Jan';
+
+  @override
+  String get reviewMonthFeb => 'Feb';
+
+  @override
+  String get reviewMonthMar => 'Mar';
+
+  @override
+  String get reviewMonthApr => 'Apr';
+
+  @override
+  String get reviewMonthMay => 'May';
+
+  @override
+  String get reviewMonthJun => 'Jun';
+
+  @override
+  String get reviewMonthJul => 'Jul';
+
+  @override
+  String get reviewMonthAug => 'Aug';
+
+  @override
+  String get reviewMonthSep => 'Sep';
+
+  @override
+  String get reviewMonthOct => 'Oct';
+
+  @override
+  String get reviewMonthNov => 'Nov';
+
+  @override
+  String get reviewMonthDec => 'Dec';
+
+  @override
+  String get reviewLeaveTitle => 'Leave a Review';
+
+  @override
+  String reviewAttachPhotoLabel(int current) {
+    return 'Attach photo ($current/3)';
+  }
+
+  @override
+  String get reviewCancelBtn => 'Cancel';
+
+  @override
+  String get reviewSubmitBtn => 'Submit';
+
+  @override
+  String get reviewSelectRatingError => 'Select a rating';
+
+  @override
+  String get reviewWriteCommentError => 'Write a comment';
+
+  @override
+  String get reviewSuccessMsg => 'Review added successfully!';
+
+  @override
+  String get reviewModerationFailMsg =>
+      'Could not submit. Check text for inappropriate language.';
+
+  @override
+  String reviewErrorGeneric(String error) {
+    return 'An error occurred: $error';
+  }
+
+  @override
+  String get profileCompletionTitle => 'Profile completion';
+
+  @override
+  String get profileCompletionLow =>
+      'Complete your profile for better recommendations';
+
+  @override
+  String get profileCompletionMedium => 'Almost done! Add missing data';
+
+  @override
+  String get profileCompletionHigh => 'Great job! Profile is complete';
+
+  @override
+  String get pickerChooseSource => 'Choose source';
+
+  @override
+  String get pickerGallery => 'Gallery';
+
+  @override
+  String get pickerCamera => 'Camera';
+
+  @override
+  String get pickerErrorUpdateLink => 'Error updating link in profile';
+
+  @override
+  String get pickerErrorUploadCloud => 'Error uploading to cloud';
+
+  @override
+  String pickerErrorGeneric(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get profileDeleteAccount => 'Delete Account';
+
+  @override
+  String get profileDeleteAccountTitle => 'Delete Account?';
+
+  @override
+  String get profileDeleteAccountContent =>
+      'Are you sure you want to delete your account? All your data will be permanently deleted.';
+
+  @override
+  String get profileDeleteAccountCancel => 'Cancel';
+
+  @override
+  String get profileDeleteAccountConfirm => 'Delete';
+
+  @override
+  String get profileDeleteAccountErrorLink => 'Could not open link';
+
+  @override
+  String get errorTimeout =>
+      'Connection timed out. Check your internet connection.';
+
+  @override
+  String errorCritical(String error) {
+    return 'Critical error: $error';
+  }
 }

@@ -23,70 +23,84 @@ class DeadlineBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: next.isSoon || next.isUrgent
-              ? [const Color(0xFFEF4444), const Color(0xFFF97316)]
+              ? [
+                  const Color(0xFFFF512F),
+                  const Color(0xFFDD2476),
+                ] // Modern red/orange gradient
               : next.daysLeft < 30
-              ? [const Color(0xFFF59E0B), const Color(0xFFF97316)]
-              : [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
+              ? [
+                  const Color(0xFFF6D365),
+                  const Color(0xFFFDA085),
+                ] // Modern orange/yellow gradient
+              : [
+                  const Color(0xFF8B5DF6),
+                  const Color(0xFF7239EA),
+                ], // Beautiful vibrant purple
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color:
                 (next.isSoon
-                        ? const Color(0xFFEF4444)
-                        : const Color(0xFF6366F1))
-                    .withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+                        ? const Color(0xFFDD2476)
+                        : const Color(0xFF7239EA))
+                    .withValues(alpha: 0.35),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
           onTap: () => _showAllDeadlines(context, deadlineService, isDark),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Row(
               children: [
                 // Icon
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 60,
+                  height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   child: Center(
                     child: Text(
                       next.icon,
-                      style: const TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 32),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 // Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         next.title,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          letterSpacing: 0.3,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 6),
                       Text(
                         next.formattedDate,
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.85),
-                          fontSize: 12,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -95,29 +109,31 @@ class DeadlineBanner extends StatelessWidget {
                 // Countdown
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                    horizontal: 18,
+                    vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         '${next.daysLeft}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w800,
-                          fontSize: 20,
+                          fontSize: 28,
+                          height: 1.1,
                         ),
                       ),
                       const Text(
                         'дней',
                         style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],

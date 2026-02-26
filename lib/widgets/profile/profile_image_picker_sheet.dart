@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../theme/app_colors.dart';
 import '../../services/auth_service.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Helper class for image-picker bottom-sheet and upload logic.
 class ProfileImagePickerHelper {
@@ -18,6 +19,7 @@ class ProfileImagePickerHelper {
     required void Function(String message) onError,
   }) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final AppLocalizations? l10n = AppLocalizations.of(context);
 
     showModalBottomSheet(
       context: context,
@@ -43,7 +45,7 @@ class ProfileImagePickerHelper {
               ),
               const SizedBox(height: 20),
               Text(
-                'Выберите источник',
+                l10n?.pickerChooseSource ?? 'Выберите источник',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -56,7 +58,7 @@ class ProfileImagePickerHelper {
                   Expanded(
                     child: _buildPickerOption(
                       icon: Icons.photo_library_rounded,
-                      label: 'Галерея',
+                      label: l10n?.pickerGallery ?? 'Галерея',
                       color: const Color(0xFF3B82F6),
                       isDark: isDark,
                       onTap: () {
@@ -67,6 +69,7 @@ class ProfileImagePickerHelper {
                           onLoadingChanged: onLoadingChanged,
                           onPhotoUpdated: onPhotoUpdated,
                           onError: onError,
+                          l10n: l10n,
                         );
                       },
                     ),
@@ -75,7 +78,7 @@ class ProfileImagePickerHelper {
                   Expanded(
                     child: _buildPickerOption(
                       icon: Icons.camera_alt_rounded,
-                      label: 'Камера',
+                      label: l10n?.pickerCamera ?? 'Камера',
                       color: const Color(0xFF8B5CF6),
                       isDark: isDark,
                       onTap: () {
@@ -86,6 +89,7 @@ class ProfileImagePickerHelper {
                           onLoadingChanged: onLoadingChanged,
                           onPhotoUpdated: onPhotoUpdated,
                           onError: onError,
+                          l10n: l10n,
                         );
                       },
                     ),
@@ -140,6 +144,7 @@ class ProfileImagePickerHelper {
     required ValueChanged<bool> onLoadingChanged,
     required VoidCallback onPhotoUpdated,
     required void Function(String message) onError,
+    AppLocalizations? l10n,
   }) async {
     final ImagePicker picker = ImagePicker();
 
@@ -165,14 +170,21 @@ class ProfileImagePickerHelper {
         if (success) {
           onPhotoUpdated();
         } else {
-          throw Exception('Ошибка обновления ссылки в профиле');
+          throw Exception(
+            l10n?.pickerErrorUpdateLink ?? 'Ошибка обновления ссылки в профиле',
+          );
         }
       } else {
-        throw Exception('Ошибка загрузки в облако');
+        throw Exception(
+          l10n?.pickerErrorUploadCloud ?? 'Ошибка загрузки в облако',
+        );
       }
     } catch (e) {
       debugPrint('Photo error: $e');
-      onError('Ошибка: ${e.toString().replaceAll('Exception:', '')}');
+      onError(
+        l10n?.pickerErrorGeneric(e.toString().replaceAll('Exception:', '')) ??
+            'Ошибка: ${e.toString().replaceAll('Exception:', '')}',
+      );
     } finally {
       onLoadingChanged(false);
     }

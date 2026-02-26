@@ -7,6 +7,7 @@ import '../services/like_service.dart';
 import '../services/review_service.dart';
 import '../utils/guest_guard.dart';
 import '../theme/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
 /// Кнопка лайка с анимацией
 class LikeButton extends StatefulWidget {
@@ -239,12 +240,13 @@ class _AddReviewDialogState extends State<AddReviewDialog>
 
   // Emoji and text for each rating
   static const List<String> _ratingEmojis = ['😞', '😕', '😐', '😊', '🤩'];
-  static const List<String> _ratingTextsRu = [
-    'Ужасно',
-    'Плохо',
-    'Нормально',
-    'Хорошо',
-    'Отлично!',
+
+  List<String> _ratingTexts(AppLocalizations? l10n) => [
+    l10n?.reviewRatingBad ?? 'Ужасно',
+    l10n?.reviewRatingPoor ?? 'Плохо',
+    l10n?.reviewRatingOk ?? 'Нормально',
+    l10n?.reviewRatingGood ?? 'Хорошо',
+    l10n?.reviewRatingExcellent ?? 'Отлично!',
   ];
 
   @override
@@ -335,10 +337,11 @@ class _AddReviewDialogState extends State<AddReviewDialog>
   }
 
   Future<void> _submitReview() async {
+    final AppLocalizations? l10n = AppLocalizations.of(context);
     if (_rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Выберите оценку'),
+          content: Text(l10n?.reviewSelectRatingError ?? 'Выберите оценку'),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.orange,
           shape: RoundedRectangleBorder(
@@ -352,7 +355,9 @@ class _AddReviewDialogState extends State<AddReviewDialog>
     if (_commentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Напишите комментарий'),
+          content: Text(
+            l10n?.reviewWriteCommentError ?? 'Напишите комментарий',
+          ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.orange,
           shape: RoundedRectangleBorder(
@@ -387,7 +392,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                 children: [
                   const Icon(Icons.check_circle, color: Colors.white),
                   const SizedBox(width: 12),
-                  const Text('Отзыв успешно добавлен!'),
+                  Text(l10n?.reviewSuccessMsg ?? 'Отзыв успешно добавлен!'),
                 ],
               ),
               behavior: SnackBarBehavior.floating,
@@ -401,8 +406,9 @@ class _AddReviewDialogState extends State<AddReviewDialog>
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                'Не удалось отправить. Проверьте текст на нецензурные слова.',
+              content: Text(
+                l10n?.reviewModerationFailMsg ??
+                    'Не удалось отправить. Проверьте текст на нецензурные слова.',
               ),
               behavior: SnackBarBehavior.floating,
               backgroundColor: Colors.red,
@@ -418,7 +424,9 @@ class _AddReviewDialogState extends State<AddReviewDialog>
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Произошла ошибка: $e'),
+            content: Text(
+              l10n?.reviewErrorGeneric(e.toString()) ?? 'Произошла ошибка: $e',
+            ),
             behavior: SnackBarBehavior.floating,
             backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(
@@ -434,6 +442,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final AppLocalizations? l10n = AppLocalizations.of(context);
 
     return SlideTransition(
       position: Tween<Offset>(
@@ -480,7 +489,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                     ),
                     const SizedBox(width: 14),
                     Text(
-                      'Оставить отзыв',
+                      l10n?.reviewLeaveTitle ?? 'Оставить отзыв',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -507,7 +516,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                   child: Column(
                     children: [
                       Text(
-                        'Как вы оцениваете?',
+                        l10n?.reviewRateQuestion ?? 'Как вы оцениваете?',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -567,7 +576,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      _ratingTextsRu[_rating - 1],
+                                      _ratingTexts(l10n)[_rating - 1],
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
@@ -594,7 +603,9 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                     fontSize: 15,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Расскажите о своём опыте...',
+                    hintText:
+                        l10n?.reviewCommentHint ??
+                        'Расскажите о своём опыте...',
                     hintStyle: TextStyle(
                       color: isDark ? Colors.white38 : AppColors.textHint,
                     ),
@@ -689,7 +700,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                           : AppColors.primary,
                     ),
                     label: Text(
-                      'Прикрепить фото (${_selectedImages.length}/3)',
+                      l10n?.reviewAttachPhotoLabel(_selectedImages.length) ??
+                          'Прикрепить фото (${_selectedImages.length}/3)',
                       style: TextStyle(
                         color: _selectedImages.length >= 3
                             ? Colors.grey
@@ -731,7 +743,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                           ),
                         ),
                         child: Text(
-                          'Отмена',
+                          l10n?.reviewCancelBtn ?? 'Отмена',
                           style: TextStyle(
                             color: isDark
                                 ? Colors.white70
@@ -778,7 +790,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                                     color: Colors.white,
                                   ),
                                 )
-                              : const Row(
+                              : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
@@ -788,7 +800,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                                     ),
                                     SizedBox(width: 8),
                                     Text(
-                                      'Отправить',
+                                      l10n?.reviewSubmitBtn ?? 'Отправить',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15,

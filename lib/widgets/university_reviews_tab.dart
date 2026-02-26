@@ -284,7 +284,7 @@ class UniversityReviewsTab extends StatelessWidget {
     AppLocalizations? l10n,
     BuildContext context,
   ) {
-    final String dateStr = _formatReviewDate(r.createdAt);
+    final String dateStr = _formatReviewDate(r.createdAt, l10n);
     final Color avatarColor = _avatarColor(r.userName);
     final String? currentUserId = authService.currentUser.value?.uid;
     final bool isHelpfulByMe = r.helpfulBy.contains(currentUserId);
@@ -552,7 +552,7 @@ class UniversityReviewsTab extends StatelessWidget {
                       const Spacer(),
                       if (r.repliedAt != null)
                         Text(
-                          _formatReviewDate(r.repliedAt!),
+                          _formatReviewDate(r.repliedAt!, l10n),
                           style: TextStyle(
                             fontSize: 11,
                             color: isDark
@@ -580,28 +580,36 @@ class UniversityReviewsTab extends StatelessWidget {
     );
   }
 
-  String _formatReviewDate(DateTime date) {
+  String _formatReviewDate(DateTime date, AppLocalizations? l10n) {
     final DateTime now = DateTime.now();
     final Duration diff = now.difference(date);
 
-    if (diff.inMinutes < 1) return 'только что';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} мин назад';
-    if (diff.inHours < 24) return '${diff.inHours} ч назад';
-    if (diff.inDays < 7) return '${diff.inDays} дн назад';
+    if (diff.inMinutes < 1) return l10n?.reviewDateJustNow ?? 'только что';
+    if (diff.inMinutes < 60) {
+      return l10n?.reviewDateMinAgo(diff.inMinutes) ??
+          '${diff.inMinutes} мин назад';
+    }
+    if (diff.inHours < 24) {
+      return l10n?.reviewDateHoursAgo(diff.inHours) ??
+          '${diff.inHours} ч назад';
+    }
+    if (diff.inDays < 7) {
+      return l10n?.reviewDateDaysAgo(diff.inDays) ?? '${diff.inDays} дн назад';
+    }
 
     final List<String> months = [
-      'янв',
-      'фев',
-      'мар',
-      'апр',
-      'май',
-      'июн',
-      'июл',
-      'авг',
-      'сен',
-      'окт',
-      'ноя',
-      'дек',
+      l10n?.reviewMonthJan ?? 'янв',
+      l10n?.reviewMonthFeb ?? 'фев',
+      l10n?.reviewMonthMar ?? 'мар',
+      l10n?.reviewMonthApr ?? 'апр',
+      l10n?.reviewMonthMay ?? 'май',
+      l10n?.reviewMonthJun ?? 'июн',
+      l10n?.reviewMonthJul ?? 'июл',
+      l10n?.reviewMonthAug ?? 'авг',
+      l10n?.reviewMonthSep ?? 'сен',
+      l10n?.reviewMonthOct ?? 'окт',
+      l10n?.reviewMonthNov ?? 'ноя',
+      l10n?.reviewMonthDec ?? 'дек',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }

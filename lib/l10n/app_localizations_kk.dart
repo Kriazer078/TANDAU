@@ -939,7 +939,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get reviewWriteComment => 'Пікіріңізді жазыңыз';
 
   @override
-  String get reviewCommentHint => 'Тәжірибеңіз туралы айтып беріңіз...';
+  String get reviewCommentHint => 'Тәжірибеңіз туралы айтыңыз...';
 
   @override
   String get reviewSubmit => 'Жіберу';
@@ -1229,4 +1229,173 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get wizardCityAny => 'Кез келген қала';
+
+  @override
+  String get svdAnalyticsTitle => 'СБЖ Аналитика';
+
+  @override
+  String svdDataSource(String year) {
+    return 'Деректер: БҒМ РҚ, $year';
+  }
+
+  @override
+  String get svdHowWeCalculateTitle => 'Қалай есептейміз? 📝';
+
+  @override
+  String get svdHowWeCalculateBody =>
+      '4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейіндік пәндерді және ҚР БҒМ-нің өткен жылдардағы шекті балл статистикасын талдайды.\n\nБіз сіздің мамандығыңыздағы бәсекені ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжаттарды тапсыру кезінде 4 ЖОО-ны бөлудің оңтайлы стратегиясын таңдауға мүмкіндік береді.';
+
+  @override
+  String get svdUnderstood => 'Түсінікті';
+
+  @override
+  String get svdDisclaimer =>
+      '⚠️ Есептеу ұсыныс сипатында. Грант беру туралы түпкілікті шешім әрқашан ҚР БҒМ қабылдау комиссиясында қалады.';
+
+  @override
+  String get reviewDateJustNow => 'жаңа ғана';
+
+  @override
+  String reviewDateMinAgo(int min) {
+    return '$min мин бұрын';
+  }
+
+  @override
+  String reviewDateHoursAgo(int hours) {
+    return '$hours сағ бұрын';
+  }
+
+  @override
+  String reviewDateDaysAgo(int days) {
+    return '$days күн бұрын';
+  }
+
+  @override
+  String get reviewMonthJan => 'қаң';
+
+  @override
+  String get reviewMonthFeb => 'ақп';
+
+  @override
+  String get reviewMonthMar => 'нау';
+
+  @override
+  String get reviewMonthApr => 'сәу';
+
+  @override
+  String get reviewMonthMay => 'мам';
+
+  @override
+  String get reviewMonthJun => 'мау';
+
+  @override
+  String get reviewMonthJul => 'шіл';
+
+  @override
+  String get reviewMonthAug => 'там';
+
+  @override
+  String get reviewMonthSep => 'қыр';
+
+  @override
+  String get reviewMonthOct => 'қаз';
+
+  @override
+  String get reviewMonthNov => 'қар';
+
+  @override
+  String get reviewMonthDec => 'жел';
+
+  @override
+  String get reviewLeaveTitle => 'Пікір қалдыру';
+
+  @override
+  String reviewAttachPhotoLabel(int current) {
+    return 'Фото қосу ($current/3)';
+  }
+
+  @override
+  String get reviewCancelBtn => 'Болдырмау';
+
+  @override
+  String get reviewSubmitBtn => 'Жіберу';
+
+  @override
+  String get reviewSelectRatingError => 'Бағаңызды таңдаңыз';
+
+  @override
+  String get reviewWriteCommentError => 'Пікіріңізді жазыңыз';
+
+  @override
+  String get reviewSuccessMsg => 'Пікір сәтті қосылды!';
+
+  @override
+  String get reviewModerationFailMsg =>
+      'Жіберу мүмкін болмады. Мәтінді сөгіс сөздерге тексеріңіз.';
+
+  @override
+  String reviewErrorGeneric(String error) {
+    return 'Қате пайда болды: $error';
+  }
+
+  @override
+  String get profileCompletionTitle => 'Профильді толтыру';
+
+  @override
+  String get profileCompletionLow =>
+      'Жақсырақ ұсыныстар үшін профильді толтырыңыз';
+
+  @override
+  String get profileCompletionMedium => 'Аз қалды! Қалған деректерді қосыңыз';
+
+  @override
+  String get profileCompletionHigh => 'Тамаша жұмыс! Профиль толтырылды';
+
+  @override
+  String get pickerChooseSource => 'Көзді таңдаңыз';
+
+  @override
+  String get pickerGallery => 'Галерея';
+
+  @override
+  String get pickerCamera => 'Камера';
+
+  @override
+  String get pickerErrorUpdateLink => 'Профильдегі сілтемені жаңарту қатесі';
+
+  @override
+  String get pickerErrorUploadCloud => 'Бұлтқа жүктеу қатесі';
+
+  @override
+  String pickerErrorGeneric(String error) {
+    return 'Қате: $error';
+  }
+
+  @override
+  String get profileDeleteAccount => 'Delete Account';
+
+  @override
+  String get profileDeleteAccountTitle => 'Delete Account?';
+
+  @override
+  String get profileDeleteAccountContent =>
+      'Are you sure you want to delete your account? All your data will be permanently deleted.';
+
+  @override
+  String get profileDeleteAccountCancel => 'Cancel';
+
+  @override
+  String get profileDeleteAccountConfirm => 'Delete';
+
+  @override
+  String get profileDeleteAccountErrorLink => 'Could not open link';
+
+  @override
+  String get errorTimeout =>
+      'Connection timed out. Check your internet connection.';
+
+  @override
+  String errorCritical(String error) {
+    return 'Critical error: $error';
+  }
 }

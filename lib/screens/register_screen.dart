@@ -62,6 +62,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       String? registerError;
       try {
         debugPrint('🔵 REGSCR: Вызов AuthService().register...');
+        final timeoutErrorStr =
+            AppLocalizations.of(context)?.errorTimeout ??
+            'Превышено время ожидания. Проверьте интернет.';
         final authService = AuthService();
         registerError = await authService
             .register(
@@ -73,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const Duration(seconds: 20),
               onTimeout: () {
                 debugPrint('🔴 REGSCR: Таймаут вызова register!');
-                return 'Превышено время ожидания. Проверьте интернет.';
+                return timeoutErrorStr;
               },
             );
 
@@ -106,7 +109,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Критическая ошибка: $e'),
+              content: Text(
+                AppLocalizations.of(context)?.errorCritical(e.toString()) ??
+                    'Критическая ошибка: $e',
+              ),
               backgroundColor: AppColors.error,
             ),
           );
@@ -380,6 +386,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     const SizedBox(height: 24),
 
+                    // Google Login Button
+                    _buildGoogleRegisterButton(),
+
+                    const SizedBox(height: 24),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -464,6 +475,84 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       : (isDark ? Colors.white24 : Colors.grey[400]),
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget _buildGoogleRegisterButton() {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: (_isLoading || !_termsAccepted)
+            ? null
+            : () async {
+                setState(() => _isLoading = true);
+                final error = await AuthService().signInWithGoogle();
+                if (mounted) {
+                  setState(() => _isLoading = false);
+                  if (error == AuthService.bannedErrorCode) return;
+
+                  if (error == null) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const MainNavigationScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
+                }
+              },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          disabledBackgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.network(
+              'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
+              height: 24,
+              width: 24,
+              scale: 1,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.g_mobiledata, size: 32, color: Colors.blue),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              AppLocalizations.of(context)?.authGoogleLogin ??
+                  'Sign in with Google',
+              style: TextStyle(
+                color: (!_termsAccepted)
+                    ? Colors.grey
+                    : Theme.of(context).textTheme.bodyLarge?.color,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

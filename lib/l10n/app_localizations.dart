@@ -2433,6 +2433,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Any city'**
   String get wizardCityAny;
+
+  /// No description provided for @svdAnalyticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SVD Analytics'**
+  String get svdAnalyticsTitle;
+
+  /// No description provided for @svdDataSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Data: MON RK, {year}'**
+  String svdDataSource(String year);
+
+  /// No description provided for @svdHowWeCalculateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How do we calculate? 📝'**
+  String get svdHowWeCalculateTitle;
+
+  /// No description provided for @svdHowWeCalculateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.'**
+  String get svdHowWeCalculateBody;
+
+  /// No description provided for @svdUnderstood.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get svdUnderstood;
+
+  /// No description provided for @svdDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.'**
+  String get svdDisclaimer;
+
+  /// No description provided for @reviewDateJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get reviewDateJustNow;
+
+  /// No description provided for @reviewDateMinAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{min} min ago'**
+  String reviewDateMinAgo(int min);
+
+  /// No description provided for @reviewDateHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h ago'**
+  String reviewDateHoursAgo(int hours);
+
+  /// No description provided for @reviewDateDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} d ago'**
+  String reviewDateDaysAgo(int days);
+
+  /// No description provided for @reviewMonthJan.
+  ///
+  /// In en, this message translates to:
+  /// **'Jan'**
+  String get reviewMonthJan;
+
+  /// No description provided for @reviewMonthFeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Feb'**
+  String get reviewMonthFeb;
+
+  /// No description provided for @reviewMonthMar.
+  ///
+  /// In en, this message translates to:
+  /// **'Mar'**
+  String get reviewMonthMar;
+
+  /// No description provided for @reviewMonthApr.
+  ///
+  /// In en, this message translates to:
+  /// **'Apr'**
+  String get reviewMonthApr;
+
+  /// No description provided for @reviewMonthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get reviewMonthMay;
+
+  /// No description provided for @reviewMonthJun.
+  ///
+  /// In en, this message translates to:
+  /// **'Jun'**
+  String get reviewMonthJun;
+
+  /// No description provided for @reviewMonthJul.
+  ///
+  /// In en, this message translates to:
+  /// **'Jul'**
+  String get reviewMonthJul;
+
+  /// No description provided for @reviewMonthAug.
+  ///
+  /// In en, this message translates to:
+  /// **'Aug'**
+  String get reviewMonthAug;
+
+  /// No description provided for @reviewMonthSep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sep'**
+  String get reviewMonthSep;
+
+  /// No description provided for @reviewMonthOct.
+  ///
+  /// In en, this message translates to:
+  /// **'Oct'**
+  String get reviewMonthOct;
+
+  /// No description provided for @reviewMonthNov.
+  ///
+  /// In en, this message translates to:
+  /// **'Nov'**
+  String get reviewMonthNov;
+
+  /// No description provided for @reviewMonthDec.
+  ///
+  /// In en, this message translates to:
+  /// **'Dec'**
+  String get reviewMonthDec;
+
+  /// No description provided for @reviewLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a Review'**
+  String get reviewLeaveTitle;
+
+  /// No description provided for @reviewAttachPhotoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach photo ({current}/3)'**
+  String reviewAttachPhotoLabel(int current);
+
+  /// No description provided for @reviewCancelBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get reviewCancelBtn;
+
+  /// No description provided for @reviewSubmitBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get reviewSubmitBtn;
+
+  /// No description provided for @reviewSelectRatingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a rating'**
+  String get reviewSelectRatingError;
+
+  /// No description provided for @reviewWriteCommentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a comment'**
+  String get reviewWriteCommentError;
+
+  /// No description provided for @reviewSuccessMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Review added successfully!'**
+  String get reviewSuccessMsg;
+
+  /// No description provided for @reviewModerationFailMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not submit. Check text for inappropriate language.'**
+  String get reviewModerationFailMsg;
+
+  /// No description provided for @reviewErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {error}'**
+  String reviewErrorGeneric(String error);
+
+  /// No description provided for @profileCompletionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile completion'**
+  String get profileCompletionTitle;
+
+  /// No description provided for @profileCompletionLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile for better recommendations'**
+  String get profileCompletionLow;
+
+  /// No description provided for @profileCompletionMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost done! Add missing data'**
+  String get profileCompletionMedium;
+
+  /// No description provided for @profileCompletionHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! Profile is complete'**
+  String get profileCompletionHigh;
+
+  /// No description provided for @pickerChooseSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose source'**
+  String get pickerChooseSource;
+
+  /// No description provided for @pickerGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get pickerGallery;
+
+  /// No description provided for @pickerCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get pickerCamera;
+
+  /// No description provided for @pickerErrorUpdateLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating link in profile'**
+  String get pickerErrorUpdateLink;
+
+  /// No description provided for @pickerErrorUploadCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Error uploading to cloud'**
+  String get pickerErrorUploadCloud;
+
+  /// No description provided for @pickerErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String pickerErrorGeneric(String error);
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @profileDeleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account?'**
+  String get profileDeleteAccountTitle;
+
+  /// No description provided for @profileDeleteAccountContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account? All your data will be permanently deleted.'**
+  String get profileDeleteAccountContent;
+
+  /// No description provided for @profileDeleteAccountCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileDeleteAccountCancel;
+
+  /// No description provided for @profileDeleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get profileDeleteAccountConfirm;
+
+  /// No description provided for @profileDeleteAccountErrorLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link'**
+  String get profileDeleteAccountErrorLink;
+
+  /// No description provided for @errorTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out. Check your internet connection.'**
+  String get errorTimeout;
+
+  /// No description provided for @errorCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical error: {error}'**
+  String errorCritical(String error);
 }
 
 class _AppLocalizationsDelegate
