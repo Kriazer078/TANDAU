@@ -9,6 +9,7 @@ import 'package:antigravity_backend/controllers/university_controller.dart';
 import 'package:antigravity_backend/controllers/notification_controller.dart';
 import 'package:antigravity_backend/services/firebase_service.dart';
 import 'package:antigravity_backend/services/gemini_service.dart';
+import 'package:antigravity_backend/services/knowledge_service.dart';
 
 void main(List<String> args) async {
   // Load environment variables
@@ -27,9 +28,13 @@ void main(List<String> args) async {
 
   final geminiService = GeminiService(geminiKey);
 
+  // Initialize Knowledge Service (RAG)
+  final knowledgeService = KnowledgeService(firebaseService);
+  await knowledgeService.init();
+
   // Initialize Controller
   final universityController =
-      UniversityController(firebaseService, geminiService);
+      UniversityController(firebaseService, geminiService, knowledgeService);
   final notificationController = NotificationController(firebaseService);
 
   // Router

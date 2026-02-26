@@ -588,4 +588,727 @@ final List<University> sampleUniversities = [
     rating: 4.0,
     studentCount: 6000,
   ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ҚАРАҒАНДЫ (3 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '17',
+    name: 'Е.А. Бөкетов атындағы Қарағанды университеті',
+    city: 'Қарағанды',
+    logoUrl: 'assets/images/karaganda_uni_logo.png',
+    imageUrls: ['assets/images/karaganda_uni_campus.jpg'],
+    majors: [
+      'Құқықтану',
+      'Экономика',
+      'Педагогика',
+      'Ақпараттық технологиялар',
+      'Биология',
+      'Физика',
+      'Тарих',
+      'Химия',
+    ],
+    passingScore: 65,
+    tuitionRange: '650,000 - 1,100,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        'Қарағанды облысындағы ең ірі университет, 1972 жылы құрылған. '
+        '~18 000 студент. 90+ мамандық. Серпін бағдарламасына қатысады.',
+    contactPhone: '+7 (7212) 77-04-24',
+    email: 'office@ksu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+      'Анықтама (075-У)',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Университет көшесі, 28, Қарағанды',
+    website: 'ksu.kz',
+    rating: 4.3,
+    studentCount: 18000,
+  ),
+  University(
+    id: '18',
+    name: 'Қарағанды техникалық университеті (ҚарТУ)',
+    city: 'Қарағанды',
+    logoUrl: 'assets/images/kartu_logo.png',
+    imageUrls: ['assets/images/kartu_campus.jpg'],
+    majors: [
+      'Тау-кен ісі',
+      'Металлургия',
+      'Машина жасау',
+      'Ақпараттық жүйелер',
+      'Энергетика',
+      'Құрылыс',
+      'Автоматтандыру',
+    ],
+    passingScore: 60,
+    tuitionRange: '600,000 - 900,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1953 жылы құрылған, Орталық Қазақстандағы жетекші техникалық ЖОО. '
+        '~10 000 студент. Тау-кен саласының маманы.',
+    contactPhone: '+7 (7212) 56-59-32',
+    email: 'info@kstu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты (математика профиль)',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Бұлқышев көшесі, 56, Қарағанды',
+    website: 'kstu.kz',
+    rating: 4.1,
+    studentCount: 10000,
+  ),
+  University(
+    id: '19',
+    name: 'Қарағанды медицина университеті',
+    city: 'Қарағанды',
+    logoUrl: 'assets/images/karaganda_med_logo.png',
+    imageUrls: ['assets/images/karaganda_med_campus.jpg'],
+    majors: [
+      'Жалпы медицина',
+      'Стоматология',
+      'Фармация',
+      'Қоғамдық денсаулық сақтау',
+      'Мейірбике ісі',
+    ],
+    passingScore: 70,
+    tuitionRange: '800,000 - 1,500,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1950 жылы құрылған. Орталық Қазақстандағы жетекші мед.ЖОО. '
+        '~8 000 студент, клиникалық базалар мен симуляциялық орталықтар.',
+    contactPhone: '+7 (7212) 51-38-79',
+    email: 'info@qmu.kz',
+    requirements: [
+      'ҰБТ 70+ (биология + химия)',
+      'Аттестат',
+      'Медициналық анықтама (075-У)',
+      '6 фото 3×4',
+    ],
+    applicationDeadline: '20 тамыз, 2026',
+    address: 'Гоголь көшесі, 40, Қарағанды',
+    website: 'qmu.kz',
+    rating: 4.4,
+    studentCount: 8000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ПАВЛОДАР (2 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '20',
+    name: 'С. Торайғыров атындағы Павлодар университеті',
+    city: 'Павлодар',
+    logoUrl: 'assets/images/pavlodar_uni_logo.png',
+    imageUrls: ['assets/images/pavlodar_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Ақпараттық технологиялар',
+      'Металлургия',
+      'Туризм',
+    ],
+    passingScore: 55,
+    tuitionRange: '500,000 - 900,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1960 жылы құрылған, Павлодар облысындағы ең ірі ЖОО. '
+        '~12 000 студент. Серпін + сельская квота.',
+    contactPhone: '+7 (7182) 67-36-69',
+    email: 'psu@psu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Ломов көшесі, 64, Павлодар',
+    website: 'psu.kz',
+    rating: 4.0,
+    studentCount: 12000,
+  ),
+  University(
+    id: '21',
+    name: 'Инновациялық Еуразия университеті',
+    city: 'Павлодар',
+    logoUrl: 'assets/images/ineu_logo.png',
+    imageUrls: ['assets/images/ineu_campus.jpg'],
+    majors: [
+      'Бизнес басқару',
+      'Қаржы',
+      'Дизайн',
+      'Ақпараттық жүйелер',
+      'Педагогика',
+      'Психология',
+    ],
+    passingScore: 50,
+    tuitionRange: '450,000 - 800,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1993 жылы құрылған жеке ЖОО. ~5 000 студент. '
+        'Заманауи кампус, дуалды оқыту жүйесі.',
+    contactPhone: '+7 (7182) 55-68-11',
+    email: 'ineu@ineu.edu.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'М. Горький көшесі, 102/4, Павлодар',
+    website: 'ineu.edu.kz',
+    rating: 3.9,
+    studentCount: 5000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ АҚТӨБЕ (2 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '22',
+    name: 'Қ. Жұбанов атындағы Ақтөбе өңірлік университеті',
+    city: 'Ақтөбе',
+    logoUrl: 'assets/images/aktobe_uni_logo.png',
+    imageUrls: ['assets/images/aktobe_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Ақпараттық технологиялар',
+      'Химия',
+      'Биология',
+      'Тарих',
+    ],
+    passingScore: 55,
+    tuitionRange: '450,000 - 850,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1966 жылы құрылған, Батыс Қазақстандағы ең ірі университет. '
+        '~15 000 студент. 70+ мамандық.',
+    contactPhone: '+7 (7132) 56-36-43',
+    email: 'arsu@zhubanov.edu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Братьев Жубановых көшесі, 263, Ақтөбе',
+    website: 'zhubanov.edu.kz',
+    rating: 4.1,
+    studentCount: 15000,
+  ),
+  University(
+    id: '23',
+    name: 'Батыс Қазақстан медицина университеті',
+    city: 'Ақтөбе',
+    logoUrl: 'assets/images/aktobe_med_logo.png',
+    imageUrls: ['assets/images/aktobe_med_campus.jpg'],
+    majors: ['Жалпы медицина', 'Стоматология', 'Фармация', 'Мейірбике ісі'],
+    passingScore: 65,
+    tuitionRange: '750,000 - 1,400,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1957 жылы құрылған мед. университет. ~7 000 студент. '
+        'Батыс Қазақстанда медицина мамандығын алудың бірінші мекені.',
+    contactPhone: '+7 (7132) 54-67-19',
+    email: 'info@zkmu.kz',
+    requirements: [
+      'ҰБТ 65+ (биология + химия)',
+      'Аттестат',
+      'Медициналық анықтама',
+      '6 фото 3×4',
+    ],
+    applicationDeadline: '20 тамыз, 2026',
+    address: 'Маресьев көшесі, 68, Ақтөбе',
+    website: 'zkmu.kz',
+    rating: 4.2,
+    studentCount: 7000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ СЕМЕЙ (2 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '24',
+    name: 'Шәкәрім атындағы Семей университеті',
+    city: 'Семей',
+    logoUrl: 'assets/images/semey_uni_logo.png',
+    imageUrls: ['assets/images/semey_uni_campus.jpg'],
+    majors: [
+      'Ветеринария',
+      'Ауылшаруашылық',
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Ақпараттық технологиялар',
+      'Тамақ технологиясы',
+    ],
+    passingScore: 55,
+    tuitionRange: '500,000 - 900,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1995 жылы құрылған. ~10 000 студент. Ветеринария және '
+        'ауылшаруашылық бағытында Шығыс Қазақстан регионының көшбасшысы.',
+    contactPhone: '+7 (7222) 35-60-53',
+    email: 'info@semgu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Глинки көшесі, 20А, Семей',
+    website: 'semgu.kz',
+    rating: 4.0,
+    studentCount: 10000,
+  ),
+  University(
+    id: '25',
+    name: 'Семей медицина университеті',
+    city: 'Семей',
+    logoUrl: 'assets/images/semey_med_logo.png',
+    imageUrls: ['assets/images/semey_med_campus.jpg'],
+    majors: [
+      'Жалпы медицина',
+      'Стоматология',
+      'Қоғамдық денсаулық сақтау',
+      'Фармация',
+    ],
+    passingScore: 70,
+    tuitionRange: '800,000 - 1,500,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1953 жылы құрылған. ~5 000 студент. '
+        'Шығыс Қазақстандағы ең ескі медициналық университеттердің бірі.',
+    contactPhone: '+7 (7222) 56-98-72',
+    email: 'info@semeymeduni.kz',
+    requirements: [
+      'ҰБТ 70+ (биология + химия)',
+      'Аттестат',
+      'Медициналық анықтама',
+      '6 фото 3×4',
+    ],
+    applicationDeadline: '20 тамыз, 2026',
+    address: 'Абай Құнанбаев көшесі, 103, Семей',
+    website: 'semeymeduni.kz',
+    rating: 4.2,
+    studentCount: 5000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ӨСКЕМЕН (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '26',
+    name: 'Д. Серікбаев атындағы ШҚТУ',
+    city: 'Өскемен',
+    logoUrl: 'assets/images/ektu_logo.png',
+    imageUrls: ['assets/images/ektu_campus.jpg'],
+    majors: [
+      'Ақпараттық технологиялар',
+      'Машина жасау',
+      'Энергетика',
+      'Тау-кен ісі',
+      'Архитектура',
+      'Құрылыс',
+    ],
+    passingScore: 55,
+    tuitionRange: '550,000 - 900,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1958 жылдан бері жұмыс істеп келе жатқан техникалық университет. '
+        '~8 000 студент. Шығыс Қазақстан өңірінің инженерлік жетекші ЖОО.',
+    contactPhone: '+7 (7232) 54-05-30',
+    email: 'info@ektu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты (математика профиль)',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Серикбаев көшесі, 19, Өскемен',
+    website: 'ektu.kz',
+    rating: 4.1,
+    studentCount: 8000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ТАРАЗ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '27',
+    name: 'Тараз өңірлік университеті',
+    city: 'Тараз',
+    logoUrl: 'assets/images/taraz_uni_logo.png',
+    imageUrls: ['assets/images/taraz_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Ақпараттық технологиялар',
+      'Тарих',
+      'Филология',
+    ],
+    passingScore: 50,
+    tuitionRange: '450,000 - 800,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        'Жамбыл облысындағы ірі университет. ~8 000 студент. '
+        'Серпін бағдарламасына қатысады.',
+    contactPhone: '+7 (7262) 43-93-00',
+    email: 'info@taru.edu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Толе би көшесі, 40, Тараз',
+    website: 'taru.edu.kz',
+    rating: 3.9,
+    studentCount: 8000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ҚОСТАНАЙ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '28',
+    name: 'А.Байтұрсынов атындағы Қостанай өңірлік университеті',
+    city: 'Қостанай',
+    logoUrl: 'assets/images/kostanay_uni_logo.png',
+    imageUrls: ['assets/images/kostanay_uni_campus.jpg'],
+    majors: [
+      'Агрономия',
+      'Ветеринария',
+      'Педагогика',
+      'Экономика',
+      'Құқықтану',
+      'Ақпараттық технологиялар',
+    ],
+    passingScore: 50,
+    tuitionRange: '450,000 - 800,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1939 жылы құрылған. ~9 000 студент. Ауылшаруашылық мамандықтарда '
+        'Солтүстік Қазақстанда жетекші. Сельская квота белсенді.',
+    contactPhone: '+7 (7142) 51-11-57',
+    email: 'info@ksu.edu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Байтұрсынов көшесі, 47, Қостанай',
+    website: 'ksu.edu.kz',
+    rating: 4.0,
+    studentCount: 9000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ПЕТРОПАВЛ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '29',
+    name: 'М.Қозыбаев атындағы СҚУ',
+    city: 'Петропавл',
+    logoUrl: 'assets/images/nkzu_logo.png',
+    imageUrls: ['assets/images/nkzu_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Ақпараттық технологиялар',
+      'Экономика',
+      'Құқықтану',
+      'Бизнес басқару',
+      'Психология',
+    ],
+    passingScore: 50,
+    tuitionRange: '400,000 - 750,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1937 жылы құрылған. Солтүстік Қазақстан облысының ірі ЖОО. '
+        '~7 000 студент.',
+    contactPhone: '+7 (7152) 36-41-49',
+    email: 'info@nkzu.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Пушкин көшесі, 86, Петропавл',
+    website: 'nkzu.kz',
+    rating: 3.9,
+    studentCount: 7000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ АҚТАУ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '30',
+    name: 'Ш.Есенов атындағы Каспий технологиялар және инжиниринг университеті',
+    city: 'Ақтау',
+    logoUrl: 'assets/images/aktau_uni_logo.png',
+    imageUrls: ['assets/images/aktau_uni_campus.jpg'],
+    majors: [
+      'Мұнай-газ ісі',
+      'Химиялық технология',
+      'Ақпараттық жүйелер',
+      'Экономика',
+      'Құрылыс',
+      'Экология',
+    ],
+    passingScore: 55,
+    tuitionRange: '500,000 - 900,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1975 жылы құрылған. ~8 000 студент. Мұнай-газ саласына '
+        'маман дайындаудағы жетекші. Маңғыстау облысының бірден-бір университеті.',
+    contactPhone: '+7 (7292) 33-40-02',
+    email: 'info@yu.edu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: '32 шағын аудан, Ақтау',
+    website: 'yu.edu.kz',
+    rating: 4.0,
+    studentCount: 8000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ АТЫРАУ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '31',
+    name: 'Х.Досмұхамедов атындағы Атырау университеті',
+    city: 'Атырау',
+    logoUrl: 'assets/images/atyrau_uni_logo.png',
+    imageUrls: ['assets/images/atyrau_uni_campus.jpg'],
+    majors: [
+      'Мұнай-газ ісі',
+      'Құқықтану',
+      'Педагогика',
+      'Экономика',
+      'Ақпараттық технологиялар',
+      'Тарих',
+    ],
+    passingScore: 50,
+    tuitionRange: '450,000 - 850,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1957 жылы құрылған. ~6 000 студент. '
+        'Батыс Қазақстан өңірінің ірі ЖОО.',
+    contactPhone: '+7 (7122) 27-38-37',
+    email: 'info@asu.edu.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Студенттер даңғылы, 212, Атырау',
+    website: 'asu.edu.kz',
+    rating: 3.8,
+    studentCount: 6000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ҚЫЗЫЛОРДА (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '32',
+    name: 'Қорқыт Ата атындағы Қызылорда университеті',
+    city: 'Қызылорда',
+    logoUrl: 'assets/images/kyzylorda_uni_logo.png',
+    imageUrls: ['assets/images/kyzylorda_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Ақпараттық жүйелер',
+      'Ауылшаруашылық',
+      'Энергетика',
+    ],
+    passingScore: 50,
+    tuitionRange: '400,000 - 750,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1937 жылы құрылған. ~10 000 студент. Серпін бағдарламасына '
+        'белсенді қатысады. Қызылорда облысындағы бірден-бір университет.',
+    contactPhone: '+7 (7242) 26-17-30',
+    email: 'info@korkyt.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Айтеке би көшесі, 29А, Қызылорда',
+    website: 'korkyt.kz',
+    rating: 3.8,
+    studentCount: 10000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ОРАЛ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '33',
+    name: 'М. Өтемісов атындағы Батыс Қазақстан университеті',
+    city: 'Орал',
+    logoUrl: 'assets/images/oral_uni_logo.png',
+    imageUrls: ['assets/images/oral_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Биология',
+      'Тарих',
+      'Ақпараттық жүйелер',
+    ],
+    passingScore: 50,
+    tuitionRange: '400,000 - 750,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1932 жылы құрылған. ~8 000 студент. '
+        'Батыс Қазақстан облысындағы ең ескі университеттердің бірі.',
+    contactPhone: '+7 (7112) 51-37-98',
+    email: 'info@wksu.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Студенттік даңғылы, 55, Орал',
+    website: 'wksu.kz',
+    rating: 3.9,
+    studentCount: 8000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ КӨКШЕТАУ (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '34',
+    name: 'Ш.Уәлиханов атындағы Көкшетау университеті',
+    city: 'Көкшетау',
+    logoUrl: 'assets/images/kokshetau_uni_logo.png',
+    imageUrls: ['assets/images/kokshetau_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Экономика',
+      'Құқықтану',
+      'Ақпараттық технологиялар',
+      'Экология',
+      'Туризм',
+    ],
+    passingScore: 50,
+    tuitionRange: '400,000 - 700,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1962 жылы құрылған. ~7 000 студент. '
+        'Ақмола облысының ірі білім беру орталығы.',
+    contactPhone: '+7 (7162) 25-41-50',
+    email: 'info@shoqan.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Абай көшесі, 76, Көкшетау',
+    website: 'shoqan.kz',
+    rating: 3.9,
+    studentCount: 7000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ТАЛДЫҚОРҒАН (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '35',
+    name: 'І.Жансүгіров атындағы Жетісу университеті',
+    city: 'Талдықорған',
+    logoUrl: 'assets/images/zhetysu_uni_logo.png',
+    imageUrls: ['assets/images/zhetysu_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Экономика',
+      'Құқықтану',
+      'Ақпараттық жүйелер',
+      'Биология',
+      'Тарих',
+    ],
+    passingScore: 50,
+    tuitionRange: '400,000 - 700,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1972 жылы құрылған. ~6 000 студент. '
+        'Жетісу өңірінің ірі білім беру орталығы.',
+    contactPhone: '+7 (7282) 22-36-64',
+    email: 'info@zhetysu.edu.kz',
+    requirements: ['Аттестат/Диплом', 'ҰБТ сертификаты', '6 фото 3×4'],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'І.Жансүгіров көшесі, 187А, Талдықорған',
+    website: 'zhetysu.edu.kz',
+    rating: 3.8,
+    studentCount: 6000,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🏙️ ТҮРКІСТАН (1 университет)
+  // ═══════════════════════════════════════════════════════════════
+  University(
+    id: '36',
+    name: 'Қ.А. Ясауи атындағы Халықаралық қазақ-түрік университеті',
+    city: 'Түркістан',
+    logoUrl: 'assets/images/turkistan_uni_logo.png',
+    imageUrls: ['assets/images/turkistan_uni_campus.jpg'],
+    majors: [
+      'Педагогика',
+      'Құқықтану',
+      'Экономика',
+      'Ақпараттық технологиялар',
+      'Тарих',
+      'Филология',
+      'Медицина',
+      'Инженерия',
+    ],
+    passingScore: 55,
+    tuitionRange: '400,000 - 800,000 ₸/жыл',
+    hasDormitory: true,
+    hasGrants: true,
+    description:
+        '1991 жылы құрылған Қазақстан мен Түркия арасындағы бірлескен университет. '
+        '~20 000 студент. Ең ірі аймақтық ЖОО. Түрік студенттерге де ашық.',
+    contactPhone: '+7 (7253) 63-19-11',
+    email: 'info@ayu.edu.kz',
+    requirements: [
+      'Аттестат/Диплом',
+      'ҰБТ сертификаты',
+      '6 фото 3×4',
+      'Жеке куәлік көшірмесі',
+    ],
+    applicationDeadline: '25 тамыз, 2026',
+    address: 'Б.Саттарханов даңғылы, 29, Түркістан',
+    website: 'ayu.edu.kz',
+    rating: 4.0,
+    studentCount: 20000,
+  ),
 ];

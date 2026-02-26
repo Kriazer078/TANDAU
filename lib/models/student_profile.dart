@@ -13,6 +13,13 @@ class StudentProfile {
   final List<String> preferredCities; // Предпочитаемые города
   final List<String> preferredMajors; // Интересующие специальности
   final int? budget; // Бюджет на обучение в тенге
+  // 🆕 Phase 3 — расширенный профиль
+  final String? targetProfession; // "Frontend разработчик"
+  final String? financialSituation; // "only_grant" | "up_to_1m" | "any"
+  final bool? hasDisability; // для квоты инвалидов
+  final bool? isOrphan; // для квоты СУСН
+  final bool? isRural; // для сельской квоты
+  final List<String> extracurriculars; // кружки, проекты, олимпиады
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -28,6 +35,12 @@ class StudentProfile {
     this.preferredCities = const [],
     this.preferredMajors = const [],
     this.budget,
+    this.targetProfession,
+    this.financialSituation,
+    this.hasDisability,
+    this.isOrphan,
+    this.isRural,
+    this.extracurriculars = const [],
     this.createdAt,
     this.updatedAt,
   });
@@ -46,6 +59,12 @@ class StudentProfile {
       'preferredCities': preferredCities,
       'preferredMajors': preferredMajors,
       'budget': budget,
+      'targetProfession': targetProfession,
+      'financialSituation': financialSituation,
+      'hasDisability': hasDisability,
+      'isOrphan': isOrphan,
+      'isRural': isRural,
+      'extracurriculars': extracurriculars,
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
           : FieldValue.serverTimestamp(),
@@ -69,6 +88,12 @@ class StudentProfile {
       preferredCities: List<String>.from(map['preferredCities'] ?? []),
       preferredMajors: List<String>.from(map['preferredMajors'] ?? []),
       budget: map['budget'],
+      targetProfession: map['targetProfession'],
+      financialSituation: map['financialSituation'],
+      hasDisability: map['hasDisability'],
+      isOrphan: map['isOrphan'],
+      isRural: map['isRural'],
+      extracurriculars: List<String>.from(map['extracurriculars'] ?? []),
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
           : null,
@@ -96,6 +121,12 @@ class StudentProfile {
     List<String>? preferredCities,
     List<String>? preferredMajors,
     int? budget,
+    String? targetProfession,
+    String? financialSituation,
+    bool? hasDisability,
+    bool? isOrphan,
+    bool? isRural,
+    List<String>? extracurriculars,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -111,6 +142,12 @@ class StudentProfile {
       preferredCities: preferredCities ?? this.preferredCities,
       preferredMajors: preferredMajors ?? this.preferredMajors,
       budget: budget ?? this.budget,
+      targetProfession: targetProfession ?? this.targetProfession,
+      financialSituation: financialSituation ?? this.financialSituation,
+      hasDisability: hasDisability ?? this.hasDisability,
+      isOrphan: isOrphan ?? this.isOrphan,
+      isRural: isRural ?? this.isRural,
+      extracurriculars: extracurriculars ?? this.extracurriculars,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -125,22 +162,24 @@ class StudentProfile {
 
   /// Получить процент заполненности профиля
   int get completeness {
-    int total = 0;
+    int total = 10; // all trackable fields
     int filled = 0;
 
-    // Базовые поля (Base fields)
-    total += 4;
-    // Расширенные поля (Extended fields for AI strategy)
-    total += 3; // gpa, ielts, math
-
+    // Базовые поля
     if (entScore != null) filled++;
     if (achievements.isNotEmpty) filled++;
     if (preferredMajors.isNotEmpty) filled++;
     if (preferredCities.isNotEmpty) filled++;
 
+    // Расширенные поля
     if (gpa != null) filled++;
     if (ieltsScore != null) filled++;
     if (mathScore != null) filled++;
+
+    // Новые поля Phase 3
+    if (targetProfession != null) filled++;
+    if (financialSituation != null) filled++;
+    if (extracurriculars.isNotEmpty) filled++;
 
     return ((filled / total) * 100).round();
   }

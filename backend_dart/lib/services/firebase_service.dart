@@ -226,4 +226,37 @@ class FirebaseService {
       return false;
     }
   }
+
+  /// Fetch all documents from 'knowledge_base' collection for RAG
+  Future<List<Map<String, dynamic>>> getKnowledgeBase() async {
+    final parent = 'projects/$_projectId/databases/(default)/documents';
+    try {
+      final response = await _firestoreApi.projects.databases.documents
+          .list(parent, 'knowledge_base', pageSize: 100);
+
+      if (response.documents == null) return [];
+
+      return response.documents!.map((doc) {
+        final fields = doc.fields!;
+        final id = doc.name!.split('/').last;
+
+        dynamic extractValue(Value v) {
+          if (v.stringValue != null) return v.stringValue;
+          if (v.integerValue != null) return int.tryParse(v.integerValue!) ?? 0;
+          if (v.doubleValue != null) return v.doubleValue;
+          if (v.booleanValue != null) return v.booleanValue;
+          return null;
+        }
+
+        final Map<String, dynamic> result = {'id': id};
+        fields.forEach((key, val) {
+          result[key] = extractValue(val);
+        });
+        return result;
+      }).toList();
+    } catch (e) {
+      stderr.writeln('Error fetching knowledge base: $e');
+      return [];
+    }
+  }
 }

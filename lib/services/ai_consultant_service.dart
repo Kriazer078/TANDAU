@@ -147,6 +147,7 @@ class AIConsultantService {
     int? entScore,
     double? ieltsScore,
     double? gpa,
+    int? mathScore,
     List<String>? preferredCities,
     List<String>? preferredMajors,
     String? currentEducation,
@@ -155,48 +156,60 @@ class AIConsultantService {
     try {
       String fullMessage;
 
+      // --- MODERATION CHECK (LOCAL) ---
+      if (!isInternalStrategyCall && _moderationService.hasProfanity(message)) {
+        return 'Мы за вежливое общение. Пожалуйста, переформулируйте ваш вопрос без использования грубых выражений.';
+      }
+      // --------------------------------
+
       if (isInternalStrategyCall) {
-        // For internal strategy calls, the message already contains the prompt and JSON
         fullMessage = message;
       } else {
-        // Building context for general chat
-        String context = '';
-        if (userAchievements != null && userAchievements.isNotEmpty) {
-          context += 'Достижения: ${userAchievements.join(", ")}. ';
-        }
+        // Build structured context for better AI personalization
+        final List<String> contextParts = [];
+
         if (entScore != null && entScore > 0) {
-          context += 'ЕНТ: $entScore. ';
+          contextParts.add('ЕНТ балл: $entScore из 140');
+        }
+        if (gpa != null && gpa > 0) {
+          contextParts.add('GPA: $gpa');
         }
         if (ieltsScore != null && ieltsScore > 0) {
-          context += 'IELTS: $ieltsScore. ';
+          contextParts.add('IELTS: $ieltsScore');
         }
-
-        // --- MODERATION CHECK (LOCAL) ---
-        if (_moderationService.hasProfanity(message)) {
-          return 'Мы за вежливое общение. Пожалуйста, переформулируйте ваш вопрос без использования грубых выражений.';
-        }
-        // --------------------------------
-        if (gpa != null && gpa > 0) {
-          context += 'GPA: $gpa. ';
+        if (mathScore != null && mathScore > 0) {
+          contextParts.add('Математика: $mathScore');
         }
         if (preferredCities != null && preferredCities.isNotEmpty) {
-          context += 'Города: ${preferredCities.join(", ")}. ';
+          contextParts.add('Город: ${preferredCities.join(", ")}');
         }
         if (currentEducation != null && currentEducation.isNotEmpty) {
-          context += 'Текущее образование: $currentEducation. ';
+          contextParts.add('Образование: $currentEducation');
+        }
+        if (preferredMajors != null && preferredMajors.isNotEmpty) {
+          contextParts.add(
+            'Интересующие специальности: ${preferredMajors.join(", ")}',
+          );
+        }
+        if (userAchievements != null && userAchievements.isNotEmpty) {
+          contextParts.add('Достижения: ${userAchievements.join(", ")}');
         }
 
-        // Important: we append the context to the message so Gemini knows current user state
-        fullMessage =
-            '${context.isNotEmpty ? 'Мой контекст: $context\n\n' : ''}Мой вопрос: $message';
+        if (contextParts.isNotEmpty) {
+          fullMessage =
+              '[ПРОФИЛЬ АБИТУРИЕНТА]\n${contextParts.join('\n')}\n\n[ВОПРОС]\n$message';
+        } else {
+          fullMessage = message;
+        }
       }
 
       final bodyData = <String, dynamic>{'question': fullMessage};
 
-      // final currentUser = AuthService().currentUser.value;
-      // if (currentUser != null) {
-      //   bodyData['uid'] = currentUser.uid;
-      // }
+      // Send uid for token tracking
+      final currentUser = AuthService().currentUser.value;
+      if (currentUser != null) {
+        bodyData['uid'] = currentUser.uid;
+      }
 
       if (history != null && history.isNotEmpty) {
         bodyData['history'] = history;
@@ -228,4 +241,58 @@ class AIConsultantService {
 
   // --- SYSTEM INSTRUCTIONS ---
   // (Removed unused strategy instructions as we moved logic to backend)
+
+  /// Запросить Жеке Жоспар (персональный план поступления)
+  Future<String> requestZhekeZhospar({
+    int? entScore,
+    double? gpa,
+    double? ieltsScore,
+    int? mathScore,
+    String? city,
+    String? preferredMajors,
+    String? currentEducation,
+    String? achievements,
+  }) async {
+    try {
+      final bodyData = <String, dynamic>{};
+
+      if (entScore != null) bodyData['entScore'] = entScore;
+      if (gpa != null) bodyData['gpa'] = gpa;
+      if (ieltsScore != null) bodyData['ieltsScore'] = ieltsScore;
+      if (mathScore != null) bodyData['mathScore'] = mathScore;
+      if (city != null) bodyData['city'] = city;
+      if (preferredMajors != null)
+        bodyData['preferredMajors'] = preferredMajors;
+      if (currentEducation != null) {
+        bodyData['currentEducation'] = currentEducation;
+      }
+      if (achievements != null) bodyData['achievements'] = achievements;
+
+      // Send uid for token tracking
+      final currentUser = AuthService().currentUser.value;
+      if (currentUser != null) {
+        bodyData['uid'] = currentUser.uid;
+      }
+
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/zheke-zhospar'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(bodyData),
+          )
+          .timeout(const Duration(seconds: 45));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        if (data['outOfTokens'] == true) {
+          throw OutOfTokensException(data['answer'] ?? '');
+        }
+        return data['answer'] ?? 'Не удалось создать план.';
+      }
+      return '📍 **Проблема с подключением.**\n\nСервер недоступен (Код: ${response.statusCode}).';
+    } catch (e) {
+      if (e is OutOfTokensException) rethrow;
+      return '📍 **Ошибка сети.**\n\nПроверьте интернет и попробуйте снова.';
+    }
+  }
 }

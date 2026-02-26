@@ -6,9 +6,11 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../theme/app_colors.dart';
 import '../l10n/app_localizations.dart';
 import '../services/ai_consultant_service.dart';
+import '../services/ai_feedback_service.dart';
 import '../services/auth_service.dart';
 import '../services/moderation_service.dart';
 import '../widgets/ai_logo_icon.dart';
+import 'onboarding_wizard_screen.dart';
 
 class AIConsultantScreen extends StatefulWidget {
   const AIConsultantScreen({super.key});
@@ -149,6 +151,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         entScore: user?.untScore,
         ieltsScore: user?.ieltsScore,
         gpa: user?.gpa,
+        mathScore: user?.mathScore,
         currentEducation: user?.education,
         preferredCities: user?.city != null ? [user!.city!] : null,
         userAchievements: user?.achievements,
@@ -189,6 +192,73 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           );
         });
         _saveHistory();
+        _scrollToBottom();
+      }
+    }
+  }
+
+  /// Request Жеке Жоспар (personalized admission plan)
+  Future<void> _requestZhekeZhospar() async {
+    final l10n = AppLocalizations.of(context);
+
+    setState(() {
+      _messages.add(
+        _ChatMessage(
+          text: '📋 Создай мне Жеке Жоспар (персональный план поступления)',
+          isUser: true,
+          time: DateTime.now(),
+        ),
+      );
+      _isTyping = true;
+    });
+    _scrollToBottom();
+
+    final user = AuthService().currentUser.value;
+
+    try {
+      final response = await _aiService.requestZhekeZhospar(
+        entScore: user?.untScore,
+        gpa: user?.gpa,
+        ieltsScore: user?.ieltsScore,
+        mathScore: user?.mathScore,
+        city: user?.city,
+        preferredMajors: user?.preferredMajors?.join(', '),
+        currentEducation: user?.education,
+        achievements: user?.achievements?.join(', '),
+      );
+
+      if (mounted) {
+        setState(() {
+          _isTyping = false;
+          _messages.add(
+            _ChatMessage(text: response, isUser: false, time: DateTime.now()),
+          );
+        });
+        _saveHistory();
+        _scrollToBottom();
+      }
+    } on OutOfTokensException catch (e) {
+      if (mounted) {
+        setState(() {
+          _isTyping = false;
+          _messages.add(
+            _ChatMessage(text: e.message, isUser: false, time: DateTime.now()),
+          );
+        });
+        _scrollToBottom();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isTyping = false;
+          _messages.add(
+            _ChatMessage(
+              text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
+              isUser: false,
+              time: DateTime.now(),
+            ),
+          );
+        });
         _scrollToBottom();
       }
     }
@@ -409,7 +479,40 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
+
+            // 🚀 Onboarding Wizard button
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: FilledButton.icon(
+                onPressed: () async {
+                  final result = await Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const OnboardingWizardScreen(),
+                    ),
+                  );
+                  if (result == true && mounted) {
+                    _sendMessage(
+                      text: 'Мой профиль обновлён! Покажи мне подходящие вузы.',
+                    );
+                  }
+                },
+                icon: const Text('🚀', style: TextStyle(fontSize: 18)),
+                label: const Text(
+                  'Заполни профиль за 2 мин',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF6366F1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
 
             // Suggestion chips
             Wrap(
@@ -432,6 +535,12 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   Icons.emoji_events_rounded,
                   isDark,
                 ),
+                _buildSuggestionChip(
+                  '📖 Истории успеха',
+                  Icons.auto_stories_rounded,
+                  isDark,
+                ),
+                _buildZhekeZhosparChip(isDark),
               ],
             ),
           ],
@@ -473,6 +582,42 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildZhekeZhosparChip(bool isDark) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: _requestZhekeZhospar,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [const Color(0xFF6366F1), const Color(0xFF8B5CF6)]
+                  : [const Color(0xFF818CF8), const Color(0xFFA78BFA)],
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.assignment_rounded, size: 16, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                '📋 Жеке Жоспар',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
               ),
@@ -675,7 +820,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                     ),
                   ),
                   const SizedBox(width: 8),
-                  _FeedbackButtons(isDark: isDark),
+                  _FeedbackButtons(isDark: isDark, messageText: msg.text),
                 ],
               ],
             ),
@@ -943,7 +1088,8 @@ class _AnimatedTypingIndicatorState extends State<_AnimatedTypingIndicator>
 // ═══════════════════════════════════════════
 class _FeedbackButtons extends StatefulWidget {
   final bool isDark;
-  const _FeedbackButtons({required this.isDark});
+  final String messageText;
+  const _FeedbackButtons({required this.isDark, required this.messageText});
 
   @override
   State<_FeedbackButtons> createState() => _FeedbackButtonsState();
@@ -955,6 +1101,13 @@ class _FeedbackButtonsState extends State<_FeedbackButtons> {
   void _handleFeedback(bool isHelpful) {
     if (_isHelpful != null) return; // Prevent double feedback
     setState(() => _isHelpful = isHelpful);
+
+    // 💾 Save feedback to Firestore
+    AIFeedbackService().saveFeedback(
+      isHelpful: isHelpful,
+      aiResponse: widget.messageText,
+    );
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

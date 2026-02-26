@@ -11,6 +11,7 @@ import 'filter_screen.dart';
 import '../providers/grant_predictor_provider.dart';
 import 'grant_prediction_results_screen.dart';
 import 'university_list_screen.dart';
+import '../widgets/deadline_banner.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -82,7 +83,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           children: [
                             const SizedBox(height: 8),
                             _buildGreetingSubtitle(l10n, theme, isDark),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
+                            const DeadlineBanner(),
+                            const SizedBox(height: 16),
                             _buildScoreInput(untScore, isDark, l10n),
                             const SizedBox(height: 24),
                             Text(

@@ -4,18 +4,21 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import '../services/firebase_service.dart';
 import '../services/gemini_service.dart';
+import '../services/knowledge_service.dart';
 import '../models/university.dart';
 
 class UniversityController {
   final FirebaseService _firebaseService;
   final GeminiService _aiService;
+  final KnowledgeService _knowledgeService;
   final Router router = Router();
 
-  UniversityController(this._firebaseService, this._aiService) {
+  UniversityController(
+      this._firebaseService, this._aiService, this._knowledgeService) {
     router.post('/recommend', _recommend);
     router.post('/chat', _chat);
-    router.post(
-        '/ai/getAIStrategy', _getAIStrategy); // Added prefix to match frontend
+    router.post('/zheke-zhospar', _zhekeZhospar);
+    router.post('/ai/getAIStrategy', _getAIStrategy);
     router.get('/health',
         (Request req) => Response.ok('Antigravity Server is running'));
   }
@@ -102,7 +105,11 @@ class UniversityController {
       }
       // --- 💎 AI LIMITS LOGIC END ---
 
-      final answer = await _aiService.generateChat(question, history: history);
+      final answer = await _aiService.generateChat(
+        question,
+        history: history,
+        ragContext: _knowledgeService.searchAndFormat(question),
+      );
 
       // Deduct token if successful and not premium
       if (shouldDeductToken && uid != null) {
@@ -341,6 +348,97 @@ class UniversityController {
       // SECURITY: Do NOT expose error details to client
       return Response.internalServerError(
         body: jsonEncode({'error': 'Internal Server Error'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  }
+
+  /// POST /api/v1/zheke-zhospar
+  /// Generates a personalized step-by-step admission plan
+  Future<Response> _zhekeZhospar(Request request) async {
+    try {
+      final body = await request.readAsString();
+      final data = jsonDecode(body);
+      final uid = data['uid'] as String?;
+
+      // Build user profile string from provided data
+      final entScore = data['entScore'];
+      final gpa = data['gpa'];
+      final city = data['city'] ?? '';
+      final majors = data['preferredMajors'] ?? '';
+      final ielts = data['ieltsScore'];
+      final mathScore = data['mathScore'];
+      final achievements = data['achievements'] ?? '';
+      final education = data['currentEducation'] ?? '';
+
+      final profileBuffer = StringBuffer();
+      profileBuffer.writeln('ЕНТ: ${entScore ?? "не указан"}');
+      profileBuffer.writeln('GPA: ${gpa ?? "не указан"}');
+      if (ielts != null) profileBuffer.writeln('IELTS: $ielts');
+      if (mathScore != null) profileBuffer.writeln('Математика: $mathScore');
+      profileBuffer.writeln('Город: $city');
+      profileBuffer.writeln('Мамандық: $majors');
+      profileBuffer.writeln('Образование: $education');
+      if (achievements.toString().isNotEmpty) {
+        profileBuffer.writeln('Достижения: $achievements');
+      }
+
+      final userProfile = profileBuffer.toString();
+
+      // --- Token check (same as _chat) ---
+      bool shouldDeductToken = false;
+      if (uid != null) {
+        final userDoc = await _firebaseService.getUserDocument(uid);
+        if (userDoc != null) {
+          final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
+          int tokens = userDoc['aiTokensRemaining'] as int? ?? 1000;
+
+          if (plan == 'free' && tokens <= 0) {
+            return Response.ok(
+              jsonEncode({
+                'answer':
+                    '💎 **Лимит запросов исчерпан.**\n\nОбновите подписку до **TANDAU PRO** для генерации Жеке Жоспар 🚀',
+                'outOfTokens': true
+              }),
+              headers: {'Content-Type': 'application/json'},
+            );
+          }
+          if (plan != 'premium') shouldDeductToken = true;
+        }
+      }
+
+      // RAG context
+      final ragContext = _knowledgeService.searchAndFormat(
+          'грант квота специальность ЕНТ план поступление $majors');
+
+      final answer = await _aiService.generateZhekeZhospar(
+        userProfile: userProfile,
+        ragContext: ragContext,
+      );
+
+      // Deduct token
+      if (shouldDeductToken && uid != null) {
+        final userDoc = await _firebaseService.getUserDocument(uid);
+        if (userDoc != null) {
+          int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
+          if (currentTokens > 0) {
+            await _firebaseService.updateUserFields(
+                uid, {'aiTokensRemaining': currentTokens - 1});
+          }
+        }
+      }
+
+      return Response.ok(
+        jsonEncode({'answer': answer}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      stderr.writeln('Zheke Zhospar Error: $e');
+      return Response.ok(
+        jsonEncode({
+          'answer':
+              '📍 **Не удалось создать Жеке Жоспар.**\n\nПроизошла ошибка. Попробуйте позже.'
+        }),
         headers: {'Content-Type': 'application/json'},
       );
     }
