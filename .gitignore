@@ -80,3 +80,9 @@ gcloud-keys.json
 # Agents
 .agent/
 .agents/
+
+# Cloud Build (may contain secrets)
+backend_dart/cloudbuild.yaml
+
+# Node modules
+node_modules/

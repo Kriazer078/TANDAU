@@ -141,6 +141,14 @@ flutter build appbundle --release --dart-define=IMGBB_API_KEY=<your_key>
 
 ---
 
+## 📞 Поддержка
+
+По любым вопросам, предложениям или проблемам:
+
+📧 Email: **tandau.app.help@gmail.com**
+
+---
+
 <div align="center">
 
 ### 🇰🇿 Сделано в Казахстане с ❤️

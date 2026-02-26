@@ -44,7 +44,7 @@ class LegalConstants {
 
 7. Контакты и обратная связь
 По любым вопросам конфиденциальности, безопасности или при необходимости получения выписки/удаления ваших данных:
-Email: support@tandau.app
+Email: tandau.app.help@gmail.com
 Веб-сайт: https://tandau-backend.onrender.com/privacy
 ''';
 

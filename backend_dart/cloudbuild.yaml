@@ -19,7 +19,7 @@ steps:
       - '8080'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'FIREBASE_PROJECT_ID=tandau-app,GEMINI_API_KEY=AIzaSyAdGTLDlQhfAvkYTvuXycyMDFKdSuTwpTw'
+      - 'FIREBASE_PROJECT_ID=tandau-app,GEMINI_API_KEY=$$GEMINI_API_KEY'
 
 images:
   - 'gcr.io/$PROJECT_ID/tandau-backend'

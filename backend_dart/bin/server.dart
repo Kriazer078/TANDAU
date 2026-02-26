@@ -83,7 +83,8 @@ void main(List<String> args) async {
     <p>Вы можете запросить полное удаление вашего аккаунта и всех связанных с ним данных в любой момент прямо из настроек профиля внутри приложения.</p>
 
     <h2>5. Контакты</h2>
-    <p>Если у вас есть вопросы к этой политике конфиденциальности, пожалуйста, свяжитесь с нами.</p>
+    <p>Если у вас есть вопросы к этой политике конфиденциальности, пожалуйста, свяжитесь с нами:</p>
+    <p>Email: <a href="mailto:tandau.app.help@gmail.com">tandau.app.help@gmail.com</a></p>
 </body>
 </html>
 ''';
@@ -170,7 +171,7 @@ void main(List<String> args) async {
 
             <div class="contact-box">
                 <p>Если у вас нет доступа к приложению или возникли проблемы — напишите нам, и мы удалим ваш аккаунт вручную в течение 3 рабочих дней.</p>
-                <a href="mailto:support@tandau.kz">📧 support@tandau.kz</a>
+                <a href="mailto:tandau.app.help@gmail.com">📧 tandau.app.help@gmail.com</a>
             </div>
         </div>
     </div>
