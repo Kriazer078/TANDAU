@@ -54,19 +54,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = true);
       debugPrint('🔵 REGSCR: Начало процесса регистрации...');
 
+      final timeoutErrorStr =
+          AppLocalizations.of(context)?.errorTimeout ??
+          'Превышено время ожидания. Проверьте интернет.';
+      final criticalErrorStr = AppLocalizations.of(context);
+
       // ✅ Даем время UI отрисовать индикатор загрузки (CircularProgressIndicator)
       // И гарантированно завершить анимацию скрытия клавиатуры до тяжелого запроса Firebase.
       // Это предотвращает ANR (Application Not Responding) и зависание главного потока.
       await Future.delayed(const Duration(milliseconds: 150));
 
-      String? registerError;
       try {
         debugPrint('🔵 REGSCR: Вызов AuthService().register...');
-        final timeoutErrorStr =
-            AppLocalizations.of(context)?.errorTimeout ??
-            'Превышено время ожидания. Проверьте интернет.';
         final authService = AuthService();
-        registerError = await authService
+        String? registerError = await authService
             .register(
               _nameController.text.trim(),
               _emailController.text.trim(),
@@ -110,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                AppLocalizations.of(context)?.errorCritical(e.toString()) ??
+                criticalErrorStr?.errorCritical(e.toString()) ??
                     'Критическая ошибка: $e',
               ),
               backgroundColor: AppColors.error,
