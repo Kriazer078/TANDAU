@@ -29,106 +29,36 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Map<String, dynamic>> _majors = [];
   bool _isLoading = true;
 
-  // Quick-access departments with icons
   List<Map<String, dynamic>> get _featuredMajors {
     final l10n = AppLocalizations.of(context);
-    final String locale = l10n?.localeName ?? 'en';
-
-    if (locale == 'ru') {
-      return [
-        {
-          'name': 'IT',
-          'icon': Icons.computer_rounded,
-          'color': const Color(0xFF3B82F6),
-        },
-        {
-          'name': 'Медицина',
-          'icon': Icons.medical_services_rounded,
-          'color': const Color(0xFFEF4444),
-        },
-        {
-          'name': 'Бизнес',
-          'icon': Icons.business_center_rounded,
-          'color': const Color(0xFFF97316),
-        },
-        {
-          'name': 'Инженерия',
-          'icon': Icons.engineering_rounded,
-          'color': const Color(0xFF22C55E),
-        },
-        {
-          'name': 'Право',
-          'icon': Icons.gavel_rounded,
-          'color': const Color(0xFF8B5CF6),
-        },
-        {
-          'name': 'Искусство',
-          'icon': Icons.palette_rounded,
-          'color': const Color(0xFFEC4899),
-        },
-      ];
-    } else if (locale == 'kk') {
-      return [
-        {
-          'name': 'IT',
-          'icon': Icons.computer_rounded,
-          'color': const Color(0xFF3B82F6),
-        },
-        {
-          'name': 'Медицина',
-          'icon': Icons.medical_services_rounded,
-          'color': const Color(0xFFEF4444),
-        },
-        {
-          'name': 'Бизнес',
-          'icon': Icons.business_center_rounded,
-          'color': const Color(0xFFF97316),
-        },
-        {
-          'name': 'Инженерия',
-          'icon': Icons.engineering_rounded,
-          'color': const Color(0xFF22C55E),
-        },
-        {
-          'name': 'Заң',
-          'icon': Icons.gavel_rounded,
-          'color': const Color(0xFF8B5CF6),
-        },
-        {
-          'name': 'Өнер',
-          'icon': Icons.palette_rounded,
-          'color': const Color(0xFFEC4899),
-        },
-      ];
-    }
     return [
       {
-        'name': 'IT',
+        'name': l10n?.majorIT ?? 'IT',
         'icon': Icons.computer_rounded,
         'color': const Color(0xFF3B82F6),
       },
       {
-        'name': 'Medicine',
+        'name': l10n?.majorMedicine ?? 'Медицина',
         'icon': Icons.medical_services_rounded,
         'color': const Color(0xFFEF4444),
       },
       {
-        'name': 'Business',
+        'name': l10n?.majorBusiness ?? 'Бизнес',
         'icon': Icons.business_center_rounded,
         'color': const Color(0xFFF97316),
       },
       {
-        'name': 'Engineering',
+        'name': l10n?.majorEngineering ?? 'Инженерия',
         'icon': Icons.engineering_rounded,
         'color': const Color(0xFF22C55E),
       },
       {
-        'name': 'Law',
+        'name': l10n?.majorLaw ?? 'Право',
         'icon': Icons.gavel_rounded,
         'color': const Color(0xFF8B5CF6),
       },
       {
-        'name': 'Art',
+        'name': l10n?.majorArt ?? 'Искусство',
         'icon': Icons.palette_rounded,
         'color': const Color(0xFFEC4899),
       },
@@ -252,15 +182,10 @@ class _SearchScreenState extends State<SearchScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
-    final String labelDepartments = (l10n?.localeName == 'ru')
-        ? 'Специальности'
-        : (l10n?.localeName == 'kk' ? 'Мамандықтар' : 'Departments');
-    final String labelPopularCities = (l10n?.localeName == 'ru')
-        ? 'Популярные города'
-        : (l10n?.localeName == 'kk' ? 'Танымал қалалар' : 'Popular Cities');
-    final String labelHistory = (l10n?.localeName == 'ru')
-        ? 'История поиска'
-        : (l10n?.localeName == 'kk' ? 'Іздеу тарихы' : 'Search History');
+    final String labelDepartments = l10n?.searchDepartments ?? 'Специальности';
+    final String labelPopularCities =
+        l10n?.searchPopularCities ?? 'Популярные города';
+    final String labelHistory = l10n?.searchHistory ?? 'История поиска';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -475,9 +400,7 @@ class _SearchScreenState extends State<SearchScreen> {
       filters.add(_ActiveFilter(label: major, type: 'major'));
     }
     if (_onlyGrants) {
-      final label = (l10n?.localeName == 'ru')
-          ? 'Грант'
-          : (l10n?.localeName == 'kk' ? 'Грант' : 'Grant');
+      final label = l10n?.filterGrant ?? 'Грант';
       filters.add(_ActiveFilter(label: label, type: 'grant'));
     }
     if (_maxPrice != null) {

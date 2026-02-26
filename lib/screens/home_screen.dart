@@ -341,7 +341,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  'Нажмите на число для точного ввода',
+                  l10n?.scoreInputTapHint ??
+                      'Нажмите на число для точного ввода',
                   style: TextStyle(
                     fontSize: 10,
                     color: isDark ? Colors.white30 : Colors.black26,
@@ -405,7 +406,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          'Введите балл ЕНТ',
+          AppLocalizations.of(context)?.scoreInputTitle ?? 'Введите балл ЕНТ',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : AppColors.textPrimary,
@@ -420,7 +421,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             LengthLimitingTextInputFormatter(3),
           ],
           decoration: InputDecoration(
-            hintText: '0 – 140',
+            hintText: AppLocalizations.of(context)?.scoreInputHint ?? '0 – 140',
             hintStyle: TextStyle(
               color: isDark ? Colors.white38 : Colors.black26,
             ),
@@ -447,7 +448,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Отмена',
+              AppLocalizations.of(context)?.commonCancel ?? 'Отмена',
               style: TextStyle(color: isDark ? Colors.white54 : Colors.grey),
             ),
           ),
@@ -459,7 +460,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('Готово'),
+            child: Text(AppLocalizations.of(context)?.commonDone ?? 'Готово'),
           ),
         ],
       ),
@@ -474,7 +475,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Введите число от 0 до 140'),
+          content: Text(
+            AppLocalizations.of(context)?.scoreInputError ??
+                'Введите число от 0 до 140',
+          ),
           backgroundColor: Colors.red.shade400,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
