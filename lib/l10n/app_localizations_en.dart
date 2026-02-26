@@ -1035,4 +1035,199 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationEmpty => 'No notifications';
+
+  @override
+  String get deadlineTitle => '📅 Admission Deadlines 2026';
+
+  @override
+  String get deadlineDays => 'days';
+
+  @override
+  String get deadlineCompleted => 'Completed';
+
+  @override
+  String get deadlineToday => 'Today!';
+
+  @override
+  String get deadlineTomorrow => 'Tomorrow!';
+
+  @override
+  String get deadlineWeeks => 'wk';
+
+  @override
+  String get deadlineMonths => 'mo';
+
+  @override
+  String wizardStepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get wizardSkip => 'Skip';
+
+  @override
+  String get wizardNext => 'Next →';
+
+  @override
+  String get wizardFinish => '✨ Finish';
+
+  @override
+  String get wizardEntTitle => 'What is your UNT score?';
+
+  @override
+  String get wizardEntSubtitle =>
+      'Trial or actual — enter an approximate score';
+
+  @override
+  String get wizardMajorTitle => 'What major?';
+
+  @override
+  String get wizardMajorSubtitle => 'Select one or more';
+
+  @override
+  String get wizardCityTitle => 'Which city?';
+
+  @override
+  String get wizardCitySubtitle => 'Where do you want to study';
+
+  @override
+  String get wizardFinanceTitle => 'Financial situation?';
+
+  @override
+  String get wizardFinanceSubtitle =>
+      'This will help find suitable universities';
+
+  @override
+  String get wizardQuotaTitle => 'Have any quotas?';
+
+  @override
+  String get wizardQuotaSubtitle => 'Quotas give an advantage in admission';
+
+  @override
+  String get wizardAchievementTitle => 'Achievements?';
+
+  @override
+  String get wizardAchievementSubtitle => 'Altyn Belgi, olympiads, sports';
+
+  @override
+  String get wizardFinanceOnlyGrant => 'Grant only';
+
+  @override
+  String get wizardFinanceOnlyGrantDesc => 'Cannot afford tuition';
+
+  @override
+  String get wizardFinanceUpTo1m => 'Up to 1,000,000 ₸';
+
+  @override
+  String get wizardFinanceUpTo1mDesc => 'Can partially pay';
+
+  @override
+  String get wizardFinanceAny => 'Any budget';
+
+  @override
+  String get wizardFinanceAnyDesc => 'Finances don\'t limit my choice';
+
+  @override
+  String get wizardQuotaRural => '🏡 Rural quota';
+
+  @override
+  String get wizardQuotaRuralDesc => 'Registered in a village';
+
+  @override
+  String get wizardQuotaOrphan => '👶 Orphan quota';
+
+  @override
+  String get wizardQuotaOrphanDesc => 'Orphan child status';
+
+  @override
+  String get wizardQuotaDisability => '♿ Disability quota';
+
+  @override
+  String get wizardQuotaDisabilityDesc => 'Disability group I, II or III';
+
+  @override
+  String get wizardQuotaHint =>
+      'No quota? No problem! AI will consider this and find the best options.';
+
+  @override
+  String get wizardProfileButton => '🚀 Complete profile in 2 min';
+
+  @override
+  String get wizardProfileUpdated =>
+      'My profile is updated! Show me suitable universities.';
+
+  @override
+  String get wizardSaveError => 'Save error';
+
+  @override
+  String get wizardScoreExcellent => 'Excellent! 🔥';
+
+  @override
+  String get wizardScoreGood => 'Good! 💪';
+
+  @override
+  String get wizardScoreOk => 'Not bad 👍';
+
+  @override
+  String get wizardScoreGrow => 'Room to grow 📈';
+
+  @override
+  String get wizardScorePrep => 'Prep needed 📚';
+
+  @override
+  String get successStoriesChip => '📖 Success Stories';
+
+  @override
+  String get wizardMajorIT => 'IT / Programming';
+
+  @override
+  String get wizardMajorMedicine => 'Medicine';
+
+  @override
+  String get wizardMajorEngineering => 'Engineering';
+
+  @override
+  String get wizardMajorBusiness => 'Business / Economics';
+
+  @override
+  String get wizardMajorPedagogy => 'Pedagogy';
+
+  @override
+  String get wizardMajorLaw => 'Law';
+
+  @override
+  String get wizardMajorArchitecture => 'Architecture';
+
+  @override
+  String get wizardMajorOilGas => 'Oil & Gas';
+
+  @override
+  String get wizardMajorArt => 'Art / Design';
+
+  @override
+  String get wizardMajorUndecided => 'Undecided';
+
+  @override
+  String get wizardAchAltynBelgi => 'Altyn Belgi';
+
+  @override
+  String get wizardAchOlympiadRepublic => 'Olympiad (national)';
+
+  @override
+  String get wizardAchOlympiadRegion => 'Olympiad (regional)';
+
+  @override
+  String get wizardAchSport => 'Sports achievements';
+
+  @override
+  String get wizardAchVolunteer => 'Volunteering';
+
+  @override
+  String get wizardAchScience => 'Research project';
+
+  @override
+  String get wizardAchNone => 'No achievements';
+
+  @override
+  String get wizardCityAny => 'Any city';
 }

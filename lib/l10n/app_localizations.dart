@@ -2055,6 +2055,384 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No notifications'**
   String get notificationEmpty;
+
+  /// No description provided for @deadlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'📅 Admission Deadlines 2026'**
+  String get deadlineTitle;
+
+  /// No description provided for @deadlineDays.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get deadlineDays;
+
+  /// No description provided for @deadlineCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get deadlineCompleted;
+
+  /// No description provided for @deadlineToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today!'**
+  String get deadlineToday;
+
+  /// No description provided for @deadlineTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow!'**
+  String get deadlineTomorrow;
+
+  /// No description provided for @deadlineWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'wk'**
+  String get deadlineWeeks;
+
+  /// No description provided for @deadlineMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'mo'**
+  String get deadlineMonths;
+
+  /// No description provided for @wizardStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String wizardStepOf(int current, int total);
+
+  /// No description provided for @wizardSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get wizardSkip;
+
+  /// No description provided for @wizardNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next →'**
+  String get wizardNext;
+
+  /// No description provided for @wizardFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'✨ Finish'**
+  String get wizardFinish;
+
+  /// No description provided for @wizardEntTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your UNT score?'**
+  String get wizardEntTitle;
+
+  /// No description provided for @wizardEntSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial or actual — enter an approximate score'**
+  String get wizardEntSubtitle;
+
+  /// No description provided for @wizardMajorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What major?'**
+  String get wizardMajorTitle;
+
+  /// No description provided for @wizardMajorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select one or more'**
+  String get wizardMajorSubtitle;
+
+  /// No description provided for @wizardCityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which city?'**
+  String get wizardCityTitle;
+
+  /// No description provided for @wizardCitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where do you want to study'**
+  String get wizardCitySubtitle;
+
+  /// No description provided for @wizardFinanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial situation?'**
+  String get wizardFinanceTitle;
+
+  /// No description provided for @wizardFinanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This will help find suitable universities'**
+  String get wizardFinanceSubtitle;
+
+  /// No description provided for @wizardQuotaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Have any quotas?'**
+  String get wizardQuotaTitle;
+
+  /// No description provided for @wizardQuotaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quotas give an advantage in admission'**
+  String get wizardQuotaSubtitle;
+
+  /// No description provided for @wizardAchievementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements?'**
+  String get wizardAchievementTitle;
+
+  /// No description provided for @wizardAchievementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Altyn Belgi, olympiads, sports'**
+  String get wizardAchievementSubtitle;
+
+  /// No description provided for @wizardFinanceOnlyGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant only'**
+  String get wizardFinanceOnlyGrant;
+
+  /// No description provided for @wizardFinanceOnlyGrantDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot afford tuition'**
+  String get wizardFinanceOnlyGrantDesc;
+
+  /// No description provided for @wizardFinanceUpTo1m.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 1,000,000 ₸'**
+  String get wizardFinanceUpTo1m;
+
+  /// No description provided for @wizardFinanceUpTo1mDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Can partially pay'**
+  String get wizardFinanceUpTo1mDesc;
+
+  /// No description provided for @wizardFinanceAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any budget'**
+  String get wizardFinanceAny;
+
+  /// No description provided for @wizardFinanceAnyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Finances don\'t limit my choice'**
+  String get wizardFinanceAnyDesc;
+
+  /// No description provided for @wizardQuotaRural.
+  ///
+  /// In en, this message translates to:
+  /// **'🏡 Rural quota'**
+  String get wizardQuotaRural;
+
+  /// No description provided for @wizardQuotaRuralDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered in a village'**
+  String get wizardQuotaRuralDesc;
+
+  /// No description provided for @wizardQuotaOrphan.
+  ///
+  /// In en, this message translates to:
+  /// **'👶 Orphan quota'**
+  String get wizardQuotaOrphan;
+
+  /// No description provided for @wizardQuotaOrphanDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Orphan child status'**
+  String get wizardQuotaOrphanDesc;
+
+  /// No description provided for @wizardQuotaDisability.
+  ///
+  /// In en, this message translates to:
+  /// **'♿ Disability quota'**
+  String get wizardQuotaDisability;
+
+  /// No description provided for @wizardQuotaDisabilityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Disability group I, II or III'**
+  String get wizardQuotaDisabilityDesc;
+
+  /// No description provided for @wizardQuotaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No quota? No problem! AI will consider this and find the best options.'**
+  String get wizardQuotaHint;
+
+  /// No description provided for @wizardProfileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'🚀 Complete profile in 2 min'**
+  String get wizardProfileButton;
+
+  /// No description provided for @wizardProfileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'My profile is updated! Show me suitable universities.'**
+  String get wizardProfileUpdated;
+
+  /// No description provided for @wizardSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Save error'**
+  String get wizardSaveError;
+
+  /// No description provided for @wizardScoreExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent! 🔥'**
+  String get wizardScoreExcellent;
+
+  /// No description provided for @wizardScoreGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good! 💪'**
+  String get wizardScoreGood;
+
+  /// No description provided for @wizardScoreOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Not bad 👍'**
+  String get wizardScoreOk;
+
+  /// No description provided for @wizardScoreGrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Room to grow 📈'**
+  String get wizardScoreGrow;
+
+  /// No description provided for @wizardScorePrep.
+  ///
+  /// In en, this message translates to:
+  /// **'Prep needed 📚'**
+  String get wizardScorePrep;
+
+  /// No description provided for @successStoriesChip.
+  ///
+  /// In en, this message translates to:
+  /// **'📖 Success Stories'**
+  String get successStoriesChip;
+
+  /// No description provided for @wizardMajorIT.
+  ///
+  /// In en, this message translates to:
+  /// **'IT / Programming'**
+  String get wizardMajorIT;
+
+  /// No description provided for @wizardMajorMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get wizardMajorMedicine;
+
+  /// No description provided for @wizardMajorEngineering.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineering'**
+  String get wizardMajorEngineering;
+
+  /// No description provided for @wizardMajorBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business / Economics'**
+  String get wizardMajorBusiness;
+
+  /// No description provided for @wizardMajorPedagogy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pedagogy'**
+  String get wizardMajorPedagogy;
+
+  /// No description provided for @wizardMajorLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Law'**
+  String get wizardMajorLaw;
+
+  /// No description provided for @wizardMajorArchitecture.
+  ///
+  /// In en, this message translates to:
+  /// **'Architecture'**
+  String get wizardMajorArchitecture;
+
+  /// No description provided for @wizardMajorOilGas.
+  ///
+  /// In en, this message translates to:
+  /// **'Oil & Gas'**
+  String get wizardMajorOilGas;
+
+  /// No description provided for @wizardMajorArt.
+  ///
+  /// In en, this message translates to:
+  /// **'Art / Design'**
+  String get wizardMajorArt;
+
+  /// No description provided for @wizardMajorUndecided.
+  ///
+  /// In en, this message translates to:
+  /// **'Undecided'**
+  String get wizardMajorUndecided;
+
+  /// No description provided for @wizardAchAltynBelgi.
+  ///
+  /// In en, this message translates to:
+  /// **'Altyn Belgi'**
+  String get wizardAchAltynBelgi;
+
+  /// No description provided for @wizardAchOlympiadRepublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Olympiad (national)'**
+  String get wizardAchOlympiadRepublic;
+
+  /// No description provided for @wizardAchOlympiadRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Olympiad (regional)'**
+  String get wizardAchOlympiadRegion;
+
+  /// No description provided for @wizardAchSport.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports achievements'**
+  String get wizardAchSport;
+
+  /// No description provided for @wizardAchVolunteer.
+  ///
+  /// In en, this message translates to:
+  /// **'Volunteering'**
+  String get wizardAchVolunteer;
+
+  /// No description provided for @wizardAchScience.
+  ///
+  /// In en, this message translates to:
+  /// **'Research project'**
+  String get wizardAchScience;
+
+  /// No description provided for @wizardAchNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No achievements'**
+  String get wizardAchNone;
+
+  /// No description provided for @wizardCityAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any city'**
+  String get wizardCityAny;
 }
 
 class _AppLocalizationsDelegate

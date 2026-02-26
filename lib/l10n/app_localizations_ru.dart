@@ -1038,4 +1038,197 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notificationEmpty => 'Нет уведомлений';
+
+  @override
+  String get deadlineTitle => '📅 Дедлайны поступления 2026';
+
+  @override
+  String get deadlineDays => 'дней';
+
+  @override
+  String get deadlineCompleted => 'Завершено';
+
+  @override
+  String get deadlineToday => 'Сегодня!';
+
+  @override
+  String get deadlineTomorrow => 'Завтра!';
+
+  @override
+  String get deadlineWeeks => 'нед.';
+
+  @override
+  String get deadlineMonths => 'мес.';
+
+  @override
+  String wizardStepOf(int current, int total) {
+    return 'Шаг $current из $total';
+  }
+
+  @override
+  String get wizardSkip => 'Пропустить';
+
+  @override
+  String get wizardNext => 'Далее →';
+
+  @override
+  String get wizardFinish => '✨ Завершить';
+
+  @override
+  String get wizardEntTitle => 'Какой у тебя балл ЕНТ?';
+
+  @override
+  String get wizardEntSubtitle => 'Пробный или реальный — укажи примерный';
+
+  @override
+  String get wizardMajorTitle => 'Какая специальность?';
+
+  @override
+  String get wizardMajorSubtitle => 'Выбери одну или несколько';
+
+  @override
+  String get wizardCityTitle => 'Какой город?';
+
+  @override
+  String get wizardCitySubtitle => 'Где хочешь учиться';
+
+  @override
+  String get wizardFinanceTitle => 'Финансовая ситуация?';
+
+  @override
+  String get wizardFinanceSubtitle => 'Это поможет подобрать подходящие вузы';
+
+  @override
+  String get wizardQuotaTitle => 'Есть ли квоты?';
+
+  @override
+  String get wizardQuotaSubtitle => 'Квоты дают преимущество при поступлении';
+
+  @override
+  String get wizardAchievementTitle => 'Достижения?';
+
+  @override
+  String get wizardAchievementSubtitle => 'Алтын белгі, олимпиады, спорт';
+
+  @override
+  String get wizardFinanceOnlyGrant => 'Только грант';
+
+  @override
+  String get wizardFinanceOnlyGrantDesc => 'Не могу оплачивать обучение';
+
+  @override
+  String get wizardFinanceUpTo1m => 'До 1 000 000 ₸';
+
+  @override
+  String get wizardFinanceUpTo1mDesc => 'Могу оплатить частично';
+
+  @override
+  String get wizardFinanceAny => 'Любой бюджет';
+
+  @override
+  String get wizardFinanceAnyDesc => 'Финансы не ограничивают выбор';
+
+  @override
+  String get wizardQuotaRural => '🏡 Сельская квота';
+
+  @override
+  String get wizardQuotaRuralDesc => 'Регистрация в селе / ауле';
+
+  @override
+  String get wizardQuotaOrphan => '👶 СУСН (дети-сироты)';
+
+  @override
+  String get wizardQuotaOrphanDesc => 'Статус ребёнка-сироты';
+
+  @override
+  String get wizardQuotaDisability => '♿ Квота для лиц с инвалидностью';
+
+  @override
+  String get wizardQuotaDisabilityDesc => 'Инвалидность I, II или III группы';
+
+  @override
+  String get wizardQuotaHint =>
+      'Нет квоты? Не страшно! AI учтёт это и подберёт лучшие варианты.';
+
+  @override
+  String get wizardProfileButton => '🚀 Заполни профиль за 2 мин';
+
+  @override
+  String get wizardProfileUpdated =>
+      'Мой профиль обновлён! Покажи мне подходящие вузы.';
+
+  @override
+  String get wizardSaveError => 'Ошибка сохранения';
+
+  @override
+  String get wizardScoreExcellent => 'Отлично! 🔥';
+
+  @override
+  String get wizardScoreGood => 'Хорошо! 💪';
+
+  @override
+  String get wizardScoreOk => 'Неплохо 👍';
+
+  @override
+  String get wizardScoreGrow => 'Есть куда расти 📈';
+
+  @override
+  String get wizardScorePrep => 'Нужна подготовка 📚';
+
+  @override
+  String get successStoriesChip => '📖 Истории успеха';
+
+  @override
+  String get wizardMajorIT => 'IT / Программирование';
+
+  @override
+  String get wizardMajorMedicine => 'Медицина';
+
+  @override
+  String get wizardMajorEngineering => 'Инженерия';
+
+  @override
+  String get wizardMajorBusiness => 'Бизнес / Экономика';
+
+  @override
+  String get wizardMajorPedagogy => 'Педагогика';
+
+  @override
+  String get wizardMajorLaw => 'Юриспруденция';
+
+  @override
+  String get wizardMajorArchitecture => 'Архитектура';
+
+  @override
+  String get wizardMajorOilGas => 'Нефтегаз';
+
+  @override
+  String get wizardMajorArt => 'Искусство / Дизайн';
+
+  @override
+  String get wizardMajorUndecided => 'Не определился';
+
+  @override
+  String get wizardAchAltynBelgi => 'Алтын белгі';
+
+  @override
+  String get wizardAchOlympiadRepublic => 'Олимпиада (республика)';
+
+  @override
+  String get wizardAchOlympiadRegion => 'Олимпиада (область)';
+
+  @override
+  String get wizardAchSport => 'Спортивные достижения';
+
+  @override
+  String get wizardAchVolunteer => 'Волонтёрство';
+
+  @override
+  String get wizardAchScience => 'Научный проект';
+
+  @override
+  String get wizardAchNone => 'Нет достижений';
+
+  @override
+  String get wizardCityAny => 'Любой город';
 }
