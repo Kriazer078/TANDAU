@@ -67,6 +67,9 @@
     "aiAgentSample1": "Қай университет жақсы?",
     "aiAgentSample2": "IT мамандығы қайда?",
     "aiAgentSample3": "Грант алу үшін не керек?",
+    "aiAgentZhekeZhosparTitle": "Жеке Жоспар",
+    "aiAgentZhekeZhosparDesc": "📋 Маған Жеке Жоспар (жеке оқуға түсу жоспары) жасап берші",
+    "aiAgentStatusOnline": "Желіде",
     "aiClearChat": "Чатты тазалау",
     "aiAbout": "TANDAU AI туралы",
     "aiClearDialogTitle": "Тарихты тазалау?",
@@ -439,7 +442,8 @@
     "notificationTitle": "Хабарламалар",
     "notificationEmpty": "Хабарламалар жоқ",
 
-    "deadlineTitle": "📅 Түсу мерзімдері 2026",
+    "deadlineTitle": "Түсу мерзімдері\n2026",
+    "deadlineImportantDates": "Маңызды күндер",
     "deadlineDays": "күн",
     "deadlineCompleted": "Аяқталды",
     "deadlineToday": "Бүгін!",
@@ -583,5 +587,38 @@
     "pickerErrorGeneric": "Қате: {error}",
     "@pickerErrorGeneric": {
         "placeholders": { "error": { "type": "String" } }
-    }
+    },
+
+    "profileDeleteAccount": "Тіркелгіні жою",
+    "profileDeleteAccountTitle": "Тіркелгіні жою керек пе?",
+    "profileDeleteAccountContent": "Тіркелгіні жойғыңыз келетініне сенімдісіз бе? Барлық деректеріңіз қайтарылмайтындай жойылады.",
+    "profileDeleteAccountCancel": "Болдырмау",
+    "profileDeleteAccountConfirm": "Жою",
+    "profileDeleteAccountErrorLink": "Сілтемені ашу мүмкін болмады",
+    "errorTimeout": "Уақыт шектеуі асты. Интернетті тексеріңіз.",
+    "errorCritical": "Маңызды қате: {error}",
+    "@errorCritical": {
+        "placeholders": {
+            "error": { "type": "String" }
+        }
+    },
+
+    "profileFillAllData": "Профильдің барлық деректерін толтырыңыз (аты мен академиялық балдарды қоса).",
+    "profileNameProfanity": "Атында тыйым салынған сөздер бар.",
+    "profileUnsavedChanges": "Сақталмаған өзгерістер",
+    "profileUnsavedMessage": "Сізде сақталмаған өзгерістер бар. Шығуға сенімдісіз бе?",
+    "profileStay": "Қалу",
+    "profileLeave": "Шығу",
+    "profileSectionPersonal": "Жеке деректер",
+    "profileSectionAcademic": "Академиялық балдар",
+    "profilePhotoUpdated": "Фото сәтті жаңартылды!",
+    "profileDeleteAccountSent": "Жою сұрауы жіберілді. Ашылған беттегі нұсқауларды орындаңыз.",
+    "profileChangePhoto": "Суретті өзгерту",
+    "commonError": "Қате:",
+    "profileCompletionLow": "Жақсырақ ұсыныстар алу үшін профильді толтырыңыз",
+    "profileCompletionMedium": "Аяқталуға жақын! Қалған деректерді қосыңыз",
+    "profileCityEnter": "Қала атын енгізіңіз",
+    "validationCity": "Қаланы енгізіңіз",
+    "profileSave": "Өзгерістерді сақтау",
+    "profileMathScore": "Мат. (бейіндік)"
 }

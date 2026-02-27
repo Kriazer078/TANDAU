@@ -67,48 +67,39 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     );
                   }
 
-                  // 🔥 Сортировка университетов по шансам поступления (по убыванию)
+                  // 🔥 Оптимизация: 미리 вычисляем шансы, чтобы не лагало при сортировке (O(N) вместо O(N log N))
                   final chanceService = GrantChanceService();
                   final user = AuthService().currentUser.value;
 
                   final sortedUniversities = List<University>.from(
                     universities,
                   );
+
+                  // 1. Кешируем результаты вычислений
+                  final Map<String, int> chanceCache = {};
+                  for (final uni in sortedUniversities) {
+                    final cat = uni.majors.isNotEmpty
+                        ? chanceService.detectCategory(uni.majors.first)
+                        : MajorCategory.other;
+                    final chance = chanceService.calculate(
+                      entScore: entScore,
+                      universityId: uni.id,
+                      universityPassingScore: uni.passingScore,
+                      majorCategory: cat,
+                      gpa: user?.gpa,
+                      ieltsScore: user?.ieltsScore,
+                      achievements: user?.achievements ?? [],
+                      userCity: user?.city,
+                      universityCity: uni.city,
+                    );
+                    chanceCache[uni.id] = chance.chancePercent;
+                  }
+
+                  // 2. Сортируем используя кэш
                   sortedUniversities.sort((a, b) {
-                    final catA = a.majors.isNotEmpty
-                        ? chanceService.detectCategory(a.majors.first)
-                        : MajorCategory.other;
-                    final chanceA = chanceService.calculate(
-                      entScore: entScore,
-                      universityId: a.id,
-                      universityPassingScore: a.passingScore,
-                      majorCategory: catA,
-                      gpa: user?.gpa,
-                      
-                      ieltsScore: user?.ieltsScore,
-                      achievements: user?.achievements ?? [],
-                      userCity: user?.city,
-                      universityCity: a.city,
-                    );
-
-                    final catB = b.majors.isNotEmpty
-                        ? chanceService.detectCategory(b.majors.first)
-                        : MajorCategory.other;
-                    final chanceB = chanceService.calculate(
-                      entScore: entScore,
-                      universityId: b.id,
-                      universityPassingScore: b.passingScore,
-                      majorCategory: catB,
-                      gpa: user?.gpa,
-                      ieltsScore: user?.ieltsScore,
-                      achievements: user?.achievements ?? [],
-                      userCity: user?.city,
-                      universityCity: b.city,
-                    );
-
-                    return chanceB.chancePercent.compareTo(
-                      chanceA.chancePercent,
-                    );
+                    final chanceA = chanceCache[a.id] ?? 0;
+                    final chanceB = chanceCache[b.id] ?? 0;
+                    return chanceB.compareTo(chanceA);
                   });
 
                   return SliverPadding(
@@ -116,12 +107,28 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final uni = sortedUniversities[index];
+                        final cat = uni.majors.isNotEmpty
+                            ? chanceService.detectCategory(uni.majors.first)
+                            : MajorCategory.other;
+                        final chanceResult = chanceService.calculate(
+                          entScore: entScore,
+                          universityId: uni.id,
+                          universityPassingScore: uni.passingScore,
+                          majorCategory: cat,
+                          gpa: user?.gpa,
+                          ieltsScore: user?.ieltsScore,
+                          achievements: user?.achievements ?? [],
+                          userCity: user?.city,
+                          universityCity: uni.city,
+                        );
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: _ResultUniCard(
                             uni: uni,
                             isDark: isDark,
                             untScore: entScore,
+                            chanceResult: chanceResult,
                           ),
                         );
                       }, childCount: sortedUniversities.length),
@@ -255,11 +262,13 @@ class _ResultUniCard extends StatefulWidget {
   final University uni;
   final bool isDark;
   final int untScore;
+  final GrantChanceResult chanceResult;
 
   const _ResultUniCard({
     required this.uni,
     required this.isDark,
     required this.untScore,
+    required this.chanceResult,
   });
 
   @override
@@ -272,25 +281,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final chanceService = GrantChanceService();
-    final user = AuthService().currentUser.value;
-
-    // 🔧 Правильно определяем категорию специальности из данных вуза
-    final MajorCategory category = widget.uni.majors.isNotEmpty
-        ? chanceService.detectCategory(widget.uni.majors.first)
-        : MajorCategory.other;
-
-    final chanceResult = chanceService.calculate(
-      entScore: widget.untScore,
-      universityId: widget.uni.id,
-      universityPassingScore: widget.uni.passingScore,
-      majorCategory: category,
-      gpa: user?.gpa,
-      ieltsScore: user?.ieltsScore,
-      achievements: user?.achievements ?? [],
-      userCity: user?.city,
-      universityCity: widget.uni.city,
-    );
+    final chanceResult = widget.chanceResult;
 
     final chanceColor = chanceResult.chancePercent >= 70
         ? Colors.green

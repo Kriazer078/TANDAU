@@ -185,23 +185,126 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(
-                                l10n?.svdHowWeCalculateTitle ??
-                                    'Как мы считаем? 📝',
-                              ),
-                              content: Text(
-                                l10n?.svdHowWeCalculateBody ??
-                                    'Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от "Высокого" до "Низкого").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.',
-                                style: const TextStyle(height: 1.5),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(l10n?.svdUnderstood ?? 'Понятно'),
+                            builder: (context) {
+                              final bool isDarkList =
+                                  Theme.of(context).brightness ==
+                                  Brightness.dark;
+                              return Dialog(
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                insetPadding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 24,
                                 ),
-                              ],
-                            ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(24),
+                                  decoration: BoxDecoration(
+                                    color: isDarkList
+                                        ? AppColors.cardDark
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(28),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
+                                    border: Border.all(
+                                      color: isDarkList
+                                          ? Colors.white10
+                                          : Colors.white,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Icon header
+                                      Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              AppColors.primary.withValues(
+                                                alpha: 0.2,
+                                              ),
+                                              AppColors.primary.withValues(
+                                                alpha: 0.05,
+                                              ),
+                                            ],
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.hub_rounded,
+                                          color: AppColors.primary,
+                                          size: 32,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      // Title
+                                      Text(
+                                        l10n?.svdHowWeCalculateTitle ??
+                                            'Как мы считаем? 📝',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDarkList
+                                              ? Colors.white
+                                              : AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      // Body text
+                                      Text(
+                                        l10n?.svdHowWeCalculateBody ??
+                                            'Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от "Высокого" до "Низкого").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          height: 1.6,
+                                          color: isDarkList
+                                              ? Colors.white70
+                                              : AppColors.textSecondary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 28),
+                                      // Button
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.primary,
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 16,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          child: Text(
+                                            l10n?.svdUnderstood ?? 'Понятно',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

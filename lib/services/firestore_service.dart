@@ -12,22 +12,42 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Collection references
-  CollectionReference get universitiesCollection =>
-      _firestore.collection('universities');
+  final CollectionReference universitiesCollection = FirebaseFirestore.instance
+      .collection('universities');
   CollectionReference get usersCollection => _firestore.collection('users');
 
-  /// Get all universities from Firestore
+  // ═══ In-memory cache ═══════════════════════════════════
+  List<University>? _cachedUniversities;
+  DateTime? _cacheTimestamp;
+  static const Duration _cacheTtl = Duration(minutes: 10);
+
+  bool get _isCacheValid =>
+      _cachedUniversities != null &&
+      _cacheTimestamp != null &&
+      DateTime.now().difference(_cacheTimestamp!) < _cacheTtl;
+
+  /// Force refresh of the cache on next access
+  void refreshCache() {
+    _cachedUniversities = null;
+    _cacheTimestamp = null;
+  }
+
+  /// Get all universities from Firestore (with caching)
   Future<List<University>> getAllUniversities() async {
+    if (_isCacheValid) return _cachedUniversities!;
+
     try {
       final snapshot = await universitiesCollection.get().timeout(
         const Duration(seconds: 15),
       );
-      return snapshot.docs
+      _cachedUniversities = snapshot.docs
           .map((doc) => University.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
+      _cacheTimestamp = DateTime.now();
+      return _cachedUniversities!;
     } catch (e) {
       debugPrint('Error getting universities: $e');
-      return [];
+      return _cachedUniversities ?? [];
     }
   }
 
@@ -89,14 +109,10 @@ class FirestoreService {
     }
   }
 
-  /// Search universities by name or city
+  /// Search universities by name or city (uses cached data)
   Future<List<University>> searchUniversities(String query) async {
     try {
-      final snapshot = await universitiesCollection.get();
-      final allUniversities = snapshot.docs
-          .map((doc) => University.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
-
+      final allUniversities = await getAllUniversities();
       return allUniversities.where((uni) => uni.matchesSearch(query)).toList();
     } catch (e) {
       debugPrint('Error searching universities: $e');

@@ -8,15 +8,29 @@ class RevenueCatService {
   factory RevenueCatService() => _instance;
   RevenueCatService._internal();
 
-  // Настоящий публичный API ключ RevenueCat для Android
-  static const String _googleApiKey = 'goog_bxSHqzYutnwEVzWtyOioRDAFFqh';
+  // 🔐 API ключи загружаются через --dart-define (не хардкодим в коде!)
+  // Запуск: flutter run --dart-define=REVENUECAT_GOOGLE_KEY=goog_xxx
+  // Сборка: flutter build apk --dart-define=REVENUECAT_GOOGLE_KEY=goog_xxx
+  static const String _googleApiKey = String.fromEnvironment(
+    'REVENUECAT_GOOGLE_KEY',
+  );
 
-  // Ключ для iOS (App Store) в будущем добавится сюда (appl_...)
-  static const String _appleApiKey = '';
+  // Ключ для iOS (App Store) — передавать через --dart-define=REVENUECAT_APPLE_KEY=appl_xxx
+  static const String _appleApiKey = String.fromEnvironment(
+    'REVENUECAT_APPLE_KEY',
+  );
 
   Future<void> init() async {
     // RevenueCat не работает в Web (только iOS и Android)
     if (kIsWeb) return;
+
+    if (_googleApiKey.isEmpty && _appleApiKey.isEmpty) {
+      debugPrint(
+        '⚠️ RevenueCat: API ключи не указаны. '
+        'Используйте --dart-define=REVENUECAT_GOOGLE_KEY=goog_xxx при сборке.',
+      );
+      return;
+    }
 
     try {
       // SECURITY: Only enable verbose logs in debug mode

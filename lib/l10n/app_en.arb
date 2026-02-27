@@ -67,6 +67,9 @@
     "aiAgentSample1": "Which university is better?",
     "aiAgentSample2": "Where are IT majors?",
     "aiAgentSample3": "What is needed for a grant?",
+    "aiAgentZhekeZhosparTitle": "Personal Plan",
+    "aiAgentZhekeZhosparDesc": "📋 Create a Personal Plan for admission for me",
+    "aiAgentStatusOnline": "Online",
     "aiClearChat": "Clear Chat",
     "aiAbout": "About TANDAU AI",
     "aiClearDialogTitle": "Clear History?",
@@ -457,7 +460,8 @@
     "notificationTitle": "Notifications",
     "notificationEmpty": "No notifications",
 
-    "deadlineTitle": "📅 Admission Deadlines 2026",
+    "deadlineTitle": "Admission Deadlines\n2026",
+    "deadlineImportantDates": "Important Dates",
     "deadlineDays": "days",
     "deadlineCompleted": "Completed",
     "deadlineToday": "Today!",
@@ -614,5 +618,24 @@
         "placeholders": {
             "error": { "type": "String" }
         }
-    }
+    },
+
+    "profileFillAllData": "Please fill in all profile data (including name and academic scores).",
+    "profileNameProfanity": "Name contains inappropriate words.",
+    "profileUnsavedChanges": "Unsaved changes",
+    "profileUnsavedMessage": "You have unsaved changes. Are you sure you want to leave?",
+    "profileStay": "Stay",
+    "profileLeave": "Leave",
+    "profileSectionPersonal": "Personal info",
+    "profileSectionAcademic": "Academic scores",
+    "profilePhotoUpdated": "Photo updated successfully!",
+    "profileDeleteAccountSent": "Deletion request sent. Follow the instructions on the opened page.",
+    "profileChangePhoto": "Change photo",
+    "commonError": "Error:",
+    "profileCompletionLow": "Complete your profile for better recommendations",
+    "profileCompletionMedium": "Almost done! Add the remaining data",
+    "profileCityEnter": "Enter city name",
+    "validationCity": "Enter a city",
+    "profileSave": "Save changes",
+    "profileMathScore": "Math (prof.)"
 }

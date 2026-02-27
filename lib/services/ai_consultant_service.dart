@@ -7,8 +7,6 @@ import 'auth_service.dart';
 import 'grant_chance_service.dart';
 import 'locale_manager.dart';
 
-import 'moderation_service.dart';
-
 class OutOfTokensException implements Exception {
   final String message;
   const OutOfTokensException([this.message = '']);
@@ -22,8 +20,6 @@ class AIConsultantService {
 
   // PRODUCTION URL:
   static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
-
-  final ModerationService _moderationService = ModerationService();
 
   /// Инициализация (Warm-up backend)
   void init() {
@@ -156,11 +152,8 @@ class AIConsultantService {
     try {
       String fullMessage;
 
-      // --- MODERATION CHECK (LOCAL) ---
-      if (!isInternalStrategyCall && _moderationService.hasProfanity(message)) {
-        return 'Мы за вежливое общение. Пожалуйста, переформулируйте ваш вопрос без использования грубых выражений.';
-      }
-      // --------------------------------
+      // NOTE: Moderation (profanity) is checked in the UI layer
+      // (AIConsultantScreen._sendMessage) before calling this method.
 
       if (isInternalStrategyCall) {
         fullMessage = message;

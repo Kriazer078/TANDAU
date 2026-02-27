@@ -44,8 +44,3 @@ class AppColors {
     end: Alignment.bottomRight,
   );
 }
-
-extension ColorExtension on Color {
-  /// Deprecated helper for withValues transition
-  Color withOpacity(double opacity) => withValues(alpha: opacity);
-}

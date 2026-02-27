@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,7 +126,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       _isTyping = true;
     });
 
-    _saveHistory();
+    unawaited(_saveHistory());
 
     _messageController.clear();
     _scrollToBottom();
@@ -165,7 +166,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _ChatMessage(text: response, isUser: false, time: DateTime.now()),
           );
         });
-        _saveHistory();
+        unawaited(_saveHistory());
         _scrollToBottom();
       }
     } on OutOfTokensException catch (e) {
@@ -176,7 +177,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _ChatMessage(text: e.message, isUser: false, time: DateTime.now()),
           );
         });
-        _saveHistory();
+        unawaited(_saveHistory());
         _scrollToBottom();
       }
     } catch (e) {
@@ -191,7 +192,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             ),
           );
         });
-        _saveHistory();
+        unawaited(_saveHistory());
         _scrollToBottom();
       }
     }
@@ -204,7 +205,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     setState(() {
       _messages.add(
         _ChatMessage(
-          text: '📋 Создай мне Жеке Жоспар (персональный план поступления)',
+          text:
+              l10n?.aiAgentZhekeZhosparDesc ??
+              '📋 Создай мне Жеке Жоспар (персональный план поступления)',
           isUser: true,
           time: DateTime.now(),
         ),
@@ -234,7 +237,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _ChatMessage(text: response, isUser: false, time: DateTime.now()),
           );
         });
-        _saveHistory();
+        unawaited(_saveHistory());
         _scrollToBottom();
       }
     } on OutOfTokensException catch (e) {
@@ -269,7 +272,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 200), // ⚡ Snappier scroll
           curve: Curves.easeOut,
         );
       }
@@ -335,7 +338,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      'Online',
+                      AppLocalizations.of(context)?.aiAgentStatusOnline ??
+                          'Online',
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         color: isDark ? Colors.white54 : AppColors.textHint,
@@ -485,7 +489,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             SizedBox(
               width: double.infinity,
               height: 48,
-              child: FilledButton.icon(
+              child: FilledButton(
                 onPressed: () async {
                   final result = await Navigator.push<bool>(
                     context,
@@ -495,19 +499,23 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   );
                   if (result == true && mounted) {
                     _sendMessage(
-                      text: 'Мой профиль обновлён! Покажи мне подходящие вузы.',
+                      text:
+                          l10n?.wizardProfileUpdated ??
+                          'Мой профиль обновлён! Покажи мне подходящие вузы.',
                     );
                   }
                 },
-                icon: const Text('🚀', style: TextStyle(fontSize: 18)),
-                label: const Text(
-                  'Заполни профиль за 2 мин',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                ),
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF6366F1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: Text(
+                  l10n?.wizardProfileButton ?? '🚀 Заполни профиль за 2 мин',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -536,7 +544,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   isDark,
                 ),
                 _buildSuggestionChip(
-                  '📖 Истории успеха',
+                  l10n?.successStoriesChip ?? '📖 Истории успеха',
                   Icons.auto_stories_rounded,
                   isDark,
                 ),
@@ -608,14 +616,19 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             ),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.assignment_rounded, size: 16, color: Colors.white),
-              SizedBox(width: 8),
+              const Icon(
+                Icons.assignment_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8),
               Text(
-                '📋 Жеке Жоспар',
-                style: TextStyle(
+                AppLocalizations.of(context)?.aiAgentZhekeZhosparTitle ??
+                    'Жеке Жоспар',
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
@@ -636,11 +649,15 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       controller: _scrollController,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       itemCount: _messages.length + (_isTyping ? 1 : 0),
+      addRepaintBoundaries: true,
+      cacheExtent: 200, // ⚡ Pre-render for smoother scroll
       itemBuilder: (context, index) {
         if (index == _messages.length) {
           return _buildTypingIndicator(isDark);
         }
-        return _buildMessageBubble(_messages[index], isDark);
+        return RepaintBoundary(
+          child: _buildMessageBubble(_messages[index], isDark),
+        );
       },
     );
   }
@@ -959,7 +976,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           TextButton(
             onPressed: () {
               setState(() => _messages.clear());
-              _saveHistory();
+              unawaited(_saveHistory());
               Navigator.pop(ctx);
             },
             child: Text(

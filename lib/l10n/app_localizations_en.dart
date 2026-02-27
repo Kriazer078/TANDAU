@@ -215,6 +215,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiAgentSample3 => 'What is needed for a grant?';
 
   @override
+  String get aiAgentZhekeZhosparTitle => 'Personal Plan';
+
+  @override
+  String get aiAgentZhekeZhosparDesc =>
+      '📋 Create a Personal Plan for admission for me';
+
+  @override
+  String get aiAgentStatusOnline => 'Online';
+
+  @override
   String get aiClearChat => 'Clear Chat';
 
   @override
@@ -659,7 +669,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String commonError(String error) {
-    return 'Error: $error';
+    return 'Error:';
   }
 
   @override
@@ -1037,7 +1047,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationEmpty => 'No notifications';
 
   @override
-  String get deadlineTitle => '📅 Admission Deadlines 2026';
+  String get deadlineTitle => 'Admission Deadlines\n2026';
+
+  @override
+  String get deadlineImportantDates => 'Important Dates';
 
   @override
   String get deadlineDays => 'days';
@@ -1347,7 +1360,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Complete your profile for better recommendations';
 
   @override
-  String get profileCompletionMedium => 'Almost done! Add missing data';
+  String get profileCompletionMedium => 'Almost done! Add the remaining data';
 
   @override
   String get profileCompletionHigh => 'Great job! Profile is complete';
@@ -1399,4 +1412,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorCritical(String error) {
     return 'Critical error: $error';
   }
+
+  @override
+  String get profileFillAllData =>
+      'Please fill in all profile data (including name and academic scores).';
+
+  @override
+  String get profileNameProfanity => 'Name contains inappropriate words.';
+
+  @override
+  String get profileUnsavedChanges => 'Unsaved changes';
+
+  @override
+  String get profileUnsavedMessage =>
+      'You have unsaved changes. Are you sure you want to leave?';
+
+  @override
+  String get profileStay => 'Stay';
+
+  @override
+  String get profileLeave => 'Leave';
+
+  @override
+  String get profileSectionPersonal => 'Personal info';
+
+  @override
+  String get profileSectionAcademic => 'Academic scores';
+
+  @override
+  String get profilePhotoUpdated => 'Photo updated successfully!';
+
+  @override
+  String get profileDeleteAccountSent =>
+      'Deletion request sent. Follow the instructions on the opened page.';
+
+  @override
+  String get profileChangePhoto => 'Change photo';
+
+  @override
+  String get profileCityEnter => 'Enter city name';
+
+  @override
+  String get validationCity => 'Enter a city';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileMathScore => 'Math (prof.)';
 }

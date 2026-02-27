@@ -67,6 +67,9 @@
     "aiAgentSample1": "Какой университет лучше?",
     "aiAgentSample2": "Где есть IT специальности?",
     "aiAgentSample3": "Что нужно для гранта?",
+    "aiAgentZhekeZhosparTitle": "Индивидуальный план",
+    "aiAgentZhekeZhosparDesc": "📋 Создай мне индивидуальный план поступления",
+    "aiAgentStatusOnline": "В сети",
     "aiClearChat": "Очистить чат",
     "aiAbout": "О TANDAU AI",
     "aiClearDialogTitle": "Очистить историю?",
@@ -438,7 +441,8 @@
     "notificationTitle": "Уведомления",
     "notificationEmpty": "Нет уведомлений",
 
-    "deadlineTitle": "📅 Дедлайны поступления 2026",
+    "deadlineTitle": "Дедлайны поступления\n2026",
+    "deadlineImportantDates": "Важные даты",
     "deadlineDays": "дней",
     "deadlineCompleted": "Завершено",
     "deadlineToday": "Сегодня!",
@@ -595,5 +599,24 @@
         "placeholders": {
             "error": { "type": "String" }
         }
-    }
+    },
+
+    "profileFillAllData": "Пожалуйста, заполните все данные профиля (включая имя и академические баллы).",
+    "profileNameProfanity": "Имя содержит недопустимые слова (мат/оскорбления).",
+    "profileUnsavedChanges": "Несохранённые изменения",
+    "profileUnsavedMessage": "У вас есть несохранённые изменения. Вы уверены, что хотите выйти?",
+    "profileStay": "Остаться",
+    "profileLeave": "Выйти",
+    "profileSectionPersonal": "Личные данные",
+    "profileSectionAcademic": "Академические баллы",
+    "profilePhotoUpdated": "Фото успешно обновлено!",
+    "profileDeleteAccountSent": "Запрос на удаление отправлен. Следуйте инструкциям на открывшейся странице.",
+    "profileChangePhoto": "Изменить фото",
+    "commonError": "Ошибка:",
+    "profileCompletionLow": "Заполните профиль для лучших рекомендаций",
+    "profileCompletionMedium": "Почти готово! Добавьте оставшиеся данные",
+    "profileCityEnter": "Введите название города",
+    "validationCity": "Введите город",
+    "profileSave": "Сохранить изменения",
+    "profileMathScore": "Мат. (проф)"
 }

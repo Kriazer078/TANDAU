@@ -30,6 +30,9 @@ class AuthService {
   bool _isRegistering =
       false; // Flag to prevent listener conflicts during registration
 
+  // 🔐 Guard against double init() — store subscription to cancel on re-init
+  StreamSubscription<User?>? _authSubscription;
+
   // Constants for login limiting
   static const String _attemptsKey = 'login_attempts';
   static const String _lockoutTimeKey = 'lockout_time';
@@ -41,8 +44,11 @@ class AuthService {
 
   /// Initialize and check auth state
   Future<void> init() async {
+    // ⚡ Cancel previous listener to prevent double-subscription
+    await _authSubscription?.cancel();
+
     // Listen to auth state changes
-    _auth.authStateChanges().listen((User? user) async {
+    _authSubscription = _auth.authStateChanges().listen((User? user) async {
       if (_isRegistering) {
         debugPrint(
           '🟡 AUTH: Состояние изменилось, но мы в процессе регистрации. Игнорируем.',
@@ -423,12 +429,8 @@ class AuthService {
         updatedAt: DateTime.now(),
       );
 
-      // --- MODERATION CHECK (Name) ---
-      if (name != null && _moderationService.hasProfanity(name)) {
-        debugPrint('❌ Update rejected: Profanity in name');
-        return false;
-      }
-      // -------------------------------
+      // Moderation check is now handled exclusively in the UI (edit_profile_screen.dart)
+      // to provide localized error messages to the user.
 
       await _firestore
           .collection('users')

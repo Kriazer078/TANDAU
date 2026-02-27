@@ -18,45 +18,48 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
-  // ⚡ Track which tabs have been visited for lazy loading
-  final Set<int> _visitedTabs = {0}; // Home is visited by default
+  // ⚡ Lazy-load tabs — only build a tab widget the first time it's visited
+  final Map<int, Widget> _tabCache = {};
 
   @override
   void initState() {
     super.initState();
     // ⚡ Pre-load all liked IDs once instead of per-card reads
     LikeButton.preloadLikes();
+    // ⚡ Pre-cache home tab so it renders immediately
+    _getPage(0);
   }
 
-  void setIndex(int index) {
-    setState(() {
-      _currentIndex = index;
-      _visitedTabs.add(index);
+  /// Build and cache tab widget on first access
+  Widget _getPage(int index) {
+    return _tabCache.putIfAbsent(index, () {
+      switch (index) {
+        case 0:
+          return const HomeScreen();
+        case 1:
+          return const SearchScreen();
+        case 2:
+          return const AIConsultantScreen();
+        case 3:
+          return const ProfileScreen();
+        default:
+          return const HomeScreen();
+      }
     });
-  }
-
-  /// Build a tab only if it has been visited; otherwise show empty
-  Widget _buildTab(int index, Widget child) {
-    if (!_visitedTabs.contains(index)) {
-      return const SizedBox.shrink();
-    }
-    return Offstage(
-      offstage: _currentIndex != index,
-      child: TickerMode(enabled: _currentIndex == index, child: child),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Build only visited pages for IndexedStack
+    final List<Widget> pages = List.generate(4, (i) {
+      if (_tabCache.containsKey(i)) return _getPage(i);
+      return const SizedBox.shrink(); // Placeholder until visited
+    });
+
     return Scaffold(
-      body: Stack(
-        children: [
-          _buildTab(0, const HomeScreen()),
-          _buildTab(1, const SearchScreen()),
-          _buildTab(2, const AIConsultantScreen()),
-          _buildTab(3, const ProfileScreen()),
-        ],
-      ),
+      // ⚡ IndexedStack only paints the active child,
+      // skips layout for inactive children — much faster than Stack+Offstage
+      body: IndexedStack(index: _currentIndex, children: pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -79,7 +82,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
             setState(() {
               _currentIndex = index;
-              _visitedTabs.add(index);
+              _getPage(index); // ⚡ Ensure page is cached on first visit
             });
           },
           destinations: [

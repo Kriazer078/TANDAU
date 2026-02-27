@@ -144,14 +144,20 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (!_formKey.currentState!.validate()) return;
 
     if (_completionProgress < 1.0) {
+      final l10n = AppLocalizations.of(context);
       _showError(
-        'Пожалуйста, заполните все данные профиля (включая имя и академические баллы).',
+        l10n?.profileFillAllData ??
+            'Пожалуйста, заполните все данные профиля (включая имя и академические баллы).',
       );
       return;
     }
 
     if (ModerationService().hasProfanity(_nameController.text.trim())) {
-      _showError('Имя содержит недопустимые слова (мат/оскорбления).');
+      final l10n = AppLocalizations.of(context);
+      _showError(
+        l10n?.profileNameProfanity ??
+            'Имя содержит недопустимые слова (мат/оскорбления).',
+      );
       return;
     }
 
@@ -201,7 +207,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         }
       }
     } catch (e) {
-      if (mounted) _showError('Error: $e');
+      if (mounted) {
+        _showError(
+          '${AppLocalizations.of(context)?.commonError ?? 'Ошибка:'} $e',
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -246,17 +256,22 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 size: 28,
               ),
               const SizedBox(width: 10),
-              const Flexible(
+              Flexible(
                 child: Text(
-                  'Несохранённые изменения',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                  AppLocalizations.of(ctx)?.profileUnsavedChanges ??
+                      'Несохранённые изменения',
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
           ),
           content: Text(
-            'У вас есть несохранённые изменения. '
-            'Вы уверены, что хотите выйти?',
+            AppLocalizations.of(ctx)?.profileUnsavedMessage ??
+                'У вас есть несохранённые изменения. '
+                    'Вы уверены, что хотите выйти?',
             style: TextStyle(
               color: isDark ? Colors.white70 : Colors.grey.shade700,
               fontSize: 14,
@@ -270,7 +285,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               style: TextButton.styleFrom(
                 foregroundColor: isDark ? Colors.white70 : Colors.grey.shade600,
               ),
-              child: const Text('Остаться'),
+              child: Text(AppLocalizations.of(ctx)?.profileStay ?? 'Остаться'),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
@@ -280,7 +295,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('Выйти'),
+              child: Text(AppLocalizations.of(ctx)?.profileLeave ?? 'Выйти'),
             ),
           ],
         );
@@ -313,32 +328,59 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           appBar: AppBar(
             title: Text(
               l10n?.editProfileTitle ?? 'Редактировать профиль',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+                letterSpacing: -0.5,
+                color: isDark ? Colors.white : AppColors.textPrimary,
+              ),
             ),
             centerTitle: true,
             elevation: 0,
-            backgroundColor: Colors.transparent,
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 18,
-                  color: isDark ? Colors.white : AppColors.textPrimary,
+            scrolledUnderElevation: 0,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            leading: Padding(
+              padding: const EdgeInsets.all(8),
+              child: GestureDetector(
+                behavior: HitTestBehavior
+                    .opaque, // ⚡ Critical: detect taps on entire area
+                onTap: () async {
+                  final bool shouldPop = await _onWillPop();
+                  if (shouldPop && context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : Colors.grey.shade200,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 18,
+                    color: isDark ? Colors.white70 : AppColors.textPrimary,
+                  ),
                 ),
               ),
-              onPressed: () async {
-                final bool shouldPop = await _onWillPop();
-                if (shouldPop && context.mounted) {
-                  Navigator.pop(context);
-                }
-              },
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(
+                height: 1,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : Colors.grey.shade100,
+              ),
             ),
           ),
           body: FadeTransition(
@@ -363,68 +405,102 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             isLoading: _isLoading,
                             onPickImage: () => _showImagePicker(),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
                           ProfileCompletionBar(
                             progress: _completionProgress,
                             isDark: isDark,
                           ),
-                          const SizedBox(height: 28),
-                          ProfileSectionHeader(
-                            icon: Icons.person_outline,
-                            title: 'Личные данные',
+                          const SizedBox(height: 24),
+
+                          // ═══ Personal Data Card ═══
+                          _buildSectionCard(
                             isDark: isDark,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileSectionHeader(
+                                  icon: Icons.person_outline,
+                                  title:
+                                      l10n?.profileSectionPersonal ??
+                                      'Личные данные',
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 18),
+                                ProfilePersonalFields(
+                                  nameController: _nameController,
+                                  emailController: _emailController,
+                                  ageController: _ageController,
+                                  selectedEducation: _selectedEducation,
+                                  onAgeChanged: (v) {
+                                    if (v != null) {
+                                      setState(() => _ageController.text = v);
+                                      _markChanged();
+                                    }
+                                  },
+                                  onEducationChanged: (v) {
+                                    setState(() => _selectedEducation = v);
+                                    _markChanged();
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 14),
-                          ProfilePersonalFields(
-                            nameController: _nameController,
-                            emailController: _emailController,
-                            ageController: _ageController,
-                            selectedEducation: _selectedEducation,
-                            onAgeChanged: (v) {
-                              if (v != null) {
-                                setState(() => _ageController.text = v);
-                                _markChanged();
-                              }
-                            },
-                            onEducationChanged: (v) {
-                              setState(() => _selectedEducation = v);
-                              _markChanged();
-                            },
-                          ),
-                          const SizedBox(height: 28),
-                          ProfileSectionHeader(
-                            icon: Icons.location_on_outlined,
-                            title: l10n?.profileCity ?? 'Город',
+                          const SizedBox(height: 16),
+
+                          // ═══ City Card ═══
+                          _buildSectionCard(
                             isDark: isDark,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileSectionHeader(
+                                  icon: Icons.location_on_outlined,
+                                  title: l10n?.profileCity ?? 'Город',
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 18),
+                                ProfileCityFields(
+                                  selectedCityDropdown: _selectedCityDropdown,
+                                  cityController: _cityController,
+                                  onCityDropdownChanged: (v) {
+                                    setState(() {
+                                      _selectedCityDropdown = v;
+                                      if (v != 'Другой') {
+                                        _cityController.text = v ?? '';
+                                      } else {
+                                        _cityController.clear();
+                                      }
+                                    });
+                                    _markChanged();
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 14),
-                          ProfileCityFields(
-                            selectedCityDropdown: _selectedCityDropdown,
-                            cityController: _cityController,
-                            onCityDropdownChanged: (v) {
-                              setState(() {
-                                _selectedCityDropdown = v;
-                                if (v != 'Другой') {
-                                  _cityController.text = v ?? '';
-                                } else {
-                                  _cityController.clear();
-                                }
-                              });
-                              _markChanged();
-                            },
-                          ),
-                          const SizedBox(height: 28),
-                          ProfileSectionHeader(
-                            icon: Icons.school_outlined,
-                            title: 'Академические баллы',
+                          const SizedBox(height: 16),
+
+                          // ═══ Academic Scores Card ═══
+                          _buildSectionCard(
                             isDark: isDark,
-                          ),
-                          const SizedBox(height: 14),
-                          ProfileAcademicFields(
-                            untScoreController: _untScoreController,
-                            ieltsScoreController: _ieltsScoreController,
-                            gpaController: _gpaController,
-                            mathScoreController: _mathScoreController,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileSectionHeader(
+                                  icon: Icons.school_outlined,
+                                  title:
+                                      l10n?.profileSectionAcademic ??
+                                      'Академические баллы',
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 18),
+                                ProfileAcademicFields(
+                                  untScoreController: _untScoreController,
+                                  ieltsScoreController: _ieltsScoreController,
+                                  gpaController: _gpaController,
+                                  mathScoreController: _mathScoreController,
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 32),
                         ],
@@ -446,6 +522,34 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
   }
 
+  // ── Section Card ──────────────────────────────────────
+
+  Widget _buildSectionCard({required bool isDark, required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.grey.shade100,
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                  spreadRadius: -2,
+                ),
+              ],
+      ),
+      child: child,
+    );
+  }
+
   // ── Image picker shortcut ──────────────────────────────
 
   void _showImagePicker() {
@@ -458,11 +562,14 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Row(
+              content: Row(
                 children: [
-                  Icon(Icons.check_circle, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text('Фото успешно обновлено!'),
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)?.profilePhotoUpdated ??
+                        'Фото успешно обновлено!',
+                  ),
                 ],
               ),
               backgroundColor: const Color(0xFF22C55E),

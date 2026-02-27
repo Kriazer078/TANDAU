@@ -230,6 +230,9 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             itemCount: _universities.length,
                             addRepaintBoundaries: true,
+                            addAutomaticKeepAlives: false,
+                            cacheExtent:
+                                300, // ⚡ Pre-render 300px ahead for smooth scroll
                             itemBuilder: (context, index) {
                               final uni = _universities[index];
                               return UniversityCard(

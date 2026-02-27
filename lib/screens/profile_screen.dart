@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shimmer/shimmer.dart';
 import '../theme/theme_manager.dart';
 import '../services/locale_manager.dart';
 import '../services/auth_service.dart';
 import '../l10n/app_localizations.dart';
 import 'login_screen.dart';
 import 'admin/admin_panel_screen.dart';
-import '../models/user_model.dart'; // Import UserModel
-import 'edit_profile_screen.dart'; // Import EditProfileScreen
+import '../models/user_model.dart';
+import 'edit_profile_screen.dart';
 import 'notifications_settings_screen.dart';
 import 'help_support_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'favorites_screen.dart';
-import '../widgets/like_review_widgets.dart'; // ⚡ For clearing like cache on logout
+import '../widgets/like_review_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -54,9 +56,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ValueListenableBuilder<UserModel?>(
               valueListenable: AuthService().currentUser,
               builder: (context, user, _) {
+                final isAuthLoading =
+                    FirebaseAuth.instance.currentUser != null && user == null;
+
                 return Column(
                   children: [
-                    if (user != null && !AuthService().isGuest)
+                    if (isAuthLoading)
+                      _buildShimmerHeader(context)
+                    else if (user != null && !AuthService().isGuest)
                       _buildUserHeader(context, user)
                     else
                       _buildGuestHeader(context),
@@ -343,6 +350,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         url,
                                         mode: LaunchMode.externalApplication,
                                       );
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              l10n?.profileDeleteAccountSent ??
+                                                  'Запрос на удаление отправлен. Следуйте инструкциям на открывшейся странице.',
+                                            ),
+                                            backgroundColor:
+                                                Colors.orange.shade700,
+                                            duration: const Duration(
+                                              seconds: 5,
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     } else {
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(
@@ -875,6 +899,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerHeader(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+
+    return Center(
+      child: Shimmer.fromColors(
+        baseColor: baseColor,
+        highlightColor: highlightColor,
+        child: Column(
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(width: 150, height: 24, color: Colors.white),
+            const SizedBox(height: 4),
+            Container(width: 200, height: 16, color: Colors.white),
+            const SizedBox(height: 16),
+            Container(
+              width: 140,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

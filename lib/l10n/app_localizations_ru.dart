@@ -217,6 +217,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiAgentSample3 => 'Что нужно для гранта?';
 
   @override
+  String get aiAgentZhekeZhosparTitle => 'Индивидуальный план';
+
+  @override
+  String get aiAgentZhekeZhosparDesc =>
+      '📋 Создай мне индивидуальный план поступления';
+
+  @override
+  String get aiAgentStatusOnline => 'В сети';
+
+  @override
   String get aiClearChat => 'Очистить чат';
 
   @override
@@ -662,7 +672,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String commonError(String error) {
-    return 'Ошибка: $error';
+    return 'Ошибка:';
   }
 
   @override
@@ -1040,7 +1050,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get notificationEmpty => 'Нет уведомлений';
 
   @override
-  String get deadlineTitle => '📅 Дедлайны поступления 2026';
+  String get deadlineTitle => 'Дедлайны поступления\n2026';
+
+  @override
+  String get deadlineImportantDates => 'Важные даты';
 
   @override
   String get deadlineDays => 'дней';
@@ -1400,4 +1413,53 @@ class AppLocalizationsRu extends AppLocalizations {
   String errorCritical(String error) {
     return 'Критическая ошибка: $error';
   }
+
+  @override
+  String get profileFillAllData =>
+      'Пожалуйста, заполните все данные профиля (включая имя и академические баллы).';
+
+  @override
+  String get profileNameProfanity =>
+      'Имя содержит недопустимые слова (мат/оскорбления).';
+
+  @override
+  String get profileUnsavedChanges => 'Несохранённые изменения';
+
+  @override
+  String get profileUnsavedMessage =>
+      'У вас есть несохранённые изменения. Вы уверены, что хотите выйти?';
+
+  @override
+  String get profileStay => 'Остаться';
+
+  @override
+  String get profileLeave => 'Выйти';
+
+  @override
+  String get profileSectionPersonal => 'Личные данные';
+
+  @override
+  String get profileSectionAcademic => 'Академические баллы';
+
+  @override
+  String get profilePhotoUpdated => 'Фото успешно обновлено!';
+
+  @override
+  String get profileDeleteAccountSent =>
+      'Запрос на удаление отправлен. Следуйте инструкциям на открывшейся странице.';
+
+  @override
+  String get profileChangePhoto => 'Изменить фото';
+
+  @override
+  String get profileCityEnter => 'Введите название города';
+
+  @override
+  String get validationCity => 'Введите город';
+
+  @override
+  String get profileSave => 'Сохранить изменения';
+
+  @override
+  String get profileMathScore => 'Мат. (проф)';
 }

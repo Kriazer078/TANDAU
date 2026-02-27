@@ -157,21 +157,37 @@ class LikeService {
           .collection(_universitiesCollection)
           .get();
 
-      final batch = _firestore.batch();
+      WriteBatch batch = _firestore.batch();
       int updated = 0;
+      int batchOperationCount = 0;
 
       for (var doc in universitiesSnapshot.docs) {
-        // Подсчитываем лайки для каждого университета
-        final likesSnapshot = await _firestore
+        // Подсчитываем лайки для каждого университета (AggregateQuery для скорости)
+        final likesCountQuery = await _firestore
             .collection(_likesCollection)
             .where('universityId', isEqualTo: doc.id)
+            .count()
             .get();
 
-        batch.update(doc.reference, {'likesCount': likesSnapshot.docs.length});
+        final count = likesCountQuery.count ?? 0;
+
+        batch.update(doc.reference, {'likesCount': count});
         updated++;
+        batchOperationCount++;
+
+        // Firestore batch limit is 500 operations
+        if (batchOperationCount == 500) {
+          await batch.commit();
+          batch = _firestore.batch(); // Create a new batch
+          batchOperationCount = 0;
+        }
       }
 
-      await batch.commit();
+      // Commit any remaining operations
+      if (batchOperationCount > 0) {
+        await batch.commit();
+      }
+
       debugPrint('✅ Initialized $updated universities');
     } catch (e) {
       debugPrint('❌ Error initializing counters: $e');

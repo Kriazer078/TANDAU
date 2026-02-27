@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 import '../services/like_service.dart';
 import '../services/review_service.dart';
 import '../utils/guest_guard.dart';
@@ -102,6 +103,8 @@ class _LikeButtonState extends State<LikeButton>
   Future<void> _handleLike() async {
     if (!GuestGuard.check(context)) return;
     if (_isLoading) return;
+
+    HapticFeedback.lightImpact();
 
     setState(() => _isLoading = true);
 
@@ -476,56 +479,89 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.gold.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(14),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.gold.withValues(alpha: 0.2),
+                            AppColors.gold.withValues(alpha: 0.05),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: AppColors.gold.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.gold.withValues(alpha: 0.1),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: const Icon(
                         Icons.rate_review_rounded,
                         color: AppColors.gold,
-                        size: 22,
+                        size: 24,
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 16),
                     Text(
                       l10n?.reviewLeaveTitle ?? 'Оставить отзыв',
                       style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
                         color: isDark ? Colors.white : AppColors.textPrimary,
+                        letterSpacing: -0.5,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 32),
 
                 // Rating section
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24,
+                    horizontal: 20,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.white.withValues(alpha: 0.04)
-                        : Colors.grey.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(20),
+                        ? Colors.white.withValues(alpha: 0.03)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: isDark ? Colors.white10 : AppColors.border,
+                      color: isDark
+                          ? Colors.white10
+                          : AppColors.border.withValues(alpha: 0.5),
                     ),
+                    boxShadow: isDark
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                   ),
                   child: Column(
                     children: [
                       Text(
-                        l10n?.reviewRateQuestion ?? 'Как вы оцениваете?',
+                        l10n?.reviewRateQuestion ?? 'Как вы оцениваете вуз?',
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                           color: isDark
                               ? Colors.white70
                               : AppColors.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
 
                       // Star selector
                       Row(
@@ -534,25 +570,30 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                           final bool selected = index < _rating;
                           return GestureDetector(
                             onTap: () {
+                              HapticFeedback.selectionClick();
                               setState(() => _rating = index + 1);
                             },
                             child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOutBack,
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
+                                horizontal: 4,
                                 vertical: 4,
                               ),
                               child: AnimatedScale(
-                                scale: selected ? 1.2 : 1.0,
-                                duration: const Duration(milliseconds: 200),
+                                scale: selected ? 1.15 : 1.0,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeOutBack,
                                 child: Icon(
                                   selected
                                       ? Icons.star_rounded
                                       : Icons.star_outline_rounded,
                                   color: selected
                                       ? AppColors.gold
-                                      : Colors.grey,
-                                  size: 40,
+                                      : (isDark
+                                            ? Colors.white24
+                                            : Colors.grey[300]),
+                                  size: 44,
                                 ),
                               ),
                             ),
@@ -561,80 +602,113 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                       ),
 
                       // Emoji feedback
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        child: _rating > 0
-                            ? Padding(
-                                key: ValueKey(_rating),
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      _ratingEmojis[_rating - 1],
-                                      style: const TextStyle(fontSize: 28),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOutBack,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          child: _rating > 0
+                              ? Padding(
+                                  key: ValueKey(_rating),
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      _ratingTexts(l10n)[_rating - 1],
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: _getRatingColor(_rating),
-                                      ),
+                                    decoration: BoxDecoration(
+                                      color: _getRatingColor(
+                                        _rating,
+                                      ).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
-                                  ],
-                                ),
-                              )
-                            : const SizedBox(height: 12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          _ratingEmojis[_rating - 1],
+                                          style: const TextStyle(fontSize: 22),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          _ratingTexts(l10n)[_rating - 1],
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w800,
+                                            color: _getRatingColor(_rating),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(height: 12),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Comment field
-                TextField(
-                  controller: _commentController,
-                  maxLines: 4,
-                  maxLength: 1000,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : AppColors.textPrimary,
-                    fontSize: 15,
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: isDark
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.02),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                   ),
-                  decoration: InputDecoration(
-                    hintText:
-                        l10n?.reviewCommentHint ??
-                        'Расскажите о своём опыте...',
-                    hintStyle: TextStyle(
-                      color: isDark ? Colors.white38 : AppColors.textHint,
+                  child: TextField(
+                    controller: _commentController,
+                    maxLines: 4,
+                    maxLength: 1000,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 15,
+                      height: 1.5,
                     ),
-                    filled: true,
-                    fillColor: isDark
-                        ? Colors.white.withValues(alpha: 0.04)
-                        : Colors.grey.withValues(alpha: 0.06),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: isDark ? Colors.white10 : AppColors.border,
+                    decoration: InputDecoration(
+                      hintText:
+                          l10n?.reviewCommentHint ??
+                          'Поделитесь своим мнением: преподаватели, инфраструктура, атмосфера...',
+                      hintMaxLines: 2,
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.white38 : AppColors.textHint,
+                        height: 1.5,
                       ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        color: isDark ? Colors.white10 : AppColors.border,
+                      filled: true,
+                      fillColor: isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(
+                          color: isDark ? Colors.white10 : AppColors.border,
+                        ),
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: AppColors.primary,
-                        width: 2,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(
+                          color: isDark ? Colors.white10 : AppColors.border,
+                        ),
                       ),
-                    ),
-                    contentPadding: const EdgeInsets.all(16),
-                    counterStyle: TextStyle(
-                      color: isDark ? Colors.white38 : AppColors.textHint,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.all(20),
+                      counterStyle: TextStyle(
+                        color: isDark ? Colors.white38 : AppColors.textHint,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),

@@ -349,7 +349,7 @@ final List<University> sampleUniversities = [
   ),
   University(
     id: '10',
-    name: 'Ө. Жәнібеков атындағы ОҚПУ (ОҚМПУ)',
+    name: 'Ө. Жәнібеков атындағы ОҚМПУ',
     city: 'Шымкент',
     logoUrl: 'assets/images/okmpu_logo.png',
     imageUrls: ['assets/images/okmpu_campus.jpg'],

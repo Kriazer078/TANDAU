@@ -78,6 +78,12 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.background,
       fontFamily: _fontFamily,
       textTheme: lightTextTheme,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: AppColors.background,
@@ -258,6 +264,12 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.backgroundDark,
       fontFamily: _fontFamily,
       textTheme: darkTextTheme,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: AppColors.backgroundDark,

@@ -20,8 +20,20 @@ class ComparisonService {
   }
 
   final UniversityService _universityService = UniversityService();
+
+  // 📝 StreamController lifecycle note:
+  // Since ComparisonService is a Singleton that lives for the entire duration
+  // of the application, this StreamController intentionally does not have a
+  // dispose() method. It remains active to serve any screen that needs
+  // real-time comparison updates.
   final StreamController<ComparisonItem?> _controller =
-      StreamController<ComparisonItem?>.broadcast();
+      StreamController<ComparisonItem?>.broadcast(
+        onCancel: () {
+          debugPrint(
+            'ℹ️ ComparisonService: All listeners unsubscribed from stream',
+          );
+        },
+      );
 
   ComparisonItem? _cachedComparison;
 

@@ -8,6 +8,7 @@ import 'legal/terms_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'main_navigation_screen.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/google_logo.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -25,11 +26,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  // TapGestureRecognizers must be disposed to avoid memory leaks
+  late final TapGestureRecognizer _termsRecognizer;
+  late final TapGestureRecognizer _privacyRecognizer;
+
+  @override
+  void initState() {
+    super.initState();
+    _termsRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const TermsScreen()),
+        );
+      };
+    _privacyRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
+        );
+      };
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _termsRecognizer.dispose();
+    _privacyRecognizer.dispose();
     super.dispose();
   }
 
@@ -326,16 +352,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TermsScreen(),
-                                          ),
-                                        );
-                                      },
+                                    recognizer: _termsRecognizer,
                                   ),
                                   TextSpan(
                                     text:
@@ -355,16 +372,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const PrivacyPolicyScreen(),
-                                          ),
-                                        );
-                                      },
+                                    recognizer: _privacyRecognizer,
                                   ),
                                   if (AppLocalizations.of(
                                         context,
@@ -533,14 +541,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(
-              'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
-              height: 24,
-              width: 24,
-              scale: 1,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.g_mobiledata, size: 32, color: Colors.blue),
-            ),
+            const GoogleLogo(size: 24),
             const SizedBox(width: 8),
             Text(
               AppLocalizations.of(context)?.authGoogleLogin ??

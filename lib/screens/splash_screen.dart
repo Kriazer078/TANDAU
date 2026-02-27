@@ -38,8 +38,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    // Artificial delay to show the logo/loading state
-    await Future.delayed(const Duration(seconds: 2));
+    // Short delay to prevent flashing if auth is resolved instantly
+    await Future.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
       // Check for updates BEFORE navigating anywhere else

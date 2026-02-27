@@ -508,6 +508,24 @@ abstract class AppLocalizations {
   /// **'What is needed for a grant?'**
   String get aiAgentSample3;
 
+  /// No description provided for @aiAgentZhekeZhosparTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Plan'**
+  String get aiAgentZhekeZhosparTitle;
+
+  /// No description provided for @aiAgentZhekeZhosparDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'📋 Create a Personal Plan for admission for me'**
+  String get aiAgentZhekeZhosparDesc;
+
+  /// No description provided for @aiAgentStatusOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get aiAgentStatusOnline;
+
   /// No description provided for @aiClearChat.
   ///
   /// In en, this message translates to:
@@ -1357,7 +1375,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonError.
   ///
   /// In en, this message translates to:
-  /// **'Error: {error}'**
+  /// **'Error:'**
   String commonError(String error);
 
   /// No description provided for @aiChancesAnalytics.
@@ -2059,8 +2077,14 @@ abstract class AppLocalizations {
   /// No description provided for @deadlineTitle.
   ///
   /// In en, this message translates to:
-  /// **'📅 Admission Deadlines 2026'**
+  /// **'Admission Deadlines\n2026'**
   String get deadlineTitle;
+
+  /// No description provided for @deadlineImportantDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Dates'**
+  String get deadlineImportantDates;
 
   /// No description provided for @deadlineDays.
   ///
@@ -2635,7 +2659,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileCompletionMedium.
   ///
   /// In en, this message translates to:
-  /// **'Almost done! Add missing data'**
+  /// **'Almost done! Add the remaining data'**
   String get profileCompletionMedium;
 
   /// No description provided for @profileCompletionHigh.
@@ -2727,6 +2751,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Critical error: {error}'**
   String errorCritical(String error);
+
+  /// No description provided for @profileFillAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all profile data (including name and academic scores).'**
+  String get profileFillAllData;
+
+  /// No description provided for @profileNameProfanity.
+  ///
+  /// In en, this message translates to:
+  /// **'Name contains inappropriate words.'**
+  String get profileNameProfanity;
+
+  /// No description provided for @profileUnsavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved changes'**
+  String get profileUnsavedChanges;
+
+  /// No description provided for @profileUnsavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Are you sure you want to leave?'**
+  String get profileUnsavedMessage;
+
+  /// No description provided for @profileStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get profileStay;
+
+  /// No description provided for @profileLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get profileLeave;
+
+  /// No description provided for @profileSectionPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal info'**
+  String get profileSectionPersonal;
+
+  /// No description provided for @profileSectionAcademic.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic scores'**
+  String get profileSectionAcademic;
+
+  /// No description provided for @profilePhotoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo updated successfully!'**
+  String get profilePhotoUpdated;
+
+  /// No description provided for @profileDeleteAccountSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion request sent. Follow the instructions on the opened page.'**
+  String get profileDeleteAccountSent;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profileCityEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter city name'**
+  String get profileCityEnter;
+
+  /// No description provided for @validationCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a city'**
+  String get validationCity;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get profileSave;
+
+  /// No description provided for @profileMathScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Math (prof.)'**
+  String get profileMathScore;
 }
 
 class _AppLocalizationsDelegate

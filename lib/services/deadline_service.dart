@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// Дедлайны поступления 2026
 /// Локальный сервис — не требует бэкенда
 class DeadlineService {
@@ -13,15 +15,17 @@ class DeadlineService {
       description: 'Основной период ЕНТ 2026 начинается',
       date: DateTime(2026, 5, 16),
       category: DeadlineCategory.ent,
-      icon: '📝',
+      icon: Icons.edit_note_rounded,
+      iconGradient: [Color(0xFF6366F1), Color(0xFF818CF8)],
     ),
     AdmissionDeadline(
       id: 'ent_end',
       title: 'Последний день ЕНТ',
       description: 'Завершение основного периода ЕНТ',
-      date: DateTime(2026, 7, 5),
+      date: DateTime(2026, 7, 7),
       category: DeadlineCategory.ent,
-      icon: '⏰',
+      icon: Icons.timer_outlined,
+      iconGradient: [Color(0xFFEF4444), Color(0xFFF87171)],
     ),
     AdmissionDeadline(
       id: 'grant_application_start',
@@ -29,7 +33,8 @@ class DeadlineService {
       description: 'Открытие приёма заявлений на образовательные гранты',
       date: DateTime(2026, 7, 13),
       category: DeadlineCategory.grant,
-      icon: '🎓',
+      icon: Icons.school_rounded,
+      iconGradient: [Color(0xFF8B5CF6), Color(0xFFA78BFA)],
     ),
     AdmissionDeadline(
       id: 'grant_application_end',
@@ -37,7 +42,8 @@ class DeadlineService {
       description: 'Последний день подачи заявлений через e-edu.kz',
       date: DateTime(2026, 7, 20),
       category: DeadlineCategory.grant,
-      icon: '🚨',
+      icon: Icons.warning_amber_rounded,
+      iconGradient: [Color(0xFFDC2626), Color(0xFFEF4444)],
       isUrgent: true,
     ),
     AdmissionDeadline(
@@ -46,7 +52,8 @@ class DeadlineService {
       description: 'Объявление результатов конкурса на гранты',
       date: DateTime(2026, 8, 10),
       category: DeadlineCategory.grant,
-      icon: '🏆',
+      icon: Icons.emoji_events_rounded,
+      iconGradient: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
     ),
     AdmissionDeadline(
       id: 'enrollment_start',
@@ -54,7 +61,8 @@ class DeadlineService {
       description: 'Зачисление студентов в вузы',
       date: DateTime(2026, 8, 15),
       category: DeadlineCategory.enrollment,
-      icon: '📋',
+      icon: Icons.assignment_turned_in_rounded,
+      iconGradient: [Color(0xFF10B981), Color(0xFF34D399)],
     ),
     AdmissionDeadline(
       id: 'semester_start',
@@ -62,7 +70,8 @@ class DeadlineService {
       description: 'Первый день занятий',
       date: DateTime(2026, 9, 1),
       category: DeadlineCategory.enrollment,
-      icon: '🎒',
+      icon: Icons.auto_stories_rounded,
+      iconGradient: [Color(0xFF3B82F6), Color(0xFF60A5FA)],
     ),
   ];
 
@@ -110,7 +119,8 @@ class AdmissionDeadline {
   final String description;
   final DateTime date;
   final DeadlineCategory category;
-  final String icon;
+  final IconData icon;
+  final List<Color> iconGradient;
   final bool isUrgent;
 
   const AdmissionDeadline({
@@ -119,7 +129,8 @@ class AdmissionDeadline {
     required this.description,
     required this.date,
     required this.category,
-    this.icon = '📅',
+    this.icon = Icons.calendar_today_rounded,
+    this.iconGradient = const [Color(0xFF6366F1), Color(0xFF818CF8)],
     this.isUrgent = false,
   });
 

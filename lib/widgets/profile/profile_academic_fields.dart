@@ -99,7 +99,7 @@ class ProfileAcademicFields extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: CustomTextField(
-                label: 'Мат. (проф)',
+                label: l10n?.profileMathScore ?? 'Мат. (проф)',
                 hintText: '0 – 50',
                 controller: mathScoreController,
                 icon: Icons.calculate_outlined,

@@ -34,13 +34,13 @@ class ProfileCityFields extends StatelessWidget {
         if (selectedCityDropdown == 'Другой') ...[
           const SizedBox(height: 12),
           CustomTextField(
-            label: 'Введите название города',
+            label: l10n?.profileCityEnter ?? 'Введите название города',
             controller: cityController,
             icon: Icons.edit_location_alt_outlined,
             textCapitalization: TextCapitalization.words,
             validator: (v) {
               if (v == null || v.trim().isEmpty) {
-                return 'Введите город';
+                return l10n?.validationCity ?? 'Введите город';
               }
               return null;
             },

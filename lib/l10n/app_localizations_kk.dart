@@ -215,6 +215,16 @@ class AppLocalizationsKk extends AppLocalizations {
   String get aiAgentSample3 => 'Грант алу үшін не керек?';
 
   @override
+  String get aiAgentZhekeZhosparTitle => 'Жеке Жоспар';
+
+  @override
+  String get aiAgentZhekeZhosparDesc =>
+      '📋 Маған Жеке Жоспар (жеке оқуға түсу жоспары) жасап берші';
+
+  @override
+  String get aiAgentStatusOnline => 'Желіде';
+
+  @override
   String get aiClearChat => 'Чатты тазалау';
 
   @override
@@ -658,7 +668,7 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String commonError(String error) {
-    return 'Қате: $error';
+    return 'Қате:';
   }
 
   @override
@@ -1038,7 +1048,10 @@ class AppLocalizationsKk extends AppLocalizations {
   String get notificationEmpty => 'Хабарламалар жоқ';
 
   @override
-  String get deadlineTitle => '📅 Түсу мерзімдері 2026';
+  String get deadlineTitle => 'Түсу мерзімдері\n2026';
+
+  @override
+  String get deadlineImportantDates => 'Маңызды күндер';
 
   @override
   String get deadlineDays => 'күн';
@@ -1343,10 +1356,11 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get profileCompletionLow =>
-      'Жақсырақ ұсыныстар үшін профильді толтырыңыз';
+      'Жақсырақ ұсыныстар алу үшін профильді толтырыңыз';
 
   @override
-  String get profileCompletionMedium => 'Аз қалды! Қалған деректерді қосыңыз';
+  String get profileCompletionMedium =>
+      'Аяқталуға жақын! Қалған деректерді қосыңыз';
 
   @override
   String get profileCompletionHigh => 'Тамаша жұмыс! Профиль толтырылды';
@@ -1372,30 +1386,77 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get profileDeleteAccount => 'Delete Account';
+  String get profileDeleteAccount => 'Тіркелгіні жою';
 
   @override
-  String get profileDeleteAccountTitle => 'Delete Account?';
+  String get profileDeleteAccountTitle => 'Тіркелгіні жою керек пе?';
 
   @override
   String get profileDeleteAccountContent =>
-      'Are you sure you want to delete your account? All your data will be permanently deleted.';
+      'Тіркелгіні жойғыңыз келетініне сенімдісіз бе? Барлық деректеріңіз қайтарылмайтындай жойылады.';
 
   @override
-  String get profileDeleteAccountCancel => 'Cancel';
+  String get profileDeleteAccountCancel => 'Болдырмау';
 
   @override
-  String get profileDeleteAccountConfirm => 'Delete';
+  String get profileDeleteAccountConfirm => 'Жою';
 
   @override
-  String get profileDeleteAccountErrorLink => 'Could not open link';
+  String get profileDeleteAccountErrorLink => 'Сілтемені ашу мүмкін болмады';
 
   @override
-  String get errorTimeout =>
-      'Connection timed out. Check your internet connection.';
+  String get errorTimeout => 'Уақыт шектеуі асты. Интернетті тексеріңіз.';
 
   @override
   String errorCritical(String error) {
-    return 'Critical error: $error';
+    return 'Маңызды қате: $error';
   }
+
+  @override
+  String get profileFillAllData =>
+      'Профильдің барлық деректерін толтырыңыз (аты мен академиялық балдарды қоса).';
+
+  @override
+  String get profileNameProfanity => 'Атында тыйым салынған сөздер бар.';
+
+  @override
+  String get profileUnsavedChanges => 'Сақталмаған өзгерістер';
+
+  @override
+  String get profileUnsavedMessage =>
+      'Сізде сақталмаған өзгерістер бар. Шығуға сенімдісіз бе?';
+
+  @override
+  String get profileStay => 'Қалу';
+
+  @override
+  String get profileLeave => 'Шығу';
+
+  @override
+  String get profileSectionPersonal => 'Жеке деректер';
+
+  @override
+  String get profileSectionAcademic => 'Академиялық балдар';
+
+  @override
+  String get profilePhotoUpdated => 'Фото сәтті жаңартылды!';
+
+  @override
+  String get profileDeleteAccountSent =>
+      'Жою сұрауы жіберілді. Ашылған беттегі нұсқауларды орындаңыз.';
+
+  @override
+  String get profileChangePhoto => 'Суретті өзгерту';
+
+  @override
+  String get profileCityEnter => 'Қала атын енгізіңіз';
+
+  @override
+  String get validationCity => 'Қаланы енгізіңіз';
+
+  @override
+  String get profileSave => 'Өзгерістерді сақтау';
+
+  @override
+  String get profileMathScore => 'Мат. (бейіндік)';
 }

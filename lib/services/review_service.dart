@@ -238,18 +238,18 @@ class ReviewService {
     try {
       debugPrint('📊 Recalculating rating for university: $universityId');
 
-      // Получаем все отзывы университета (ОГРАНИЧЕНО 1000 для предотвращения квот, в будущем перейти на AggregateQuery)
-      final reviewsSnapshot = await _firestore
+      // Получаем агрегированные данные (количество и средний рейтинг) без загрузки всех документов
+      final query = _firestore
           .collection(_reviewsCollection)
-          .where('universityId', isEqualTo: universityId)
-          .limit(1000)
+          .where('universityId', isEqualTo: universityId);
+
+      final aggregateQuery = await query
+          .aggregate(count(), average('rating'))
           .get();
 
-      final reviews = reviewsSnapshot.docs
-          .map((doc) => Review.fromDocument(doc))
-          .toList();
+      final reviewsCount = aggregateQuery.count ?? 0;
 
-      if (reviews.isEmpty) {
+      if (reviewsCount == 0) {
         // Нет отзывов - сбрасываем рейтинг
         await _firestore
             .collection(_universitiesCollection)
@@ -259,12 +259,7 @@ class ReviewService {
         return;
       }
 
-      // Рассчитываем средний рейтинг
-      final totalRating = reviews.fold<int>(
-        0,
-        (accumulator, review) => accumulator + review.rating,
-      );
-      final averageRating = totalRating / reviews.length;
+      final averageRating = aggregateQuery.getAverage('rating') ?? 0.0;
 
       // Обновляем университет
       await _firestore
@@ -274,11 +269,11 @@ class ReviewService {
             'averageRating': double.parse(
               averageRating.toStringAsFixed(1),
             ), // Округляем до 1 знака
-            'reviewsCount': reviews.length,
+            'reviewsCount': reviewsCount,
           });
 
       debugPrint(
-        '✅ Rating updated: $averageRating (from ${reviews.length} reviews)',
+        '✅ Rating updated: $averageRating (from $reviewsCount reviews)',
       );
     } catch (e) {
       debugPrint('❌ Error updating university rating: $e');

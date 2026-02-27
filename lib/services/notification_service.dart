@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,8 +34,13 @@ class NotificationService {
       sound: true,
     );
 
-    if (kDebugMode) {
-      print('User granted permission: ${settings.authorizationStatus}');
+    debugPrint('User granted permission: ${settings.authorizationStatus}');
+
+    // ⚡ Early return if permission denied — no point setting up channels/tokens
+    if (settings.authorizationStatus != AuthorizationStatus.authorized &&
+        settings.authorizationStatus != AuthorizationStatus.provisional) {
+      debugPrint('🚫 Notifications permission denied, skipping setup');
+      return;
     }
 
     // 2. Setup Local Notifications
@@ -58,9 +62,7 @@ class NotificationService {
             final Map<String, dynamic> data = jsonDecode(response.payload!);
             _handleMessageData(data);
           } catch (e) {
-            if (kDebugMode) {
-              print('Error parsing local notification payload: $e');
-            }
+            debugPrint('Error parsing local notification payload: $e');
           }
         }
       },
@@ -107,19 +109,15 @@ class NotificationService {
           'fcmToken': token,
           'lastTokenUpdate': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
-        if (kDebugMode) {
-          print('FCM Token synced to Firestore for: ${user.uid}');
-        }
+        debugPrint('FCM Token synced to Firestore for: ${user.uid}');
       } catch (e) {
-        if (kDebugMode) {
-          print('Firestore token sync error: $e');
-        }
+        debugPrint('Firestore token sync error: $e');
       }
     }
   }
 
   Future<void> _handleMessageData(Map<String, dynamic> data) async {
-    if (kDebugMode) print('Handling notification logic: $data');
+    debugPrint('Handling notification logic: $data');
 
     final String? screen = data['screen'];
     final String? id = data['id'];
@@ -240,7 +238,5 @@ class NotificationService {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  if (kDebugMode) {
-    print('Background message received: ${message.messageId}');
-  }
+  debugPrint('Background message received: ${message.messageId}');
 }

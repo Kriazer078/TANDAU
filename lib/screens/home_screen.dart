@@ -53,6 +53,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     super.dispose();
   }
 
+  Future<void> _handleRefresh() async {
+    // Add haptic feedback for premium feel
+    HapticFeedback.lightImpact();
+    // Simulate network delay or refresh actual providers
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) {
+      ref.invalidate(untScoreProvider);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -67,45 +77,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         child: Stack(
           children: [
             // Main Content
-            CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                _buildAppBar(theme, isDark),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            _buildGreetingSubtitle(l10n, theme, isDark),
-                            const SizedBox(height: 16),
-                            const DeadlineBanner(),
-                            const SizedBox(height: 16),
-                            _buildScoreInput(untScore, isDark, l10n),
-                            const SizedBox(height: 24),
-                            Text(
-                              l10n?.homeTools ?? 'Инструменты',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white70 : Colors.black87,
+            RefreshIndicator(
+              color: AppColors.primary,
+              onRefresh: _handleRefresh,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  _buildAppBar(theme, isDark),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              _buildGreetingSubtitle(l10n, theme, isDark),
+                              const SizedBox(height: 16),
+                              const DeadlineBanner(),
+                              const SizedBox(height: 16),
+                              _buildScoreInput(untScore, isDark, l10n),
+                              const SizedBox(height: 24),
+                              Text(
+                                l10n?.homeTools ?? 'Инструменты',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black87,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            _buildToolsRow(context, l10n, isDark),
-                            const SizedBox(height: 40),
-                          ],
+                              const SizedBox(height: 16),
+                              _buildToolsRow(context, l10n, isDark),
+                              const SizedBox(height: 40),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 40)),
-              ],
+                  const SliverToBoxAdapter(child: SizedBox(height: 40)),
+                ],
+              ),
             ),
           ],
         ),
@@ -228,45 +246,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     ThemeData theme,
     bool isDark,
   ) {
-    return StreamBuilder(
-      stream: Stream.periodic(const Duration(minutes: 1)),
-      builder: (context, _) {
-        final hour = DateTime.now().hour;
-        String greeting;
-        if (hour >= 5 && hour < 12) {
-          greeting = l10n?.homeGreetingMorning ?? 'Доброе утро';
-        } else if (hour >= 12 && hour < 17) {
-          greeting = l10n?.homeGreetingAfternoon ?? 'Добрый день';
-        } else if (hour >= 17 && hour < 23) {
-          greeting = l10n?.homeGreetingEvening ?? 'Добрый вечер';
-        } else {
-          greeting = l10n?.homeGreetingNight ?? 'Доброй ночи';
-        }
+    // ⚡ Removed StreamBuilder — greeting is computed once per build,
+    // not via a periodic timer that caused unnecessary 60s rebuilds.
+    final hour = DateTime.now().hour;
+    String greeting;
+    if (hour >= 5 && hour < 12) {
+      greeting = l10n?.homeGreetingMorning ?? 'Доброе утро';
+    } else if (hour >= 12 && hour < 17) {
+      greeting = l10n?.homeGreetingAfternoon ?? 'Добрый день';
+    } else if (hour >= 17 && hour < 23) {
+      greeting = l10n?.homeGreetingEvening ?? 'Добрый вечер';
+    } else {
+      greeting = l10n?.homeGreetingNight ?? 'Доброй ночи';
+    }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              greeting,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: isDark ? Colors.white60 : Colors.black54,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              l10n?.homeSubtitle ?? 'Найди свой путь в будущее',
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : AppColors.textPrimary,
-                height: 1.1,
-                letterSpacing: -0.8,
-              ),
-            ),
-          ],
-        );
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          greeting,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: isDark ? Colors.white60 : Colors.black54,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n?.homeSubtitle ?? 'Найди свой путь в будущее',
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : AppColors.textPrimary,
+            height: 1.1,
+            letterSpacing: -0.8,
+          ),
+        ),
+      ],
     );
   }
 
