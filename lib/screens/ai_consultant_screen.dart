@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../theme/app_colors.dart';
 import '../l10n/app_localizations.dart';
+import '../models/chat_conversation.dart';
 import '../services/ai_consultant_service.dart';
 import '../services/ai_feedback_service.dart';
 import '../services/auth_service.dart';
+import '../services/chat_history_service.dart';
 import '../services/moderation_service.dart';
 import '../widgets/ai_logo_icon.dart';
 import 'onboarding_wizard_screen.dart';
@@ -23,78 +23,139 @@ class AIConsultantScreen extends StatefulWidget {
 class _AIConsultantScreenState extends State<AIConsultantScreen>
     with SingleTickerProviderStateMixin {
   final AIConsultantService _aiService = AIConsultantService();
+  final ChatHistoryService _historyService = ChatHistoryService();
   final ModerationService _moderationService = ModerationService();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<_ChatMessage> _messages = [];
-  bool _isTyping = false;
-  late AnimationController _fadeController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static const _historyPrefsKey = 'ai_chat_history';
+  final List<ChatMessage> _messages = [];
+  bool _isTyping = false;
+  bool _isZhekeZhospar = false;
+  int _thinkingStep = 0;
+  Timer? _thinkingTimer;
+  late AnimationController _fadeController;
 
   @override
   void initState() {
     super.initState();
     _aiService.init();
-    _loadHistory();
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
     _fadeController.forward();
+    _initHistory();
   }
 
-  Future<void> _saveHistory() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final list = _messages
-          .map(
-            (m) => {
-              'text': m.text,
-              'isUser': m.isUser,
-              'time': m.time.toIso8601String(),
-            },
-          )
-          .toList();
-      await prefs.setString(_historyPrefsKey, jsonEncode(list));
-    } catch (e) {
-      debugPrint('Failed to save history: $e');
+  Future<void> _initHistory() async {
+    await _historyService.init();
+    await _loadActiveConversation();
+  }
+
+  Future<void> _loadActiveConversation() async {
+    final activeId = _historyService.activeConversationId.value;
+    if (activeId == null) {
+      setState(() => _messages.clear());
+      return;
+    }
+    final conv = await _historyService.getConversation(activeId);
+    if (conv != null && mounted) {
+      setState(() {
+        _messages.clear();
+        _messages.addAll(conv.messages);
+      });
+      _scrollToBottom();
     }
   }
 
-  Future<void> _loadHistory() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final str = prefs.getString(_historyPrefsKey);
-      if (str != null) {
-        final list = jsonDecode(str) as List;
-        setState(() {
-          _messages.clear();
-          for (final item in list) {
-            _messages.add(
-              _ChatMessage(
-                text: item['text'],
-                isUser: item['isUser'] ?? false,
-                time: item['time'] != null
-                    ? DateTime.parse(item['time'])
-                    : DateTime.now(),
-              ),
-            );
-          }
-        });
-        _scrollToBottom();
-      }
-    } catch (e) {
-      debugPrint('Failed to load history: $e');
+  Future<void> _switchConversation(String id) async {
+    final conv = await _historyService.setActive(id);
+    if (conv != null && mounted) {
+      setState(() {
+        _messages.clear();
+        _messages.addAll(conv.messages);
+      });
+      _scrollToBottom();
     }
+    if (mounted) Navigator.pop(context); // close drawer
+  }
+
+  void _createNewChat() {
+    _historyService.createConversation();
+    setState(() => _messages.clear());
+    _fadeController.reset();
+    _fadeController.forward();
+    Navigator.pop(context); // close drawer
   }
 
   @override
   void dispose() {
+    _thinkingTimer?.cancel();
     _messageController.dispose();
     _scrollController.dispose();
     _fadeController.dispose();
     super.dispose();
+  }
+
+  String _currentQuery = '';
+
+  void _startThinkingSteps({bool isZheke = false, String message = ''}) {
+    _thinkingTimer?.cancel();
+    setState(() {
+      _thinkingStep = 0;
+      _isZhekeZhospar = isZheke;
+      _currentQuery = message;
+    });
+    final isSimple = _isSimpleQuery(message);
+    final maxSteps = isZheke ? 5 : (isSimple ? 2 : 4);
+    final interval = isSimple ? 600 : 1200;
+    _thinkingTimer = Timer.periodic(Duration(milliseconds: interval), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (_thinkingStep < maxSteps - 1) {
+        setState(() => _thinkingStep++);
+        _scrollToBottom();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  /// Определяет простой ли запрос (приветствие, короткий вопрос)
+  bool _isSimpleQuery(String query) {
+    final lower = query.toLowerCase().trim();
+    if (lower.length < 15) return true;
+    const greetings = [
+      'привет',
+      'салем',
+      'здравствуй',
+      'хай',
+      'hi',
+      'hello',
+      'что умеешь',
+      'кто ты',
+      'как дела',
+      'спасибо',
+      'ок',
+    ];
+    return greetings.any((g) => lower.contains(g));
+  }
+
+  void _stopThinkingSteps() {
+    _thinkingTimer?.cancel();
+    _thinkingTimer = null;
+  }
+
+  // ═══════════════════════════════════════════
+  //  ENSURE ACTIVE CONVERSATION
+  // ═══════════════════════════════════════════
+  Future<void> _ensureActiveConversation() async {
+    if (_historyService.activeConversationId.value == null) {
+      _historyService.createConversation();
+    }
   }
 
   // ═══════════════════════════════════════════
@@ -119,14 +180,22 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       return;
     }
 
+    // Auto-create conversation if needed
+    await _ensureActiveConversation();
+
+    final userMsg = ChatMessage(
+      text: messageText,
+      isUser: true,
+      time: DateTime.now(),
+    );
+
     setState(() {
-      _messages.add(
-        _ChatMessage(text: messageText, isUser: true, time: DateTime.now()),
-      );
+      _messages.add(userMsg);
       _isTyping = true;
     });
+    _startThinkingSteps(message: messageText);
 
-    unawaited(_saveHistory());
+    unawaited(_historyService.addMessage(userMsg));
 
     _messageController.clear();
     _scrollToBottom();
@@ -134,13 +203,11 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     // Get current user profile for context
     final user = AuthService().currentUser.value;
 
-    // Prepare history
+    // Prepare history — limit to last 10 for performance
     final history = _messages
-        .where((m) => m != _messages.last) // Skip the message we just added
+        .where((m) => m != _messages.last)
         .map((m) => {'text': m.text, 'isUser': m.isUser})
         .toList();
-
-    // Limit history to last 10 messages for performance and token limits
     final recentHistory = history.length > 10
         ? history.sublist(history.length - 10)
         : history;
@@ -160,39 +227,47 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       );
 
       if (mounted) {
+        _stopThinkingSteps();
+        final aiMsg = ChatMessage(
+          text: response,
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
-          _messages.add(
-            _ChatMessage(text: response, isUser: false, time: DateTime.now()),
-          );
+          _messages.add(aiMsg);
         });
-        unawaited(_saveHistory());
+        unawaited(_historyService.addMessage(aiMsg));
         _scrollToBottom();
       }
     } on OutOfTokensException catch (e) {
       if (mounted) {
+        _stopThinkingSteps();
+        final errMsg = ChatMessage(
+          text: e.message,
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
-          _messages.add(
-            _ChatMessage(text: e.message, isUser: false, time: DateTime.now()),
-          );
+          _messages.add(errMsg);
         });
-        unawaited(_saveHistory());
+        unawaited(_historyService.addMessage(errMsg));
         _scrollToBottom();
       }
     } catch (e) {
       if (mounted) {
+        _stopThinkingSteps();
+        final errMsg = ChatMessage(
+          text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
-          _messages.add(
-            _ChatMessage(
-              text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
-              isUser: false,
-              time: DateTime.now(),
-            ),
-          );
+          _messages.add(errMsg);
         });
-        unawaited(_saveHistory());
+        unawaited(_historyService.addMessage(errMsg));
         _scrollToBottom();
       }
     }
@@ -202,19 +277,24 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
   Future<void> _requestZhekeZhospar() async {
     final l10n = AppLocalizations.of(context);
 
+    await _ensureActiveConversation();
+
+    final userMsg = ChatMessage(
+      text:
+          l10n?.aiAgentZhekeZhosparDesc ??
+          '📋 Создай мне Жеке Жоспар (персональный план поступления)',
+      isUser: true,
+      time: DateTime.now(),
+    );
+
     setState(() {
-      _messages.add(
-        _ChatMessage(
-          text:
-              l10n?.aiAgentZhekeZhosparDesc ??
-              '📋 Создай мне Жеке Жоспар (персональный план поступления)',
-          isUser: true,
-          time: DateTime.now(),
-        ),
-      );
+      _messages.add(userMsg);
       _isTyping = true;
     });
+    _startThinkingSteps(isZheke: true);
     _scrollToBottom();
+
+    unawaited(_historyService.addMessage(userMsg));
 
     final user = AuthService().currentUser.value;
 
@@ -231,36 +311,44 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       );
 
       if (mounted) {
+        _stopThinkingSteps();
+        final aiMsg = ChatMessage(
+          text: response,
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
-          _messages.add(
-            _ChatMessage(text: response, isUser: false, time: DateTime.now()),
-          );
+          _messages.add(aiMsg);
         });
-        unawaited(_saveHistory());
+        unawaited(_historyService.addMessage(aiMsg));
         _scrollToBottom();
       }
     } on OutOfTokensException catch (e) {
       if (mounted) {
+        _stopThinkingSteps();
+        final errMsg = ChatMessage(
+          text: e.message,
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
-          _messages.add(
-            _ChatMessage(text: e.message, isUser: false, time: DateTime.now()),
-          );
+          _messages.add(errMsg);
         });
         _scrollToBottom();
       }
     } catch (e) {
       if (mounted) {
+        _stopThinkingSteps();
+        final errMsg = ChatMessage(
+          text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
-          _messages.add(
-            _ChatMessage(
-              text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
-              isUser: false,
-              time: DateTime.now(),
-            ),
-          );
+          _messages.add(errMsg);
         });
         _scrollToBottom();
       }
@@ -272,7 +360,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 200), // ⚡ Snappier scroll
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
         );
       }
@@ -288,7 +376,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: theme.scaffoldBackgroundColor,
+      drawer: _buildHistoryDrawer(isDark),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -296,6 +386,15 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.menu_rounded,
+            color: isDark ? Colors.white : AppColors.textPrimary,
+          ),
+          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          tooltip:
+              AppLocalizations.of(context)?.aiChatHistory ?? 'История чатов',
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -352,6 +451,21 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           ],
         ),
         actions: [
+          // New chat button
+          IconButton(
+            icon: Icon(
+              Icons.edit_square,
+              color: isDark ? Colors.white : AppColors.textPrimary,
+              size: 22,
+            ),
+            onPressed: () {
+              _historyService.createConversation();
+              setState(() => _messages.clear());
+              _fadeController.reset();
+              _fadeController.forward();
+            },
+            tooltip: AppLocalizations.of(context)?.aiNewChat ?? 'Новый чат',
+          ),
           PopupMenuButton<String>(
             icon: Icon(
               Icons.more_horiz_rounded,
@@ -404,7 +518,6 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       ),
       body: Column(
         children: [
-          // Divider under AppBar
           Divider(
             height: 1,
             color: isDark
@@ -420,6 +533,271 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         ],
       ),
     );
+  }
+
+  // ═══════════════════════════════════════════
+  //  HISTORY DRAWER
+  // ═══════════════════════════════════════════
+  Widget _buildHistoryDrawer(bool isDark) {
+    final l10n = AppLocalizations.of(context);
+
+    return Drawer(
+      backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const AILogoIcon(size: 16, color: Colors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n?.aiChatHistory ?? 'История чатов',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  // New chat button in drawer
+                  IconButton(
+                    icon: const Icon(Icons.add_rounded, size: 24),
+                    color: const Color(0xFF6366F1),
+                    onPressed: _createNewChat,
+                    tooltip: l10n?.aiNewChat ?? 'Новый чат',
+                  ),
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : AppColors.border,
+            ),
+            // Conversation list
+            Expanded(
+              child: ValueListenableBuilder<List<ChatConversation>>(
+                valueListenable: _historyService.conversations,
+                builder: (context, convs, _) {
+                  if (convs.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline_rounded,
+                            size: 48,
+                            color: isDark ? Colors.white24 : AppColors.textHint,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            l10n?.aiNoChats ?? 'Нет чатов',
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white38
+                                  : AppColors.textHint,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // Group by time
+                  final grouped = _groupConversations(convs);
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: grouped.length,
+                    itemBuilder: (context, index) {
+                      final entry = grouped[index];
+                      if (entry is String) {
+                        // Section header
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 6),
+                          child: Text(
+                            entry,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? Colors.white38
+                                  : AppColors.textHint,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        );
+                      }
+                      final conv = entry as ChatConversation;
+                      final isActive =
+                          conv.id == _historyService.activeConversationId.value;
+                      return _buildConversationTile(conv, isActive, isDark);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConversationTile(
+    ChatConversation conv,
+    bool isActive,
+    bool isDark,
+  ) {
+    final title = conv.title.isNotEmpty
+        ? conv.title
+        : (AppLocalizations.of(context)?.aiNewChat ?? 'Новый чат');
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      child: Material(
+        color: isActive
+            ? (isDark
+                  ? const Color(0xFF6366F1).withValues(alpha: 0.15)
+                  : const Color(0xFF6366F1).withValues(alpha: 0.08))
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () => _switchConversation(conv.id),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  size: 18,
+                  color: isActive
+                      ? const Color(0xFF6366F1)
+                      : (isDark ? Colors.white54 : AppColors.textSecondary),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                      color: isActive
+                          ? (isDark ? Colors.white : AppColors.textPrimary)
+                          : (isDark ? Colors.white70 : AppColors.textSecondary),
+                    ),
+                  ),
+                ),
+                // Delete
+                InkWell(
+                  onTap: () => _confirmDeleteConversation(conv.id),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 16,
+                      color: isDark ? Colors.white24 : AppColors.textHint,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteConversation(String id) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n?.aiDeleteChat ?? 'Удалить чат'),
+        content: Text(l10n?.aiDeleteChatConfirm ?? 'Удалить этот чат?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n?.commonCancel ?? 'Отмена'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await _historyService.deleteConversation(id);
+              await _loadActiveConversation();
+            },
+            child: Text(
+              l10n?.aiClearDialogConfirm ?? 'Удалить',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Group conversations by: Today, Yesterday, Last 7 days, Older
+  List<dynamic> _groupConversations(List<ChatConversation> convs) {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final week = today.subtract(const Duration(days: 7));
+
+    final result = <dynamic>[];
+    final todayList = <ChatConversation>[];
+    final yesterdayList = <ChatConversation>[];
+    final weekList = <ChatConversation>[];
+    final olderList = <ChatConversation>[];
+
+    for (final c in convs) {
+      final d = DateTime(c.updatedAt.year, c.updatedAt.month, c.updatedAt.day);
+      if (!d.isBefore(today)) {
+        todayList.add(c);
+      } else if (!d.isBefore(yesterday)) {
+        yesterdayList.add(c);
+      } else if (!d.isBefore(week)) {
+        weekList.add(c);
+      } else {
+        olderList.add(c);
+      }
+    }
+
+    if (todayList.isNotEmpty) {
+      result.add(l10n?.aiToday ?? 'Сегодня');
+      result.addAll(todayList);
+    }
+    if (yesterdayList.isNotEmpty) {
+      result.add(l10n?.aiYesterday ?? 'Вчера');
+      result.addAll(yesterdayList);
+    }
+    if (weekList.isNotEmpty) {
+      result.add(l10n?.aiPrevious7Days ?? 'Последние 7 дней');
+      result.addAll(weekList);
+    }
+    if (olderList.isNotEmpty) {
+      result.add(l10n?.aiOlder ?? 'Ранее');
+      result.addAll(olderList);
+    }
+
+    return result;
   }
 
   // ═══════════════════════════════════════════
@@ -650,7 +1028,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       itemCount: _messages.length + (_isTyping ? 1 : 0),
       addRepaintBoundaries: true,
-      cacheExtent: 200, // ⚡ Pre-render for smoother scroll
+      cacheExtent: 200,
       itemBuilder: (context, index) {
         if (index == _messages.length) {
           return _buildTypingIndicator(isDark);
@@ -663,43 +1041,15 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
   }
 
   Widget _buildTypingIndicator(bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.cardDark : AppColors.background,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
-                bottomRight: Radius.circular(18),
-                bottomLeft: Radius.circular(4),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                _AnimatedTypingIndicator(isDark: isDark),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return _AIThinkingStream(
+      isDark: isDark,
+      currentStep: _thinkingStep,
+      isZhekeZhospar: _isZhekeZhospar,
+      query: _currentQuery,
     );
   }
 
-  Widget _buildMessageBubble(_ChatMessage msg, bool isDark) {
+  Widget _buildMessageBubble(ChatMessage msg, bool isDark) {
     final isUser = msg.isUser;
 
     return Padding(
@@ -974,10 +1324,13 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             child: Text(l10n?.commonCancel ?? 'Отмена'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               setState(() => _messages.clear());
-              unawaited(_saveHistory());
-              Navigator.pop(ctx);
+              final activeId = _historyService.activeConversationId.value;
+              if (activeId != null) {
+                await _historyService.setMessages(activeId, []);
+              }
+              if (ctx.mounted) Navigator.pop(ctx);
             },
             child: Text(
               l10n?.aiClearDialogConfirm ?? 'Очистить',
@@ -1025,77 +1378,278 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 }
 
 // ═══════════════════════════════════════════
-//  TYPED MESSAGE MODEL (replaces Map<String, dynamic>)
+//  AI THINKING STREAM (контекстный, как ChatGPT/Gemini)
 // ═══════════════════════════════════════════
-class _ChatMessage {
-  final String text;
-  final bool isUser;
-  final DateTime time;
-
-  const _ChatMessage({
-    required this.text,
-    required this.isUser,
-    required this.time,
-  });
-}
-
-// ═══════════════════════════════════════════
-//  ANIMATED TYPING INDICATOR
-// ═══════════════════════════════════════════
-class _AnimatedTypingIndicator extends StatefulWidget {
+class _AIThinkingStream extends StatelessWidget {
   final bool isDark;
-  const _AnimatedTypingIndicator({required this.isDark});
+  final int currentStep;
+  final bool isZhekeZhospar;
+  final String query;
+
+  const _AIThinkingStream({
+    required this.isDark,
+    required this.currentStep,
+    this.isZhekeZhospar = false,
+    this.query = '',
+  });
+
+  List<String> _getSteps(BuildContext context) {
+    if (isZhekeZhospar) {
+      return [
+        'Анализирую профиль абитуриента',
+        'Подбираю подходящие вузы',
+        'Рассчитываю шансы на грант',
+        'Составляю план поступления',
+        'Оформляю персональный жоспар',
+      ];
+    }
+
+    final lower = query.toLowerCase();
+
+    // Простые запросы — 2 шага
+    if (_isGreeting(lower)) {
+      return ['Обрабатываю запрос', 'Генерирую ответ'];
+    }
+
+    // Вопросы про конкретный вуз
+    if (_isUniversityQuery(lower)) {
+      return [
+        'Анализирую запрос',
+        'Ищу информацию по вузам',
+        'Сопоставляю с вашим профилем',
+        'Формирую рекомендацию',
+      ];
+    }
+
+    // Вопросы про грант / шансы / ЕНТ
+    if (_isGrantQuery(lower)) {
+      return [
+        'Анализирую ваши баллы',
+        'Сравниваю с проходными баллами',
+        'Рассчитываю вероятность',
+        'Формирую оценку шансов',
+      ];
+    }
+
+    // Вопросы про специальность / профессию
+    if (_isSpecialtyQuery(lower)) {
+      return [
+        'Анализирую запрос',
+        'Ищу подходящие специальности',
+        'Подбираю вузы',
+        'Формирую рекомендацию',
+      ];
+    }
+
+    // По умолчанию
+    return [
+      'Анализирую запрос',
+      'Ищу релевантную информацию',
+      'Формирую ответ',
+      'Готовлю рекомендацию',
+    ];
+  }
+
+  bool _isGreeting(String q) {
+    const words = [
+      'привет',
+      'салем',
+      'здравствуй',
+      'хай',
+      'hi',
+      'hello',
+      'кто ты',
+      'что умеешь',
+      'как дела',
+      'спасибо',
+    ];
+    return q.length < 15 || words.any((w) => q.contains(w));
+  }
+
+  bool _isUniversityQuery(String q) {
+    const words = [
+      'вуз',
+      'универ',
+      'университет',
+      'нарх',
+      'кбту',
+      'ену',
+      'назарбаев',
+      'казну',
+      'aitu',
+      'каз',
+      'поступ',
+    ];
+    return words.any((w) => q.contains(w));
+  }
+
+  bool _isGrantQuery(String q) {
+    const words = [
+      'грант',
+      'шанс',
+      'балл',
+      'ент',
+      'ент ',
+      'проходн',
+      'стипенд',
+      'квота',
+      'скольк',
+    ];
+    return words.any((w) => q.contains(w));
+  }
+
+  bool _isSpecialtyQuery(String q) {
+    const words = [
+      'специальность',
+      'профес',
+      'направлен',
+      'факультет',
+      'it',
+      'медицин',
+      'юрист',
+      'програм',
+      'инженер',
+    ];
+    return words.any((w) => q.contains(w));
+  }
 
   @override
-  State<_AnimatedTypingIndicator> createState() =>
-      _AnimatedTypingIndicatorState();
+  Widget build(BuildContext context) {
+    final steps = _getSteps(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.cardDark : AppColors.background,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18),
+                  bottomRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(4),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (int i = 0; i <= currentStep && i < steps.length; i++)
+                    _ThinkingStepRow(
+                      key: ValueKey('step_$i'),
+                      text: steps[i],
+                      isCompleted: i < currentStep,
+                      isActive: i == currentStep,
+                      isDark: isDark,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _AnimatedTypingIndicatorState extends State<_AnimatedTypingIndicator>
+/// Individual row in the AI thinking stream (без эмодзи, как ChatGPT).
+class _ThinkingStepRow extends StatefulWidget {
+  final String text;
+  final bool isCompleted;
+  final bool isActive;
+  final bool isDark;
+
+  const _ThinkingStepRow({
+    super.key,
+    required this.text,
+    required this.isCompleted,
+    required this.isActive,
+    required this.isDark,
+  });
+
+  @override
+  State<_ThinkingStepRow> createState() => _ThinkingStepRowState();
+}
+
+class _ThinkingStepRowState extends State<_ThinkingStepRow>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late AnimationController _animController;
+  late Animation<double> _fadeAnim;
+  late Animation<Offset> _slideAnim;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
+      duration: const Duration(milliseconds: 350),
+    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _slideAnim = Tween<Offset>(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
+    _animController.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        final val = _controller.value;
-        String dots = '';
-        if (val < 0.25) {
-          dots = '';
-        } else if (val < 0.5) {
-          dots = '.';
-        } else if (val < 0.75) {
-          dots = '..';
-        } else {
-          dots = '...';
-        }
-
-        return Text(
-          'Анализирую и генерирую ответ$dots',
-          style: TextStyle(
-            color: widget.isDark ? Colors.white54 : AppColors.textHint,
-            fontSize: 13,
-            fontStyle: FontStyle.italic,
+    return SlideTransition(
+      position: _slideAnim,
+      child: FadeTransition(
+        opacity: _fadeAnim,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.isCompleted)
+                const Icon(
+                  Icons.check_circle_rounded,
+                  size: 14,
+                  color: Color(0xFF10B981),
+                )
+              else if (widget.isActive)
+                SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.5,
+                    color: const Color(0xFF6366F1),
+                  ),
+                )
+              else
+                const SizedBox(width: 14),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  widget.isActive ? '${widget.text}...' : widget.text,
+                  style: TextStyle(
+                    color: widget.isCompleted
+                        ? (widget.isDark ? Colors.white38 : AppColors.textHint)
+                        : (widget.isDark
+                              ? Colors.white70
+                              : AppColors.textSecondary),
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

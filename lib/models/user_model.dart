@@ -26,6 +26,17 @@ class UserModel {
   final int aiTokensRemaining;
   final DateTime? lastTokenResetDate;
 
+  // 📋 Расширенный профиль (перенесено из StudentProfile)
+  final List<String> preferredCities; // Предпочитаемые города
+  final int? budget; // Бюджет на обучение в тенге
+  final String? targetProfession; // "Frontend разработчик"
+  final String? financialSituation; // "only_grant" | "up_to_1m" | "any"
+  final bool? hasDisability; // для квоты инвалидов
+  final bool? isOrphan; // для квоты СУСН
+  final bool? isRural; // для сельской квоты
+  final List<String> extracurriculars; // кружки, проекты, олимпиады
+  final double? profileStrength; // 0.0 to 1.0
+
   UserModel({
     required this.uid,
     required this.name,
@@ -47,9 +58,48 @@ class UserModel {
     this.banned = false,
     this.banReason,
     this.subscriptionPlan = 'free',
-    this.aiTokensRemaining = 100, // Default for free users
+    this.aiTokensRemaining = 100,
     this.lastTokenResetDate,
+    // 📋 Расширенный профиль
+    this.preferredCities = const [],
+    this.budget,
+    this.targetProfession,
+    this.financialSituation,
+    this.hasDisability,
+    this.isOrphan,
+    this.isRural,
+    this.extracurriculars = const [],
+    this.profileStrength,
   });
+
+  /// Алиас для совместимости с StudentProfile
+  int? get entScore => untScore;
+
+  /// Проверить, заполнен ли профиль (перенесено из StudentProfile)
+  bool get isProfileComplete {
+    return untScore != null &&
+        achievements.isNotEmpty &&
+        preferredMajors.isNotEmpty;
+  }
+
+  /// Получить процент заполненности профиля (перенесено из StudentProfile)
+  int get profileCompleteness {
+    int total = 10;
+    int filled = 0;
+
+    if (untScore != null) filled++;
+    if (achievements.isNotEmpty) filled++;
+    if (preferredMajors.isNotEmpty) filled++;
+    if (preferredCities.isNotEmpty || city != null) filled++;
+    if (gpa != null) filled++;
+    if (ieltsScore != null) filled++;
+    if (mathScore != null) filled++;
+    if (targetProfession != null) filled++;
+    if (financialSituation != null) filled++;
+    if (extracurriculars.isNotEmpty) filled++;
+
+    return ((filled / total) * 100).round();
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -61,9 +111,9 @@ class UserModel {
       'city': city,
       'untScore': untScore,
       'ieltsScore': ieltsScore,
-      'gpa': gpa, // ⭐
-      'mathScore': mathScore, // ⭐
-      'photoUrl': photoUrl, // ⭐
+      'gpa': gpa,
+      'mathScore': mathScore,
+      'photoUrl': photoUrl,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       'favoriteUniversities': favoriteUniversities,
@@ -77,6 +127,16 @@ class UserModel {
       'lastTokenResetDate': lastTokenResetDate != null
           ? Timestamp.fromDate(lastTokenResetDate!)
           : null,
+      // 📋 Расширенный профиль
+      'preferredCities': preferredCities,
+      'budget': budget,
+      'targetProfession': targetProfession,
+      'financialSituation': financialSituation,
+      'hasDisability': hasDisability,
+      'isOrphan': isOrphan,
+      'isRural': isRural,
+      'extracurriculars': extracurriculars,
+      'profileStrength': profileStrength,
     };
   }
 
@@ -98,7 +158,7 @@ class UserModel {
       mathScore: (map['mathScore'] is String)
           ? int.tryParse(map['mathScore'])
           : map['mathScore'] as int?,
-      photoUrl: map['photoUrl'], // ⭐
+      photoUrl: map['photoUrl'],
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
@@ -118,6 +178,16 @@ class UserModel {
       lastTokenResetDate: map['lastTokenResetDate'] != null
           ? (map['lastTokenResetDate'] as Timestamp).toDate()
           : null,
+      // 📋 Расширенный профиль
+      preferredCities: List<String>.from(map['preferredCities'] ?? []),
+      budget: map['budget'],
+      targetProfession: map['targetProfession'],
+      financialSituation: map['financialSituation'],
+      hasDisability: map['hasDisability'],
+      isOrphan: map['isOrphan'],
+      isRural: map['isRural'],
+      extracurriculars: List<String>.from(map['extracurriculars'] ?? []),
+      profileStrength: (map['profileStrength'] as num?)?.toDouble(),
     );
   }
 
@@ -135,20 +205,30 @@ class UserModel {
     String? city,
     int? untScore,
     double? ieltsScore,
-    double? gpa, // ⭐
-    int? mathScore, // ⭐
-    String? photoUrl, // ⭐
+    double? gpa,
+    int? mathScore,
+    String? photoUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
     List<String>? favoriteUniversities,
-    List<String>? achievements, // ⭐
-    List<String>? preferredMajors, // ⭐
-    String? role, // 🔐
-    bool? banned, // 🚫
-    String? banReason, // 📝
+    List<String>? achievements,
+    List<String>? preferredMajors,
+    String? role,
+    bool? banned,
+    String? banReason,
     String? subscriptionPlan,
     int? aiTokensRemaining,
     DateTime? lastTokenResetDate,
+    // 📋 Расширенный профиль
+    List<String>? preferredCities,
+    int? budget,
+    String? targetProfession,
+    String? financialSituation,
+    bool? hasDisability,
+    bool? isOrphan,
+    bool? isRural,
+    List<String>? extracurriculars,
+    double? profileStrength,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -159,9 +239,9 @@ class UserModel {
       city: city ?? this.city,
       untScore: untScore ?? this.untScore,
       ieltsScore: ieltsScore ?? this.ieltsScore,
-      gpa: gpa ?? this.gpa, // ⭐
-      mathScore: mathScore ?? this.mathScore, // ⭐
-      photoUrl: photoUrl ?? this.photoUrl, // ⭐
+      gpa: gpa ?? this.gpa,
+      mathScore: mathScore ?? this.mathScore,
+      photoUrl: photoUrl ?? this.photoUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       favoriteUniversities: favoriteUniversities ?? this.favoriteUniversities,
@@ -173,6 +253,16 @@ class UserModel {
       subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
       aiTokensRemaining: aiTokensRemaining ?? this.aiTokensRemaining,
       lastTokenResetDate: lastTokenResetDate ?? this.lastTokenResetDate,
+      // 📋 Расширенный профиль
+      preferredCities: preferredCities ?? this.preferredCities,
+      budget: budget ?? this.budget,
+      targetProfession: targetProfession ?? this.targetProfession,
+      financialSituation: financialSituation ?? this.financialSituation,
+      hasDisability: hasDisability ?? this.hasDisability,
+      isOrphan: isOrphan ?? this.isOrphan,
+      isRural: isRural ?? this.isRural,
+      extracurriculars: extracurriculars ?? this.extracurriculars,
+      profileStrength: profileStrength ?? this.profileStrength,
     );
   }
 }

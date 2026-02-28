@@ -1,25 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'user_model.dart';
 
-/// Модель для хранения достижений студента
+/// Модель профиля студента.
+///
+/// Данные хранятся в [UserModel] (единый источник правды).
+/// Используйте [StudentProfile.fromUserModel] для создания из UserModel.
 class StudentProfile {
   final String userId;
   final String name;
-  final int? entScore; // Прогнозируемый или реальный балл ЕНТ
-  final double? gpa; // GPA (max 4.0)
-  final double? ieltsScore; // IELTS Score (0-9.0)
-  final int? mathScore; // Math Score (or similar subject score)
-  final double? profileStrength; // 0.0 to 1.0 (calculated or estimated)
-  final List<String> achievements; // Список достижений
-  final List<String> preferredCities; // Предпочитаемые города
-  final List<String> preferredMajors; // Интересующие специальности
-  final int? budget; // Бюджет на обучение в тенге
+  final int? entScore;
+  final double? gpa;
+  final double? ieltsScore;
+  final int? mathScore;
+  final double? profileStrength;
+  final List<String> achievements;
+  final List<String> preferredCities;
+  final List<String> preferredMajors;
+  final int? budget;
   // 🆕 Phase 3 — расширенный профиль
-  final String? targetProfession; // "Frontend разработчик"
-  final String? financialSituation; // "only_grant" | "up_to_1m" | "any"
-  final bool? hasDisability; // для квоты инвалидов
-  final bool? isOrphan; // для квоты СУСН
-  final bool? isRural; // для сельской квоты
-  final List<String> extracurriculars; // кружки, проекты, олимпиады
+  final String? targetProfession;
+  final String? financialSituation;
+  final bool? hasDisability;
+  final bool? isOrphan;
+  final bool? isRural;
+  final List<String> extracurriculars;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -44,6 +48,39 @@ class StudentProfile {
     this.createdAt,
     this.updatedAt,
   });
+
+  // ═══════════════════════════════════════════
+  //  АДАПТЕР: создание из UserModel (единый источник)
+  // ═══════════════════════════════════════════
+
+  /// Создать StudentProfile из UserModel.
+  /// Это основной способ получения StudentProfile —
+  /// все данные берутся из единого источника [UserModel].
+  factory StudentProfile.fromUserModel(UserModel user) {
+    return StudentProfile(
+      userId: user.uid,
+      name: user.name,
+      entScore: user.untScore,
+      gpa: user.gpa,
+      ieltsScore: user.ieltsScore,
+      mathScore: user.mathScore,
+      profileStrength: user.profileStrength,
+      achievements: user.achievements,
+      preferredCities: user.preferredCities.isNotEmpty
+          ? user.preferredCities
+          : (user.city != null ? [user.city!] : []),
+      preferredMajors: user.preferredMajors,
+      budget: user.budget,
+      targetProfession: user.targetProfession,
+      financialSituation: user.financialSituation,
+      hasDisability: user.hasDisability,
+      isOrphan: user.isOrphan,
+      isRural: user.isRural,
+      extracurriculars: user.extracurriculars,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    );
+  }
 
   /// Преобразовать в Map для Firestore
   Map<String, dynamic> toMap() {
@@ -162,21 +199,16 @@ class StudentProfile {
 
   /// Получить процент заполненности профиля
   int get completeness {
-    int total = 10; // all trackable fields
+    int total = 10;
     int filled = 0;
 
-    // Базовые поля
     if (entScore != null) filled++;
     if (achievements.isNotEmpty) filled++;
     if (preferredMajors.isNotEmpty) filled++;
     if (preferredCities.isNotEmpty) filled++;
-
-    // Расширенные поля
     if (gpa != null) filled++;
     if (ieltsScore != null) filled++;
     if (mathScore != null) filled++;
-
-    // Новые поля Phase 3
     if (targetProfession != null) filled++;
     if (financialSituation != null) filled++;
     if (extracurriculars.isNotEmpty) filled++;

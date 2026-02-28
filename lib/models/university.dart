@@ -14,7 +14,9 @@ class University {
   final String applicationDeadline;
   final String address;
   final String website;
-  final double rating;
+  // rating удалён — используется averageRating (единый источник)
+  // Getter для обратной совместимости:
+  double get rating => averageRating;
   final int studentCount;
 
   // ⭐ Новые поля для лайков и отзывов
@@ -42,7 +44,7 @@ class University {
     required this.applicationDeadline,
     required this.address,
     required this.website,
-    required this.rating,
+    // rating больше не передаётся — вычисляется из averageRating
     required this.studentCount,
     this.likesCount = 0, // По умолчанию 0
     this.reviewsCount = 0, // По умолчанию 0
@@ -69,7 +71,7 @@ class University {
       'applicationDeadline': applicationDeadline,
       'address': address,
       'website': website,
-      'rating': rating,
+      // rating не сохраняется отдельно — используем averageRating
       'studentCount': studentCount,
       'likesCount': likesCount,
       'reviewsCount': reviewsCount,
@@ -97,11 +99,11 @@ class University {
       applicationDeadline: map['applicationDeadline'] ?? '',
       address: map['address'] ?? '',
       website: map['website'] ?? '',
-      rating: (map['rating'] ?? 0.0).toDouble(),
+      // rating читается как fallback для averageRating (миграция)
       studentCount: map['studentCount'] ?? 0,
       likesCount: map['likesCount'] ?? 0,
       reviewsCount: map['reviewsCount'] ?? 0,
-      averageRating: (map['averageRating'] ?? 0.0).toDouble(),
+      averageRating: (map['averageRating'] ?? map['rating'] ?? 0.0).toDouble(),
       contactPhone: map['contactPhone'] ?? '',
       email: map['email'] ?? '',
     );

@@ -64,7 +64,7 @@ import 'app_localizations_ru.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -87,17 +87,17 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('kk'),
-    Locale('ru'),
+    Locale('ru')
   ];
 
   /// No description provided for @appTitle.
@@ -2841,6 +2841,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Math (prof.)'**
   String get profileMathScore;
+
+  /// No description provided for @aiThinkingStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing your request'**
+  String get aiThinkingStep1;
+
+  /// No description provided for @aiThinkingStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching university database'**
+  String get aiThinkingStep2;
+
+  /// No description provided for @aiThinkingStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating personalized response'**
+  String get aiThinkingStep3;
+
+  /// No description provided for @aiThinkingStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing recommendation'**
+  String get aiThinkingStep4;
+
+  /// No description provided for @aiThinkingZhStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing applicant profile'**
+  String get aiThinkingZhStep1;
+
+  /// No description provided for @aiThinkingZhStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Selecting matching universities'**
+  String get aiThinkingZhStep2;
+
+  /// No description provided for @aiThinkingZhStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating grant chances'**
+  String get aiThinkingZhStep3;
+
+  /// No description provided for @aiThinkingZhStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating admission plan'**
+  String get aiThinkingZhStep4;
+
+  /// No description provided for @aiThinkingZhStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your Personal Plan'**
+  String get aiThinkingZhStep5;
+
+  /// No description provided for @aiNewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'New Chat'**
+  String get aiNewChat;
+
+  /// No description provided for @aiChatHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat History'**
+  String get aiChatHistory;
+
+  /// No description provided for @aiDeleteChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chat'**
+  String get aiDeleteChat;
+
+  /// No description provided for @aiDeleteChatConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get aiDeleteChatConfirm;
+
+  /// No description provided for @aiNoChats.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats yet'**
+  String get aiNoChats;
+
+  /// No description provided for @aiToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get aiToday;
+
+  /// No description provided for @aiYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get aiYesterday;
+
+  /// No description provided for @aiPrevious7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get aiPrevious7Days;
+
+  /// No description provided for @aiOlder.
+  ///
+  /// In en, this message translates to:
+  /// **'Older'**
+  String get aiOlder;
 }
 
 class _AppLocalizationsDelegate
@@ -2872,9 +2980,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

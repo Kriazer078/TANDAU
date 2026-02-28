@@ -1459,4 +1459,58 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get profileMathScore => 'Мат. (бейіндік)';
+
+  @override
+  String get aiThinkingStep1 => 'Сұрауыңызды талдауда';
+
+  @override
+  String get aiThinkingStep2 => 'ЖОО базасынан деректер іздеуде';
+
+  @override
+  String get aiThinkingStep3 => 'Жеке жауап дайындауда';
+
+  @override
+  String get aiThinkingStep4 => 'Ұсынысты рәсімдеуде';
+
+  @override
+  String get aiThinkingZhStep1 => 'Абитуриент профилін талдауда';
+
+  @override
+  String get aiThinkingZhStep2 => 'Сәйкес ЖОО-ларды таңдауда';
+
+  @override
+  String get aiThinkingZhStep3 => 'Грант мүмкіндігін есептеуде';
+
+  @override
+  String get aiThinkingZhStep4 => 'Түсу жоспарын жасауда';
+
+  @override
+  String get aiThinkingZhStep5 => 'Жеке Жоспарыңызды рәсімдеуде';
+
+  @override
+  String get aiNewChat => 'Жаңа чат';
+
+  @override
+  String get aiChatHistory => 'Чат тарихы';
+
+  @override
+  String get aiDeleteChat => 'Чатты жою';
+
+  @override
+  String get aiDeleteChatConfirm => 'Бұл чатты жою керек пе?';
+
+  @override
+  String get aiNoChats => 'Чаттар жоқ';
+
+  @override
+  String get aiToday => 'Бүгін';
+
+  @override
+  String get aiYesterday => 'Кеше';
+
+  @override
+  String get aiPrevious7Days => 'Соңғы 7 күн';
+
+  @override
+  String get aiOlder => 'Бұрынғы';
 }

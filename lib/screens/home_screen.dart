@@ -30,7 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
@@ -74,58 +74,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       backgroundColor: theme.scaffoldBackgroundColor,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        child: Stack(
-          children: [
-            // Main Content
-            RefreshIndicator(
-              color: AppColors.primary,
-              onRefresh: _handleRefresh,
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                slivers: [
-                  _buildAppBar(theme, isDark),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 8),
-                              _buildGreetingSubtitle(l10n, theme, isDark),
-                              const SizedBox(height: 16),
-                              const DeadlineBanner(),
-                              const SizedBox(height: 16),
-                              _buildScoreInput(untScore, isDark, l10n),
-                              const SizedBox(height: 24),
-                              Text(
-                                l10n?.homeTools ?? 'Инструменты',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              _buildToolsRow(context, l10n, isDark),
-                              const SizedBox(height: 40),
-                            ],
+        child: RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: _handleRefresh,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
+              _buildAppBar(theme, isDark),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          _buildGreetingSubtitle(l10n, theme, isDark),
+                          const SizedBox(height: 16),
+                          const DeadlineBanner(),
+                          const SizedBox(height: 16),
+                          _buildScoreInput(untScore, isDark, l10n),
+                          const SizedBox(height: 24),
+                          Text(
+                            l10n?.homeTools ?? 'Инструменты',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 16),
+                          _buildToolsRow(context, l10n, isDark),
+                          const SizedBox(height: 40),
+                        ],
                       ),
                     ),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 40)),
-                ],
+                ),
               ),
-            ),
-          ],
+              const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            ],
+          ),
         ),
       ),
     );
@@ -574,9 +567,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark
-                            ? Colors.white54
-                            : AppColors.textSecondary,
+                        color:
+                            isDark ? Colors.white54 : AppColors.textSecondary,
                       ),
                     ),
                   ],

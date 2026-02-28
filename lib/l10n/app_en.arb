@@ -637,5 +637,25 @@
     "profileCityEnter": "Enter city name",
     "validationCity": "Enter a city",
     "profileSave": "Save changes",
-    "profileMathScore": "Math (prof.)"
+    "profileMathScore": "Math (prof.)",
+
+    "aiThinkingStep1": "Analyzing your request",
+    "aiThinkingStep2": "Searching university database",
+    "aiThinkingStep3": "Generating personalized response",
+    "aiThinkingStep4": "Preparing recommendation",
+    "aiThinkingZhStep1": "Analyzing applicant profile",
+    "aiThinkingZhStep2": "Selecting matching universities",
+    "aiThinkingZhStep3": "Calculating grant chances",
+    "aiThinkingZhStep4": "Creating admission plan",
+    "aiThinkingZhStep5": "Preparing your Personal Plan",
+
+    "aiNewChat": "New Chat",
+    "aiChatHistory": "Chat History",
+    "aiDeleteChat": "Delete Chat",
+    "aiDeleteChatConfirm": "Delete this chat?",
+    "aiNoChats": "No chats yet",
+    "aiToday": "Today",
+    "aiYesterday": "Yesterday",
+    "aiPrevious7Days": "Last 7 days",
+    "aiOlder": "Older"
 }

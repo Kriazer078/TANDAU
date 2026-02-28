@@ -17,53 +17,22 @@ class _SearchScreenState extends State<SearchScreen> {
   final UniversityService _service = UniversityService();
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocus = FocusNode();
+  // ⚡ ValueNotifier: only the clear-button suffix rebuilds on text change
+  late final ValueNotifier<bool> _hasText = ValueNotifier<bool>(false);
 
   final List<String> _searchHistory = [];
 
+  // ⚡ Cached once – no rebuild-on-every-build re-allocation
+  List<Map<String, dynamic>>? _featuredMajors;
+
+  bool _onlyGrants = false;
   final List<String> _selectedCities = [];
   final List<String> _selectedMajors = [];
-  bool _onlyGrants = false;
   double? _maxPrice;
 
   List<String> _cities = [];
   List<Map<String, dynamic>> _majors = [];
   bool _isLoading = true;
-
-  List<Map<String, dynamic>> get _featuredMajors {
-    final l10n = AppLocalizations.of(context);
-    return [
-      {
-        'name': l10n?.majorIT ?? 'IT',
-        'icon': Icons.computer_rounded,
-        'color': const Color(0xFF3B82F6),
-      },
-      {
-        'name': l10n?.majorMedicine ?? 'Медицина',
-        'icon': Icons.medical_services_rounded,
-        'color': const Color(0xFFEF4444),
-      },
-      {
-        'name': l10n?.majorBusiness ?? 'Бизнес',
-        'icon': Icons.business_center_rounded,
-        'color': const Color(0xFFF97316),
-      },
-      {
-        'name': l10n?.majorEngineering ?? 'Инженерия',
-        'icon': Icons.engineering_rounded,
-        'color': const Color(0xFF22C55E),
-      },
-      {
-        'name': l10n?.majorLaw ?? 'Право',
-        'icon': Icons.gavel_rounded,
-        'color': const Color(0xFF8B5CF6),
-      },
-      {
-        'name': l10n?.majorArt ?? 'Искусство',
-        'icon': Icons.palette_rounded,
-        'color': const Color(0xFFEC4899),
-      },
-    ];
-  }
 
   int get _activeFilterCount {
     int count = 0;
@@ -77,6 +46,45 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    // ⚡ Build featured majors once (l10n available after first build via context)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _featuredMajors = [
+          {
+            'name': AppLocalizations.of(context)?.majorIT ?? 'IT',
+            'icon': Icons.computer_rounded,
+            'color': const Color(0xFF3B82F6),
+          },
+          {
+            'name': AppLocalizations.of(context)?.majorMedicine ?? 'Медицина',
+            'icon': Icons.medical_services_rounded,
+            'color': const Color(0xFFEF4444),
+          },
+          {
+            'name': AppLocalizations.of(context)?.majorBusiness ?? 'Бизнес',
+            'icon': Icons.business_center_rounded,
+            'color': const Color(0xFFF97316),
+          },
+          {
+            'name':
+                AppLocalizations.of(context)?.majorEngineering ?? 'Инженерия',
+            'icon': Icons.engineering_rounded,
+            'color': const Color(0xFF22C55E),
+          },
+          {
+            'name': AppLocalizations.of(context)?.majorLaw ?? 'Право',
+            'icon': Icons.gavel_rounded,
+            'color': const Color(0xFF8B5CF6),
+          },
+          {
+            'name': AppLocalizations.of(context)?.majorArt ?? 'Искусство',
+            'icon': Icons.palette_rounded,
+            'color': const Color(0xFFEC4899),
+          },
+        ];
+        setState(() {}); // single rebuild after init
+      }
+    });
     _loadData();
   }
 
@@ -84,6 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void dispose() {
     _searchController.dispose();
     _searchFocus.dispose();
+    _hasText.dispose();
     super.dispose();
   }
 
@@ -299,26 +308,30 @@ class _SearchScreenState extends State<SearchScreen> {
                     Icons.search_rounded,
                     color: isDark ? Colors.white38 : AppColors.textHint,
                   ),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.close_rounded,
-                            size: 20,
-                            color: isDark ? Colors.white38 : Colors.grey,
-                          ),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {});
-                          },
-                        )
-                      : null,
+                  // ⚡ ValueListenableBuilder: only this tiny widget rebuilds
+                  suffixIcon: ValueListenableBuilder<bool>(
+                    valueListenable: _hasText,
+                    builder: (_, hasText, __) => hasText
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.close_rounded,
+                              size: 20,
+                              color: isDark ? Colors.white38 : Colors.grey,
+                            ),
+                            onPressed: () {
+                              _searchController.clear();
+                              _hasText.value = false;
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 14,
                   ),
                 ),
-                onChanged: (_) => setState(() {}), // update clear button
+                onChanged: (val) => _hasText.value = val.isNotEmpty,
               ),
             ),
           ),
@@ -542,10 +555,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   // ═════════════════════════════════════════
-  // DEPARTMENT GRID (2 rows, horizontal scroll)
   // ═════════════════════════════════════════
   Widget _buildDepartmentGrid(bool isDark) {
     final majors = _featuredMajors;
+    if (majors == null) return const SizedBox.shrink();
 
     return SizedBox(
       height: 100,
@@ -597,9 +610,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     child: Icon(
                       major['icon'] as IconData,
-                      color: isSelected
-                          ? Colors.white
-                          : (isDark ? color : color),
+                      color:
+                          isSelected ? Colors.white : (isDark ? color : color),
                       size: 26,
                     ),
                   ),
@@ -613,14 +625,13 @@ class _SearchScreenState extends State<SearchScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight: isSelected
-                            ? FontWeight.w700
-                            : FontWeight.w500,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected
                             ? (major['color'] as Color)
                             : (isDark
-                                  ? Colors.white70
-                                  : AppColors.textSecondary),
+                                ? Colors.white70
+                                : AppColors.textSecondary),
                       ),
                     ),
                   ),
@@ -684,14 +695,14 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ]
                       : (isDark
-                            ? null
-                            : [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ]),
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 6,
+                                offset: const Offset(0, 1),
+                              ),
+                            ]),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -708,9 +719,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       city,
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w500,
                         color: isSelected
                             ? Colors.white
                             : (isDark ? Colors.white70 : AppColors.textPrimary),

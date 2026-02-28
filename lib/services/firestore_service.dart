@@ -16,38 +16,26 @@ class FirestoreService {
       .collection('universities');
   CollectionReference get usersCollection => _firestore.collection('users');
 
-  // ═══ In-memory cache ═══════════════════════════════════
-  List<University>? _cachedUniversities;
-  DateTime? _cacheTimestamp;
-  static const Duration _cacheTtl = Duration(minutes: 10);
+  // ═══ Кэширование перенесено в UniversityService (единая точка) ═══
 
-  bool get _isCacheValid =>
-      _cachedUniversities != null &&
-      _cacheTimestamp != null &&
-      DateTime.now().difference(_cacheTimestamp!) < _cacheTtl;
-
-  /// Force refresh of the cache on next access
+  /// Устарело — кэш больше не хранится здесь.
+  /// Оставлено для обратной совместимости.
   void refreshCache() {
-    _cachedUniversities = null;
-    _cacheTimestamp = null;
+    // Кэширование теперь в UniversityService
   }
 
-  /// Get all universities from Firestore (with caching)
+  /// Get all universities from Firestore (без кэша — кэш в UniversityService)
   Future<List<University>> getAllUniversities() async {
-    if (_isCacheValid) return _cachedUniversities!;
-
     try {
       final snapshot = await universitiesCollection.get().timeout(
         const Duration(seconds: 15),
       );
-      _cachedUniversities = snapshot.docs
+      return snapshot.docs
           .map((doc) => University.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
-      _cacheTimestamp = DateTime.now();
-      return _cachedUniversities!;
     } catch (e) {
       debugPrint('Error getting universities: $e');
-      return _cachedUniversities ?? [];
+      return [];
     }
   }
 

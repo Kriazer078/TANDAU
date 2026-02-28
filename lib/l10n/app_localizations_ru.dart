@@ -1462,4 +1462,58 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileMathScore => 'Мат. (проф)';
+
+  @override
+  String get aiThinkingStep1 => 'Анализирую ваш запрос';
+
+  @override
+  String get aiThinkingStep2 => 'Ищу данные в базе вузов';
+
+  @override
+  String get aiThinkingStep3 => 'Формирую персональный ответ';
+
+  @override
+  String get aiThinkingStep4 => 'Оформляю рекомендацию';
+
+  @override
+  String get aiThinkingZhStep1 => 'Анализирую профиль абитуриента';
+
+  @override
+  String get aiThinkingZhStep2 => 'Подбираю подходящие вузы';
+
+  @override
+  String get aiThinkingZhStep3 => 'Рассчитываю шансы на грант';
+
+  @override
+  String get aiThinkingZhStep4 => 'Составляю план поступления';
+
+  @override
+  String get aiThinkingZhStep5 => 'Оформляю ваш Жеке Жоспар';
+
+  @override
+  String get aiNewChat => 'Новый чат';
+
+  @override
+  String get aiChatHistory => 'История чатов';
+
+  @override
+  String get aiDeleteChat => 'Удалить чат';
+
+  @override
+  String get aiDeleteChatConfirm => 'Удалить этот чат?';
+
+  @override
+  String get aiNoChats => 'Нет чатов';
+
+  @override
+  String get aiToday => 'Сегодня';
+
+  @override
+  String get aiYesterday => 'Вчера';
+
+  @override
+  String get aiPrevious7Days => 'Последние 7 дней';
+
+  @override
+  String get aiOlder => 'Ранее';
 }

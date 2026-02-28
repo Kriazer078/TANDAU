@@ -618,5 +618,25 @@
     "profileCityEnter": "Введите название города",
     "validationCity": "Введите город",
     "profileSave": "Сохранить изменения",
-    "profileMathScore": "Мат. (проф)"
+    "profileMathScore": "Мат. (проф)",
+
+    "aiThinkingStep1": "Анализирую ваш запрос",
+    "aiThinkingStep2": "Ищу данные в базе вузов",
+    "aiThinkingStep3": "Формирую персональный ответ",
+    "aiThinkingStep4": "Оформляю рекомендацию",
+    "aiThinkingZhStep1": "Анализирую профиль абитуриента",
+    "aiThinkingZhStep2": "Подбираю подходящие вузы",
+    "aiThinkingZhStep3": "Рассчитываю шансы на грант",
+    "aiThinkingZhStep4": "Составляю план поступления",
+    "aiThinkingZhStep5": "Оформляю ваш Жеке Жоспар",
+
+    "aiNewChat": "Новый чат",
+    "aiChatHistory": "История чатов",
+    "aiDeleteChat": "Удалить чат",
+    "aiDeleteChatConfirm": "Удалить этот чат?",
+    "aiNoChats": "Нет чатов",
+    "aiToday": "Сегодня",
+    "aiYesterday": "Вчера",
+    "aiPrevious7Days": "Последние 7 дней",
+    "aiOlder": "Ранее"
 }

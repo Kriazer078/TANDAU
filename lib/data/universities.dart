@@ -39,7 +39,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '15 мамыр, 2026',
     address: 'Қабанбай батыр даңғылы 53, Астана',
     website: 'nu.edu.kz',
-    rating: 4.8,
+    averageRating: 4.8,
     studentCount: 6045,
   ),
   University(
@@ -78,7 +78,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '10 шілде, 2026',
     address: 'Мәңгілік Ел даңғылы 55/11, Блок С1, EXPO, Астана',
     website: 'astanait.edu.kz',
-    rating: 4.7,
+    averageRating: 4.7,
     studentCount: 3500,
   ),
   University(
@@ -116,7 +116,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '18 шілде, 2026',
     address: 'Сәтпаев көшесі 2, Астана',
     website: 'enu.kz',
-    rating: 4.5,
+    averageRating: 4.5,
     studentCount: 20350,
   ),
 
@@ -160,7 +160,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 шілде, 2026',
     address: 'Әл-Фараби даңғылы 71, Алматы',
     website: 'kaznu.kz',
-    rating: 4.6,
+    averageRating: 4.6,
     studentCount: 25000,
   ),
   University(
@@ -196,7 +196,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '15 шілде, 2026',
     address: 'Сәтпаев көшесі 22а, Алматы',
     website: 'satbayev.university',
-    rating: 4.5,
+    averageRating: 4.5,
     studentCount: 9000,
   ),
   University(
@@ -230,7 +230,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 шілде, 2026',
     address: 'Достық даңғылы 13, Алматы',
     website: 'kaznpu.kz',
-    rating: 4.4,
+    averageRating: 4.4,
     studentCount: 12843,
   ),
   University(
@@ -266,7 +266,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '1 шілде, 2026',
     address: 'Төле би көшесі 59, Алматы',
     website: 'kbtu.kz',
-    rating: 4.6,
+    averageRating: 4.6,
     studentCount: 6182,
   ),
   University(
@@ -304,7 +304,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '15 шілде, 2026',
     address: 'Жандосов көшесі 55, Алматы',
     website: 'narxoz.kz',
-    rating: 4.3,
+    averageRating: 4.3,
     studentCount: 7281,
   ),
 
@@ -344,7 +344,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '22 тамыз, 2026',
     address: 'Әл-Фараби алаңы, 1/1, Шымкент',
     website: 'skma.edu.kz',
-    rating: 4.3,
+    averageRating: 4.3,
     studentCount: 5000,
   ),
   University(
@@ -380,7 +380,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 тамыз, 2026',
     address: 'А. Байтұрсынов көшесі, 13, Шымкент',
     website: 'zhanibekov.edu.kz / okmpu.kz',
-    rating: 4.2,
+    averageRating: 4.2,
     studentCount: 5773,
   ),
   University(
@@ -417,7 +417,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 тамыз, 2026',
     address: 'Тәуке хан даңғылы, 5, Шымкент',
     website: 'auezov.edu.kz',
-    rating: 4.4,
+    averageRating: 4.4,
     studentCount: 17303,
   ),
   University(
@@ -446,7 +446,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Ғ. Иляев көшесі, 3, Шымкент',
     website: 'miras.edu.kz / miras.app',
-    rating: 4.1,
+    averageRating: 4.1,
     studentCount: 5471,
   ),
   University(
@@ -485,7 +485,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Тассай шағын ауданы, Жібек жолы көшесі, 6, Шымкент',
     website: 'univershu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 5500,
   ),
   University(
@@ -515,7 +515,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Мәделі қожа көшесі, 137, Шымкент',
     website: 'caiu.edu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 12500,
   ),
   University(
@@ -550,7 +550,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Төле би көшесі 32, Шымкент',
     website: 'udn.edu.kz',
-    rating: 4.1,
+    averageRating: 4.1,
     studentCount: 8500,
   ),
   University(
@@ -585,7 +585,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Қ. Тоқаев көшесі, 27А, Шымкент',
     website: 'tashenev.edu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 6000,
   ),
 
@@ -627,7 +627,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Университет көшесі, 28, Қарағанды',
     website: 'ksu.kz',
-    rating: 4.3,
+    averageRating: 4.3,
     studentCount: 18000,
   ),
   University(
@@ -663,7 +663,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Бұлқышев көшесі, 56, Қарағанды',
     website: 'kstu.kz',
-    rating: 4.1,
+    averageRating: 4.1,
     studentCount: 10000,
   ),
   University(
@@ -697,7 +697,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 тамыз, 2026',
     address: 'Гоголь көшесі, 40, Қарағанды',
     website: 'qmu.kz',
-    rating: 4.4,
+    averageRating: 4.4,
     studentCount: 8000,
   ),
 
@@ -736,7 +736,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Ломов көшесі, 64, Павлодар',
     website: 'psu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 12000,
   ),
   University(
@@ -766,7 +766,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'М. Горький көшесі, 102/4, Павлодар',
     website: 'ineu.edu.kz',
-    rating: 3.9,
+    averageRating: 3.9,
     studentCount: 5000,
   ),
 
@@ -806,7 +806,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Братьев Жубановых көшесі, 263, Ақтөбе',
     website: 'zhubanov.edu.kz',
-    rating: 4.1,
+    averageRating: 4.1,
     studentCount: 15000,
   ),
   University(
@@ -834,7 +834,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 тамыз, 2026',
     address: 'Маресьев көшесі, 68, Ақтөбе',
     website: 'zkmu.kz',
-    rating: 4.2,
+    averageRating: 4.2,
     studentCount: 7000,
   ),
 
@@ -874,7 +874,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Глинки көшесі, 20А, Семей',
     website: 'semgu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 10000,
   ),
   University(
@@ -907,7 +907,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '20 тамыз, 2026',
     address: 'Абай Құнанбаев көшесі, 103, Семей',
     website: 'semeymeduni.kz',
-    rating: 4.2,
+    averageRating: 4.2,
     studentCount: 5000,
   ),
 
@@ -946,7 +946,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Серикбаев көшесі, 19, Өскемен',
     website: 'ektu.kz',
-    rating: 4.1,
+    averageRating: 4.1,
     studentCount: 8000,
   ),
 
@@ -985,7 +985,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Толе би көшесі, 40, Тараз',
     website: 'taru.edu.kz',
-    rating: 3.9,
+    averageRating: 3.9,
     studentCount: 8000,
   ),
 
@@ -1024,7 +1024,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Байтұрсынов көшесі, 47, Қостанай',
     website: 'ksu.edu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 9000,
   ),
 
@@ -1058,7 +1058,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Пушкин көшесі, 86, Петропавл',
     website: 'nkzu.kz',
-    rating: 3.9,
+    averageRating: 3.9,
     studentCount: 7000,
   ),
 
@@ -1097,7 +1097,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: '32 шағын аудан, Ақтау',
     website: 'yu.edu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 8000,
   ),
 
@@ -1131,7 +1131,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Студенттер даңғылы, 212, Атырау',
     website: 'asu.edu.kz',
-    rating: 3.8,
+    averageRating: 3.8,
     studentCount: 6000,
   ),
 
@@ -1165,7 +1165,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Айтеке би көшесі, 29А, Қызылорда',
     website: 'korkyt.kz',
-    rating: 3.8,
+    averageRating: 3.8,
     studentCount: 10000,
   ),
 
@@ -1199,7 +1199,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Студенттік даңғылы, 55, Орал',
     website: 'wksu.kz',
-    rating: 3.9,
+    averageRating: 3.9,
     studentCount: 8000,
   ),
 
@@ -1233,7 +1233,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Абай көшесі, 76, Көкшетау',
     website: 'shoqan.kz',
-    rating: 3.9,
+    averageRating: 3.9,
     studentCount: 7000,
   ),
 
@@ -1267,7 +1267,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'І.Жансүгіров көшесі, 187А, Талдықорған',
     website: 'zhetysu.edu.kz',
-    rating: 3.8,
+    averageRating: 3.8,
     studentCount: 6000,
   ),
 
@@ -1308,7 +1308,7 @@ final List<University> sampleUniversities = [
     applicationDeadline: '25 тамыз, 2026',
     address: 'Б.Саттарханов даңғылы, 29, Түркістан',
     website: 'ayu.edu.kz',
-    rating: 4.0,
+    averageRating: 4.0,
     studentCount: 20000,
   ),
 ];

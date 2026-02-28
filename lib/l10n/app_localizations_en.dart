@@ -1460,4 +1460,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileMathScore => 'Math (prof.)';
+
+  @override
+  String get aiThinkingStep1 => 'Analyzing your request';
+
+  @override
+  String get aiThinkingStep2 => 'Searching university database';
+
+  @override
+  String get aiThinkingStep3 => 'Generating personalized response';
+
+  @override
+  String get aiThinkingStep4 => 'Preparing recommendation';
+
+  @override
+  String get aiThinkingZhStep1 => 'Analyzing applicant profile';
+
+  @override
+  String get aiThinkingZhStep2 => 'Selecting matching universities';
+
+  @override
+  String get aiThinkingZhStep3 => 'Calculating grant chances';
+
+  @override
+  String get aiThinkingZhStep4 => 'Creating admission plan';
+
+  @override
+  String get aiThinkingZhStep5 => 'Preparing your Personal Plan';
+
+  @override
+  String get aiNewChat => 'New Chat';
+
+  @override
+  String get aiChatHistory => 'Chat History';
+
+  @override
+  String get aiDeleteChat => 'Delete Chat';
+
+  @override
+  String get aiDeleteChatConfirm => 'Delete this chat?';
+
+  @override
+  String get aiNoChats => 'No chats yet';
+
+  @override
+  String get aiToday => 'Today';
+
+  @override
+  String get aiYesterday => 'Yesterday';
+
+  @override
+  String get aiPrevious7Days => 'Last 7 days';
+
+  @override
+  String get aiOlder => 'Older';
 }

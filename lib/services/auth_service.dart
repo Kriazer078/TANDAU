@@ -408,9 +408,18 @@ class AuthService {
     String? city,
     int? untScore,
     double? ieltsScore,
-    double? gpa, // ⭐ Added GPA
-    int? mathScore, // ⭐ Added Math Score
+    double? gpa,
+    int? mathScore,
     String? photoUrl,
+    // 📋 Расширенный профиль (перенесено из StudentProfile)
+    List<String>? preferredCities,
+    int? budget,
+    String? targetProfession,
+    String? financialSituation,
+    bool? hasDisability,
+    bool? isOrphan,
+    bool? isRural,
+    List<String>? extracurriculars,
   }) async {
     try {
       final user = _auth.currentUser;
@@ -423,10 +432,22 @@ class AuthService {
         city: city ?? currentUser.value!.city,
         untScore: untScore ?? currentUser.value!.untScore,
         ieltsScore: ieltsScore ?? currentUser.value!.ieltsScore,
-        gpa: gpa ?? currentUser.value!.gpa, // ⭐
-        mathScore: mathScore ?? currentUser.value!.mathScore, // ⭐
+        gpa: gpa ?? currentUser.value!.gpa,
+        mathScore: mathScore ?? currentUser.value!.mathScore,
         photoUrl: photoUrl ?? currentUser.value!.photoUrl,
         updatedAt: DateTime.now(),
+        // 📋 Расширенный профиль
+        preferredCities: preferredCities ?? currentUser.value!.preferredCities,
+        budget: budget ?? currentUser.value!.budget,
+        targetProfession:
+            targetProfession ?? currentUser.value!.targetProfession,
+        financialSituation:
+            financialSituation ?? currentUser.value!.financialSituation,
+        hasDisability: hasDisability ?? currentUser.value!.hasDisability,
+        isOrphan: isOrphan ?? currentUser.value!.isOrphan,
+        isRural: isRural ?? currentUser.value!.isRural,
+        extracurriculars:
+            extracurriculars ?? currentUser.value!.extracurriculars,
       );
 
       // Moderation check is now handled exclusively in the UI (edit_profile_screen.dart)

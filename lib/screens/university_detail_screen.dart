@@ -334,19 +334,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
 
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Build student profile
-    final StudentProfile profile = StudentProfile(
-      userId: user.uid,
-      name: user.name,
-      entScore: user.untScore,
-      ieltsScore: user.ieltsScore,
-      gpa: user.gpa,
-      mathScore: user.mathScore,
-      profileStrength: 0.6,
-      achievements: user.achievements,
-      preferredCities: [user.city ?? 'Almaty'],
-      preferredMajors: user.preferredMajors,
-    );
+    // Build student profile from UserModel (единый источник данных)
+    final StudentProfile profile = StudentProfile.fromUserModel(user);
 
     // Instant SVD calculation (no network!)
     final GrantChanceResult svdResult = AIConsultantService()
