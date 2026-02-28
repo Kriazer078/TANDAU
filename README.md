@@ -7,7 +7,7 @@
 *Помогаем абитуриентам найти свой идеальный вуз и получить образовательный грант*
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.10-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
 [![Gemini AI](https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
 [![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)]()
@@ -26,21 +26,17 @@
 
 ## ✨ Возможности
 
-<table>
-<tr>
-<td width="50%">
-
 ### 📊 Алгоритм 4-х вузов (СВД)
 Расчёт шансов на грант по каждому вузу на основе актуальных открытых данных МОН РК и пороговых баллов прошлых лет. Максимальная прозрачность алгоритма.
 
-### 🤖 AI-Консультант (Gemini)
-Персональные стратегии поступления с помощью нейросети Google Gemini. Поддержка механизма обратной связи (Лайки/Дизлайки) и встроенной антимат модерации на 3 языках.
+### 🤖 AI-Консультант с Историей (Gemini)
+Персональные стратегии поступления с помощью нейросети Google Gemini. Поддержка механизма обратной связи (Лайки/Дизлайки), встроенной антимат модерации на 3 языках и **сохранения истории чатов** (как в ChatGPT) для быстрого доступа к прошлым консультациям без лагов.
 
 ### 🏫 Каталог 50+ вузов
 Подробная база данных об университетах Казахстана (стоимость, проходные баллы, контакты, отзывы) с кэшированием данных для оффлайн доступа.
 
-</td>
-<td width="50%">
+### ⚡ Высокая производительность и Плавный UI
+Приложение оптимизировано для работы без "микро-лагов": кэширование списков, точечные `ValueNotifier` вместо полного перестроения экранов в поиске и быстрые анимации.
 
 ### ⚖️ Сравнение и Дедлайны
 Сравнение до 2-х вузов на одном экране. Встроенный календарь актуальных дедлайнов поступления (ЕНТ, Гранты 2026).
@@ -50,10 +46,6 @@
 
 ### 🛡️ Стабильность и Безопасность
 Полноценное тестирование (Unit/Widget Tests), обработка крашей системы и Firebase защита данных. Соответствие требованиям Google Play к ИИ-продуктам.
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -65,11 +57,11 @@
 |:---------:|:----------:|:----------:|
 | 📱 Frontend | **Flutter / Dart** | Кроссплатформенный UI |
 | ⚙️ Backend | **Dart Shelf** | API-сервер на Render |
-| 🗄 База данных | **Firestore** | Хранение данных |
+| 🗄 База данных | **Firestore** | Хранение данных, История чатов |
 | 🔐 Авторизация | **Firebase Auth** | Google, Apple, Email |
 | 🧠 AI | **Google Gemini** | Интеллектуальный консультант |
 | 📬 Уведомления | **FCM** | Push-нотификации |
-| 📸 Хранилище | **ImgBB** | Загрузка фотографий |
+| 🌍 Хостинг | **Firebase Hosting** | Лендинг и Политика конфиденциальности |
 
 </div>
 
@@ -79,7 +71,7 @@
 
 ### Требования
 - Flutter 3.x+
-- Dart SDK 3.10+
+- Dart SDK >=3.0.0 <4.0.0
 - Firebase проект
 - Android Studio / VS Code
 
@@ -134,7 +126,7 @@ flutter build appbundle --release --dart-define=IMGBB_API_KEY=<your_key>
 
 | | Ссылка |
 |:-:|:------:|
-| 📄 | [Политика конфиденциальности](https://tandau-backend.onrender.com/privacy) |
+| 📄 | [Политика конфиденциальности](https://tandau-app.web.app/privacy_policy.html) |
 | 🗑 | [Удаление аккаунта](https://tandau-backend.onrender.com/delete-account) |
 
 </div>
