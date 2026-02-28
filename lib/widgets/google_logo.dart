@@ -7,7 +7,7 @@ class GoogleLogo extends StatelessWidget {
   const GoogleLogo({super.key, this.size = 24});
 
   static const String _googleLogoPng =
-      'https://developers.google.com/identity/images/g-logo.png';
+      'https://img.icons8.com/color/48/000000/google-logo.png';
 
   @override
   Widget build(BuildContext context) {
