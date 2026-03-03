@@ -30,9 +30,8 @@ class LikeService {
       // Генерируем уникальный ID для лайка
       final likeId = Like.generateId(userId, universityId);
       final likeRef = _firestore.collection(_likesCollection).doc(likeId);
-      final universityRef = _firestore
-          .collection(_universitiesCollection)
-          .doc(universityId);
+      final universityRef =
+          _firestore.collection(_universitiesCollection).doc(universityId);
 
       // Проверяем существует ли лайк
       final likeDoc = await likeRef.get();
@@ -82,10 +81,8 @@ class LikeService {
       if (userId == null) return false;
 
       final likeId = Like.generateId(userId, universityId);
-      final doc = await _firestore
-          .collection(_likesCollection)
-          .doc(likeId)
-          .get();
+      final doc =
+          await _firestore.collection(_likesCollection).doc(likeId).get();
 
       return doc.exists;
     } catch (e) {
@@ -153,9 +150,8 @@ class LikeService {
     try {
       debugPrint('🔄 Initializing likes counters...');
 
-      final universitiesSnapshot = await _firestore
-          .collection(_universitiesCollection)
-          .get();
+      final universitiesSnapshot =
+          await _firestore.collection(_universitiesCollection).get();
 
       WriteBatch batch = _firestore.batch();
       int updated = 0;

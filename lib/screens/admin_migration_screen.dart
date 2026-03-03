@@ -258,8 +258,8 @@ class _AdminMigrationScreenState extends State<AdminMigrationScreen> {
                       _isMigrating
                           ? Icons.sync
                           : _hasError
-                          ? Icons.error
-                          : Icons.check_circle,
+                              ? Icons.error
+                              : Icons.check_circle,
                       size: 48,
                       color: _hasError ? Colors.red : Colors.blue,
                     ),

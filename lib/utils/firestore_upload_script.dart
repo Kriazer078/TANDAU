@@ -19,9 +19,8 @@ class FirestoreUploadScript {
       final WriteBatch batch = _firestore.batch();
 
       for (final university in sampleUniversities) {
-        final DocumentReference docRef = _firestore
-            .collection('universities')
-            .doc(university.id);
+        final DocumentReference docRef =
+            _firestore.collection('universities').doc(university.id);
 
         batch.set(docRef, {
           'id': university.id,

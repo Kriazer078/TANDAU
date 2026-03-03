@@ -96,8 +96,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       body: _isLoading
           ? _buildShimmerLoading(isDark)
           : _universities.isEmpty
-          ? _buildEmptyState(l10n, isDark)
-          : _buildComparisonContent(l10n, isDark),
+              ? _buildEmptyState(l10n, isDark)
+              : _buildComparisonContent(l10n, isDark),
     );
   }
 
@@ -105,12 +105,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   // SHIMMER SKELETON
   // ═══════════════════════════════════════════
   Widget _buildShimmerLoading(bool isDark) {
-    final baseColor = isDark
-        ? const Color(0xFF1E293B)
-        : const Color(0xFFE2E8F0);
-    final highlightColor = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFF8FAFC);
+    final baseColor =
+        isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
+    final highlightColor =
+        isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC);
 
     return Shimmer.fromColors(
       baseColor: baseColor,
@@ -378,9 +376,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       _ComparisonRow(
         icon: Icons.people_rounded,
         label: l10n?.comparisonParamStudents ?? 'Students',
-        values: _universities
-            .map((u) => _formatNumber(u.studentCount))
-            .toList(),
+        values:
+            _universities.map((u) => _formatNumber(u.studentCount)).toList(),
       ),
       _ComparisonRow(
         icon: Icons.menu_book_rounded,
@@ -455,8 +452,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       decoration: BoxDecoration(
         color: isEven
             ? (isDark
-                  ? Colors.white.withValues(alpha: 0.02)
-                  : Colors.grey.withValues(alpha: 0.03))
+                ? Colors.white.withValues(alpha: 0.02)
+                : Colors.grey.withValues(alpha: 0.03))
             : Colors.transparent,
         border: Border(
           bottom: BorderSide(
@@ -512,9 +509,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: isDark
-                                ? Colors.white
-                                : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                             height: row.isMultiLine ? 1.4 : 1.2,
                           ),
                         ),

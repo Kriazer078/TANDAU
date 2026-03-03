@@ -75,16 +75,20 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Pre-load Google Fonts before building any widget
-  await AppTheme.preloadFonts();
+  // ⚡ PARALLEL: Fonts, Theme, Locale are independent — load together
+  await Future.wait([
+    AppTheme.preloadFonts(),
+    ThemeManager().init(),
+    LocaleManager().init(),
+  ]);
 
-  await ThemeManager().init();
-  await LocaleManager().init();
+  // Auth must finish before UI (needed by splash navigation)
   await AuthService().init();
-  await NotificationService().init();
-  // RevenueCat: wrapped in try-catch to prevent crash from invalid/test API key
+
+  // ⚡ FIRE-AND-FORGET: These don't block UI rendering
+  NotificationService().init();
   try {
-    await RevenueCatService().init().timeout(
+    RevenueCatService().init().timeout(
       const Duration(seconds: 5),
       onTimeout: () {
         debugPrint('⚠️ RevenueCat init timed out, skipping');

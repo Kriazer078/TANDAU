@@ -147,11 +147,11 @@ class NotificationService {
   Future<void> _showLocalNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          'high_importance_channel',
-          'High Importance Notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-        );
+      'high_importance_channel',
+      'High Importance Notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
 
     const NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
@@ -179,10 +179,10 @@ class NotificationService {
         .orderBy('time', descending: true)
         .snapshots()
         .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            return AppNotification.fromMap(doc.data(), doc.id);
-          }).toList();
-        });
+      return snapshot.docs.map((doc) {
+        return AppNotification.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
   }
 
   /// Mark notification as read

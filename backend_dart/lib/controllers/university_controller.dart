@@ -29,6 +29,7 @@ class UniversityController {
       final data = jsonDecode(body);
       final question = data['question'] as String?;
       final uid = data['uid'] as String?; // Added to identify user for limits
+      final userContext = data['userContext'] as String?;
 
       // Parse history if available
       final rawHistory = data['history'] as List<dynamic>?;
@@ -105,10 +106,11 @@ class UniversityController {
       }
       // --- 💎 AI LIMITS LOGIC END ---
 
-      final answer = await _aiService.generateChat(
+      final stream = await _aiService.generateChatStream(
         question,
         history: history,
         ragContext: _knowledgeService.searchAndFormat(question),
+        userContext: userContext,
       );
 
       // Deduct token if successful and not premium
@@ -117,15 +119,28 @@ class UniversityController {
         if (userDoc != null) {
           int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
           if (currentTokens > 0) {
-            await _firebaseService.updateUserFields(
-                uid, {'aiTokensRemaining': currentTokens - 1});
+            await _firebaseService.decrementUserTokens(uid, 1);
           }
         }
       }
 
+      // Write SSE chunks
+      final sseStream = stream.map((text) {
+        final safeText =
+            text.replaceAll('\n', '\\n'); // Escape newlines for SSE
+        return utf8.encode('data: {"answer": "$safeText"}\n\n');
+      });
+
       return Response.ok(
-        jsonEncode({'answer': answer}),
-        headers: {'Content-Type': 'application/json'},
+        sseStream,
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+        context: {
+          "shelf.io.buffer_output": false
+        }, // Disable buffering for true streaming
       );
     } catch (e) {
       stderr.writeln('AI Chat Error: $e');
@@ -411,7 +426,7 @@ class UniversityController {
       final ragContext = _knowledgeService.searchAndFormat(
           'грант квота специальность ЕНТ план поступление $majors');
 
-      final answer = await _aiService.generateZhekeZhospar(
+      final stream = await _aiService.generateZhekeZhosparStream(
         userProfile: userProfile,
         ragContext: ragContext,
       );
@@ -428,9 +443,19 @@ class UniversityController {
         }
       }
 
+      final sseStream = stream.map((text) {
+        final safeText = text.replaceAll('\n', '\\n');
+        return utf8.encode('data: {"answer": "$safeText"}\n\n');
+      });
+
       return Response.ok(
-        jsonEncode({'answer': answer}),
-        headers: {'Content-Type': 'application/json'},
+        sseStream,
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+        context: {"shelf.io.buffer_output": false},
       );
     } catch (e) {
       stderr.writeln('Zheke Zhospar Error: $e');

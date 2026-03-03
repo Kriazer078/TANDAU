@@ -245,12 +245,12 @@ class _AddReviewDialogState extends State<AddReviewDialog>
   static const List<String> _ratingEmojis = ['😞', '😕', '😐', '😊', '🤩'];
 
   List<String> _ratingTexts(AppLocalizations? l10n) => [
-    l10n?.reviewRatingBad ?? 'Ужасно',
-    l10n?.reviewRatingPoor ?? 'Плохо',
-    l10n?.reviewRatingOk ?? 'Нормально',
-    l10n?.reviewRatingGood ?? 'Хорошо',
-    l10n?.reviewRatingExcellent ?? 'Отлично!',
-  ];
+        l10n?.reviewRatingBad ?? 'Ужасно',
+        l10n?.reviewRatingPoor ?? 'Плохо',
+        l10n?.reviewRatingOk ?? 'Нормально',
+        l10n?.reviewRatingGood ?? 'Хорошо',
+        l10n?.reviewRatingExcellent ?? 'Отлично!',
+      ];
 
   @override
   void initState() {
@@ -281,9 +281,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
 
       if (images.isNotEmpty) {
         // Ограничиваем количество до 3 штук
-        final toAdd = images
-            .take(3 - _selectedImages.length)
-            .map((e) => File(e.path));
+        final toAdd =
+            images.take(3 - _selectedImages.length).map((e) => File(e.path));
         setState(() {
           _selectedImages.addAll(toAdd);
           if (_selectedImages.length > 3) {
@@ -320,8 +319,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
         );
 
         final response = await request.send().timeout(
-          const Duration(seconds: 30),
-        );
+              const Duration(seconds: 30),
+            );
         if (response.statusCode == 200) {
           final resBody = await response.stream.bytesToString();
           final data = jsonDecode(resBody);
@@ -556,9 +555,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: isDark
-                              ? Colors.white70
-                              : AppColors.textSecondary,
+                          color:
+                              isDark ? Colors.white70 : AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -591,8 +589,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                                   color: selected
                                       ? AppColors.gold
                                       : (isDark
-                                            ? Colors.white24
-                                            : Colors.grey[300]),
+                                          ? Colors.white24
+                                          : Colors.grey[300]),
                                   size: 44,
                                 ),
                               ),
@@ -673,8 +671,7 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                       height: 1.5,
                     ),
                     decoration: InputDecoration(
-                      hintText:
-                          l10n?.reviewCommentHint ??
+                      hintText: l10n?.reviewCommentHint ??
                           'Поделитесь своим мнением: преподаватели, инфраструктура, атмосфера...',
                       hintMaxLines: 2,
                       hintStyle: TextStyle(
@@ -804,9 +801,8 @@ class _AddReviewDialogState extends State<AddReviewDialog>
                     // Cancel
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () => Navigator.pop(context),
+                        onPressed:
+                            _isLoading ? null : () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           side: BorderSide(

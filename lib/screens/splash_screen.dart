@@ -8,7 +8,7 @@ import 'banned_screen.dart';
 import '../services/auth_service.dart';
 import 'register_screen.dart';
 import 'onboarding_screen.dart';
-import 'package:permission_handler/permission_handler.dart';
+// permission_handler — deferred to first use (camera/gallery)
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,14 +38,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    // Short delay to prevent flashing if auth is resolved instantly
-    await Future.delayed(const Duration(milliseconds: 500));
+    // ⚡ Minimal delay — just prevent flashing if auth resolves instantly
+    await Future.delayed(const Duration(milliseconds: 100));
 
     if (mounted) {
       // Check for updates BEFORE navigating anywhere else
       // await UpdateService().checkForUpdate(context);
-
-      await _requestPermissions();
       if (!mounted) return;
 
       final prefs = await SharedPreferences.getInstance();
@@ -112,18 +110,5 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _requestPermissions() async {
-    try {
-      // Request multiple permissions at once
-      await [
-        Permission.camera,
-        Permission.photos,
-        Permission.storage,
-      ].request();
-    } catch (e) {
-      debugPrint('Permission request error: $e');
-    }
   }
 }

@@ -150,9 +150,8 @@ class _TermsScreenState extends State<TermsScreen> {
                             Text(
                               LegalConstants.termsContent,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: isDark
-                                    ? Colors.white70
-                                    : Colors.grey[800],
+                                color:
+                                    isDark ? Colors.white70 : Colors.grey[800],
                                 height: 1.5,
                               ),
                             ),
@@ -243,12 +242,10 @@ class _TermsScreenState extends State<TermsScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: isDark
-                            ? Colors.white12
-                            : Colors.grey[300],
-                        disabledForegroundColor: isDark
-                            ? Colors.white38
-                            : Colors.grey[500],
+                        disabledBackgroundColor:
+                            isDark ? Colors.white12 : Colors.grey[300],
+                        disabledForegroundColor:
+                            isDark ? Colors.white38 : Colors.grey[500],
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),

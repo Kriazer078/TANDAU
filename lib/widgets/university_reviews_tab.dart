@@ -246,9 +246,8 @@ class UniversityReviewsTab extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.white54
-                              : AppColors.textSecondary,
+                          color:
+                              isDark ? Colors.white54 : AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -346,9 +345,8 @@ class UniversityReviewsTab extends StatelessWidget {
                       dateStr,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark
-                            ? Colors.white38
-                            : AppColors.textSecondary,
+                        color:
+                            isDark ? Colors.white38 : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -477,8 +475,8 @@ class UniversityReviewsTab extends StatelessWidget {
                     color: isHelpfulByMe
                         ? AppColors.primary.withValues(alpha: 0.1)
                         : (isDark
-                              ? Colors.white10
-                              : Colors.grey.withValues(alpha: 0.1)),
+                            ? Colors.white10
+                            : Colors.grey.withValues(alpha: 0.1)),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(

@@ -79,13 +79,11 @@ class ProfileAvatarSection extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isDark
-                              ? const Color(0xFF0F172A)
-                              : Colors.white,
+                          color:
+                              isDark ? const Color(0xFF0F172A) : Colors.white,
                           border: Border.all(
-                            color: isDark
-                                ? const Color(0xFF0F172A)
-                                : Colors.white,
+                            color:
+                                isDark ? const Color(0xFF0F172A) : Colors.white,
                             width: 3,
                           ),
                           image: hasPhoto && !isLoading
@@ -103,21 +101,21 @@ class ProfileAvatarSection extends StatelessWidget {
                                 ),
                               )
                             : !hasPhoto
-                            ? Center(
-                                child: Text(
-                                  displayUser.name.isNotEmpty
-                                      ? displayUser.name[0].toUpperCase()
-                                      : '?',
-                                  style: TextStyle(
-                                    fontSize: 42,
-                                    fontWeight: FontWeight.w800,
-                                    color: isDark
-                                        ? Colors.white
-                                        : AppColors.primary,
-                                  ),
-                                ),
-                              )
-                            : null,
+                                ? Center(
+                                    child: Text(
+                                      displayUser.name.isNotEmpty
+                                          ? displayUser.name[0].toUpperCase()
+                                          : '?',
+                                      style: TextStyle(
+                                        fontSize: 42,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark
+                                            ? Colors.white
+                                            : AppColors.primary,
+                                      ),
+                                    ),
+                                  )
+                                : null,
                       ),
                     ),
                     // Camera badge
@@ -132,9 +130,8 @@ class ProfileAvatarSection extends StatelessWidget {
                           ),
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isDark
-                                ? const Color(0xFF0F172A)
-                                : Colors.white,
+                            color:
+                                isDark ? const Color(0xFF0F172A) : Colors.white,
                             width: 3,
                           ),
                           boxShadow: [

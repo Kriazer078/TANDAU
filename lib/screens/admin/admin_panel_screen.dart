@@ -6,6 +6,7 @@ import 'review_moderation_screen.dart';
 import 'user_management_screen.dart';
 import 'audit_log_screen.dart';
 import 'dashboard_screen.dart';
+import '../../services/firestore_service.dart';
 
 class AdminPanelScreen extends StatelessWidget {
   const AdminPanelScreen({super.key});
@@ -111,6 +112,31 @@ class AdminPanelScreen extends StatelessWidget {
                   builder: (context) => const DashboardScreen(),
                 ),
               );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildAdminCard(
+            context,
+            title: 'Синхронизация',
+            subtitle: 'Обновить кэш городов и специальностей',
+            icon: Icons.sync,
+            color: Colors.pink,
+            onTap: () async {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Синхронизация начата...')),
+              );
+              final success =
+                  await FirestoreService().syncAggregationMetadata();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(success
+                        ? 'Синхронизация успешно завершена!'
+                        : 'Ошибка при синхронизации'),
+                    backgroundColor: success ? Colors.green : Colors.red,
+                  ),
+                );
+              }
             },
           ),
         ],

@@ -33,17 +33,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final statsAsync = ref.watch(dashboardStatsProvider);
     final dateRange = ref.watch(dashboardDateRangeProvider);
 
-    final textColor = _isDark
-        ? AppColors.textPrimaryDark
-        : AppColors.textPrimary;
+    final textColor =
+        _isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistics Dashboard'),
         centerTitle: true,
-        backgroundColor: _isDark
-            ? AppColors.backgroundDark
-            : AppColors.background,
+        backgroundColor:
+            _isDark ? AppColors.backgroundDark : AppColors.background,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -53,9 +51,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
         ],
       ),
-      backgroundColor: _isDark
-          ? AppColors.backgroundDark
-          : AppColors.background,
+      backgroundColor:
+          _isDark ? AppColors.backgroundDark : AppColors.background,
       body: statsAsync.when(
         data: (stats) => _buildContent(stats, dateRange, textColor),
         loading: () => _buildShimmerLoading(),
@@ -428,9 +425,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           horizontalInterval: maxY > 5 ? maxY / 5 : 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: _isDark
-                  ? Colors.white10
-                  : Colors.grey.withValues(alpha: 0.2),
+              color:
+                  _isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.2),
               strokeWidth: 1,
             );
           },
@@ -530,9 +526,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           horizontalInterval: maxY > 5 ? maxY / 5 : 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: _isDark
-                  ? Colors.white10
-                  : Colors.grey.withValues(alpha: 0.2),
+              color:
+                  _isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.2),
               strokeWidth: 1,
             );
           },

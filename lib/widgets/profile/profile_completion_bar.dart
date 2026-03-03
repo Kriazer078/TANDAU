@@ -26,14 +26,12 @@ class ProfileCompletionBar extends StatelessWidget {
 
     if (percent < 40) {
       gradientColors = [const Color(0xFFEF4444), const Color(0xFFF97316)];
-      label =
-          l10n?.profileCompletionLow ??
+      label = l10n?.profileCompletionLow ??
           'Заполните профиль для лучших рекомендаций';
       icon = Icons.warning_amber_rounded;
     } else if (percent < 80) {
       gradientColors = [const Color(0xFFF59E0B), const Color(0xFFFBBF24)];
-      label =
-          l10n?.profileCompletionMedium ??
+      label = l10n?.profileCompletionMedium ??
           'Почти готово! Добавьте оставшиеся данные';
       icon = Icons.auto_graph_rounded;
     } else {

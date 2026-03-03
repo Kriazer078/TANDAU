@@ -89,9 +89,8 @@ class ReviewService {
       );
 
       // Добавляем в Firestore
-      final docRef = await _firestore
-          .collection(_reviewsCollection)
-          .add(review.toMap());
+      final docRef =
+          await _firestore.collection(_reviewsCollection).add(review.toMap());
 
       debugPrint('✅ Review added: ${docRef.id}');
 
@@ -138,10 +137,8 @@ class ReviewService {
       debugPrint('✏️ Updating review: $reviewId');
 
       // Получаем текущий отзыв
-      final reviewDoc = await _firestore
-          .collection(_reviewsCollection)
-          .doc(reviewId)
-          .get();
+      final reviewDoc =
+          await _firestore.collection(_reviewsCollection).doc(reviewId).get();
 
       if (!reviewDoc.exists) {
         debugPrint('❌ Review not found');
@@ -193,10 +190,8 @@ class ReviewService {
       debugPrint('🗑️ Deleting review: $reviewId');
 
       // Получаем отзыв перед удалением (нужен universityId)
-      final reviewDoc = await _firestore
-          .collection(_reviewsCollection)
-          .doc(reviewId)
-          .get();
+      final reviewDoc =
+          await _firestore.collection(_reviewsCollection).doc(reviewId).get();
 
       if (!reviewDoc.exists) {
         debugPrint('❌ Review not found');
@@ -243,9 +238,8 @@ class ReviewService {
           .collection(_reviewsCollection)
           .where('universityId', isEqualTo: universityId);
 
-      final aggregateQuery = await query
-          .aggregate(count(), average('rating'))
-          .get();
+      final aggregateQuery =
+          await query.aggregate(count(), average('rating')).get();
 
       final reviewsCount = aggregateQuery.count ?? 0;
 
@@ -266,11 +260,11 @@ class ReviewService {
           .collection(_universitiesCollection)
           .doc(universityId)
           .update({
-            'averageRating': double.parse(
-              averageRating.toStringAsFixed(1),
-            ), // Округляем до 1 знака
-            'reviewsCount': reviewsCount,
-          });
+        'averageRating': double.parse(
+          averageRating.toStringAsFixed(1),
+        ), // Округляем до 1 знака
+        'reviewsCount': reviewsCount,
+      });
 
       debugPrint(
         '✅ Rating updated: $averageRating (from $reviewsCount reviews)',
@@ -337,9 +331,8 @@ class ReviewService {
       await reviewRef.update({
         'adminReply': sanitizedReply,
         'repliedAt': FieldValue.serverTimestamp(),
-        'replierName': user.name.isNotEmpty
-            ? user.name
-            : 'Администрация TANDAU',
+        'replierName':
+            user.name.isNotEmpty ? user.name : 'Администрация TANDAU',
       });
 
       debugPrint('✅ Reply added to $reviewId');
@@ -418,9 +411,8 @@ class ReviewService {
     try {
       debugPrint('🔄 Initializing ratings for all universities...');
 
-      final universitiesSnapshot = await _firestore
-          .collection(_universitiesCollection)
-          .get();
+      final universitiesSnapshot =
+          await _firestore.collection(_universitiesCollection).get();
 
       for (var doc in universitiesSnapshot.docs) {
         await _updateUniversityRating(doc.id);
@@ -441,18 +433,15 @@ class ReviewService {
       );
 
       // Fire and forget - don't await/block UI
-      http
-          .post(uri)
-          .then((response) {
-            if (response.statusCode != 200) {
-              debugPrint('⚠️ Failed to track review: ${response.body}');
-            } else {
-              debugPrint('✅ Review stats tracked');
-            }
-          })
-          .catchError((e) {
-            debugPrint('⚠️ Error tracking review: $e');
-          });
+      http.post(uri).then((response) {
+        if (response.statusCode != 200) {
+          debugPrint('⚠️ Failed to track review: ${response.body}');
+        } else {
+          debugPrint('✅ Review stats tracked');
+        }
+      }).catchError((e) {
+        debugPrint('⚠️ Error tracking review: $e');
+      });
     } catch (e) {
       debugPrint('⚠️ Error initiating tracking: $e');
     }

@@ -46,8 +46,8 @@ final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
 // State for the selected filtered date range
 final dashboardDateRangeProvider =
     NotifierProvider<DashboardDateRangeNotifier, DateTimeRange>(() {
-      return DashboardDateRangeNotifier();
-    });
+  return DashboardDateRangeNotifier();
+});
 
 class DashboardDateRangeNotifier extends Notifier<DateTimeRange> {
   @override
@@ -67,8 +67,8 @@ class DashboardDateRangeNotifier extends Notifier<DateTimeRange> {
 // AsyncNotifier for fetching stats based on the date range
 final dashboardStatsProvider =
     AsyncNotifierProvider<DashboardStatsNotifier, List<DashboardStats>>(() {
-      return DashboardStatsNotifier();
-    });
+  return DashboardStatsNotifier();
+});
 
 class DashboardStatsNotifier extends AsyncNotifier<List<DashboardStats>> {
   @override

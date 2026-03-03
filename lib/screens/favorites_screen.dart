@@ -52,8 +52,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   Text(
                     'Сақталған университеттер жоқ',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                          color: AppColors.textSecondary,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(

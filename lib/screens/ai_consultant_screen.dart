@@ -208,12 +208,11 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         .where((m) => m != _messages.last)
         .map((m) => {'text': m.text, 'isUser': m.isUser})
         .toList();
-    final recentHistory = history.length > 10
-        ? history.sublist(history.length - 10)
-        : history;
+    final recentHistory =
+        history.length > 10 ? history.sublist(history.length - 10) : history;
 
     try {
-      final response = await _aiService.sendMessage(
+      final stream = _aiService.sendStreamMessage(
         messageText,
         history: recentHistory,
         entScore: user?.untScore,
@@ -227,18 +226,48 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       );
 
       if (mounted) {
-        _stopThinkingSteps();
-        final aiMsg = ChatMessage(
-          text: response,
-          isUser: false,
-          time: DateTime.now(),
-        );
-        setState(() {
-          _isTyping = false;
-          _messages.add(aiMsg);
-        });
-        unawaited(_historyService.addMessage(aiMsg));
-        _scrollToBottom();
+        int? aiMsgIndex;
+        String fullResponse = '';
+
+        await for (final chunk in stream) {
+          if (!mounted) break;
+
+          if (aiMsgIndex == null) {
+            // First chunk received: hide thinking steps, show message bubble
+            _stopThinkingSteps();
+            aiMsgIndex = _messages.length;
+            setState(() {
+              _isTyping = false;
+              _messages.add(ChatMessage(
+                text: '',
+                isUser: false,
+                time: DateTime.now(),
+              ));
+            });
+            _scrollToBottom();
+          }
+
+          fullResponse += chunk;
+          setState(() {
+            _messages[aiMsgIndex!] =
+                _messages[aiMsgIndex].copyWith(text: fullResponse);
+          });
+          _scrollToBottom();
+        }
+
+        if (aiMsgIndex == null) {
+          // Stream completed but yielded no chunks at all
+          _stopThinkingSteps();
+          setState(() {
+            _isTyping = false;
+          });
+          if (mounted) {
+            _showErrorSnackBar(
+                l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.');
+          }
+        } else if (mounted && fullResponse.isNotEmpty) {
+          unawaited(_historyService.addMessage(_messages[aiMsgIndex]));
+        }
       }
     } on OutOfTokensException catch (e) {
       if (mounted) {
@@ -280,8 +309,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     await _ensureActiveConversation();
 
     final userMsg = ChatMessage(
-      text:
-          l10n?.aiAgentZhekeZhosparDesc ??
+      text: l10n?.aiAgentZhekeZhosparDesc ??
           '📋 Создай мне Жеке Жоспар (персональный план поступления)',
       isUser: true,
       time: DateTime.now(),
@@ -299,7 +327,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     final user = AuthService().currentUser.value;
 
     try {
-      final response = await _aiService.requestZhekeZhospar(
+      final stream = _aiService.requestZhekeZhosparStream(
         entScore: user?.untScore,
         gpa: user?.gpa,
         ieltsScore: user?.ieltsScore,
@@ -311,18 +339,46 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       );
 
       if (mounted) {
-        _stopThinkingSteps();
-        final aiMsg = ChatMessage(
-          text: response,
-          isUser: false,
-          time: DateTime.now(),
-        );
-        setState(() {
-          _isTyping = false;
-          _messages.add(aiMsg);
-        });
-        unawaited(_historyService.addMessage(aiMsg));
-        _scrollToBottom();
+        int? aiMsgIndex;
+        String fullResponse = '';
+
+        await for (final chunk in stream) {
+          if (!mounted) break;
+
+          if (aiMsgIndex == null) {
+            _stopThinkingSteps();
+            aiMsgIndex = _messages.length;
+            setState(() {
+              _isTyping = false;
+              _messages.add(ChatMessage(
+                text: '',
+                isUser: false,
+                time: DateTime.now(),
+              ));
+            });
+            _scrollToBottom();
+          }
+
+          fullResponse += chunk;
+          setState(() {
+            _messages[aiMsgIndex!] =
+                _messages[aiMsgIndex].copyWith(text: fullResponse);
+          });
+          _scrollToBottom();
+        }
+
+        if (aiMsgIndex == null) {
+          _stopThinkingSteps();
+          setState(() {
+            _isTyping = false;
+          });
+          if (mounted) {
+            _showErrorSnackBar(
+                l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.');
+          }
+        } else if (mounted && fullResponse.isNotEmpty) {
+          unawaited(_historyService.addMessage(_messages[aiMsgIndex]));
+        }
       }
     } on OutOfTokensException catch (e) {
       if (mounted) {
@@ -607,9 +663,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                           Text(
                             l10n?.aiNoChats ?? 'Нет чатов',
                             style: TextStyle(
-                              color: isDark
-                                  ? Colors.white38
-                                  : AppColors.textHint,
+                              color:
+                                  isDark ? Colors.white38 : AppColors.textHint,
                               fontSize: 14,
                             ),
                           ),
@@ -634,9 +689,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? Colors.white38
-                                  : AppColors.textHint,
+                              color:
+                                  isDark ? Colors.white38 : AppColors.textHint,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -671,8 +725,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       child: Material(
         color: isActive
             ? (isDark
-                  ? const Color(0xFF6366F1).withValues(alpha: 0.15)
-                  : const Color(0xFF6366F1).withValues(alpha: 0.08))
+                ? const Color(0xFF6366F1).withValues(alpha: 0.15)
+                : const Color(0xFF6366F1).withValues(alpha: 0.08))
             : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
@@ -856,9 +910,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
               l10n?.aiAgentSubtitle ??
                   'Анализирую данные вузов, чтобы найти лучший вариант для вас.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isDark ? Colors.white60 : AppColors.textSecondary,
-                height: 1.5,
-              ),
+                    color: isDark ? Colors.white60 : AppColors.textSecondary,
+                    height: 1.5,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -877,8 +931,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   );
                   if (result == true && mounted) {
                     _sendMessage(
-                      text:
-                          l10n?.wizardProfileUpdated ??
+                      text: l10n?.wizardProfileUpdated ??
                           'Мой профиль обновлён! Покажи мне подходящие вузы.',
                     );
                   }
@@ -922,7 +975,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   isDark,
                 ),
                 _buildSuggestionChip(
-                  l10n?.successStoriesChip ?? '📖 Истории успеха',
+                  l10n?.successStoriesChip ?? 'Истории успеха',
                   Icons.auto_stories_rounded,
                   isDark,
                 ),
@@ -1055,9 +1108,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
-        crossAxisAlignment: isUser
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(14),
@@ -1109,9 +1161,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                         fontWeight: FontWeight.bold,
                       ),
                       listBullet: TextStyle(
-                        color: isDark
-                            ? Colors.white70
-                            : AppColors.textSecondary,
+                        color:
+                            isDark ? Colors.white70 : AppColors.textSecondary,
                       ),
                       horizontalRuleDecoration: BoxDecoration(
                         border: Border(
@@ -1232,8 +1283,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 fontSize: 15,
               ),
               decoration: InputDecoration(
-                hintText:
-                    AppLocalizations.of(context)?.aiAgentInputHint ??
+                hintText: AppLocalizations.of(context)?.aiAgentInputHint ??
                     'Задайте вопрос...',
                 hintStyle: TextStyle(
                   color: isDark ? Colors.white38 : AppColors.textHint,
@@ -1396,58 +1446,127 @@ class _AIThinkingStream extends StatelessWidget {
   List<String> _getSteps(BuildContext context) {
     if (isZhekeZhospar) {
       return [
-        'Анализирую профиль абитуриента',
-        'Подбираю подходящие вузы',
-        'Рассчитываю шансы на грант',
-        'Составляю план поступления',
-        'Оформляю персональный жоспар',
+        'Анализирую твой профиль',
+        'Сравниваю с базой 70+ вузов',
+        'Подсчитываю шансы на поступление',
+        'Формирую персональный план',
+        'Готово! Пишу ответ...',
       ];
     }
 
     final lower = query.toLowerCase();
+    final steps = <String>[];
 
-    // Простые запросы — 2 шага
     if (_isGreeting(lower)) {
-      return ['Обрабатываю запрос', 'Генерирую ответ'];
+      return ['Обрабатываю приветствие...', 'Пишу ответ...'];
     }
 
-    // Вопросы про конкретный вуз
-    if (_isUniversityQuery(lower)) {
-      return [
-        'Анализирую запрос',
-        'Ищу информацию по вузам',
-        'Сопоставляю с вашим профилем',
-        'Формирую рекомендацию',
-      ];
+    // 1. Анализируем запрос (ищем баллы ЕНТ)
+    final hasScore = RegExp(r'\b\d{2,3}\b').hasMatch(lower);
+    if (hasScore) {
+      final scoreMatch = RegExp(r'\b\d{2,3}\b').firstMatch(lower);
+      final scoreStr = scoreMatch?.group(0) ?? '';
+      final maybeScore = int.tryParse(scoreStr) ?? 0;
+      if (maybeScore <= 140 && maybeScore >= 20) {
+        steps.add('Анализирую шансы с $scoreStr баллами ЕНТ');
+      } else {
+        steps.add('Анализирую ваш запрос');
+      }
+    } else {
+      steps.add('Анализирую ваш запрос');
     }
 
-    // Вопросы про грант / шансы / ЕНТ
-    if (_isGrantQuery(lower)) {
-      return [
-        'Анализирую ваши баллы',
-        'Сравниваю с проходными баллами',
-        'Рассчитываю вероятность',
-        'Формирую оценку шансов',
-      ];
-    }
+    // 2. Ищем специфику (город / профессия / вуз)
+    bool detailsFound = false;
 
-    // Вопросы про специальность / профессию
-    if (_isSpecialtyQuery(lower)) {
-      return [
-        'Анализирую запрос',
-        'Ищу подходящие специальности',
-        'Подбираю вузы',
-        'Формирую рекомендацию',
-      ];
-    }
-
-    // По умолчанию
-    return [
-      'Анализирую запрос',
-      'Ищу релевантную информацию',
-      'Формирую ответ',
-      'Готовлю рекомендацию',
+    final cities = [
+      'алматы',
+      'астана',
+      'шымкент',
+      'караганд',
+      'семей',
+      'павлодар',
+      'актобе',
+      'тараз',
+      'усть-каменогорск'
     ];
+    final foundCity =
+        cities.firstWhere((c) => lower.contains(c), orElse: () => '');
+    if (foundCity.isNotEmpty) {
+      final formattedCity =
+          foundCity.replaceFirst(foundCity[0], foundCity[0].toUpperCase());
+      steps.add('Фильтрую гранты и вузы в г. $formattedCity');
+      detailsFound = true;
+    }
+
+    final professions = [
+      'it',
+      'айти',
+      'програм',
+      'медик',
+      'врач',
+      'медицин',
+      'юрист',
+      'экономист',
+      'бизнес',
+      'учител',
+      'педагог',
+      'инженер'
+    ];
+    final foundProf =
+        professions.firstWhere((p) => lower.contains(p), orElse: () => '');
+    if (foundProf.isNotEmpty) {
+      steps.add(
+          'Ищу лучшие варианты по направлению "${foundProf.toUpperCase()}"');
+      detailsFound = true;
+    }
+
+    final unis = [
+      'сду',
+      'sdu',
+      'кбту',
+      'kbtu',
+      'ену',
+      'enu',
+      'казну',
+      'kaznu',
+      'назарбаев',
+      'nu',
+      'aitu',
+      'аиту',
+      'нархоз',
+      'narxoz',
+      'iitu',
+      'муит'
+    ];
+    final foundUni =
+        unis.firstWhere((u) => lower.contains(u), orElse: () => '');
+    if (foundUni.isNotEmpty) {
+      steps.add('Проверяю проходные баллы в ${foundUni.toUpperCase()}');
+      detailsFound = true;
+    }
+
+    if (_isGrantQuery(lower)) {
+      steps.add('Рассчитываю вероятность получения гранта');
+      detailsFound = true;
+    }
+
+    if (!detailsFound) {
+      if (_isUniversityQuery(lower)) {
+        steps.add('Ищу актуальную информацию по вузам');
+        steps.add('Сопоставляю проходные баллы');
+      } else if (_isSpecialtyQuery(lower)) {
+        steps.add('Ищу подходящие специальности');
+        steps.add('Подбираю релевантные университеты');
+      } else {
+        steps.add('Поиск информации в образовательной базе');
+      }
+    }
+
+    // 3. Заключительный шаг
+    steps.add('Формирую детальный ответ...');
+
+    return steps;
   }
 
   bool _isGreeting(String q) {
@@ -1638,8 +1757,8 @@ class _ThinkingStepRowState extends State<_ThinkingStepRow>
                     color: widget.isCompleted
                         ? (widget.isDark ? Colors.white38 : AppColors.textHint)
                         : (widget.isDark
-                              ? Colors.white70
-                              : AppColors.textSecondary),
+                            ? Colors.white70
+                            : AppColors.textSecondary),
                     fontSize: 13,
                     fontStyle: FontStyle.italic,
                   ),
@@ -1685,9 +1804,8 @@ class _FeedbackButtonsState extends State<_FeedbackButtons> {
           isHelpful ? 'Спасибо за отзыв! 👍' : 'Спасибо, мы учтём это! 👎',
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: widget.isDark
-            ? AppColors.surfaceDark
-            : AppColors.primary,
+        backgroundColor:
+            widget.isDark ? AppColors.surfaceDark : AppColors.primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 2),
       ),

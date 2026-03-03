@@ -12,8 +12,8 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Collection references
-  final CollectionReference universitiesCollection = FirebaseFirestore.instance
-      .collection('universities');
+  final CollectionReference universitiesCollection =
+      FirebaseFirestore.instance.collection('universities');
   CollectionReference get usersCollection => _firestore.collection('users');
 
   // ═══ Кэширование перенесено в UniversityService (единая точка) ═══
@@ -28,8 +28,8 @@ class FirestoreService {
   Future<List<University>> getAllUniversities() async {
     try {
       final snapshot = await universitiesCollection.get().timeout(
-        const Duration(seconds: 15),
-      );
+            const Duration(seconds: 15),
+          );
       return snapshot.docs
           .map((doc) => University.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
@@ -111,9 +111,8 @@ class FirestoreService {
   /// Filter universities by city
   Future<List<University>> getUniversitiesByCity(String city) async {
     try {
-      final snapshot = await universitiesCollection
-          .where('city', isEqualTo: city)
-          .get();
+      final snapshot =
+          await universitiesCollection.where('city', isEqualTo: city).get();
       return snapshot.docs
           .map((doc) => University.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
@@ -172,48 +171,68 @@ class FirestoreService {
     }
   }
 
-  /// Get unique cities from Firestore
+  /// Sync unique cities and majors to stats/metadata (Admin only or Cloud Function replacement)
+  Future<bool> syncAggregationMetadata() async {
+    try {
+      final snapshot = await universitiesCollection.get();
+      final cities = <String>{};
+      final majors = <String>{};
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        if (data['city'] != null) cities.add(data['city'] as String);
+        if (data['majors'] != null) {
+          majors.addAll(List<String>.from(data['majors']));
+        }
+      }
+
+      final citiesList = cities.toList()..sort();
+      final majorsList = majors.toList()..sort();
+
+      await _firestore.collection('stats').doc('metadata').set({
+        'uniqueCities': citiesList,
+        'uniqueMajors': majorsList,
+        'lastUpdated': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      debugPrint('Metadata synced successfully');
+      return true;
+    } catch (e) {
+      debugPrint('Error syncing metadata: $e');
+      return false;
+    }
+  }
+
+  /// Get unique cities from Firestore (Optimized: reads from stats/metadata)
   Future<List<String>> getUniqueCities() async {
     try {
-      final snapshot = await universitiesCollection.get().timeout(
-        const Duration(seconds: 15),
-      );
-      final cities = snapshot.docs
-          .map((doc) => (doc.data() as Map<String, dynamic>)['city'] as String)
-          .toSet()
-          .toList();
-      cities.sort();
-      return cities;
+      final doc = await _firestore.collection('stats').doc('metadata').get();
+      if (doc.exists && doc.data()!.containsKey('uniqueCities')) {
+        final List<dynamic> cities = doc.data()!['uniqueCities'];
+        return cities.map((e) => e.toString()).toList();
+      }
+      return [];
     } catch (e) {
       debugPrint('Error getting unique cities: $e');
       return [];
     }
   }
 
-  /// Get unique majors from Firestore
+  /// Get unique majors from Firestore (Optimized: reads from stats/metadata)
   Future<List<String>> getUniqueMajors() async {
     try {
-      final snapshot = await universitiesCollection.get().timeout(
-        const Duration(seconds: 15),
-      );
-      final majors = <String>{};
-
-      for (var doc in snapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        final universityMajors = List<String>.from(data['majors'] ?? []);
-        majors.addAll(universityMajors);
+      final doc = await _firestore.collection('stats').doc('metadata').get();
+      if (doc.exists && doc.data()!.containsKey('uniqueMajors')) {
+        final List<dynamic> majors = doc.data()!['uniqueMajors'];
+        return majors.map((e) => e.toString()).toList();
       }
-
-      final majorsList = majors.toList();
-      majorsList.sort();
-      return majorsList;
+      return [];
     } catch (e) {
       debugPrint('Error getting unique majors: $e');
       return [];
     }
   }
 
-  // --- SPECIALTIES CURRENTLY ADDED:
   /// Get specialties for a university
   Stream<List<Specialty>> getSpecialties(String universityId) {
     return _firestore
@@ -222,9 +241,9 @@ class FirestoreService {
         .collection('specialties')
         .snapshots()
         .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            return Specialty.fromMap(doc.data(), doc.id);
-          }).toList();
-        });
+      return snapshot.docs.map((doc) {
+        return Specialty.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
   }
 }

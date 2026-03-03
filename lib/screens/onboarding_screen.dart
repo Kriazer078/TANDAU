@@ -176,7 +176,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: _pages[_currentPage].gradientColors.first
+                              color: _pages[_currentPage]
+                                  .gradientColors
+                                  .first
                                   .withValues(alpha: 0.35),
                               blurRadius: 16,
                               offset: const Offset(0, 6),

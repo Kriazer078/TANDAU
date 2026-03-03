@@ -109,9 +109,8 @@ class UniversityContactTab extends StatelessWidget {
                   label: l10n?.detailAddressLabel ?? 'Адрес',
                   data: university.address,
                   isClickable: hasAddress,
-                  onTap: hasAddress
-                      ? () => _launchMaps(university.address)
-                      : null,
+                  onTap:
+                      hasAddress ? () => _launchMaps(university.address) : null,
                 ),
                 const _ContactDivider(),
                 _buildContactRow(
@@ -299,9 +298,8 @@ class UniversityContactTab extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.white70
-                              : AppColors.textPrimary,
+                          color:
+                              isDark ? Colors.white70 : AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -359,9 +357,8 @@ class UniversityContactTab extends StatelessWidget {
 
   /// Generates decorative grid lines for the map placeholder.
   List<Widget> _buildGridLines() {
-    final Color lineColor = isDark
-        ? Colors.white.withAlpha(8)
-        : AppColors.primary.withAlpha(15);
+    final Color lineColor =
+        isDark ? Colors.white.withAlpha(8) : AppColors.primary.withAlpha(15);
 
     return [
       for (double top in [40, 80, 120])

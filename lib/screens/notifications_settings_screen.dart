@@ -114,7 +114,6 @@ class _NotificationsSettingsScreenState
             ],
           ),
           const SizedBox(height: 24),
-
           _buildNotificationSection(
             title: 'Другое',
             children: [

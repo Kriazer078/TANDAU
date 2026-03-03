@@ -457,9 +457,8 @@ class _ReviewModerationScreenState extends State<ReviewModerationScreen> {
   }
 
   Widget _buildStatsBar(List<Review> all, List<Review> filtered, bool isDark) {
-    final double avg = all.isEmpty
-        ? 0
-        : all.fold<int>(0, (s, r) => s + r.rating) / all.length;
+    final double avg =
+        all.isEmpty ? 0 : all.fold<int>(0, (s, r) => s + r.rating) / all.length;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -616,9 +615,8 @@ class _ReviewModerationScreenState extends State<ReviewModerationScreen> {
                         _formatDate(review.createdAt),
                         style: TextStyle(
                           fontSize: 11,
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.textSecondary,
+                          color:
+                              isDark ? Colors.white38 : AppColors.textSecondary,
                         ),
                       ),
                     ],

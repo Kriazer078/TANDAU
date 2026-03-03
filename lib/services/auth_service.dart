@@ -141,11 +141,11 @@ class AuthService {
       final credential = await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              throw TimeoutException('Превышено время ожидания');
-            },
-          );
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException('Превышено время ожидания');
+        },
+      );
 
       if (credential.user != null) {
         // Success - reset attempts
@@ -372,8 +372,8 @@ class AuthService {
       () async {
         try {
           final token = await NotificationService().getToken().timeout(
-            const Duration(seconds: 5),
-          );
+                const Duration(seconds: 5),
+              );
           if (token != null) NotificationService().saveTokenToFirestore(token);
         } catch (e) {
           debugPrint('⚠️ FCM token fetch failed: $e');
@@ -501,8 +501,8 @@ class AuthService {
       request.files.add(await http.MultipartFile.fromPath('image', file.path));
 
       final response = await request.send().timeout(
-        const Duration(seconds: 30),
-      );
+            const Duration(seconds: 30),
+          );
       if (response.statusCode == 200) {
         final resBody = await response.stream.bytesToString();
         final data = jsonDecode(resBody);
@@ -708,17 +708,13 @@ class AuthService {
         'https://tandau-backend.onrender.com/v1/stats/user-created',
       );
       // Fire and forget with 10s timeout to prevent lingering HTTP handles
-      http
-          .post(uri)
-          .timeout(const Duration(seconds: 10))
-          .then((response) {
-            if (response.statusCode != 200) {
-              debugPrint('⚠️ Stats API error: ${response.body}');
-            }
-          })
-          .catchError((e) {
-            debugPrint('⚠️ Error tracking user: $e');
-          });
+      http.post(uri).timeout(const Duration(seconds: 10)).then((response) {
+        if (response.statusCode != 200) {
+          debugPrint('⚠️ Stats API error: ${response.body}');
+        }
+      }).catchError((e) {
+        debugPrint('⚠️ Error tracking user: $e');
+      });
     } catch (e) {
       debugPrint('⚠️ Error initiating user tracking: $e');
     }

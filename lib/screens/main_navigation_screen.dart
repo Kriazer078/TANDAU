@@ -50,9 +50,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ⚡ Build only visited pages for IndexedStack
+    // ⚡ Build only visited pages for IndexedStack, wrap in RepaintBoundary
     final List<Widget> pages = List.generate(4, (i) {
-      if (_tabCache.containsKey(i)) return _getPage(i);
+      if (_tabCache.containsKey(i)) {
+        return RepaintBoundary(child: _getPage(i));
+      }
       return const SizedBox.shrink(); // Placeholder until visited
     });
 

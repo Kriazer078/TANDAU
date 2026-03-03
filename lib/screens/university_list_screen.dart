@@ -172,8 +172,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText:
-                          AppLocalizations.of(context)?.searchHint ??
+                      hintText: AppLocalizations.of(context)?.searchHint ??
                           'Search...',
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
@@ -206,90 +205,95 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
             child: _isLoading
                 ? _buildShimmerLoading()
                 : _universities.isEmpty
-                ? Center(
-                    child: Text(
-                      AppLocalizations.of(context)?.searchNoResults ??
-                          'Universities not found',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : StreamBuilder<ComparisonItem?>(
-                    stream: _comparisonService.getComparisonStream(),
-                    builder: (context, comparisonSnapshot) {
-                      final comparisonIds =
-                          comparisonSnapshot.data?.universityIds ?? [];
+                    ? Center(
+                        child: Text(
+                          AppLocalizations.of(context)?.searchNoResults ??
+                              'Universities not found',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    : StreamBuilder<ComparisonItem?>(
+                        stream: _comparisonService.getComparisonStream(),
+                        builder: (context, comparisonSnapshot) {
+                          final comparisonIds =
+                              comparisonSnapshot.data?.universityIds ?? [];
 
-                      return ValueListenableBuilder<UserModel?>(
-                        valueListenable: _authService.currentUser,
-                        builder: (context, user, _) {
-                          final favoriteIds = user?.favoriteUniversities ?? [];
+                          return ValueListenableBuilder<UserModel?>(
+                            valueListenable: _authService.currentUser,
+                            builder: (context, user, _) {
+                              final favoriteIds =
+                                  user?.favoriteUniversities ?? [];
 
-                          return ListView.builder(
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: _universities.length,
-                            addRepaintBoundaries: true,
-                            addAutomaticKeepAlives: false,
-                            cacheExtent:
-                                300, // ⚡ Pre-render 300px ahead for smooth scroll
-                            itemBuilder: (context, index) {
-                              final uni = _universities[index];
-                              return UniversityCard(
-                                universityId: uni.id,
-                                name: uni.name,
-                                city: uni.city,
-                                logoUrl: uni.logoUrl,
-                                features: [
-                                  uni.tuitionRange,
-                                  if (uni.hasGrants)
-                                    (AppLocalizations.of(
-                                          context,
-                                        )?.universityGrant ??
-                                        'Grant'),
-                                ],
-                                isFavorite: favoriteIds.contains(uni.id),
-                                isInComparison: comparisonIds.contains(uni.id),
-                                likesCount: uni.likesCount,
-                                reviewsCount: uni.reviewsCount,
-                                averageRating: uni.averageRating,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          UniversityDetailScreen(
+                              return ListView.builder(
+                                keyboardDismissBehavior:
+                                    ScrollViewKeyboardDismissBehavior.onDrag,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: _universities.length,
+                                addRepaintBoundaries: true,
+                                addAutomaticKeepAlives: false,
+                                cacheExtent:
+                                    300, // ⚡ Pre-render 300px ahead for smooth scroll
+                                itemBuilder: (context, index) {
+                                  final uni = _universities[index];
+                                  return UniversityCard(
+                                    universityId: uni.id,
+                                    name: uni.name,
+                                    city: uni.city,
+                                    logoUrl: uni.logoUrl,
+                                    features: [
+                                      uni.tuitionRange,
+                                      if (uni.hasGrants)
+                                        (AppLocalizations.of(
+                                              context,
+                                            )?.universityGrant ??
+                                            'Grant'),
+                                    ],
+                                    isFavorite: favoriteIds.contains(uni.id),
+                                    isInComparison:
+                                        comparisonIds.contains(uni.id),
+                                    likesCount: uni.likesCount,
+                                    reviewsCount: uni.reviewsCount,
+                                    averageRating: uni.averageRating,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UniversityDetailScreen(
                                             university: uni,
                                           ),
-                                    ),
+                                        ),
+                                      );
+                                    },
+                                    onFavoriteToggle: () async {
+                                      if (favoriteIds.contains(uni.id)) {
+                                        await _service
+                                            .removeFromFavorites(uni.id);
+                                      } else {
+                                        await _service.addToFavorites(uni.id);
+                                      }
+                                    },
+                                    onCompareToggle: () async {
+                                      // Сначала добавим текущий университет в сравнение
+                                      if (!comparisonIds.contains(uni.id)) {
+                                        await _comparisonService
+                                            .addToComparison(
+                                          uni.id,
+                                        );
+                                      }
+                                      // Открыть модальное окно для выбора
+                                      if (context.mounted) {
+                                        showComparePickerSheet(context);
+                                      }
+                                    },
                                   );
-                                },
-                                onFavoriteToggle: () async {
-                                  if (favoriteIds.contains(uni.id)) {
-                                    await _service.removeFromFavorites(uni.id);
-                                  } else {
-                                    await _service.addToFavorites(uni.id);
-                                  }
-                                },
-                                onCompareToggle: () async {
-                                  // Сначала добавим текущий университет в сравнение
-                                  if (!comparisonIds.contains(uni.id)) {
-                                    await _comparisonService.addToComparison(
-                                      uni.id,
-                                    );
-                                  }
-                                  // Открыть модальное окно для выбора
-                                  if (context.mounted) {
-                                    showComparePickerSheet(context);
-                                  }
                                 },
                               );
                             },
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
           ),
         ],
       ),
@@ -301,12 +305,10 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
   // ═══════════════════════════════════════════
   Widget _buildShimmerLoading() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = isDark
-        ? const Color(0xFF1E293B)
-        : const Color(0xFFE2E8F0);
-    final highlightColor = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFF8FAFC);
+    final baseColor =
+        isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
+    final highlightColor =
+        isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC);
 
     return Shimmer.fromColors(
       baseColor: baseColor,

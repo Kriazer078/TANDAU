@@ -143,7 +143,9 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                       Expanded(
                         child: Text(
                           l10n?.svdAnalyticsTitle ?? 'СВД Аналитика',
-                          style: Theme.of(context).textTheme.headlineSmall
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -188,7 +190,7 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                             builder: (context) {
                               final bool isDarkList =
                                   Theme.of(context).brightness ==
-                                  Brightness.dark;
+                                      Brightness.dark;
                               return Dialog(
                                 backgroundColor: Colors.transparent,
                                 elevation: 0,
@@ -550,7 +552,9 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                         Text(
                           l10n?.detailAiStrategySubtitle ??
                               'AI Стратегия TANDAU',
-                          style: Theme.of(context).textTheme.titleMedium
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -574,9 +578,8 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
                           fontSize: 18,
                         ),
                         listBullet: TextStyle(
-                          color: widget.isDark
-                              ? Colors.white70
-                              : Colors.black54,
+                          color:
+                              widget.isDark ? Colors.white70 : Colors.black54,
                         ),
                       ),
                     ),

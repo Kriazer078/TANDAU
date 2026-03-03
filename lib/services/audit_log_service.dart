@@ -83,11 +83,10 @@ class AuditLogService {
         .add(logData)
         .timeout(const Duration(seconds: 5))
         .then((_) {
-          debugPrint('📋 AuditLog: $action → $targetName');
-        })
-        .catchError((Object e) {
-          debugPrint('⚠️ AuditLog write failed: $e');
-        });
+      debugPrint('📋 AuditLog: $action → $targetName');
+    }).catchError((Object e) {
+      debugPrint('⚠️ AuditLog write failed: $e');
+    });
   }
 
   /// Fetch paginated audit logs for the viewer screen.

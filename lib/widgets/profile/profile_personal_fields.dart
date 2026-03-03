@@ -28,8 +28,7 @@ class ProfilePersonalFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations? l10n = AppLocalizations.of(context);
 
-    final String? ageValue =
-        ageController.text.isNotEmpty &&
+    final String? ageValue = ageController.text.isNotEmpty &&
             AppConstants.ageOptions.contains(ageController.text)
         ? ageController.text
         : null;

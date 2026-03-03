@@ -20,13 +20,12 @@ class AppTheme {
 
   /// Pre-load Google Fonts to avoid jank on first use.
   /// Call this in main() before runApp().
+  /// ⚡ Only preload 2 most-used variants; w500/w600 load lazily.
   static Future<void> preloadFonts() async {
     try {
       await GoogleFonts.pendingFonts([
         GoogleFonts.outfit(),
         GoogleFonts.outfit(fontWeight: FontWeight.bold),
-        GoogleFonts.outfit(fontWeight: FontWeight.w600),
-        GoogleFonts.outfit(fontWeight: FontWeight.w500),
       ]);
     } catch (_) {
       // Font loading failure is non-critical, continue with fallback

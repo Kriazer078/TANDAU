@@ -227,6 +227,36 @@ class FirebaseService {
     }
   }
 
+  /// Atomically decrement AI tokens to prevent race conditions
+  Future<bool> decrementUserTokens(String uid, [int amount = 1]) async {
+    final name =
+        'projects/$_projectId/databases/(default)/documents/users/$uid';
+    final databasePath = 'projects/$_projectId/databases/(default)';
+    try {
+      final request = CommitRequest(
+        writes: [
+          Write(
+            transform: DocumentTransform(
+              document: name,
+              fieldTransforms: [
+                FieldTransform(
+                  fieldPath: 'aiTokensRemaining',
+                  increment: Value(integerValue: (-amount).toString()),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      await _firestoreApi.projects.databases.documents
+          .commit(request, databasePath);
+      return true;
+    } catch (e) {
+      stderr.writeln('Error decrementing tokens for $uid: $e');
+      return false;
+    }
+  }
+
   /// Fetch all documents from 'knowledge_base' collection for RAG
   Future<List<Map<String, dynamic>>> getKnowledgeBase() async {
     final parent = 'projects/$_projectId/databases/(default)/documents';

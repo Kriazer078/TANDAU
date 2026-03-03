@@ -28,12 +28,12 @@ class ComparisonService {
   // real-time comparison updates.
   final StreamController<ComparisonItem?> _controller =
       StreamController<ComparisonItem?>.broadcast(
-        onCancel: () {
-          debugPrint(
-            'ℹ️ ComparisonService: All listeners unsubscribed from stream',
-          );
-        },
+    onCancel: () {
+      debugPrint(
+        'ℹ️ ComparisonService: All listeners unsubscribed from stream',
       );
+    },
+  );
 
   ComparisonItem? _cachedComparison;
 
@@ -134,9 +134,8 @@ class ComparisonService {
       final comparison = await getUserComparison();
       if (comparison == null) return false;
 
-      final updatedIds = comparison.universityIds
-          .where((id) => id != universityId)
-          .toList();
+      final updatedIds =
+          comparison.universityIds.where((id) => id != universityId).toList();
 
       if (updatedIds.isEmpty) {
         // Delete comparison if empty

@@ -420,8 +420,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                               children: [
                                 ProfileSectionHeader(
                                   icon: Icons.person_outline,
-                                  title:
-                                      l10n?.profileSectionPersonal ??
+                                  title: l10n?.profileSectionPersonal ??
                                       'Личные данные',
                                   isDark: isDark,
                                 ),
@@ -487,8 +486,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                               children: [
                                 ProfileSectionHeader(
                                   icon: Icons.school_outlined,
-                                  title:
-                                      l10n?.profileSectionAcademic ??
+                                  title: l10n?.profileSectionAcademic ??
                                       'Академические баллы',
                                   isDark: isDark,
                                 ),

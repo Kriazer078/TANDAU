@@ -203,22 +203,22 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _logs.isEmpty
-                ? _buildEmptyState(isDark)
-                : RefreshIndicator(
-                    onRefresh: () => _loadLogs(),
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _logs.length + (_hasMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _logs.length) {
-                          return _buildLoadMore(isDark);
-                        }
-                        return _buildLogCard(_logs[index], isDark);
-                      },
-                    ),
-                  ),
+                    ? _buildEmptyState(isDark)
+                    : RefreshIndicator(
+                        onRefresh: () => _loadLogs(),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: _logs.length + (_hasMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == _logs.length) {
+                              return _buildLoadMore(isDark);
+                            }
+                            return _buildLogCard(_logs[index], isDark);
+                          },
+                        ),
+                      ),
           ),
         ],
       ),
@@ -238,8 +238,8 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.15)
               : isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.grey.withValues(alpha: 0.08),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.grey.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(10),
           border: isSelected
               ? Border.all(color: AppColors.primary.withValues(alpha: 0.4))
@@ -253,8 +253,8 @@ class _AuditLogScreenState extends State<AuditLogScreen> {
             color: isSelected
                 ? AppColors.primary
                 : isDark
-                ? Colors.white54
-                : AppColors.textSecondary,
+                    ? Colors.white54
+                    : AppColors.textSecondary,
           ),
         ),
       ),

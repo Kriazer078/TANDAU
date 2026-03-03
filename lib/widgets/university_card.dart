@@ -134,8 +134,8 @@ class UniversityCard extends StatelessWidget {
                           child: Row(
                             children: features.map((feature) {
                               final isGrant = feature.toLowerCase().contains(
-                                'грант',
-                              );
+                                    'грант',
+                                  );
                               return Container(
                                 margin: const EdgeInsets.only(right: 8),
                                 padding: const EdgeInsets.symmetric(
@@ -228,9 +228,8 @@ class UniversityCard extends StatelessWidget {
                       },
                       icon: Icon(
                         isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                        color: isFavorite
-                            ? AppColors.accent
-                            : AppColors.textHint,
+                        color:
+                            isFavorite ? AppColors.accent : AppColors.textHint,
                       ),
                     ),
                     if (onCompareToggle != null)

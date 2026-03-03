@@ -87,8 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context,
               icon: Icons.dark_mode,
               title: AppLocalizations.of(context)?.settingsTheme ?? 'Dark Mode',
-              subtitle:
-                  AppLocalizations.of(context)?.settingsThemeSubtitle ??
+              subtitle: AppLocalizations.of(context)?.settingsThemeSubtitle ??
                   'Switch to dark mode',
               trailing: Switch(
                 value: isDarkMode,
@@ -109,8 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return _buildSettingCard(
                   context,
                   icon: Icons.language,
-                  title:
-                      AppLocalizations.of(context)?.settingsLanguage ??
+                  title: AppLocalizations.of(context)?.settingsLanguage ??
                       'Language',
                   subtitle: _languages[currentLocale.languageCode] ?? 'Русский',
                   trailing: Icon(
@@ -130,12 +128,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.notifications,
-              title:
-                  AppLocalizations.of(context)?.settingsNotifications ??
+              title: AppLocalizations.of(context)?.settingsNotifications ??
                   'Notifications',
               subtitle:
                   AppLocalizations.of(context)?.settingsNotificationsSubtitle ??
-                  'Configure notifications',
+                      'Configure notifications',
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
@@ -193,8 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context,
               icon: Icons.info,
               title: AppLocalizations.of(context)?.settingsAbout ?? 'About',
-              subtitle:
-                  AppLocalizations.of(context)?.settingsAboutSubtitle ??
+              subtitle: AppLocalizations.of(context)?.settingsAboutSubtitle ??
                   'Information about TANDAU',
               trailing: Icon(
                 Icons.arrow_forward_ios,
@@ -213,8 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context,
               icon: Icons.help,
               title: AppLocalizations.of(context)?.settingsHelp ?? 'Help',
-              subtitle:
-                  AppLocalizations.of(context)?.settingsHelpSubtitle ??
+              subtitle: AppLocalizations.of(context)?.settingsHelpSubtitle ??
                   'FAQ and support',
               trailing: Icon(
                 Icons.arrow_forward_ios,
@@ -238,8 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context,
               icon: Icons.privacy_tip,
               title: AppLocalizations.of(context)?.settingsPrivacy ?? 'Privacy',
-              subtitle:
-                  AppLocalizations.of(context)?.settingsPrivacySubtitle ??
+              subtitle: AppLocalizations.of(context)?.settingsPrivacySubtitle ??
                   'Privacy policy',
               trailing: Icon(
                 Icons.arrow_forward_ios,
@@ -262,11 +256,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.volunteer_activism_rounded,
-              title:
-                  AppLocalizations.of(context)?.supportTitle ??
+              title: AppLocalizations.of(context)?.supportTitle ??
                   'Поддержать команду TANDAU ❤️',
-              subtitle:
-                  AppLocalizations.of(context)?.supportSubtitle ??
+              subtitle: AppLocalizations.of(context)?.supportSubtitle ??
                   'Прямой перевод на Kaspi',
               trailing: Icon(
                 Icons.arrow_forward_ios,
@@ -293,8 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context,
                         icon: Icons.admin_panel_settings,
                         title: l10n?.adminPanelTitle ?? 'Админ Панель',
-                        subtitle:
-                            l10n?.adminPanelSubtitle ??
+                        subtitle: l10n?.adminPanelSubtitle ??
                             'Управление пушем и данными',
                         trailing: Icon(
                           Icons.arrow_forward_ios,
@@ -509,15 +500,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall?.color,
-                    ),
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
                   ),
                 ],
               ),
@@ -531,8 +522,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showLanguageDialog() {
     // Получаем текущий код языка (из настроек или системы)
-    final currentCode =
-        LocaleManager().locale.value?.languageCode ??
+    final currentCode = LocaleManager().locale.value?.languageCode ??
         Localizations.localeOf(context).languageCode;
 
     showDialog(
@@ -551,9 +541,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 isSelected
                     ? Icons.radio_button_checked
                     : Icons.radio_button_off,
-                color: isSelected
-                    ? Theme.of(context).primaryColor
-                    : Colors.grey,
+                color:
+                    isSelected ? Theme.of(context).primaryColor : Colors.grey,
               ),
               onTap: () {
                 LocaleManager().setLocale(entry.key);
@@ -637,10 +626,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-                ),
+                      color: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                    ),
               ),
               const SizedBox(height: 24),
               Container(
@@ -785,7 +774,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: CircularProgressIndicator(
                             value: loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
+                                    loadingProgress.expectedTotalBytes!
                                 : null,
                           ),
                         );
@@ -809,8 +798,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             user.email,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodyMedium?.color,
-            ),
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
           ),
           const SizedBox(height: 16),
           OutlinedButton(

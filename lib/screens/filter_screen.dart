@@ -137,8 +137,7 @@ class _FilterScreenState extends State<FilterScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             child: ElevatedButton(
-              onPressed:
-                  (_currentStep == 0 && _selectedCities.isEmpty) ||
+              onPressed: (_currentStep == 0 && _selectedCities.isEmpty) ||
                       (_currentStep == 1 && _selectedMajors.isEmpty) ||
                       (_currentStep == 2 && (!_onlyGrants && !_showPaid))
                   ? null
@@ -175,7 +174,6 @@ class _FilterScreenState extends State<FilterScreen> {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
-
         if (_isLoading)
           const Center(child: CircularProgressIndicator())
         else
@@ -219,7 +217,6 @@ class _FilterScreenState extends State<FilterScreen> {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
-
         if (_isLoading)
           const Center(child: CircularProgressIndicator())
         else
@@ -263,7 +260,6 @@ class _FilterScreenState extends State<FilterScreen> {
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
         const SizedBox(height: 24),
-
         FilterChipWidget(
           label: l10n.filterGrant,
           isSelected: _onlyGrants,
@@ -273,8 +269,8 @@ class _FilterScreenState extends State<FilterScreen> {
             color: _onlyGrants
                 ? Colors.white
                 : (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white70
-                      : AppColors.textPrimary),
+                    ? Colors.white70
+                    : AppColors.textPrimary),
           ),
         ),
         const SizedBox(height: 16),
@@ -284,7 +280,6 @@ class _FilterScreenState extends State<FilterScreen> {
           onTap: () => setState(() => _showPaid = !_showPaid),
           icon: Icons.payments_outlined,
         ),
-
         if (_showPaid) ...[
           const SizedBox(height: 32),
           Row(

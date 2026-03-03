@@ -172,7 +172,9 @@ class _ComparePickerSheetState extends State<ComparePickerSheet> {
                   children: [
                     Text(
                       l10n?.comparisonTitle ?? 'University Comparison',
-                      style: Theme.of(context).textTheme.headlineSmall
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(

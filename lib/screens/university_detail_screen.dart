@@ -45,9 +45,9 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
     try {
       final bool isFavorite =
           _authService.currentUser.value?.favoriteUniversities.contains(
-            widget.university.id,
-          ) ??
-          false;
+                widget.university.id,
+              ) ??
+              false;
       if (isFavorite) {
         await _service.removeFromFavorites(widget.university.id);
       } else {
@@ -81,9 +81,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
             expandedHeight: 300,
             pinned: true,
             stretch: true,
-            backgroundColor: isDark
-                ? AppColors.backgroundDark
-                : AppColors.background,
+            backgroundColor:
+                isDark ? AppColors.backgroundDark : AppColors.background,
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -110,9 +109,9 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                     builder: (context, user, child) {
                       final bool isFavorite =
                           user?.favoriteUniversities.contains(
-                            widget.university.id,
-                          ) ??
-                          false;
+                                widget.university.id,
+                              ) ??
+                              false;
                       return IconButton(
                         icon: Icon(
                           isFavorite ? Icons.bookmark : Icons.bookmark_border,
@@ -257,9 +256,8 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                       controller: _tabController,
                       isScrollable: true,
                       labelColor: AppColors.primary,
-                      unselectedLabelColor: isDark
-                          ? Colors.white38
-                          : Colors.black38,
+                      unselectedLabelColor:
+                          isDark ? Colors.white38 : Colors.black38,
                       indicatorColor: AppColors.primary,
                       indicatorSize: TabBarIndicatorSize.label,
                       dividerColor: Colors.transparent,

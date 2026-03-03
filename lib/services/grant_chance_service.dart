@@ -101,9 +101,8 @@ class GrantChanceService {
     double baseChance;
 
     // 🔥 NEW: Use targetScore instead of threshold to be more realistic
-    final int targetScore = universityPassingScore > 0
-        ? universityPassingScore
-        : threshold;
+    final int targetScore =
+        universityPassingScore > 0 ? universityPassingScore : threshold;
 
     if (entScore < threshold) {
       // Ниже строгого МОН порога — шанса нет (по закону нельзя подать)
@@ -261,8 +260,7 @@ class GrantChanceService {
     if (userCity != null && userCity.isNotEmpty) {
       final String lowerCity = userCity.toLowerCase();
       // Проверка на сельскую местность по ключевым словам
-      final bool isRural =
-          lowerCity.contains('ауыл') ||
+      final bool isRural = lowerCity.contains('ауыл') ||
           lowerCity.contains('село') ||
           lowerCity.contains('район') ||
           lowerCity.contains('а. ') ||
@@ -289,13 +287,12 @@ class GrantChanceService {
     if (entScore < threshold) {
       totalChance = 0;
     } else {
-      totalChance =
-          (baseChance +
-                  gpaBonus +
-                  ieltsBonus +
-                  achievementBonus +
-                  regionModifier)
-              .clamp(0, 98);
+      totalChance = (baseChance +
+              gpaBonus +
+              ieltsBonus +
+              achievementBonus +
+              regionModifier)
+          .clamp(0, 98);
     }
 
     final int chancePercent = totalChance.round();

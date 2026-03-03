@@ -80,8 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = true);
       debugPrint('🔵 REGSCR: Начало процесса регистрации...');
 
-      final timeoutErrorStr =
-          AppLocalizations.of(context)?.errorTimeout ??
+      final timeoutErrorStr = AppLocalizations.of(context)?.errorTimeout ??
           'Превышено время ожидания. Проверьте интернет.';
       final criticalErrorStr = AppLocalizations.of(context);
 
@@ -95,17 +94,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         final authService = AuthService();
         String? registerError = await authService
             .register(
-              _nameController.text.trim(),
-              _emailController.text.trim(),
-              _passwordController.text, // 🛡️ Security: do not trim passwords
-            )
+          _nameController.text.trim(),
+          _emailController.text.trim(),
+          _passwordController.text, // 🛡️ Security: do not trim passwords
+        )
             .timeout(
-              const Duration(seconds: 20),
-              onTimeout: () {
-                debugPrint('🔴 REGSCR: Таймаут вызова register!');
-                return timeoutErrorStr;
-              },
-            );
+          const Duration(seconds: 20),
+          onTimeout: () {
+            debugPrint('🔴 REGSCR: Таймаут вызова register!');
+            return timeoutErrorStr;
+          },
+        );
 
         debugPrint('🔵 REGSCR: Ответ от сервиса получен: $registerError');
 
@@ -211,14 +210,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     CustomTextField(
                       controller: _nameController,
-                      label:
-                          AppLocalizations.of(context)?.authFullName ??
+                      label: AppLocalizations.of(context)?.authFullName ??
                           'Full Name',
                       icon: Icons.person_outline,
                       textInputAction: TextInputAction.next,
                       validator: (v) => v!.isEmpty
                           ? (AppLocalizations.of(context)?.authRequired ??
-                                'Required')
+                              'Required')
                           : null,
                     ),
                     const SizedBox(height: 20),
@@ -249,8 +247,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 20),
                     CustomTextField(
                       controller: _passwordController,
-                      label:
-                          AppLocalizations.of(context)?.authPassword ??
+                      label: AppLocalizations.of(context)?.authPassword ??
                           'Password',
                       icon: Icons.lock_outline,
                       obscureText: _obscurePassword,
@@ -324,26 +321,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                             child: RichText(
                               text: TextSpan(
-                                style: Theme.of(context).textTheme.bodySmall
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
                                     ?.copyWith(
                                       height: 1.5,
-                                      color:
-                                          Theme.of(context).brightness ==
+                                      color: Theme.of(context).brightness ==
                                               Brightness.dark
                                           ? Colors.grey[400]
                                           : Colors.grey[700],
                                     ),
                                 children: [
                                   TextSpan(
-                                    text:
-                                        AppLocalizations.of(
+                                    text: AppLocalizations.of(
                                           context,
                                         )?.authTermsRegister ??
                                         'Регистрируясь, вы соглашаетесь с ',
                                   ),
                                   TextSpan(
-                                    text:
-                                        AppLocalizations.of(
+                                    text: AppLocalizations.of(
                                           context,
                                         )?.authTermsLink ??
                                         'Условиями',
@@ -355,15 +351,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     recognizer: _termsRecognizer,
                                   ),
                                   TextSpan(
-                                    text:
-                                        AppLocalizations.of(
+                                    text: AppLocalizations.of(
                                           context,
                                         )?.authTermsAnd ??
                                         ' и ',
                                   ),
                                   TextSpan(
-                                    text:
-                                        AppLocalizations.of(
+                                    text: AppLocalizations.of(
                                           context,
                                         )?.authPrivacyLink ??
                                         'Политикой конфиденциальности',
@@ -379,8 +373,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       )?.localeName ==
                                       'kk')
                                     TextSpan(
-                                      text:
-                                          AppLocalizations.of(
+                                      text: AppLocalizations.of(
                                             context,
                                           )?.authTermsSuffix ??
                                           ' келісемін',

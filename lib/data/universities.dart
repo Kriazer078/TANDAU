@@ -253,8 +253,7 @@ final List<University> sampleUniversities = [
     tuitionRange: 'Грант немесе 2,100,000 - 2,400,000 ₸/жыл',
     hasDormitory: false,
     hasGrants: true,
-    description:
-        'KBTU — Британдық білім беру стандарттарымен жұмыс істейтін '
+    description: 'KBTU — Британдық білім беру стандарттарымен жұмыс істейтін '
         'техникалық университет. ~6 182 студент. 80% студент гранттармен '
         'оқиды. IELTS сертификаты қажет.',
     contactPhone: '+7 (727) 357-42-51',
@@ -431,8 +430,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '510,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1997 жылы құрылған жеке меншік университет. ~5 471 студент. '
+    description: '1997 жылы құрылған жеке меншік университет. ~5 471 студент. '
         'Жатақхана бар. Қабылдау комиссиясының мақұлдау көрсеткіші жоғары.',
     contactPhone: '8 (725) 233-77-77',
     email: 'info@miras.edu.kz',
@@ -469,8 +467,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 600,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '2001 жылы құрылған жеке меншік университет. ~5 500 студент. '
+    description: '2001 жылы құрылған жеке меншік университет. ~5 500 студент. '
         'Жатақхана — 150 000-220 000 ₸/жыл.',
     contactPhone: '8 (725) 255-58-61',
     email: 'shu2050@mail.ru',
@@ -499,8 +496,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '400,000 - 550,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        'Жаңа форматтағы заманауи университет (CAIU). 30+ мамандық. '
+    description: 'Жаңа форматтағы заманауи университет (CAIU). 30+ мамандық. '
         '~12 000-13 000 студент. Жатақхана бар. Әскери кафедра бар.',
     contactPhone: '8 (725) 237-12-37',
     email: 'ukgi2002@mail.ru',
@@ -535,8 +531,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 600,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '2000 жылы құрылған жеке меншік университет. ~8 500 студент. '
+    description: '2000 жылы құрылған жеке меншік университет. ~8 500 студент. '
         'Жатақхана бар. Әскери кафедра жоқ.',
     contactPhone: '8 (725) 295-25-21',
     email: 'info@kipudn.kz',
@@ -570,8 +565,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 600,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1998 жылы құрылған университет. ~6 000 студент. '
+    description: '1998 жылы құрылған университет. ~6 000 студент. '
         'Жатақхана — 180 000-250 000 ₸/жыл. Көпжақты оқу бағдарламалары.',
     contactPhone: '8 (776) 104-70-70',
     email: 'info@tashenev.edu.kz',
@@ -683,8 +677,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '800,000 - 1,500,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1950 жылы құрылған. Орталық Қазақстандағы жетекші мед.ЖОО. '
+    description: '1950 жылы құрылған. Орталық Қазақстандағы жетекші мед.ЖОО. '
         '~8 000 студент, клиникалық базалар мен симуляциялық орталықтар.',
     contactPhone: '+7 (7212) 51-38-79',
     email: 'info@qmu.kz',
@@ -722,8 +715,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '500,000 - 900,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1960 жылы құрылған, Павлодар облысындағы ең ірі ЖОО. '
+    description: '1960 жылы құрылған, Павлодар облысындағы ең ірі ЖОО. '
         '~12 000 студент. Серпін + сельская квота.',
     contactPhone: '+7 (7182) 67-36-69',
     email: 'psu@psu.kz',
@@ -757,8 +749,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 800,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1993 жылы құрылған жеке ЖОО. ~5 000 студент. '
+    description: '1993 жылы құрылған жеке ЖОО. ~5 000 студент. '
         'Заманауи кампус, дуалды оқыту жүйесі.',
     contactPhone: '+7 (7182) 55-68-11',
     email: 'ineu@ineu.edu.kz',
@@ -792,8 +783,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 850,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1966 жылы құрылған, Батыс Қазақстандағы ең ірі университет. '
+    description: '1966 жылы құрылған, Батыс Қазақстандағы ең ірі университет. '
         '~15 000 студент. 70+ мамандық.',
     contactPhone: '+7 (7132) 56-36-43',
     email: 'arsu@zhubanov.edu.kz',
@@ -820,8 +810,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '750,000 - 1,400,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1957 жылы құрылған мед. университет. ~7 000 студент. '
+    description: '1957 жылы құрылған мед. университет. ~7 000 студент. '
         'Батыс Қазақстанда медицина мамандығын алудың бірінші мекені.',
     contactPhone: '+7 (7132) 54-67-19',
     email: 'info@zkmu.kz',
@@ -860,8 +849,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '500,000 - 900,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1995 жылы құрылған. ~10 000 студент. Ветеринария және '
+    description: '1995 жылы құрылған. ~10 000 студент. Ветеринария және '
         'ауылшаруашылық бағытында Шығыс Қазақстан регионының көшбасшысы.',
     contactPhone: '+7 (7222) 35-60-53',
     email: 'info@semgu.kz',
@@ -893,8 +881,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '800,000 - 1,500,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1953 жылы құрылған. ~5 000 студент. '
+    description: '1953 жылы құрылған. ~5 000 студент. '
         'Шығыс Қазақстандағы ең ескі медициналық университеттердің бірі.',
     contactPhone: '+7 (7222) 56-98-72',
     email: 'info@semeymeduni.kz',
@@ -971,8 +958,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 800,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        'Жамбыл облысындағы ірі университет. ~8 000 студент. '
+    description: 'Жамбыл облысындағы ірі университет. ~8 000 студент. '
         'Серпін бағдарламасына қатысады.',
     contactPhone: '+7 (7262) 43-93-00',
     email: 'info@taru.edu.kz',
@@ -1049,8 +1035,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '400,000 - 750,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1937 жылы құрылған. Солтүстік Қазақстан облысының ірі ЖОО. '
+    description: '1937 жылы құрылған. Солтүстік Қазақстан облысының ірі ЖОО. '
         '~7 000 студент.',
     contactPhone: '+7 (7152) 36-41-49',
     email: 'info@nkzu.kz',
@@ -1083,8 +1068,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '500,000 - 900,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1975 жылы құрылған. ~8 000 студент. Мұнай-газ саласына '
+    description: '1975 жылы құрылған. ~8 000 студент. Мұнай-газ саласына '
         'маман дайындаудағы жетекші. Маңғыстау облысының бірден-бір университеті.',
     contactPhone: '+7 (7292) 33-40-02',
     email: 'info@yu.edu.kz',
@@ -1122,8 +1106,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '450,000 - 850,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1957 жылы құрылған. ~6 000 студент. '
+    description: '1957 жылы құрылған. ~6 000 студент. '
         'Батыс Қазақстан өңірінің ірі ЖОО.',
     contactPhone: '+7 (7122) 27-38-37',
     email: 'info@asu.edu.kz',
@@ -1156,8 +1139,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '400,000 - 750,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1937 жылы құрылған. ~10 000 студент. Серпін бағдарламасына '
+    description: '1937 жылы құрылған. ~10 000 студент. Серпін бағдарламасына '
         'белсенді қатысады. Қызылорда облысындағы бірден-бір университет.',
     contactPhone: '+7 (7242) 26-17-30',
     email: 'info@korkyt.kz',
@@ -1190,8 +1172,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '400,000 - 750,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1932 жылы құрылған. ~8 000 студент. '
+    description: '1932 жылы құрылған. ~8 000 студент. '
         'Батыс Қазақстан облысындағы ең ескі университеттердің бірі.',
     contactPhone: '+7 (7112) 51-37-98',
     email: 'info@wksu.kz',
@@ -1224,8 +1205,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '400,000 - 700,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1962 жылы құрылған. ~7 000 студент. '
+    description: '1962 жылы құрылған. ~7 000 студент. '
         'Ақмола облысының ірі білім беру орталығы.',
     contactPhone: '+7 (7162) 25-41-50',
     email: 'info@shoqan.kz',
@@ -1258,8 +1238,7 @@ final List<University> sampleUniversities = [
     tuitionRange: '400,000 - 700,000 ₸/жыл',
     hasDormitory: true,
     hasGrants: true,
-    description:
-        '1972 жылы құрылған. ~6 000 студент. '
+    description: '1972 жылы құрылған. ~6 000 студент. '
         'Жетісу өңірінің ірі білім беру орталығы.',
     contactPhone: '+7 (7282) 22-36-64',
     email: 'info@zhetysu.edu.kz',

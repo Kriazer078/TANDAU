@@ -77,9 +77,8 @@ class UniversityAdmissionTab extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                        color: isDark
-                            ? Colors.white70
-                            : AppColors.textSecondary,
+                        color:
+                            isDark ? Colors.white70 : AppColors.textSecondary,
                       ),
                     ),
                   ],

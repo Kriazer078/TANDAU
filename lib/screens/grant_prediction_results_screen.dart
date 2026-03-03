@@ -373,9 +373,8 @@ class _ResultUniCardState extends State<_ResultUniCard> {
                   ),
                   circularStrokeCap: CircularStrokeCap.round,
                   progressColor: chanceColor,
-                  backgroundColor: widget.isDark
-                      ? Colors.white12
-                      : Colors.black12,
+                  backgroundColor:
+                      widget.isDark ? Colors.white12 : Colors.black12,
                 ),
               ],
             ),
@@ -506,9 +505,8 @@ class _ResultUniCardState extends State<_ResultUniCard> {
           alternatives.add({
             'university': altUni,
             'university_name': altUni.name,
-            'specialty_name': altUni.majors.isNotEmpty
-                ? altUni.majors.first
-                : 'Жалпы',
+            'specialty_name':
+                altUni.majors.isNotEmpty ? altUni.majors.first : 'Жалпы',
             'probability': altResult.chancePercent,
           });
         }
@@ -527,15 +525,14 @@ class _ResultUniCardState extends State<_ResultUniCard> {
           specialtyId: widget.uni.majors.isNotEmpty
               ? widget.uni.majors.first
               : 'unknown',
-          subjectScores: user?.mathScore != null
-              ? {'Математика': user!.mathScore!}
-              : null,
+          subjectScores:
+              user?.mathScore != null ? {'Математика': user!.mathScore!} : null,
         );
 
         if (strategyData['description'] != null &&
             strategyData['description'].toString().contains(
-              'сервис временно недоступен',
-            )) {
+                  'сервис временно недоступен',
+                )) {
           throw Exception('Backend returned explicit unavailable message');
         }
 
@@ -544,8 +541,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
             context,
             MaterialPageRoute(
               builder: (_) => AIAgentScreen(
-                title:
-                    strategyData['title'] ??
+                title: strategyData['title'] ??
                     (l10n?.aiStrategyFallbackTitle ?? 'Стратегия поступления'),
                 description: strategyData['description'] ?? '',
                 alternativeOptions: topAlternatives,

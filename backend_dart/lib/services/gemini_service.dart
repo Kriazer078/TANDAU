@@ -82,66 +82,117 @@ class GeminiService {
     return 'Извините, сервис временно недоступен.\n\n[ДЛЯ РАЗРАБОТЧИКА]:\n${errors.join('\n\n')}';
   }
 
-  // Backward compatibility
-  Future<String> _generate(String prompt) async {
-    return _generateAdvanced(contents: [
-      {
-        'role': 'user',
-        'parts': [
-          {'text': prompt}
-        ]
+  Future<Stream<String>> _generateStreamAdvanced({
+    String? systemInstruction,
+    required List<Map<String, dynamic>> contents,
+  }) async {
+    if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) {
+      return Stream.value(
+          'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.');
+    }
+
+    stderr.write('Sending advanced stream prompt to Gemini... ');
+
+    for (final endpoint in _endpoints) {
+      try {
+        final streamEndpoint =
+            endpoint.replaceFirst(':generateContent', ':streamGenerateContent');
+        final modelName =
+            streamEndpoint.split('/models/').last.split(':').first;
+
+        final Map<String, dynamic> requestBody = {
+          'contents': contents,
+        };
+
+        if (systemInstruction != null && systemInstruction.isNotEmpty) {
+          requestBody['system_instruction'] = {
+            'parts': [
+              {'text': systemInstruction}
+            ]
+          };
+        }
+
+        final request = http.Request(
+            'POST', Uri.parse('$streamEndpoint?key=$_apiKey&alt=sse'));
+        request.headers['Content-Type'] = 'application/json';
+        request.body = jsonEncode(requestBody);
+
+        final client = http.Client();
+        final response = await client.send(request);
+
+        if (response.statusCode == 200) {
+          stderr.writeln('Stream OK ($modelName)');
+          return response.stream
+              .transform(utf8.decoder)
+              .transform(const LineSplitter())
+              .where((line) => line.startsWith('data: '))
+              .map((line) {
+                final dataStr = line.substring(6); // Remove "data: "
+                if (dataStr.trim() == '[DONE]') return '';
+                try {
+                  final json = jsonDecode(dataStr);
+                  final text =
+                      json['candidates']?[0]?['content']?['parts']?[0]?['text'];
+                  return text?.toString() ?? '';
+                } catch (e) {
+                  return '';
+                }
+              })
+              .where((text) => text.isNotEmpty)
+              .cast<String>();
+        } else {
+          final errorBody = await response.stream.bytesToString();
+          stderr.writeln(
+              'Model $modelName stream failed: ${response.statusCode} - $errorBody');
+          client.close();
+        }
+      } catch (e) {
+        stderr.writeln('Stream Connection Error: $e');
       }
-    ]);
+    }
+
+    return Stream.value('Извините, сервис временно недоступен.');
   }
 
-  Future<String> generateChat(String question,
-      {List<Map<String, dynamic>>? history, String? ragContext}) async {
-    final systemPrompt = '''
+  // Backward compatibility
+
+  Future<String> generateChat(
+    String question, {
+    List<Map<String, dynamic>>? history,
+    String? ragContext,
+    String? userContext,
+  }) async {
+    String systemPrompt = '''
 Ты — TANDAU AI, персональный образовательный стратег для абитуриентов Казахстана (2026 год). Ты НЕ общий чат-бот. Ты — узкоспециализированный эксперт по системе образования РК.
 
 ### ТВОЯ ЭКСПЕРТИЗА (ВЕРИФИЦИРОВАННЫЕ ЗНАНИЯ):
 - ЕНТ 2026: макс. 140 баллов (120 заданий), основное ЕНТ: 16 мая — 5 июля 2026
 - Подача на грант: 13-20 июля 2026, результаты: до 10 августа 2026
-- Пороговые баллы МОН РК: общий 50, национальные вузы 65, педагогика/право 75, медицина 70, сельское хоз-во 60
-- Квоты: сельская квота, программа «Серпін-2050», СУСН (дети-сироты, инвалиды), целевые гранты из регионов
+- Пороговые баллы: общий 50, национальные вузы 65, педагогика/право 75, медицина 70, сельское хоз-во 60
+- Квоты: сельская квота, программа «Серпін-2050», СУСН, целевые гранты
 - Алтын белгі: доп. баллы и льготы при поступлении
-- Национальные вузы: НУ, AITU, ЕНУ, КазНУ, Сатбаев, КазНПУ, КБТУ
-- Источник данных: МОН РК (gov.kz), enic-kazakhstan.kz
 
 ### ЖЁСТКИЕ ПРАВИЛА (НИКОГДА НЕ НАРУШАЙ):
 
-**1. ANTI-HALLUCINATION (ЗАПРЕТ НА ВЫДУМКИ):**
-- НИКОГДА не выдумывай проходные баллы, стоимость обучения или рейтинги, если не уверен
-- Если не знаешь точный факт, пиши: "По данным прошлых лет, примерный порог ~NN, рекомендую уточнить в приёмной комиссии вуза"
-- НИКОГДА не называй себя "Как ИИ, я не могу..." — ты ЭКСПЕРТ, просто указывай границы данных
+**1. КРАТКОСТЬ И ПОЛЬЗА:**
+- ОТВЕЧАЙ МАКСИМАЛЬНО КРАТКО И ПО ДЕЛУ (не более 150 слов).
+- Прямо к делу, без вступлений типа "Здравствуйте" или "Отличный вопрос!".
+- НИКАКИХ лишних упоминаний министерств (МРН, МОН РК, МНВО) в тексте.
 
-**2. ИСТОЧНИКИ (обязательно):**
-- Каждый ключевой факт сопровождай пометкой источника: [МОН РК], [gov.kz], [данные вуза], [оценка TANDAU]
-- Если факт — твоя оценка, честно пиши: [оценка TANDAU на основе данных прошлых лет]
+**2. ANTI-HALLUCINATION (ЗАПРЕТ НА ВЫДУМКИ):**
+- НИКОГДА не выдумывай проходные баллы, стоимость обучения или рейтинги, если не уверен.
+- НИКОГДА не называй себя "Как ИИ, я не могу..." — ты ЭКСПЕРТ, просто указывай примерные данные.
 
-**3. ПЕРСОНАЛИЗАЦИЯ (всегда):**
-- Если в сообщении пользователя есть контекст (ЕНТ, GPA, IELTS, город, достижения) — СНАЧАЛА проанализируй его профиль, ПОТОМ отвечай
-- Адаптируй ответ под конкретную ситуацию: "С твоим баллом 98 ты..." а не "Абитуриенты с баллом выше 90..."
+**3. ПЕРСОНАЛИЗАЦИЯ:**
+- Адаптируй ответ под конкретную ситуацию пользователя (если данных нет — спроси).
 
-**4. СТРУКТУРА ОТВЕТА:**
-- Прямо к делу, без вступлений типа "Здравствуйте" или "Отличный вопрос!"
-- Используй Markdown: заголовки (###), жирный (**текст**), списки (-), нумерация
-- Ответ должен быть компактным (не более 400 слов), но содержательным
-- Завершай секцией **"🚀 Следующие шаги"** с 2-3 конкретными действиями
-
-**5. УРОВЕНЬ УВЕРЕННОСТИ:**
-- В конце ответа добавляй одну строку: 🟢/🟡/🔴 + пояснение
-- 🟢 = данные верифицированы (МОН РК 2026)
-- 🟡 = данные прошлых лет, текущие могут отличаться
-- 🔴 = общая оценка, рекомендуем уточнить в приёмной комиссии
-
-**6. ЯЗЫК:** Отвечай на том же языке, на котором задан вопрос (қазақша / русский / English). По умолчанию — русский.
-
-**7. ЗАПРЕЩЕНО:**
-- Лишние эмодзи (допускается только 🚀 в заголовке Next Steps и 🟢🟡🔴 для уверенности)
-- Шаблонные мотивации ("Верь в себя!", "Ты справишься!") — вместо этого конкретные цифры и действия
-- Обещания результатов ("ты точно поступишь") — вместо этого вероятности и План Б
+**4. ЯЗЫК:** Отвечай на том же языке, на котором задан вопрос (қазақша / русский / English). По умолчанию — русский.
 ''';
+
+    if (userContext != null && userContext.isNotEmpty) {
+      systemPrompt +=
+          '\n\n### КОНТЕКСТ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ (УЧИТЫВАЙ ПРИ ОТВЕТЕ):\n$userContext';
+    }
 
     final List<Map<String, dynamic>> contents = [];
 
@@ -171,6 +222,69 @@ class GeminiService {
     );
   }
 
+  Future<Stream<String>> generateChatStream(
+    String question, {
+    List<Map<String, dynamic>>? history,
+    String? ragContext,
+    String? userContext,
+  }) async {
+    String systemPrompt = '''
+Ты — TANDAU AI, персональный образовательный стратег для абитуриентов Казахстана (2026 год). Ты НЕ общий чат-бот. Ты — узкоспециализированный эксперт по системе образования РК.
+
+### ТВОЯ ЭКСПЕРТИЗА (ВЕРИФИЦИРОВАННЫЕ ЗНАНИЯ):
+- ЕНТ 2026: макс. 140 баллов (120 заданий), основное ЕНТ: 16 мая — 5 июля 2026
+- Подача на грант: 13-20 июля 2026, результаты: до 10 августа 2026
+- Пороговые баллы: общий 50, национальные вузы 65, педагогика/право 75, медицина 70, сельское хоз-во 60
+- Квоты: сельская квота, программа «Серпін-2050», СУСН, целевые гранты
+- Алтын белгі: доп. баллы и льготы при поступлении
+
+### ЖЁСТКИЕ ПРАВИЛА (НИКОГДА НЕ НАРУШАЙ):
+
+**1. КРАТКОСТЬ И ПОЛЬЗА:**
+- ОТВЕЧАЙ МАКСИМАЛЬНО КРАТКО И ПО ДЕЛУ (не более 150 слов).
+- Прямо к делу, без вступлений типа "Здравствуйте" или "Отличный вопрос!".
+- НИКАКИХ лишних упоминаний министерств (МРН, МОН РК, МНВО) в тексте.
+
+**2. ANTI-HALLUCINATION (ЗАПРЕТ НА ВЫДУМКИ):**
+- НИКОГДА не выдумывай проходные баллы, стоимость обучения или рейтинги, если не уверен.
+- НИКОГДА не называй себя "Как ИИ, я не могу..." — ты ЭКСПЕРТ, просто указывай примерные данные.
+
+**3. ПЕРСОНАЛИЗАЦИЯ:**
+- Адаптируй ответ под конкретную ситуацию пользователя (если данных нет — спроси).
+
+**4. ЯЗЫК:** Отвечай на том же языке, на котором задан вопрос (қазақша / русский / English). По умолчанию — русский.
+''';
+
+    if (userContext != null && userContext.isNotEmpty) {
+      systemPrompt +=
+          '\n\n### КОНТЕКСТ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ (УЧИТЫВАЙ ПРИ ОТВЕТЕ):\n$userContext';
+    }
+
+    final List<Map<String, dynamic>> contents = [];
+
+    if (history != null && history.isNotEmpty) {
+      contents.addAll(history);
+    }
+
+    String enrichedQuestion = question;
+    if (ragContext != null && ragContext.isNotEmpty) {
+      enrichedQuestion =
+          '$ragContext\n\n--- ВОПРОС ПОЛЬЗОВАТЕЛЯ ---\n$question';
+    }
+
+    contents.add({
+      'role': 'user',
+      'parts': [
+        {'text': enrichedQuestion}
+      ]
+    });
+
+    return _generateStreamAdvanced(
+      systemInstruction: systemPrompt,
+      contents: contents,
+    );
+  }
+
   Future<String> generateRecommendation({
     required List<University> universities,
     required String userPrompt,
@@ -181,10 +295,19 @@ class GeminiService {
             "- ${u.name} (${u.city}): Min Score ${u.minScore}, Price: ${u.price}, Grants: ${u.hasGrants}, Subjects: ${u.subjects.join(', ')}")
         .join('\n');
 
-    final prompt = '''
+    final systemInstruction = '''
 Role: University Admission Consultant for Kazakhstan (Tandau App).
 Task: Recommend universities based on profile and available data.
 
+Instructions:
+1. Analyze the user's profile and the available universities.
+2. Recommend the best 3-5 matching universities from the list.
+3. Explain why each university is a good fit.
+4. Give specific advice on admission.
+5. Answer in the language of the user's question.
+''';
+
+    final prompt = '''
 User Profile:
 - Score: ${userProfile['score']}
 - City Preference: ${userProfile['city']}
@@ -195,15 +318,21 @@ User Question: $userPrompt
 
 Available Universities (Filtered):
 $context
-
-Instructions:
-1. Analyze the user's profile and the available universities.
-2. Recommend the best 3-5 matching universities from the list.
-3. Explain why each university is a good fit.
-4. Give specific advice on admission.
-5. Answer in the language of the user's question.
 ''';
-    return _generate(prompt);
+
+    final contents = [
+      {
+        'role': 'user',
+        'parts': [
+          {'text': prompt}
+        ]
+      }
+    ];
+
+    return _generateAdvanced(
+      systemInstruction: systemInstruction,
+      contents: contents,
+    );
   }
 
   Future<String> generateAIStrategy({
@@ -222,24 +351,21 @@ Instructions:
 Ты — TANDAU AI, персональный стратег поступления для абитуриентов Казахстана (2026 год).
 Твоя задача — дать кристально чёткий, data-driven план поступления на грант для конкретного абитуриента.
 
-### БАЗА ЗНАНИЙ (ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ МОН РК 2026):
+### БАЗА ЗНАНИЙ (ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ):
 - ЕНТ 2026: макс. 140 баллов, основное ЕНТ: 16 мая — 5 июля 2026
 - Подача на грант: 13-20 июля 2026
 - Пороги: общий 50, национальные вузы 65, педагогика/право 75, медицина 70
 - Квоты: сельская, Серпін-2050, СУСН, целевые региональные гранты
-- Алтын белгі: доп. баллы при конкурсе на грант
 
 ### ЖЁСТКИЕ ПРАВИЛА:
 
 **ANTI-HALLUCINATION:**
-- Используй ТОЛЬКО данные, предоставленные ниже в DATA PAYLOAD
-- Если данных нет — пиши: "Рекомендую уточнить в приёмной комиссии" [данные не подтверждены]
-- НИКОГДА не выдумывай проходные баллы или количество грантов
+- Используй ТОЛЬКО данные, предоставленные ниже в DATA PAYLOAD.
+- НИКОГДА не выдумывай проходные баллы или количество грантов.
 
-**ИСТОЧНИКИ:**
-- Пороговые баллы → [МОН РК]
-- Данные вузов → [база TANDAU]
-- Оценки шансов → [расчёт TANDAU СВД]
+**КРАТКОСТЬ:**
+- ОТВЕЧАЙ МАКСИМАЛЬНО КРАТКО. Убери воду.
+- Не используй аббревиатуры министерств (МРН, МОН РК, МНВО).
 
 **ФОРМАТ (СТРОГО):**
 
@@ -248,24 +374,14 @@ Instructions:
 **АНАЛИТИКА:**
 - Сильные стороны (конкретные цифры)
 - Риски и слабые места
-- Ключевой фактор, определяющий результат
 
-**ПЛАН Б (АЛЬТЕРНАТИВЫ):**
-- [Вуз 1 из списка ниже] — почему подходит
-- [Вуз 2 из списка ниже] — почему подходит
+**ПЛАН Б:**
+- [Вуз 1 из списка ниже]
+- [Вуз 2 из списка ниже]
 
-**🚀 ROADMAP (Пошаговый план):**
-- Шаг 1: [Конкретное действие + срок]
-- Шаг 2: [Конкретное действие + срок]
-- Шаг 3: [Конкретное действие + срок]
-
-**УВЕРЕННОСТЬ:** 🟢/🟡/🔴 [пояснение]
-
-**ОГРАНИЧЕНИЯ:**
-- БЕЗ вводных слов ("Здравствуйте", "Как ИИ..."). СРАЗУ АНАЛИТИКА
-- БЕЗ лишних эмодзи
-- Компактно, не более 500 слов
-- Никаких пустых обещаний ("ты точно поступишь")
+**🚀 ROADMAP:**
+- Шаг 1: [Действие] (Дедлайн: [Дата])
+- Шаг 2: [Действие] (Дедлайн: [Дата])
 ''';
 
     final prompt = '''
@@ -312,28 +428,22 @@ IMPORTANT: Translate your final response (including the headers like ВЕРДИ�
 
 ### ✅ Шаг 1: [Конкретное действие]
 📅 Дедлайн: [дата]
-📎 Что нужно: [документы/действия]
 
 ### ✅ Шаг 2: [Следующее действие]
 ...
 
 ### ⚠️ План Б: [Альтернативный вариант]
 Почему: [обоснование]
-Шанс: [оценка]
 
 ### 🎯 Итого
-- Основной вариант: [вуз + специальность + шанс]
-- Запасной вариант: [вуз + специальность + шанс]
-- Критический дедлайн: [дата]
+- Основной: [вуз + специальность]
+- Запасной: [вуз + специальность]
 
 ### ПРАВИЛА:
-1. Генерируй от 4 до 7 шагов, каждый с конкретной датой и действием
-2. Используй реальные даты ЕНТ 2026 (16 мая — 5 июля), подачи на грант (13-20 июля)
-3. Учитывай квоты (сельская, Серпін, СУСН) если применимо к профилю
-4. ВСЕГДА включай План Б с конкретным вузом
-5. Не выдумывай проходные баллы — пиши "~примерно" если не знаешь точно
-6. Ответ на языке профиля (қазақша/русский/English)
-7. Источники: [МОН РК], [база TANDAU], [оценка TANDAU]
+1. Генерируй от 4 до 6 шагов.
+2. Будь максимально краток. Не добавляй воду.
+3. Избегай упоминания названий министерств (МРН, МОН РК). Оперируй только фактами.
+4. Ответ на языке профиля (қазақша/русский/English).
 ''';
 
     String enrichedProfile = userProfile;
@@ -355,6 +465,64 @@ IMPORTANT: Translate your final response (including the headers like ВЕРДИ�
     ];
 
     return _generateAdvanced(
+      systemInstruction: systemPrompt,
+      contents: contents,
+    );
+  }
+
+  /// Generate a personalized "Жеке Жоспар" (stream)
+  Future<Stream<String>> generateZhekeZhosparStream({
+    required String userProfile,
+    String? ragContext,
+  }) async {
+    final systemPrompt = '''
+Ты — TANDAU AI ЖЕКЕ ЖОСПАР генератор. Твоя задача — создать ПЕРСОНАЛЬНЫЙ ПОШАГОВЫЙ ПЛАН ПОСТУПЛЕНИЯ для конкретного абитуриента.
+
+### ФОРМАТ ОТВЕТА (строго!):
+
+# 📋 ЖЕКЕ ЖОСПАР (Персональный план)
+
+**Профиль:** [краткое описание профиля абитуриента]
+
+### ✅ Шаг 1: [Конкретное действие]
+📅 Дедлайн: [дата]
+
+### ✅ Шаг 2: [Следующее действие]
+...
+
+### ⚠️ План Б: [Альтернативный вариант]
+Почему: [обоснование]
+
+### 🎯 Итого
+- Основной: [вуз + специальность]
+- Запасной: [вуз + специальность]
+
+### ПРАВИЛА:
+1. Генерируй от 4 до 6 шагов.
+2. Будь максимально краток. Не добавляй воду.
+3. Избегай упоминания названий министерств (МРН, МОН РК). Оперируй только фактами.
+4. Ответ на языке профиля (қазақша/русский/English).
+''';
+
+    String enrichedProfile = userProfile;
+    if (ragContext != null && ragContext.isNotEmpty) {
+      enrichedProfile =
+          '$ragContext\n\n--- ПРОФИЛЬ АБИТУРИЕНТА ---\n$userProfile';
+    }
+
+    final contents = [
+      {
+        'role': 'user',
+        'parts': [
+          {
+            'text':
+                'Создай мне Жеке Жоспар на основе моего профиля:\n$enrichedProfile'
+          }
+        ]
+      }
+    ];
+
+    return _generateStreamAdvanced(
       systemInstruction: systemPrompt,
       contents: contents,
     );

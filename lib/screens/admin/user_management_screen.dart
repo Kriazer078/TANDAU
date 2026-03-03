@@ -1074,9 +1074,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     Icon(
                       Icons.sort_by_alpha,
                       size: 18,
-                      color: _sortBy == 'name'
-                          ? AppColors.primary
-                          : Colors.grey,
+                      color:
+                          _sortBy == 'name' ? AppColors.primary : Colors.grey,
                     ),
                     const SizedBox(width: 8),
                     const Text('По имени'),
@@ -1143,8 +1142,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             child: _isLoading
                 ? _buildShimmerLoading(isDark)
                 : _users.isEmpty
-                ? _buildEmptyState(isDark)
-                : _buildUsersList(isDark),
+                    ? _buildEmptyState(isDark)
+                    : _buildUsersList(isDark),
           ),
         ],
       ),
@@ -1358,8 +1357,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.15)
               : isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.grey.withValues(alpha: 0.08),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.grey.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(10),
           border: isSelected
               ? Border.all(color: AppColors.primary.withValues(alpha: 0.4))
@@ -1373,8 +1372,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             color: isSelected
                 ? AppColors.primary
                 : isDark
-                ? Colors.white54
-                : AppColors.textSecondary,
+                    ? Colors.white54
+                    : AppColors.textSecondary,
           ),
         ),
       ),
@@ -1422,10 +1421,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             color: isSelf
                 ? AppColors.primary.withValues(alpha: 0.3)
                 : user.banned
-                ? Colors.red.withValues(alpha: 0.3)
-                : isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.grey.withValues(alpha: 0.1),
+                    ? Colors.red.withValues(alpha: 0.3)
+                    : isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.grey.withValues(alpha: 0.1),
           ),
           boxShadow: isDark
               ? null
@@ -1449,8 +1448,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   ).withValues(alpha: 0.15),
                   backgroundImage:
                       user.photoUrl != null && user.photoUrl!.isNotEmpty
-                      ? NetworkImage(user.photoUrl!)
-                      : null,
+                          ? NetworkImage(user.photoUrl!)
+                          : null,
                   child: user.photoUrl == null || user.photoUrl!.isEmpty
                       ? Text(
                           user.name.isNotEmpty
@@ -1517,9 +1516,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
-                            color: isDark
-                                ? Colors.white
-                                : AppColors.textPrimary,
+                            color:
+                                isDark ? Colors.white : AppColors.textPrimary,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1563,24 +1561,24 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     color: user.banned
                         ? Colors.red.withValues(alpha: 0.1)
                         : isAdmin
-                        ? Colors.purple.withValues(alpha: 0.1)
-                        : Colors.grey.withValues(alpha: 0.1),
+                            ? Colors.purple.withValues(alpha: 0.1)
+                            : Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     user.banned
                         ? '🚫 БАН'
                         : isAdmin
-                        ? 'Админ'
-                        : 'User',
+                            ? 'Админ'
+                            : 'User',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: user.banned
                           ? Colors.red
                           : isAdmin
-                          ? Colors.purple
-                          : Colors.grey,
+                              ? Colors.purple
+                              : Colors.grey,
                     ),
                   ),
                 ),

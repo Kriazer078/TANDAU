@@ -84,11 +84,11 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
     );
     _progressAnimation =
         Tween<double>(begin: 1 / _totalSteps, end: 1 / _totalSteps).animate(
-          CurvedAnimation(
-            parent: _progressController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
+      CurvedAnimation(
+        parent: _progressController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
   }
 
   @override
@@ -118,16 +118,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
   }
 
   void _animateProgress() {
-    _progressAnimation =
-        Tween<double>(
-          begin: _progressAnimation.value,
-          end: (_currentStep + 1) / _totalSteps,
-        ).animate(
-          CurvedAnimation(
-            parent: _progressController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
+    _progressAnimation = Tween<double>(
+      begin: _progressAnimation.value,
+      end: (_currentStep + 1) / _totalSteps,
+    ).animate(
+      CurvedAnimation(
+        parent: _progressController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
     _progressController.forward(from: 0);
   }
 
@@ -169,9 +168,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0F172A)
-          : const Color(0xFFF8FAFC),
+      backgroundColor:
+          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Column(
           children: [
@@ -203,9 +201,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: isDark
-                            ? Colors.white54
-                            : AppColors.textSecondary,
+                        color:
+                            isDark ? Colors.white54 : AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -366,9 +363,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: _getScoreColor(_entScore),
-              inactiveTrackColor: isDark
-                  ? Colors.white12
-                  : Colors.grey.shade200,
+              inactiveTrackColor:
+                  isDark ? Colors.white12 : Colors.grey.shade200,
               thumbColor: _getScoreColor(_entScore),
               overlayColor: _getScoreColor(_entScore).withValues(alpha: 0.2),
               trackHeight: 6,
@@ -535,15 +531,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
                     color: selected
                         ? const Color(0xFF6366F1).withValues(alpha: 0.15)
                         : isDark
-                        ? Colors.white.withValues(alpha: 0.05)
-                        : Colors.white,
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: selected
                           ? const Color(0xFF6366F1)
                           : isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.grey.shade200,
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : Colors.grey.shade200,
                       width: selected ? 2 : 1,
                     ),
                   ),
@@ -554,8 +550,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
                         color: selected
                             ? const Color(0xFF6366F1)
                             : isDark
-                            ? Colors.white54
-                            : Colors.grey,
+                                ? Colors.white54
+                                : Colors.grey,
                         size: 28,
                       ),
                       const SizedBox(width: 14),
@@ -674,15 +670,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
         color: value
             ? const Color(0xFF6366F1).withValues(alpha: 0.12)
             : isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white,
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: value
               ? const Color(0xFF6366F1)
               : isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : Colors.grey.shade200,
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.grey.shade200,
           width: value ? 2 : 1,
         ),
       ),
@@ -809,15 +805,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
           color: selected
               ? const Color(0xFF6366F1).withValues(alpha: 0.15)
               : isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.white,
+                  ? Colors.white.withValues(alpha: 0.06)
+                  : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: selected
                 ? const Color(0xFF6366F1)
                 : isDark
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.grey.shade200,
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.grey.shade200,
             width: selected ? 2 : 1,
           ),
         ),
@@ -830,8 +826,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
               color: selected
                   ? const Color(0xFF6366F1)
                   : isDark
-                  ? Colors.white54
-                  : Colors.grey,
+                      ? Colors.white54
+                      : Colors.grey,
             ),
             const SizedBox(width: 6),
             Flexible(
@@ -843,8 +839,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
                   color: selected
                       ? const Color(0xFF6366F1)
                       : isDark
-                      ? Colors.white70
-                      : AppColors.textPrimary,
+                          ? Colors.white70
+                          : AppColors.textPrimary,
                 ),
               ),
             ),

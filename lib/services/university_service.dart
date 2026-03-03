@@ -48,9 +48,8 @@ class UniversityService {
   Future<void> _saveToDisk(List<University> universities) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final List<Map<String, dynamic>> jsonList = universities
-          .map((u) => u.toMap())
-          .toList();
+      final List<Map<String, dynamic>> jsonList =
+          universities.map((u) => u.toMap()).toList();
       await prefs.setString(_diskCacheKey, jsonEncode(jsonList));
       await prefs.setString(
         _diskCacheTimeKey,
@@ -89,8 +88,8 @@ class UniversityService {
 
     // 2. Try Firestore
     try {
-      final List<University> universities = await _firestoreService
-          .getAllUniversities();
+      final List<University> universities =
+          await _firestoreService.getAllUniversities();
       _cachedAllUniversities = universities;
       _lastCacheTime = DateTime.now();
 

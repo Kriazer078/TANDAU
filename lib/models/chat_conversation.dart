@@ -12,19 +12,31 @@ class ChatMessage {
     required this.time,
   });
 
+  ChatMessage copyWith({
+    String? text,
+    bool? isUser,
+    DateTime? time,
+  }) {
+    return ChatMessage(
+      text: text ?? this.text,
+      isUser: isUser ?? this.isUser,
+      time: time ?? this.time,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
-    'text': text,
-    'isUser': isUser,
-    'time': time.toIso8601String(),
-  };
+        'text': text,
+        'isUser': isUser,
+        'time': time.toIso8601String(),
+      };
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
-    text: json['text'] as String? ?? '',
-    isUser: json['isUser'] as bool? ?? false,
-    time: json['time'] != null
-        ? DateTime.parse(json['time'] as String)
-        : DateTime.now(),
-  );
+        text: json['text'] as String? ?? '',
+        isUser: json['isUser'] as bool? ?? false,
+        time: json['time'] != null
+            ? DateTime.parse(json['time'] as String)
+            : DateTime.now(),
+      );
 }
 
 /// A single AI chat conversation (like one "thread" in ChatGPT)
@@ -53,16 +65,15 @@ class ChatConversation {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-    'messages': messages.map((m) => m.toJson()).toList(),
-  };
+        'id': id,
+        'title': title,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+        'messages': messages.map((m) => m.toJson()).toList(),
+      };
 
   factory ChatConversation.fromJson(Map<String, dynamic> json) {
-    final msgs =
-        (json['messages'] as List<dynamic>?)
+    final msgs = (json['messages'] as List<dynamic>?)
             ?.map((m) => ChatMessage.fromJson(m as Map<String, dynamic>))
             .toList() ??
         [];

@@ -279,9 +279,8 @@ class _NotificationItem extends StatelessWidget {
                         notification.message,
                         style: TextStyle(
                           fontSize: 13,
-                          color: isDark
-                              ? Colors.white70
-                              : AppColors.textSecondary,
+                          color:
+                              isDark ? Colors.white70 : AppColors.textSecondary,
                           height: 1.4,
                         ),
                       ),

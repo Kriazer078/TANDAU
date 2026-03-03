@@ -200,8 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 20),
                     CustomTextField(
                       controller: _passwordController,
-                      label:
-                          AppLocalizations.of(context)?.authPassword ??
+                      label: AppLocalizations.of(context)?.authPassword ??
                           'Password',
                       icon: Icons.lock_outline,
                       obscureText: _obscurePassword,
@@ -219,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (v) => (v == null || v.isEmpty)
                           ? (AppLocalizations.of(context)?.validationPassword ??
-                                'Введите пароль')
+                              'Введите пароль')
                           : null,
                     ),
 
@@ -454,19 +453,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: RichText(
                         text: TextSpan(
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                height: 1.5,
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[700],
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    height: 1.5,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[700],
+                                  ),
                           children: [
                             TextSpan(
-                              text:
-                                  AppLocalizations.of(
+                              text: AppLocalizations.of(
                                     context,
                                   )?.authTermsIHaveRead ??
                                   'Я согласен с ',
@@ -474,7 +471,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextSpan(
                               text:
                                   AppLocalizations.of(context)?.authTermsLink ??
-                                  'Условиями использования',
+                                      'Условиями использования',
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
@@ -485,11 +482,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextSpan(
                               text:
                                   AppLocalizations.of(context)?.authTermsAnd ??
-                                  ' и ',
+                                      ' и ',
                             ),
                             TextSpan(
-                              text:
-                                  AppLocalizations.of(
+                              text: AppLocalizations.of(
                                     context,
                                   )?.authPrivacyLink ??
                                   'Политикой конфиденциальности',

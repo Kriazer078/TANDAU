@@ -29,14 +29,14 @@ class DeadlineBanner extends StatelessWidget {
             const Color(0xFFFF4B2B),
           ] // Vibrant Red/Orange
         : next.daysLeft < 30
-        ? [
-            const Color(0xFFF7971E),
-            const Color(0xFFFFD200),
-          ] // Energetic Orange/Yellow
-        : [
-            AppColors.primary,
-            AppColors.secondary,
-          ]; // Brand Electric Blue/Indigo
+            ? [
+                const Color(0xFFF7971E),
+                const Color(0xFFFFD200),
+              ] // Energetic Orange/Yellow
+            : [
+                AppColors.primary,
+                AppColors.secondary,
+              ]; // Brand Electric Blue/Indigo
 
     final shadowColor = gradientColors.first.withValues(alpha: 0.4);
 
@@ -357,12 +357,10 @@ class _DeadlinesBottomSheet extends StatelessWidget {
       badgeBgColor = statusColor.withValues(alpha: 0.15);
     }
 
-    final cardBgColor = isDark
-        ? const Color(0xFF1E293B)
-        : const Color(0xFFF8FAFC);
-    final iconBgColor = isDark
-        ? Colors.white.withValues(alpha: 0.05)
-        : Colors.white;
+    final cardBgColor =
+        isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC);
+    final iconBgColor =
+        isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white;
 
     return Container(
       decoration: BoxDecoration(

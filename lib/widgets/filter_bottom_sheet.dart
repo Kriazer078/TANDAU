@@ -16,8 +16,7 @@ class FilterBottomSheet extends StatefulWidget {
     List<String> majors,
     bool onlyGrants,
     double? maxPrice,
-  )
-  onApply;
+  ) onApply;
 
   const FilterBottomSheet({
     super.key,
@@ -418,8 +417,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
     final filteredCities = _citySearch.isEmpty
         ? widget.cities
         : widget.cities
-              .where((c) => c.toLowerCase().contains(_citySearch.toLowerCase()))
-              .toList();
+            .where((c) => c.toLowerCase().contains(_citySearch.toLowerCase()))
+            .toList();
 
     return Column(
       children: [
@@ -469,10 +468,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
     final filteredMajors = _majorSearch.isEmpty
         ? allMajors
         : allMajors
-              .where(
-                (m) => m.toLowerCase().contains(_majorSearch.toLowerCase()),
-              )
-              .toList();
+            .where(
+              (m) => m.toLowerCase().contains(_majorSearch.toLowerCase()),
+            )
+            .toList();
 
     return Column(
       children: [
@@ -735,9 +734,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
             color: isDark ? Colors.white38 : Colors.grey.shade400,
           ),
           filled: true,
-          fillColor: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.white,
+          fillColor:
+              isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),

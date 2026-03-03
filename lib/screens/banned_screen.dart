@@ -17,9 +17,8 @@ class BannedScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: isDark
-            ? AppColors.backgroundDark
-            : AppColors.background,
+        backgroundColor:
+            isDark ? AppColors.backgroundDark : AppColors.background,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -131,9 +130,8 @@ class BannedScreen extends StatelessWidget {
                         reason,
                         style: TextStyle(
                           fontSize: 15,
-                          color: isDark
-                              ? Colors.white70
-                              : AppColors.textPrimary,
+                          color:
+                              isDark ? Colors.white70 : AppColors.textPrimary,
                           height: 1.5,
                         ),
                       ),
@@ -223,12 +221,10 @@ class BannedScreen extends StatelessWidget {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark
-                          ? AppColors.cardDark
-                          : Colors.grey.shade100,
-                      foregroundColor: isDark
-                          ? Colors.white70
-                          : AppColors.textPrimary,
+                      backgroundColor:
+                          isDark ? AppColors.cardDark : Colors.grey.shade100,
+                      foregroundColor:
+                          isDark ? Colors.white70 : AppColors.textPrimary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),

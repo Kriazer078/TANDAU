@@ -51,9 +51,8 @@ class AIConsultantService {
       final Map<String, dynamic> result = await getAIStrategy(
         universityId: university.id,
         untScore: profile.entScore ?? 0,
-        specialtyId: university.majors.isNotEmpty
-            ? university.majors.first
-            : 'Другое',
+        specialtyId:
+            university.majors.isNotEmpty ? university.majors.first : 'Другое',
       );
 
       return result['description'] ??
@@ -150,14 +149,12 @@ class AIConsultantService {
     bool isInternalStrategyCall = false,
   }) async {
     try {
-      String fullMessage;
+      final bodyData = <String, dynamic>{'question': message};
 
       // NOTE: Moderation (profanity) is checked in the UI layer
       // (AIConsultantScreen._sendMessage) before calling this method.
 
-      if (isInternalStrategyCall) {
-        fullMessage = message;
-      } else {
+      if (!isInternalStrategyCall) {
         // Build structured context for better AI personalization
         final List<String> contextParts = [];
 
@@ -189,14 +186,9 @@ class AIConsultantService {
         }
 
         if (contextParts.isNotEmpty) {
-          fullMessage =
-              '[ПРОФИЛЬ АБИТУРИЕНТА]\n${contextParts.join('\n')}\n\n[ВОПРОС]\n$message';
-        } else {
-          fullMessage = message;
+          bodyData['userContext'] = contextParts.join('\n');
         }
       }
-
-      final bodyData = <String, dynamic>{'question': fullMessage};
 
       // Send uid for token tracking
       final currentUser = AuthService().currentUser.value;
@@ -232,8 +224,187 @@ class AIConsultantService {
     }
   }
 
+  /// Отправить сообщение AI консультанту (Stream)
+  Stream<String> sendStreamMessage(
+    String message, {
+    List<Map<String, dynamic>>? history,
+    List<String>? userAchievements,
+    int? entScore,
+    double? ieltsScore,
+    double? gpa,
+    int? mathScore,
+    List<String>? preferredCities,
+    List<String>? preferredMajors,
+    String? currentEducation,
+  }) async* {
+    try {
+      final bodyData = <String, dynamic>{'question': message};
+
+      final List<String> contextParts = [];
+
+      if (entScore != null && entScore > 0) {
+        contextParts.add('ЕНТ балл: $entScore из 140');
+      }
+      if (gpa != null && gpa > 0) {
+        contextParts.add('GPA: $gpa');
+      }
+      if (ieltsScore != null && ieltsScore > 0) {
+        contextParts.add('IELTS: $ieltsScore');
+      }
+      if (mathScore != null && mathScore > 0) {
+        contextParts.add('Математика: $mathScore');
+      }
+      if (preferredCities != null && preferredCities.isNotEmpty) {
+        contextParts.add('Город: ${preferredCities.join(", ")}');
+      }
+      if (currentEducation != null && currentEducation.isNotEmpty) {
+        contextParts.add('Образование: $currentEducation');
+      }
+      if (preferredMajors != null && preferredMajors.isNotEmpty) {
+        contextParts.add(
+          'Интересующие специальности: ${preferredMajors.join(", ")}',
+        );
+      }
+      if (userAchievements != null && userAchievements.isNotEmpty) {
+        contextParts.add('Достижения: ${userAchievements.join(", ")}');
+      }
+
+      if (contextParts.isNotEmpty) {
+        bodyData['userContext'] = contextParts.join('\n');
+      }
+
+      final currentUser = AuthService().currentUser.value;
+      if (currentUser != null) {
+        bodyData['uid'] = currentUser.uid;
+      }
+
+      if (history != null && history.isNotEmpty) {
+        bodyData['history'] = history;
+      }
+
+      final request = http.Request('POST', Uri.parse('$_baseUrl/chat'));
+      request.headers['Content-Type'] = 'application/json';
+      request.body = jsonEncode(bodyData);
+
+      final client = http.Client();
+      final response =
+          await client.send(request).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        // Check content type to see if it's JSON (error/out of tokens) or event-stream
+        final contentType = response.headers['content-type'] ?? '';
+        if (contentType.contains('application/json')) {
+          final bodyString = await response.stream.bytesToString();
+          final data = jsonDecode(bodyString);
+          if (data['outOfTokens'] == true) {
+            throw OutOfTokensException(data['answer'] ?? '');
+          }
+          yield data['answer'] ?? 'Извините, ответ не получен.';
+          return;
+        }
+
+        // Stream parsing
+        await for (final line in response.stream
+            .transform(utf8.decoder)
+            .transform(const LineSplitter())) {
+          if (line.startsWith('data: ')) {
+            final dataStr = line.substring(6);
+            if (dataStr.trim() == '[DONE]') break;
+            try {
+              final json = jsonDecode(dataStr);
+              yield json['answer'] as String;
+            } catch (_) {}
+          }
+        }
+      } else {
+        yield '📍 **Проблема с подключением.**\n\nСервер TANDAU сейчас перегружен или недоступен (Код: ${response.statusCode}). Пожалуйста, попробуйте позже.';
+      }
+    } catch (e) {
+      if (e is OutOfTokensException) {
+        rethrow;
+      }
+      yield '📍 **Ошибка сети.**\n\nПроверьте ваше интернет-соединение и попробуйте снова.';
+    }
+  }
+
   // --- SYSTEM INSTRUCTIONS ---
   // (Removed unused strategy instructions as we moved logic to backend)
+
+  /// Запросить Жеке Жоспар (персональный план поступления) - Stream
+  Stream<String> requestZhekeZhosparStream({
+    int? entScore,
+    double? gpa,
+    double? ieltsScore,
+    int? mathScore,
+    String? city,
+    String? preferredMajors,
+    String? currentEducation,
+    String? achievements,
+  }) async* {
+    try {
+      final bodyData = <String, dynamic>{};
+
+      if (entScore != null) bodyData['entScore'] = entScore;
+      if (gpa != null) bodyData['gpa'] = gpa;
+      if (ieltsScore != null) bodyData['ieltsScore'] = ieltsScore;
+      if (mathScore != null) bodyData['mathScore'] = mathScore;
+      if (city != null) bodyData['city'] = city;
+      if (preferredMajors != null) {
+        bodyData['preferredMajors'] = preferredMajors;
+      }
+      if (currentEducation != null) {
+        bodyData['currentEducation'] = currentEducation;
+      }
+      if (achievements != null) bodyData['achievements'] = achievements;
+
+      // Send uid for token tracking
+      final currentUser = AuthService().currentUser.value;
+      if (currentUser != null) {
+        bodyData['uid'] = currentUser.uid;
+      }
+
+      final request =
+          http.Request('POST', Uri.parse('$_baseUrl/zheke-zhospar'));
+      request.headers['Content-Type'] = 'application/json';
+      request.body = jsonEncode(bodyData);
+
+      final client = http.Client();
+      final response =
+          await client.send(request).timeout(const Duration(seconds: 45));
+
+      if (response.statusCode == 200) {
+        final contentType = response.headers['content-type'] ?? '';
+        if (contentType.contains('application/json')) {
+          final bodyString = await response.stream.bytesToString();
+          final data = jsonDecode(bodyString);
+          if (data['outOfTokens'] == true) {
+            throw OutOfTokensException(data['answer'] ?? '');
+          }
+          yield data['answer'] ?? 'Не удалось создать план.';
+          return;
+        }
+
+        // Stream parsing
+        await for (final line in response.stream
+            .transform(utf8.decoder)
+            .transform(const LineSplitter())) {
+          if (line.startsWith('data: ')) {
+            final dataStr = line.substring(6);
+            if (dataStr.trim() == '[DONE]') break;
+            try {
+              final json = jsonDecode(dataStr);
+              yield json['answer'] as String;
+            } catch (_) {}
+          }
+        }
+      } else {
+        yield '📍 **Проблема с подключением.**\n\nСервер недоступен (Код: ${response.statusCode}).';
+      }
+    } catch (e) {
+      if (e is OutOfTokensException) rethrow;
+      yield '📍 **Ошибка сети.**\n\nПроверьте интернет и попробуйте снова.';
+    }
+  }
 
   /// Запросить Жеке Жоспар (персональный план поступления)
   Future<String> requestZhekeZhospar({
