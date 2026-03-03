@@ -10,8 +10,12 @@ import '../services/ai_feedback_service.dart';
 import '../services/auth_service.dart';
 import '../services/chat_history_service.dart';
 import '../services/moderation_service.dart';
+import '../services/university_service.dart';
 import '../widgets/ai_logo_icon.dart';
 import 'onboarding_wizard_screen.dart';
+import 'university_detail_screen.dart';
+import 'comparison_screen.dart';
+import '../services/comparison_service.dart';
 
 class AIConsultantScreen extends StatefulWidget {
   const AIConsultantScreen({super.key});
@@ -28,6 +32,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final UniversityService _universityService = UniversityService();
 
   final List<ChatMessage> _messages = [];
   bool _isTyping = false;
@@ -228,6 +233,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       if (mounted) {
         int? aiMsgIndex;
         String fullResponse = '';
+        Set<String> executedActions = {};
 
         await for (final chunk in stream) {
           if (!mounted) break;
@@ -248,9 +254,27 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           }
 
           fullResponse += chunk;
+
+          // Detect and parse actions
+          String displayedText = fullResponse;
+          final actionRegex = RegExp(r'\[ACTION:\s*([^:]+):\s*([^\]]+)\]');
+          final matches = actionRegex.allMatches(fullResponse);
+
+          for (final match in matches) {
+            final actionKey = match.group(0)!;
+            displayedText = displayedText.replaceAll(actionKey, '');
+
+            if (!executedActions.contains(actionKey)) {
+              executedActions.add(actionKey);
+              final actionType = match.group(1)?.trim() ?? '';
+              final actionArgs = match.group(2)?.trim() ?? '';
+              _handleAiAction(actionType, actionArgs);
+            }
+          }
+
           setState(() {
             _messages[aiMsgIndex!] =
-                _messages[aiMsgIndex].copyWith(text: fullResponse);
+                _messages[aiMsgIndex].copyWith(text: displayedText.trim());
           });
           _scrollToBottom();
         }
@@ -1145,6 +1169,13 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                   )
                 : MarkdownBody(
                     data: msg.text,
+                    onTapLink: (text, href, title) {
+                      if (href != null &&
+                          href.startsWith('app://university/')) {
+                        final uniId = href.replaceAll('app://university/', '');
+                        _openUniversity(uniId);
+                      }
+                    },
                     styleSheet: MarkdownStyleSheet(
                       p: TextStyle(
                         color: isDark ? Colors.white : AppColors.textPrimary,
@@ -1424,6 +1455,58 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: AppColors.error),
     );
+  }
+
+  void _openUniversity(String uniId) async {
+    try {
+      // Because getAllUniversities is heavily cached in UniversityService,
+      // it will return almost instantly.
+      final universities = await _universityService.getAllUniversities();
+      final uni = universities.firstWhere((u) => u.id == uniId);
+
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => UniversityDetailScreen(university: uni),
+        ),
+      );
+    } catch (e) {
+      _showErrorSnackBar('Университет не найден в базе.');
+    }
+  }
+
+  Future<void> _handleAiAction(String actionType, String args) async {
+    try {
+      if (actionType == 'SAVE_FAV') {
+        final uniId = args.trim();
+        final success = await AuthService().addToFavorites(uniId);
+        if (success && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Сохранено в избранное'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else if (actionType == 'COMPARE') {
+        final parts = args.split(',').map((e) => e.trim()).toList();
+        if (parts.length >= 2) {
+          final id1 = parts[0];
+          final id2 = parts[1];
+          // Set these exactly in the comparison service
+          await ComparisonService().setComparison([id1, id2]);
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ComparisonScreen()),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error handling AI Action: $e');
+    }
   }
 }
 
