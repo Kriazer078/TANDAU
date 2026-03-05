@@ -156,11 +156,26 @@ class UniversityController {
 
       stderr.writeln('🎯 Intent: ${intentResult.intent.name}');
 
+      // 🔗 Inject real university ID→name mapping for correct app:// links
+      String enrichedContext = userContext ?? '';
+      try {
+        final universities = await _firebaseService.getUniversities();
+        if (universities.isNotEmpty) {
+          final idMap = universities
+              .map((u) => '- ${u.id}: ${u.name} (${u.city})')
+              .join('\n');
+          enrichedContext +=
+              '\n\n### СПРАВОЧНИК ID ВУЗОВ (используй ТОЛЬКО эти ID для ссылок app://university/ID):\n$idMap';
+        }
+      } catch (e) {
+        stderr.writeln('⚠️ Failed to load uni IDs for context: $e');
+      }
+
       final stream = await _aiService.generateChatStream(
         question,
         history: history,
         ragContext: await _knowledgeService.searchAndFormatAsync(question),
-        userContext: userContext,
+        userContext: enrichedContext.isNotEmpty ? enrichedContext : null,
         intentInstruction: intentInstruction,
       );
 

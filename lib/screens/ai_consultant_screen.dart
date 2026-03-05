@@ -11,6 +11,7 @@ import '../services/auth_service.dart';
 import '../services/chat_history_service.dart';
 import '../services/moderation_service.dart';
 import '../services/university_service.dart';
+import '../models/university.dart';
 import '../widgets/ai_logo_icon.dart';
 import 'onboarding_wizard_screen.dart';
 import 'university_detail_screen.dart';
@@ -1180,7 +1181,10 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                       if (href != null &&
                           href.startsWith('app://university/')) {
                         final uniId = href.replaceAll('app://university/', '');
-                        _openUniversity(uniId);
+                        // Try ID first, fall back to visible name
+                        _openUniversity(uniId, fallbackName: text);
+                      } else {
+                        _openUniversity(text);
                       }
                     },
                     styleSheet: MarkdownStyleSheet(
@@ -1512,21 +1516,73 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     );
   }
 
-  void _openUniversity(String uniId) async {
+  void _openUniversity(String uniIdOrName, {String? fallbackName}) async {
     try {
-      // Because getAllUniversities is heavily cached in UniversityService,
-      // it will return almost instantly.
       final universities = await _universityService.getAllUniversities();
-      final uni = universities.firstWhere((u) => u.id == uniId);
+      final query = uniIdOrName.trim().toLowerCase();
+      debugPrint('🔍 Looking for: "$query" in ${universities.length} unis');
 
+      // Try exact ID match first
+      University? found;
+      for (final u in universities) {
+        if (u.id == uniIdOrName) {
+          found = u;
+          break;
+        }
+      }
+
+      // Try name matching (exact → contains → word match)
+      if (found == null) {
+        for (final u in universities) {
+          final name = u.name.toLowerCase();
+          if (name == query || name.contains(query) || query.contains(name)) {
+            found = u;
+            break;
+          }
+        }
+      }
+
+      // Fuzzy: match any significant word (3+ chars)
+      if (found == null) {
+        final words = query
+            .split(RegExp(r'[\s\-\(\)]+'))
+            .where((w) => w.length >= 3)
+            .toList();
+        for (final u in universities) {
+          final name = u.name.toLowerCase();
+          if (words.any((w) => name.contains(w))) {
+            found = u;
+            break;
+          }
+        }
+      }
+
+      // Fallback: retry with visible link text if ID didn't match
+      if (found == null &&
+          fallbackName != null &&
+          fallbackName != uniIdOrName) {
+        debugPrint('🔍 Retrying with fallback name: "$fallbackName"');
+        _openUniversity(fallbackName);
+        return;
+      }
+
+      if (found == null) {
+        debugPrint(
+            '❌ Not found. Available: ${universities.map((u) => '${u.id}:${u.name}').take(5)}');
+        _showErrorSnackBar('Университет не найден в базе.');
+        return;
+      }
+
+      debugPrint('✅ Found: ${found.name}');
       if (!mounted) return;
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => UniversityDetailScreen(university: uni),
+          builder: (_) => UniversityDetailScreen(university: found!),
         ),
       );
     } catch (e) {
+      debugPrint('❌ _openUniversity error: $e');
       _showErrorSnackBar('Университет не найден в базе.');
     }
   }
