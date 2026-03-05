@@ -3,13 +3,27 @@ import 'package:googleapis/firestore/v1.dart';
 import 'package:googleapis/fcm/v1.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import '../models/university.dart';
+import 'cache_service.dart';
 
 class FirebaseService {
   late FirestoreApi _firestoreApi;
   late FirebaseCloudMessagingApi _fcmApi;
   final String _projectId;
+  CacheService? _cacheService;
+
+  /// Cache TTL for university data (5 minutes)
+  static const Duration _universitiesCacheTtl = Duration(minutes: 5);
+  static const String _universitiesCacheKey = 'universities';
 
   FirebaseService(this._projectId);
+
+  /// Set cache service (optional, set from server.dart)
+  void setCacheService(CacheService cache) {
+    _cacheService = cache;
+  }
+
+  /// Expose FirestoreApi for other services
+  FirestoreApi get firestoreApi => _firestoreApi;
 
   Future<void> init() async {
     // Path to your service account key file.
@@ -39,6 +53,16 @@ class FirebaseService {
   }
 
   Future<List<University>> getUniversities() async {
+    // 📦 Check cache first
+    if (_cacheService != null) {
+      final cached =
+          _cacheService!.get<List<University>>(_universitiesCacheKey);
+      if (cached != null) {
+        stderr.writeln('📦 [CACHE HIT] universities (${cached.length} items)');
+        return cached;
+      }
+    }
+
     final parent = 'projects/$_projectId/databases/(default)/documents';
 
     try {
@@ -48,7 +72,7 @@ class FirebaseService {
 
       if (response.documents == null) return [];
 
-      return response.documents!.map((doc) {
+      final universities = response.documents!.map((doc) {
         final fields = doc.fields!;
         final id = doc.name!.split('/').last;
 
@@ -82,8 +106,18 @@ class FirebaseService {
 
         return University.fromJson(json, id);
       }).toList();
+
+      // 📦 Store in cache
+      if (_cacheService != null) {
+        _cacheService!
+            .set(_universitiesCacheKey, universities, _universitiesCacheTtl);
+        stderr.writeln(
+            '📦 [CACHE SET] universities (${universities.length} items, TTL: $_universitiesCacheTtl)');
+      }
+
+      return universities;
     } catch (e) {
-      // stderr.writeln('Error fetching universities: $e');
+      stderr.writeln('Error fetching universities: $e');
       return [];
     }
   }

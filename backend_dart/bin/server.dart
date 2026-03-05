@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:collection';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
@@ -10,6 +11,10 @@ import 'package:antigravity_backend/controllers/notification_controller.dart';
 import 'package:antigravity_backend/services/firebase_service.dart';
 import 'package:antigravity_backend/services/gemini_service.dart';
 import 'package:antigravity_backend/services/knowledge_service.dart';
+import 'package:antigravity_backend/services/cache_service.dart';
+import 'package:antigravity_backend/services/ai_logger_service.dart';
+import 'package:antigravity_backend/services/prompt_config_service.dart';
+import 'package:antigravity_backend/services/cost_tracker_service.dart';
 
 void main(List<String> args) async {
   // Load environment variables
@@ -26,16 +31,53 @@ void main(List<String> args) async {
   final firebaseService = FirebaseService(projectId);
   await firebaseService.init();
 
+  // 📦 Initialize Cache Service
+  final cacheService = CacheService();
+  firebaseService.setCacheService(cacheService);
+  stderr.writeln('📦 Cache Service initialized');
+
   final geminiService = GeminiService(geminiKey);
 
+  // 💰 Initialize Cost Tracker
+  final costTracker = CostTrackerService();
+  geminiService.setCostTracker(costTracker);
+  stderr.writeln('💰 Cost Tracker initialized');
+
   // Initialize Knowledge Service (RAG)
-  final knowledgeService = KnowledgeService(firebaseService);
+  final knowledgeService = KnowledgeService(firebaseService, geminiKey);
   await knowledgeService.init();
+
+  // 📊 Initialize AI Logger
+  final aiLogger = AILoggerService(
+    firebaseService.firestoreApi,
+    projectId,
+  );
+  stderr.writeln('📊 AI Logger initialized');
+
+  // 🧪 Initialize Prompt Config (A/B testing)
+  final promptConfig = PromptConfigService(
+    firebaseService.firestoreApi,
+    projectId,
+  );
+  try {
+    await promptConfig.init();
+    stderr.writeln('🧪 Prompt Config initialized');
+  } catch (e) {
+    stderr.writeln('⚠️ Prompt Config init failed (non-critical): $e');
+  }
 
   // Initialize Controller
   final universityController =
       UniversityController(firebaseService, geminiService, knowledgeService);
+  universityController.setAILogger(aiLogger);
+
   final notificationController = NotificationController(firebaseService);
+
+  // 📊 Request stats counters
+  final serverStartTime = DateTime.now().toUtc();
+  int totalRequests = 0;
+  final Map<String, int> requestsByPath = {};
+  final Map<int, int> requestsByStatus = {};
 
   // Router
   final router = Router();
@@ -45,6 +87,45 @@ void main(List<String> args) async {
   // Health check
   router.get('/health', (Request req) => Response.ok('OK'));
 
+  // 📊 Admin: Cache stats
+  router.get('/admin/cache-stats', (Request req) {
+    return Response.ok(
+      jsonEncode(cacheService.stats()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  });
+
+  // 📊 Admin: Request stats
+  router.get('/admin/stats', (Request req) {
+    final uptime = DateTime.now().toUtc().difference(serverStartTime);
+    return Response.ok(
+      jsonEncode({
+        'server_start': serverStartTime.toIso8601String(),
+        'uptime_minutes': uptime.inMinutes,
+        'total_requests': totalRequests,
+        'requests_by_path': requestsByPath,
+        'requests_by_status': requestsByStatus,
+        'cache': cacheService.stats(),
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+  });
+
+  // 💰 Admin: Cost tracking
+  router.get('/admin/costs', (Request req) {
+    return Response.ok(
+      jsonEncode(costTracker.getStats()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  });
+
+  // 🧪 Admin: Prompt configs
+  router.get('/admin/prompts', (Request req) {
+    return Response.ok(
+      jsonEncode(promptConfig.getStats()),
+      headers: {'Content-Type': 'application/json'},
+    );
+  });
   // Privacy Policy
   router.get('/privacy', (Request req) {
     final html = '''
@@ -247,14 +328,36 @@ void main(List<String> args) async {
     };
   }
 
+  // 📊 Request counting middleware
+  Middleware requestCounterMiddleware() {
+    return (Handler innerHandler) {
+      return (Request request) async {
+        totalRequests++;
+        final path = request.requestedUri.path;
+        requestsByPath[path] = (requestsByPath[path] ?? 0) + 1;
+
+        final response = await innerHandler(request);
+        requestsByStatus[response.statusCode] =
+            (requestsByStatus[response.statusCode] ?? 0) + 1;
+        return response;
+      };
+    };
+  }
+
   // Middleware pipeline
   final handler = Pipeline()
       .addMiddleware(corsMiddleware())
       .addMiddleware(rateLimitMiddleware())
+      .addMiddleware(requestCounterMiddleware())
       .addMiddleware(logRequests())
       .addHandler(router.call);
 
   // Start Server
   final server = await io.serve(handler, '0.0.0.0', port);
-  stderr.writeln('Antigravity Server listening on port ${server.port}');
+  stderr.writeln('\n🚀 Antigravity Server listening on port ${server.port}');
+  stderr.writeln('   📊 Admin endpoints:');
+  stderr.writeln('   │ /admin/cache-stats');
+  stderr.writeln('   │ /admin/stats');
+  stderr.writeln('   │ /admin/costs');
+  stderr.writeln('   └ /admin/prompts');
 }

@@ -1126,8 +1126,15 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     );
   }
 
+  /// Extract university IDs from app:// links in message text
+  List<String> _extractUniversityLinks(String text) {
+    final regex = RegExp(r'app://university/([a-zA-Z0-9_-]+)');
+    return regex.allMatches(text).map((m) => m.group(1)!).toList();
+  }
+
   Widget _buildMessageBubble(ChatMessage msg, bool isDark) {
     final isUser = msg.isUser;
+    final uniLinks = isUser ? <String>[] : _extractUniversityLinks(msg.text);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -1206,7 +1213,54 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                     ),
                   ),
           ),
+
+          // 🆕 Rich Action Buttons (university quick-open chips)
+          if (!isUser && uniLinks.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 6, left: 4),
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: uniLinks.take(3).map((uniId) {
+                  return _ActionChip(
+                    label: uniId.toUpperCase(),
+                    icon: Icons.school_rounded,
+                    onTap: () => _openUniversity(uniId),
+                    isDark: isDark,
+                  );
+                }).toList(),
+              ),
+            ),
+
           const SizedBox(height: 4),
+
+          // 🆕 Citation indicator for AI messages
+          if (!isUser && msg.text.length > 50)
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 10,
+                    color: isDark
+                        ? const Color(0xFF818CF8)
+                        : const Color(0xFF6366F1),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'TANDAU AI \u2022 \u0411\u0430\u0437\u0430 \u0437\u043d\u0430\u043d\u0438\u0439 + Google Search',
+                    style: TextStyle(
+                      color: isDark ? Colors.white30 : AppColors.textHint,
+                      fontSize: 9,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           Padding(
             padding: EdgeInsets.only(
               left: isUser ? 0 : 4,
@@ -1229,7 +1283,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                       Clipboard.setData(ClipboardData(text: msg.text));
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Рекомендация скопирована'),
+                          content: const Text(
+                              '\u0420\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u044f \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u0430'),
                           behavior: SnackBarBehavior.floating,
                           backgroundColor: Colors.green,
                           shape: RoundedRectangleBorder(
@@ -1256,7 +1311,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Скопировать',
+                            '\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c',
                             style: TextStyle(
                               color: isDark
                                   ? Colors.white54
@@ -1484,8 +1539,18 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Сохранено в избранное'),
-              backgroundColor: Colors.green,
+              content: Row(
+                children: const [
+                  Icon(Icons.favorite, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text('Сохранено в избранное ❤️'),
+                ],
+              ),
+              backgroundColor: const Color(0xFF6366F1),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         }
@@ -1494,12 +1559,29 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         if (parts.length >= 2) {
           final id1 = parts[0];
           final id2 = parts[1];
-          // Set these exactly in the comparison service
           await ComparisonService().setComparison([id1, id2]);
           if (mounted) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ComparisonScreen()),
+            );
+          }
+        }
+      } else if (actionType == 'OPEN_UNI') {
+        // 🆕 Open university detail page
+        _openUniversity(args.trim());
+      } else if (actionType == 'NAVIGATE') {
+        // 🆕 Navigate to a screen (deep linking)
+        final screen = args.trim().toLowerCase();
+        if (mounted) {
+          if (screen == 'favorites') {
+            Navigator.pop(context); // Go back to main nav
+          } else if (screen == 'profile') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const OnboardingWizardScreen(),
+              ),
             );
           }
         }
@@ -1847,6 +1929,80 @@ class _ThinkingStepRowState extends State<_ThinkingStepRow>
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════
+//  ACTION CHIP (Rich Action buttons in chat)
+// ═══════════════════════════════════════════
+class _ActionChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _ActionChip({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [const Color(0xFF312E81), const Color(0xFF4338CA)]
+                  : [const Color(0xFFEEF2FF), const Color(0xFFE0E7FF)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFF6366F1).withValues(alpha: 0.4)
+                  : const Color(0xFF6366F1).withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 13,
+                color:
+                    isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? const Color(0xFF818CF8)
+                      : const Color(0xFF4F46E5),
+                ),
+              ),
+              const SizedBox(width: 2),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 9,
+                color: isDark
+                    ? const Color(0xFF818CF8).withValues(alpha: 0.6)
+                    : const Color(0xFF4F46E5).withValues(alpha: 0.5),
               ),
             ],
           ),

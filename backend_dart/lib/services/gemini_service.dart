@@ -2,9 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/university.dart';
+import 'system_prompts.dart';
+import 'cost_tracker_service.dart';
 
 class GeminiService {
   final String _apiKey;
+  CostTrackerService? _costTracker;
+
+  /// Set cost tracker (optional, set from server.dart)
+  void setCostTracker(CostTrackerService tracker) {
+    _costTracker = tracker;
+  }
 
   // List of models available to current key (Prioritizing stable models)
   static const List<String> _endpoints = [
@@ -13,11 +21,44 @@ class GeminiService {
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
   ];
 
+  // ═══════════════════════════════════════════════════════════════
+  // PROMPT HELPERS — delegates to SystemPrompts class
+  // ═══════════════════════════════════════════════════════════════
+
+  /// Builds contents list from history, RAG context, and question
+  static List<Map<String, dynamic>> buildContents({
+    required String question,
+    List<Map<String, dynamic>>? history,
+    String? ragContext,
+  }) {
+    final List<Map<String, dynamic>> contents = [];
+
+    if (history != null && history.isNotEmpty) {
+      contents.addAll(history);
+    }
+
+    String enrichedQuestion = question;
+    if (ragContext != null && ragContext.isNotEmpty) {
+      enrichedQuestion =
+          '$ragContext\n\n--- ВОПРОС ПОЛЬЗОВАТЕЛЯ ---\n$question';
+    }
+
+    contents.add({
+      'role': 'user',
+      'parts': [
+        {'text': enrichedQuestion}
+      ]
+    });
+
+    return contents;
+  }
+
   GeminiService(this._apiKey);
 
   Future<String> _generateAdvanced({
     String? systemInstruction,
     required List<Map<String, dynamic>> contents,
+    bool useGrounding = false,
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) {
       return 'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.';
@@ -44,6 +85,13 @@ class GeminiService {
           };
         }
 
+        // 🔍 Google Search Grounding
+        if (useGrounding) {
+          requestBody['tools'] = [
+            {'google_search': {}}
+          ];
+        }
+
         final response = await http.post(
           Uri.parse('$endpoint?key=$_apiKey'),
           headers: {'Content-Type': 'application/json'},
@@ -58,6 +106,8 @@ class GeminiService {
               json['candidates']?[0]?['content']?['parts']?[0]?['text'];
           if (text != null) {
             stderr.writeln('OK ($modelName)');
+            // 💰 Track token usage
+            _trackTokenUsage(json, modelName);
             return text;
           }
           stderr.writeln('Empty response from $modelName:\n${response.body}');
@@ -85,6 +135,7 @@ class GeminiService {
   Future<Stream<String>> _generateStreamAdvanced({
     String? systemInstruction,
     required List<Map<String, dynamic>> contents,
+    bool useGrounding = false,
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) {
       return Stream.value(
@@ -110,6 +161,13 @@ class GeminiService {
               {'text': systemInstruction}
             ]
           };
+        }
+
+        // 🔍 Google Search Grounding
+        if (useGrounding) {
+          requestBody['tools'] = [
+            {'google_search': {}}
+          ];
         }
 
         final request = http.Request(
@@ -161,75 +219,19 @@ class GeminiService {
     List<Map<String, dynamic>>? history,
     String? ragContext,
     String? userContext,
+    String? intentInstruction,
   }) async {
-    String systemPrompt = '''
-Ты — TANDAU AI, персональный образовательный стратег для абитуриентов Казахстана (2026 год). Ты НЕ общий чат-бот. Ты — узкоспециализированный эксперт по системе образования РК.
-
-### ТВОЯ ЭКСПЕРТИЗА (ВЕРИФИЦИРОВАННЫЕ ЗНАНИЯ):
-- ЕНТ 2026: макс. 140 баллов (120 заданий), основное ЕНТ: 16 мая — 5 июля 2026
-- Подача на грант: 13-20 июля 2026, результаты: до 10 августа 2026
-- Пороговые баллы: общий 50, национальные вузы 65, педагогика/право 75, медицина 70, сельское хоз-во 60
-- Квоты: сельская квота, программа «Серпін-2050», СУСН, целевые гранты
-- Алтын белгі: доп. баллы и льготы при поступлении
-
-### ЖЁСТКИЕ ПРАВИЛА (НИКОГДА НЕ НАРУШАЙ):
-
-**1. КРАТКОСТЬ И ПОЛЬЗА:**
-- ОТВЕЧАЙ МАКСИМАЛЬНО КРАТКО И ПО ДЕЛУ (не более 150 слов).
-- Прямо к делу, без вступлений типа "Здравствуйте" или "Отличный вопрос!".
-- НИКАКИХ лишних упоминаний министерств (МРН, МОН РК, МНВО) в тексте.
-
-**2. ANTI-HALLUCINATION (ЗАПРЕТ НА ВЫДУМКИ):**
-- НИКОГДА не выдумывай проходные баллы, стоимость обучения или рейтинги, если не уверен.
-- НИКОГДА не называй себя "Как ИИ, я не могу..." — ты ЭКСПЕРТ, просто указывай примерные данные.
-
-**3. ПЕРСОНАЛИЗАЦИЯ И ТОЧНОСТЬ (КОНТЕКСТ):**
-- ЖЕСТКО опирайся на предоставленный КОНТЕКСТ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ. Не выдумывай баллы ЕНТ или город, если они указаны.
-- Адаптируй ответ под конкретную ситуацию пользователя (если данных нет — спроси).
-
-**4. УМНЫЕ ССЫЛКИ:**
-- Если ты рекомендуешь конкретный университет, ВСЕГДА используй формат Markdown-ссылки с app-схемой: [Название вуза](app://university/ID_ВУЗА).
-- АЙДИ вуза (ID_ВУЗА) бери из своей базы знаний или контекста (например: sdu, kbtu, aitu, nu и т.д.).
-
-**5. ВЫЗОВ ДЕЙСТВИЙ В ПРИЛОЖЕНИИ:**
-- Ты можешь управлять приложением пользователя скрытыми командами в конце своего ответа.
-- Чтобы сохранить универ в Избранное, просто добавь отдельной строкой: `[ACTION: SAVE_FAV: ID_ВУЗА]`
-- Чтобы открыть крутую таблицу сравнения двух вузов, напиши: `[ACTION: COMPARE: ID_ВУЗА_1, ID_ВУЗА_2]`
-- Делай это, ТОЛЬКО если пользователь попросил (например, "сохрани", "добавь в избранное", "сравни").
-
-**6. ЯЗЫК:** Отвечай на том же языке, на котором задан вопрос (қазақша / русский / English). По умолчанию — русский.
-''';
-
-    if (userContext != null && userContext.isNotEmpty) {
-      systemPrompt +=
-          '\n\n### КОНТЕКСТ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ (УЧИТЫВАЙ ПРИ ОТВЕТЕ):\n$userContext';
-    }
-
-    final List<Map<String, dynamic>> contents = [];
-
-    // Add history if present
-    if (history != null && history.isNotEmpty) {
-      contents.addAll(history);
-    }
-
-    // 🧠 RAG: Prepend knowledge base context to the question
-    String enrichedQuestion = question;
-    if (ragContext != null && ragContext.isNotEmpty) {
-      enrichedQuestion =
-          '$ragContext\n\n--- ВОПРОС ПОЛЬЗОВАТЕЛЯ ---\n$question';
-    }
-
-    // Add current question
-    contents.add({
-      'role': 'user',
-      'parts': [
-        {'text': enrichedQuestion}
-      ]
-    });
-
     return _generateAdvanced(
-      systemInstruction: systemPrompt,
-      contents: contents,
+      systemInstruction: SystemPrompts.buildChatPrompt(
+        userContext: userContext,
+        intentInstruction: intentInstruction,
+      ),
+      contents: buildContents(
+        question: question,
+        history: history,
+        ragContext: ragContext,
+      ),
+      useGrounding: true,
     );
   }
 
@@ -238,72 +240,19 @@ class GeminiService {
     List<Map<String, dynamic>>? history,
     String? ragContext,
     String? userContext,
+    String? intentInstruction,
   }) async {
-    String systemPrompt = '''
-Ты — TANDAU AI, персональный образовательный стратег для абитуриентов Казахстана (2026 год). Ты НЕ общий чат-бот. Ты — узкоспециализированный эксперт по системе образования РК.
-
-### ТВОЯ ЭКСПЕРТИЗА (ВЕРИФИЦИРОВАННЫЕ ЗНАНИЯ):
-- ЕНТ 2026: макс. 140 баллов (120 заданий), основное ЕНТ: 16 мая — 5 июля 2026
-- Подача на грант: 13-20 июля 2026, результаты: до 10 августа 2026
-- Пороговые баллы: общий 50, национальные вузы 65, педагогика/право 75, медицина 70, сельское хоз-во 60
-- Квоты: сельская квота, программа «Серпін-2050», СУСН, целевые гранты
-- Алтын белгі: доп. баллы и льготы при поступлении
-
-### ЖЁСТКИЕ ПРАВИЛА (НИКОГДА НЕ НАРУШАЙ):
-
-**1. КРАТКОСТЬ И ПОЛЬЗА:**
-- ОТВЕЧАЙ МАКСИМАЛЬНО КРАТКО И ПО ДЕЛУ (не более 150 слов).
-- Прямо к делу, без вступлений типа "Здравствуйте" или "Отличный вопрос!".
-- НИКАКИХ лишних упоминаний министерств (МРН, МОН РК, МНВО) в тексте.
-
-**2. ANTI-HALLUCINATION (ЗАПРЕТ НА ВЫДУМКИ):**
-- НИКОГДА не выдумывай проходные баллы, стоимость обучения или рейтинги, если не уверен.
-- НИКОГДА не называй себя "Как ИИ, я не могу..." — ты ЭКСПЕРТ, просто указывай примерные данные.
-
-**3. ПЕРСОНАЛИЗАЦИЯ И ТОЧНОСТЬ (КОНТЕКСТ):**
-- ЖЕСТКО опирайся на предоставленный КОНТЕКСТ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ. Не выдумывай баллы ЕНТ или город, если они указаны.
-- Адаптируй ответ под конкретную ситуацию пользователя (если данных нет — спроси).
-
-**4. УМНЫЕ ССЫЛКИ:**
-- Если ты рекомендуешь конкретный университет, ВСЕГДА используй формат Markdown-ссылки с app-схемой: [Название вуза](app://university/ID_ВУЗА).
-- АЙДИ вуза (ID_ВУЗА) бери из своей базы знаний или контекста (например: sdu, kbtu, aitu, nu и т.д.).
-
-**5. ВЫЗОВ ДЕЙСТВИЙ В ПРИЛОЖЕНИИ:**
-- Ты можешь управлять приложением пользователя скрытыми командами в конце своего ответа.
-- Чтобы сохранить универ в Избранное, просто добавь отдельной строкой: `[ACTION: SAVE_FAV: ID_ВУЗА]`
-- Чтобы открыть крутую таблицу сравнения двух вузов, напиши: `[ACTION: COMPARE: ID_ВУЗА_1, ID_ВУЗА_2]`
-- Делай это, ТОЛЬКО если пользователь попросил (например, "сохрани", "добавь в избранное", "сравни").
-
-**6. ЯЗЫК:** Отвечай на том же языке, на котором задан вопрос (қазақша / русский / English). По умолчанию — русский.
-''';
-
-    if (userContext != null && userContext.isNotEmpty) {
-      systemPrompt +=
-          '\n\n### КОНТЕКСТ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ (УЧИТЫВАЙ ПРИ ОТВЕТЕ):\n$userContext';
-    }
-
-    final List<Map<String, dynamic>> contents = [];
-
-    if (history != null && history.isNotEmpty) {
-      contents.addAll(history);
-    }
-
-    String enrichedQuestion = question;
-    if (ragContext != null && ragContext.isNotEmpty) {
-      enrichedQuestion =
-          '$ragContext\n\n--- ВОПРОС ПОЛЬЗОВАТЕЛЯ ---\n$question';
-    }
-
-    contents.add({
-      'role': 'user',
-      'parts': [
-        {'text': enrichedQuestion}
-      ]
-    });
-
     return _generateStreamAdvanced(
-      systemInstruction: systemPrompt,
-      contents: contents,
+      systemInstruction: SystemPrompts.buildChatPrompt(
+        userContext: userContext,
+        intentInstruction: intentInstruction,
+      ),
+      contents: buildContents(
+        question: question,
+        history: history,
+        ragContext: ragContext,
+      ),
+      useGrounding: true,
     );
   }
 
@@ -369,60 +318,17 @@ $context
         .map((e) => "${e.key}: ${e.value} баллов")
         .join('\n');
 
-    final systemInstruction = '''
-Ты — TANDAU AI, персональный стратег поступления для абитуриентов Казахстана (2026 год).
-Твоя задача — дать кристально чёткий, data-driven план поступления на грант для конкретного абитуриента.
-
-### БАЗА ЗНАНИЙ (ВЕРИФИЦИРОВАННЫЕ ДАННЫЕ):
-- ЕНТ 2026: макс. 140 баллов, основное ЕНТ: 16 мая — 5 июля 2026
-- Подача на грант: 13-20 июля 2026
-- Пороги: общий 50, национальные вузы 65, педагогика/право 75, медицина 70
-- Квоты: сельская, Серпін-2050, СУСН, целевые региональные гранты
-
-### ЖЁСТКИЕ ПРАВИЛА:
-
-**ANTI-HALLUCINATION:**
-- Используй ТОЛЬКО данные, предоставленные ниже в DATA PAYLOAD.
-- НИКОГДА не выдумывай проходные баллы или количество грантов.
-
-**КРАТКОСТЬ:**
-- ОТВЕЧАЙ МАКСИМАЛЬНО КРАТКО. Убери воду.
-- Не используй аббревиатуры министерств (МРН, МОН РК, МНВО).
-
-**ФОРМАТ (СТРОГО):**
-
-**ВЕРДИКТ:** [Шанс: Высокий ≥70% / Пограничный 40-69% / Низкий <40%]. [1 предложение-вывод].
-
-**АНАЛИТИКА:**
-- Сильные стороны (конкретные цифры)
-- Риски и слабые места
-
-**ПЛАН Б:**
-- [Вуз 1 из списка ниже]
-- [Вуз 2 из списка ниже]
-
-**🚀 ROADMAP:**
-- Шаг 1: [Действие] (Дедлайн: [Дата])
-- Шаг 2: [Действие] (Дедлайн: [Дата])
-''';
-
-    final prompt = '''
-### CONTEXT: DATA PAYLOAD
-Желаемый вуз (Target): $universityName
-Специальность: $specialty
-Метрики: Общий балл ЕНТ - $untScore из 140
-Раскладка предметов: 
-$scoresText
-
-📍 **Target Alternatives База:** $alternativesCtx
-
-${untScore < 65 ? '🚨 ВНИМАНИЕ: Метрики ниже среднего. Активировать протокол социального лифта: агрессивно предлагать «Серпін», сельские/социальные квоты и региональные вузы с низким порогом из базы альтернатив.' : '💡 ВНИМАНИЕ: Метрики конкурентоспособны. Оптимизировать стратегию для прохождения в топовые Национальные университеты и максимизации вероятности гранта.'}
-
-IMPORTANT: Translate your final response (including the headers like ВЕРДИКТ, АНАЛИТИКА, АЛЬТЕРНАТИВЫ, NEXT STEPS) strictly into the following language: ${language == 'kk' ? 'Kazakh' : (language == 'en' ? 'English' : 'Russian')}. Do not change the Markdown formatting.
-''';
+    final prompt = SystemPrompts.buildStrategyPrompt(
+      universityName: universityName,
+      untScore: untScore,
+      specialty: specialty,
+      scoresText: scoresText,
+      alternativesCtx: alternativesCtx,
+      language: language,
+    );
 
     return _generateAdvanced(
-      systemInstruction: systemInstruction,
+      systemInstruction: SystemPrompts.strategy,
       contents: [
         {
           'role': 'user',
@@ -434,47 +340,17 @@ IMPORTANT: Translate your final response (including the headers like ВЕРДИ�
     );
   }
 
-  /// Generate a personalized "Жеке Жоспар" (step-by-step admission plan)
-  Future<String> generateZhekeZhospar({
+  /// Build Zheke Zhospar contents with RAG context
+  static List<Map<String, dynamic>> _buildZhekeContents({
     required String userProfile,
     String? ragContext,
-  }) async {
-    final systemPrompt = '''
-Ты — TANDAU AI ЖЕКЕ ЖОСПАР генератор. Твоя задача — создать ПЕРСОНАЛЬНЫЙ ПОШАГОВЫЙ ПЛАН ПОСТУПЛЕНИЯ для конкретного абитуриента.
-
-### ФОРМАТ ОТВЕТА (строго!):
-
-# 📋 ЖЕКЕ ЖОСПАР (Персональный план)
-
-**Профиль:** [краткое описание профиля абитуриента]
-
-### ✅ Шаг 1: [Конкретное действие]
-📅 Дедлайн: [дата]
-
-### ✅ Шаг 2: [Следующее действие]
-...
-
-### ⚠️ План Б: [Альтернативный вариант]
-Почему: [обоснование]
-
-### 🎯 Итого
-- Основной: [вуз + специальность]
-- Запасной: [вуз + специальность]
-
-### ПРАВИЛА:
-1. Генерируй от 4 до 6 шагов.
-2. Будь максимально краток. Не добавляй воду.
-3. Избегай упоминания названий министерств (МРН, МОН РК). Оперируй только фактами.
-4. Ответ на языке профиля (қазақша/русский/English).
-''';
-
+  }) {
     String enrichedProfile = userProfile;
     if (ragContext != null && ragContext.isNotEmpty) {
       enrichedProfile =
           '$ragContext\n\n--- ПРОФИЛЬ АБИТУРИЕНТА ---\n$userProfile';
     }
-
-    final contents = [
+    return [
       {
         'role': 'user',
         'parts': [
@@ -485,10 +361,19 @@ IMPORTANT: Translate your final response (including the headers like ВЕРДИ�
         ]
       }
     ];
+  }
 
+  /// Generate a personalized "Жеке Жоспар" (non-stream)
+  Future<String> generateZhekeZhospar({
+    required String userProfile,
+    String? ragContext,
+  }) async {
     return _generateAdvanced(
-      systemInstruction: systemPrompt,
-      contents: contents,
+      systemInstruction: SystemPrompts.zhekeZhospar,
+      contents: _buildZhekeContents(
+        userProfile: userProfile,
+        ragContext: ragContext,
+      ),
     );
   }
 
@@ -497,56 +382,34 @@ IMPORTANT: Translate your final response (including the headers like ВЕРДИ�
     required String userProfile,
     String? ragContext,
   }) async {
-    final systemPrompt = '''
-Ты — TANDAU AI ЖЕКЕ ЖОСПАР генератор. Твоя задача — создать ПЕРСОНАЛЬНЫЙ ПОШАГОВЫЙ ПЛАН ПОСТУПЛЕНИЯ для конкретного абитуриента.
-
-### ФОРМАТ ОТВЕТА (строго!):
-
-# 📋 ЖЕКЕ ЖОСПАР (Персональный план)
-
-**Профиль:** [краткое описание профиля абитуриента]
-
-### ✅ Шаг 1: [Конкретное действие]
-📅 Дедлайн: [дата]
-
-### ✅ Шаг 2: [Следующее действие]
-...
-
-### ⚠️ План Б: [Альтернативный вариант]
-Почему: [обоснование]
-
-### 🎯 Итого
-- Основной: [вуз + специальность]
-- Запасной: [вуз + специальность]
-
-### ПРАВИЛА:
-1. Генерируй от 4 до 6 шагов.
-2. Будь максимально краток. Не добавляй воду.
-3. Избегай упоминания названий министерств (МРН, МОН РК). Оперируй только фактами.
-4. Ответ на языке профиля (қазақша/русский/English).
-''';
-
-    String enrichedProfile = userProfile;
-    if (ragContext != null && ragContext.isNotEmpty) {
-      enrichedProfile =
-          '$ragContext\n\n--- ПРОФИЛЬ АБИТУРИЕНТА ---\n$userProfile';
-    }
-
-    final contents = [
-      {
-        'role': 'user',
-        'parts': [
-          {
-            'text':
-                'Создай мне Жеке Жоспар на основе моего профиля:\n$enrichedProfile'
-          }
-        ]
-      }
-    ];
-
     return _generateStreamAdvanced(
-      systemInstruction: systemPrompt,
-      contents: contents,
+      systemInstruction: SystemPrompts.zhekeZhospar,
+      contents: _buildZhekeContents(
+        userProfile: userProfile,
+        ragContext: ragContext,
+      ),
     );
+  }
+  // ═══════════════════════════════════════════════════════════════
+  // COST TRACKING — parse usageMetadata from Gemini responses
+  // ═══════════════════════════════════════════════════════════════
+
+  /// Parse and track token usage from Gemini API response.
+  void _trackTokenUsage(Map<String, dynamic> json, String model) {
+    if (_costTracker == null) return;
+    try {
+      final usage = json['usageMetadata'];
+      if (usage != null) {
+        final inputTokens = usage['promptTokenCount'] as int? ?? 0;
+        final outputTokens = usage['candidatesTokenCount'] as int? ?? 0;
+        _costTracker!.trackUsage(
+          endpoint: model,
+          inputTokens: inputTokens,
+          outputTokens: outputTokens,
+        );
+      }
+    } catch (e) {
+      stderr.writeln('⚠️ Cost tracking error: $e');
+    }
   }
 }

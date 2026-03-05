@@ -5,12 +5,16 @@ import 'package:shelf_router/shelf_router.dart';
 import '../services/firebase_service.dart';
 import '../services/gemini_service.dart';
 import '../services/knowledge_service.dart';
+import '../services/intent_detector.dart';
+import '../services/system_prompts.dart';
+import '../services/ai_logger_service.dart';
 import '../models/university.dart';
 
 class UniversityController {
   final FirebaseService _firebaseService;
   final GeminiService _aiService;
   final KnowledgeService _knowledgeService;
+  AILoggerService? _aiLogger;
   final Router router = Router();
 
   UniversityController(
@@ -23,7 +27,13 @@ class UniversityController {
         (Request req) => Response.ok('Antigravity Server is running'));
   }
 
+  /// Set AI logger (optional, set from server.dart)
+  void setAILogger(AILoggerService logger) {
+    _aiLogger = logger;
+  }
+
   Future<Response> _chat(Request request) async {
+    final chatStopwatch = Stopwatch()..start();
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body);
@@ -106,11 +116,52 @@ class UniversityController {
       }
       // --- 💎 AI LIMITS LOGIC END ---
 
+      // 🎯 Intent Detection — classify query before calling AI
+      final intentResult = IntentDetector.detect(question);
+
+      // Quick reply for greetings/off-topic (no AI call needed)
+      if (!intentResult.needsAI) {
+        stderr.writeln('🎯 Intent: ${intentResult.intent.name} (quick reply)');
+        final quickReply = intentResult.quickReply!;
+        final encodedText = jsonEncode(quickReply);
+        final sseData = 'data: {"text": $encodedText}\n\n';
+        return Response.ok(
+          Stream.value(sseData),
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+        );
+      }
+
+      // Map intent to prompt instruction
+      String? intentInstruction;
+      switch (intentResult.intent) {
+        case QueryIntent.compare:
+          intentInstruction = SystemPrompts.intentCompare;
+          break;
+        case QueryIntent.strategy:
+          intentInstruction = SystemPrompts.intentStrategy;
+          break;
+        case QueryIntent.emotion:
+          intentInstruction = SystemPrompts.intentEmotion;
+          break;
+        case QueryIntent.info:
+          intentInstruction = SystemPrompts.intentInfo;
+          break;
+        default:
+          break;
+      }
+
+      stderr.writeln('🎯 Intent: ${intentResult.intent.name}');
+
       final stream = await _aiService.generateChatStream(
         question,
         history: history,
-        ragContext: _knowledgeService.searchAndFormat(question),
+        ragContext: await _knowledgeService.searchAndFormatAsync(question),
         userContext: userContext,
+        intentInstruction: intentInstruction,
       );
 
       // Deduct token if successful and not premium
@@ -126,10 +177,21 @@ class UniversityController {
 
       // Write SSE chunks
       final sseStream = stream.map((text) {
-        final safeText =
-            text.replaceAll('\n', '\\n'); // Escape newlines for SSE
-        return utf8.encode('data: {"answer": "$safeText"}\n\n');
+        // Properly encode the value to handle all special characters
+        final encodedText = jsonEncode(text);
+        // encodedText is already quoted, e.g. "hello\nworld"
+        return utf8.encode('data: {"answer": $encodedText}\n\n');
       });
+
+      // 📊 Log AI interaction (fire-and-forget)
+      chatStopwatch.stop();
+      _aiLogger?.logInteraction(
+        endpoint: 'chat',
+        question: question,
+        intent: intentResult.intent.name,
+        latencyMs: chatStopwatch.elapsedMilliseconds,
+        success: true,
+      );
 
       return Response.ok(
         sseStream,
@@ -143,7 +205,15 @@ class UniversityController {
         }, // Disable buffering for true streaming
       );
     } catch (e) {
+      chatStopwatch.stop();
       stderr.writeln('AI Chat Error: $e');
+      _aiLogger?.logInteraction(
+        endpoint: 'chat',
+        question: 'error',
+        latencyMs: chatStopwatch.elapsedMilliseconds,
+        success: false,
+        errorMessage: e.toString(),
+      );
       return Response.ok(
         jsonEncode({
           'answer':
@@ -224,6 +294,7 @@ class UniversityController {
   }
 
   Future<Response> _getAIStrategy(Request request) async {
+    final stratStopwatch = Stopwatch()..start();
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body);
@@ -345,6 +416,14 @@ class UniversityController {
         }
       }
 
+      stratStopwatch.stop();
+      _aiLogger?.logInteraction(
+        endpoint: 'strategy',
+        question: 'strategy:${university.name}',
+        latencyMs: stratStopwatch.elapsedMilliseconds,
+        success: true,
+      );
+
       return Response.ok(
         jsonEncode({
           'title': 'Стратегия: ${university.name}',
@@ -359,7 +438,15 @@ class UniversityController {
         },
       );
     } catch (e, stack) {
+      stratStopwatch.stop();
       stderr.writeln('AI Strategy Error: $e\n$stack');
+      _aiLogger?.logInteraction(
+        endpoint: 'strategy',
+        question: 'error',
+        latencyMs: stratStopwatch.elapsedMilliseconds,
+        success: false,
+        errorMessage: e.toString(),
+      );
       // SECURITY: Do NOT expose error details to client
       return Response.internalServerError(
         body: jsonEncode({'error': 'Internal Server Error'}),
@@ -371,6 +458,7 @@ class UniversityController {
   /// POST /api/v1/zheke-zhospar
   /// Generates a personalized step-by-step admission plan
   Future<Response> _zhekeZhospar(Request request) async {
+    final zhekeStopwatch = Stopwatch()..start();
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body);
@@ -423,7 +511,7 @@ class UniversityController {
       }
 
       // RAG context
-      final ragContext = _knowledgeService.searchAndFormat(
+      final ragContext = await _knowledgeService.searchAndFormatAsync(
           'грант квота специальность ЕНТ план поступление $majors');
 
       final stream = await _aiService.generateZhekeZhosparStream(
@@ -443,9 +531,17 @@ class UniversityController {
         }
       }
 
+      zhekeStopwatch.stop();
+      _aiLogger?.logInteraction(
+        endpoint: 'zheke-zhospar',
+        question: 'zheke:$majors',
+        latencyMs: zhekeStopwatch.elapsedMilliseconds,
+        success: true,
+      );
+
       final sseStream = stream.map((text) {
-        final safeText = text.replaceAll('\n', '\\n');
-        return utf8.encode('data: {"answer": "$safeText"}\n\n');
+        final encodedText = jsonEncode(text);
+        return utf8.encode('data: {"answer": $encodedText}\n\n');
       });
 
       return Response.ok(
@@ -458,7 +554,15 @@ class UniversityController {
         context: {"shelf.io.buffer_output": false},
       );
     } catch (e) {
+      zhekeStopwatch.stop();
       stderr.writeln('Zheke Zhospar Error: $e');
+      _aiLogger?.logInteraction(
+        endpoint: 'zheke-zhospar',
+        question: 'error',
+        latencyMs: zhekeStopwatch.elapsedMilliseconds,
+        success: false,
+        errorMessage: e.toString(),
+      );
       return Response.ok(
         jsonEncode({
           'answer':

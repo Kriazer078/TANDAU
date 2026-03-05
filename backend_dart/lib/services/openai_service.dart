@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/university.dart';
 
+/// @deprecated This service is no longer used. Use GeminiService instead.
+/// Kept for reference only. Will be removed in a future cleanup.
+@Deprecated('Use GeminiService instead — this service is no longer active.')
 class OpenAIService {
   final String _apiKey;
 
