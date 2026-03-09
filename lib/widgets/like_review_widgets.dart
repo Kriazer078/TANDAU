@@ -48,36 +48,20 @@ class LikeButton extends StatefulWidget {
   State<LikeButton> createState() => _LikeButtonState();
 }
 
-class _LikeButtonState extends State<LikeButton>
-    with SingleTickerProviderStateMixin {
+class _LikeButtonState extends State<LikeButton> {
   final LikeService _likeService = LikeService();
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
 
   bool _isLiked = false;
   int _likesCount = 0;
   bool _isLoading = false;
+  // ⚡ Toggle to trigger scale animation without AnimationController
+  bool _animTrigger = false;
 
   @override
   void initState() {
     super.initState();
     _likesCount = widget.initialLikesCount;
     _checkLikeStatus();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.3,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   /// ⚡ Check like status from cache first, fallback to Firestore
@@ -112,9 +96,8 @@ class _LikeButtonState extends State<LikeButton>
     setState(() {
       _isLiked = !_isLiked;
       _likesCount += _isLiked ? 1 : -1;
+      _animTrigger = !_animTrigger; // ⚡ trigger bounce animation
     });
-
-    _controller.forward().then((_) => _controller.reverse());
 
     final success = await _likeService.toggleLike(widget.universityId);
 
@@ -147,8 +130,15 @@ class _LikeButtonState extends State<LikeButton>
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ScaleTransition(
-          scale: _scaleAnimation,
+        // ⚡ TweenAnimationBuilder replaces explicit AnimationController —
+        // no Ticker allocated per list item, animates only on trigger change
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 1.0, end: _animTrigger ? 1.3 : 1.0),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          builder: (context, scale, child) {
+            return Transform.scale(scale: scale, child: child);
+          },
           child: IconButton(
             onPressed: _handleLike,
             constraints: const BoxConstraints(),

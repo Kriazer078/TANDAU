@@ -12,7 +12,6 @@ import '../widgets/compare_picker_sheet.dart';
 import '../l10n/app_localizations.dart';
 
 import '../services/auth_service.dart';
-import '../models/user_model.dart';
 import '../models/comparison.dart';
 
 class UniversityListScreen extends StatefulWidget {
@@ -55,6 +54,11 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
 
   bool _isLoading = true;
 
+  // ⚡ Cached reactive data — avoids nested builders inside ListView
+  List<String> _comparisonIds = [];
+  List<String> _favoriteIds = [];
+  StreamSubscription<ComparisonItem?>? _comparisonSub;
+
   @override
   void initState() {
     super.initState();
@@ -65,12 +69,43 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
     _onlyGrants = widget.onlyGrants ?? false;
     _maxPrice = widget.maxPrice;
     _loadInitialData();
+
+    // ⚡ Listen to comparison stream at state level, not inside build
+    _comparisonSub = _comparisonService.getComparisonStream().listen((item) {
+      if (!mounted) return;
+      final ids = item?.universityIds ?? [];
+      if (!_listEquals(ids, _comparisonIds)) {
+        setState(() => _comparisonIds = ids);
+      }
+    });
+
+    // ⚡ Listen to user favorites at state level
+    _authService.currentUser.addListener(_onUserChanged);
+    _favoriteIds = _authService.currentUser.value?.favoriteUniversities ?? [];
+  }
+
+  void _onUserChanged() {
+    if (!mounted) return;
+    final ids = _authService.currentUser.value?.favoriteUniversities ?? [];
+    if (!_listEquals(ids, _favoriteIds)) {
+      setState(() => _favoriteIds = ids);
+    }
+  }
+
+  bool _listEquals(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
     _searchController.dispose();
+    _comparisonSub?.cancel();
+    _authService.currentUser.removeListener(_onUserChanged);
     super.dispose();
   }
 
@@ -212,84 +247,66 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
                           style: const TextStyle(color: Colors.grey),
                         ),
                       )
-                    : StreamBuilder<ComparisonItem?>(
-                        stream: _comparisonService.getComparisonStream(),
-                        builder: (context, comparisonSnapshot) {
-                          final comparisonIds =
-                              comparisonSnapshot.data?.universityIds ?? [];
-
-                          return ValueListenableBuilder<UserModel?>(
-                            valueListenable: _authService.currentUser,
-                            builder: (context, user, _) {
-                              final favoriteIds =
-                                  user?.favoriteUniversities ?? [];
-
-                              return ListView.builder(
-                                keyboardDismissBehavior:
-                                    ScrollViewKeyboardDismissBehavior.onDrag,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                itemCount: _universities.length,
-                                addRepaintBoundaries: true,
-                                addAutomaticKeepAlives: false,
-                                cacheExtent:
-                                    300, // ⚡ Pre-render 300px ahead for smooth scroll
-                                itemBuilder: (context, index) {
-                                  final uni = _universities[index];
-                                  return UniversityCard(
-                                    universityId: uni.id,
-                                    name: uni.name,
-                                    city: uni.city,
-                                    logoUrl: uni.logoUrl,
-                                    features: [
-                                      uni.tuitionRange,
-                                      if (uni.hasGrants)
-                                        (AppLocalizations.of(
-                                              context,
-                                            )?.universityGrant ??
-                                            'Grant'),
-                                    ],
-                                    isFavorite: favoriteIds.contains(uni.id),
-                                    isInComparison:
-                                        comparisonIds.contains(uni.id),
-                                    likesCount: uni.likesCount,
-                                    reviewsCount: uni.reviewsCount,
-                                    averageRating: uni.averageRating,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              UniversityDetailScreen(
-                                            university: uni,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    onFavoriteToggle: () async {
-                                      if (favoriteIds.contains(uni.id)) {
-                                        await _service
-                                            .removeFromFavorites(uni.id);
-                                      } else {
-                                        await _service.addToFavorites(uni.id);
-                                      }
-                                    },
-                                    onCompareToggle: () async {
-                                      // Сначала добавим текущий университет в сравнение
-                                      if (!comparisonIds.contains(uni.id)) {
-                                        await _comparisonService
-                                            .addToComparison(
-                                          uni.id,
-                                        );
-                                      }
-                                      // Открыть модальное окно для выбора
-                                      if (context.mounted) {
-                                        showComparePickerSheet(context);
-                                      }
-                                    },
-                                  );
-                                },
+                    // ⚡ No more nested StreamBuilder/ValueListenableBuilder —
+                    // comparison & favorite IDs are now cached in state fields,
+                    // so only individual cards rebuild when data changes.
+                    : ListView.builder(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: _universities.length,
+                        addRepaintBoundaries: true,
+                        addAutomaticKeepAlives: false,
+                        cacheExtent:
+                            300, // ⚡ Pre-render 300px ahead for smooth scroll
+                        itemBuilder: (context, index) {
+                          final uni = _universities[index];
+                          return UniversityCard(
+                            universityId: uni.id,
+                            name: uni.name,
+                            city: uni.city,
+                            logoUrl: uni.logoUrl,
+                            features: [
+                              uni.tuitionRange,
+                              if (uni.hasGrants)
+                                (AppLocalizations.of(
+                                      context,
+                                    )?.universityGrant ??
+                                    'Grant'),
+                            ],
+                            isFavorite: _favoriteIds.contains(uni.id),
+                            isInComparison: _comparisonIds.contains(uni.id),
+                            likesCount: uni.likesCount,
+                            reviewsCount: uni.reviewsCount,
+                            averageRating: uni.averageRating,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UniversityDetailScreen(
+                                    university: uni,
+                                  ),
+                                ),
                               );
+                            },
+                            onFavoriteToggle: () async {
+                              if (_favoriteIds.contains(uni.id)) {
+                                await _service.removeFromFavorites(uni.id);
+                              } else {
+                                await _service.addToFavorites(uni.id);
+                              }
+                            },
+                            onCompareToggle: () async {
+                              // Сначала добавим текущий университет в сравнение
+                              if (!_comparisonIds.contains(uni.id)) {
+                                await _comparisonService.addToComparison(
+                                  uni.id,
+                                );
+                              }
+                              // Открыть модальное окно для выбора
+                              if (context.mounted) {
+                                showComparePickerSheet(context);
+                              }
                             },
                           );
                         },

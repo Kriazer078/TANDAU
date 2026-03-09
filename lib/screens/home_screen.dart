@@ -21,10 +21,13 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late final AnimationController _controller;
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
+
+  @override
+  bool get wantKeepAlive => true; // ⚡ Preserve state across tab switches
 
   @override
   void initState() {
@@ -44,7 +47,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
-    _controller.forward();
+    // ⚡ Stop controller after animation completes to free the Ticker
+    _controller.forward().then((_) => _controller.stop());
   }
 
   @override
@@ -65,6 +69,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // ⚡ Required by AutomaticKeepAliveClientMixin
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
