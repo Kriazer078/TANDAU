@@ -56,7 +56,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 
   Future<void> _initHistory() async {
     await _historyService.init();
-    await _loadActiveConversation();
+    // ⚡ Always start with a fresh chat on app restart
+    _historyService.createConversation();
+    setState(() => _messages.clear());
   }
 
   Future<void> _loadActiveConversation() async {
@@ -256,10 +258,25 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 
           fullResponse += chunk;
 
-          // Detect and parse actions
+          // 🧠 Filter <thinking> blocks (hidden from UI)
           String displayedText = fullResponse;
+          final thinkingRegex = RegExp(
+            r'<thinking>[\s\S]*?</thinking>',
+            multiLine: true,
+          );
+          displayedText = displayedText.replaceAll(thinkingRegex, '');
+          // Also strip incomplete opening <thinking> tag at end of stream
+          final openThinkingIdx = displayedText.lastIndexOf('<thinking>');
+          if (openThinkingIdx != -1 &&
+              !displayedText
+                  .substring(openThinkingIdx)
+                  .contains('</thinking>')) {
+            displayedText = displayedText.substring(0, openThinkingIdx);
+          }
+
+          // Detect and parse actions
           final actionRegex = RegExp(r'\[ACTION:\s*([^:]+):\s*([^\]]+)\]');
-          final matches = actionRegex.allMatches(fullResponse);
+          final matches = actionRegex.allMatches(displayedText);
 
           for (final match in matches) {
             final actionKey = match.group(0)!;
@@ -385,9 +402,25 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           }
 
           fullResponse += chunk;
+
+          // 🧠 Filter <thinking> blocks (hidden from UI)
+          String displayedText = fullResponse;
+          final thinkingRegex = RegExp(
+            r'<thinking>[\s\S]*?</thinking>',
+            multiLine: true,
+          );
+          displayedText = displayedText.replaceAll(thinkingRegex, '');
+          final openThinkingIdx = displayedText.lastIndexOf('<thinking>');
+          if (openThinkingIdx != -1 &&
+              !displayedText
+                  .substring(openThinkingIdx)
+                  .contains('</thinking>')) {
+            displayedText = displayedText.substring(0, openThinkingIdx);
+          }
+
           setState(() {
             _messages[aiMsgIndex!] =
-                _messages[aiMsgIndex].copyWith(text: fullResponse);
+                _messages[aiMsgIndex].copyWith(text: displayedText.trim());
           });
           _scrollToBottom();
         }
@@ -1630,7 +1663,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         // 🆕 Navigate to a screen (deep linking)
         final screen = args.trim().toLowerCase();
         if (mounted) {
-          if (screen == 'favorites') {
+          if (screen == 'favorites' || screen == 'home') {
             Navigator.pop(context); // Go back to main nav
           } else if (screen == 'profile') {
             Navigator.push(
@@ -1639,6 +1672,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 builder: (_) => const OnboardingWizardScreen(),
               ),
             );
+          } else if (screen == 'calculator') {
+            // Pop to main nav — calculator is on the main screen
+            Navigator.pop(context);
           }
         }
       }

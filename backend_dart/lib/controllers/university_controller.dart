@@ -171,6 +171,14 @@ class UniversityController {
         stderr.writeln('⚠️ Failed to load uni IDs for context: $e');
       }
 
+      // 🧭 Navigation whitelist — strict allowed targets
+      enrichedContext +=
+          '\n\n### ДОПУСТИМЫЕ НАВИГАЦИИ (используй ТОЛЬКО эти значения для ACTION NAVIGATE):\n'
+          '- favorites — Избранные вузы\n'
+          '- profile — Настройка профиля\n'
+          '- calculator — Калькулятор шансов\n'
+          '- home — Главная страница';
+
       final stream = await _aiService.generateChatStream(
         question,
         history: history,
