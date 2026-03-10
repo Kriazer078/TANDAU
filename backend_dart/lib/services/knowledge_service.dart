@@ -20,11 +20,11 @@ class KnowledgeService {
 
   /// Gemini Embedding model endpoint
   static const String _embeddingEndpoint =
-      'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent';
 
   /// Batch embedding endpoint
   static const String _batchEmbeddingEndpoint =
-      'https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:batchEmbedContents';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:batchEmbedContents';
 
   KnowledgeService(this._firebaseService, this._apiKey);
 
@@ -63,7 +63,7 @@ class KnowledgeService {
       final List<Map<String, dynamic>> requests = batch.map((doc) {
         final text = '${doc['title'] ?? ''}: ${doc['content'] ?? ''}';
         return {
-          'model': 'models/text-embedding-004',
+          'model': 'models/gemini-embedding-001',
           'content': {
             'parts': [
               {'text': text}
