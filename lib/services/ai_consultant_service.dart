@@ -312,7 +312,10 @@ class AIConsultantService {
             if (dataStr.trim() == '[DONE]') break;
             try {
               final json = jsonDecode(dataStr);
-              yield json['answer'] as String;
+              final chunk = json['answer'];
+              if (chunk is String && chunk.isNotEmpty) {
+                yield chunk;
+              }
             } catch (_) {}
           }
         }
@@ -396,7 +399,10 @@ class AIConsultantService {
             if (dataStr.trim() == '[DONE]') break;
             try {
               final json = jsonDecode(dataStr);
-              yield json['answer'] as String;
+              final chunk = json['answer'];
+              if (chunk is String && chunk.isNotEmpty) {
+                yield chunk;
+              }
             } catch (_) {}
           }
         }
