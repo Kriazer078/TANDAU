@@ -329,17 +329,11 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       if (mounted) {
         _stopThinkingSteps();
-        final errMsg = ChatMessage(
-          text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
-          isUser: false,
-          time: DateTime.now(),
-        );
         setState(() {
           _isTyping = false;
-          _messages.add(errMsg);
         });
-        unawaited(_historyService.addMessage(errMsg));
-        _scrollToBottom();
+        _showErrorSnackBar(
+            l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.');
       }
     }
   }
@@ -455,16 +449,11 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       if (mounted) {
         _stopThinkingSteps();
-        final errMsg = ChatMessage(
-          text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
-          isUser: false,
-          time: DateTime.now(),
-        );
         setState(() {
           _isTyping = false;
-          _messages.add(errMsg);
         });
-        _scrollToBottom();
+        _showErrorSnackBar(
+            l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.');
       }
     }
   }

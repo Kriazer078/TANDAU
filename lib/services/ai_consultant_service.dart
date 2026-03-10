@@ -215,12 +215,12 @@ class AIConsultantService {
         }
         return data['answer'] ?? 'Извините, ответ не получен.';
       }
-      return '📍 **Проблема с подключением.**\n\nСервер TANDAU сейчас перегружен или недоступен (Код: ${response.statusCode}). Пожалуйста, попробуйте позже.';
+      throw Exception('Server error: ${response.statusCode}');
     } catch (e) {
       if (e is OutOfTokensException) {
         rethrow;
       }
-      return '📍 **Ошибка сети.**\n\nПроверьте ваше интернет-соединение и попробуйте снова.';
+      throw Exception('Network error: $e');
     }
   }
 
@@ -317,13 +317,13 @@ class AIConsultantService {
           }
         }
       } else {
-        yield '📍 **Проблема с подключением.**\n\nСервер TANDAU сейчас перегружен или недоступен (Код: ${response.statusCode}). Пожалуйста, попробуйте позже.';
+        throw Exception('Server error: ${response.statusCode}');
       }
     } catch (e) {
       if (e is OutOfTokensException) {
         rethrow;
       }
-      yield '📍 **Ошибка сети.**\n\nПроверьте ваше интернет-соединение и попробуйте снова.';
+      throw Exception('Network error: $e');
     }
   }
 
@@ -342,7 +342,10 @@ class AIConsultantService {
     String? achievements,
   }) async* {
     try {
-      final bodyData = <String, dynamic>{};
+      final language = LocaleManager().locale.value?.languageCode ?? 'ru';
+      final bodyData = <String, dynamic>{
+        'language': language,
+      };
 
       if (entScore != null) bodyData['entScore'] = entScore;
       if (gpa != null) bodyData['gpa'] = gpa;
@@ -398,11 +401,11 @@ class AIConsultantService {
           }
         }
       } else {
-        yield '📍 **Проблема с подключением.**\n\nСервер недоступен (Код: ${response.statusCode}).';
+        throw Exception('Server error: ${response.statusCode}');
       }
     } catch (e) {
       if (e is OutOfTokensException) rethrow;
-      yield '📍 **Ошибка сети.**\n\nПроверьте интернет и попробуйте снова.';
+      throw Exception('Network error: $e');
     }
   }
 
@@ -418,7 +421,10 @@ class AIConsultantService {
     String? achievements,
   }) async {
     try {
-      final bodyData = <String, dynamic>{};
+      final language = LocaleManager().locale.value?.languageCode ?? 'ru';
+      final bodyData = <String, dynamic>{
+        'language': language,
+      };
 
       if (entScore != null) bodyData['entScore'] = entScore;
       if (gpa != null) bodyData['gpa'] = gpa;
@@ -454,10 +460,10 @@ class AIConsultantService {
         }
         return data['answer'] ?? 'Не удалось создать план.';
       }
-      return '📍 **Проблема с подключением.**\n\nСервер недоступен (Код: ${response.statusCode}).';
+      throw Exception('Server error: ${response.statusCode}');
     } catch (e) {
       if (e is OutOfTokensException) rethrow;
-      return '📍 **Ошибка сети.**\n\nПроверьте интернет и попробуйте снова.';
+      throw Exception('Network error: $e');
     }
   }
 }
