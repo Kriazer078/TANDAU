@@ -136,36 +136,108 @@ void main(List<String> args) async {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Политика конфиденциальности TANDAU</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1, h2 { color: #2C3E50; }
-        a { color: #3498DB; text-decoration: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+               background: #0f0f1a; color: #e0e0e0; line-height: 1.7; padding: 24px 16px; }
+        .container { max-width: 780px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; padding: 32px;
+                 background: linear-gradient(135deg, #1a237e, #4527a0); border-radius: 16px; }
+        header h1 { font-size: 2rem; color: #fff; margin-bottom: 8px; }
+        header p { color: #b0b8ff; font-size: 0.9rem; }
+        section { margin-bottom: 32px; }
+        h2 { font-size: 1.1rem; color: #90caf9; margin-bottom: 12px;
+             padding-bottom: 6px; border-bottom: 1px solid #1e3a5f; }
+        p, li { color: #cfd8dc; font-size: 0.95rem; margin-bottom: 8px; }
+        ul { padding-left: 20px; }
+        strong { color: #e0e0e0; }
+        a { color: #82b1ff; }
+        footer { text-align: center; color: #546e7a; font-size: 0.8rem; margin-top: 40px; }
+        .badge { display: inline-block; background: #4527a0; color: #b0b8ff;
+                 border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; margin-top: 8px; }
     </style>
 </head>
 <body>
-    <h1>Политика конфиденциальности приложения TANDAU</h1>
-    <p><strong>Последнее обновление: 24 февраля 2026 г.</strong></p>
+<div class="container">
+  <header>
+    <h1>🎓 TANDAU</h1>
+    <p>Политика конфиденциальности / Privacy Policy / Құпиялылық саясаты</p>
+    <p style="margin-top:8px; font-size:0.8rem;">Последнее обновление: 10 марта 2026 г.</p>
+    <span class="badge">Возрастное ограничение: 16+</span>
+  </header>
 
-    <h2>1. Какую информацию мы собираем</h2>
-    <p>Мы получаем вашу информацию через Google Sign-In, Apple Sign-In и регистрацию по Email, а также другие данные, необходимые для работы приложения. Конкретно:</p>
+  <section>
+    <h2>1. О приложении</h2>
+    <p>TANDAU — мобильное приложение для помощи абитуриентам Казахстана (16–18 лет) в выборе вузов
+       на основе их ЕНТ-баллов и шансов на грант.
+       Разработчик: tandau.app.help@gmail.com</p>
+  </section>
+
+  <section>
+    <h2>2. Данные, которые мы собираем</h2>
     <ul>
-        <li>Имя и фамилию</li>
-        <li>Адрес электронной почты</li>
-        <li>Уникальный идентификатор устройства и Firebase UID</li>
-        <li>Данные о вашем образовании, результатах ЕНТ и предпочтениях для рекомендаций</li>
+      <li><strong>Аккаунт:</strong> email, имя — через Firebase Authentication.</li>
+      <li><strong>Профиль:</strong> ЕНТ-баллы, предметы, предпочтения вузов.</li>
+      <li><strong>Использование:</strong> анонимная аналитика (Firebase Analytics).</li>
+      <li><strong>Push-уведомления:</strong> FCM-токен для отправки уведомлений.</li>
+      <li><strong>Фото:</strong> только если пользователь загружает аватар (Firebase Storage).</li>
     </ul>
+  </section>
 
-    <h2>2. Как мы используем вашу информацию</h2>
-    <p>Мы используем собранные данные для оценки шансов на получение образовательного гранта, генерации персонализированных стратегий поступления, работы персонального ИИ-консультанта и обеспечения безопасности вашего аккаунта.</p>
+  <section>
+    <h2>3. Как мы используем данные</h2>
+    <ul>
+      <li>Расчёт шансов на грант и рекомендация вузов.</li>
+      <li>Персонализация контента в приложении.</li>
+      <li>Отправка уведомлений о дедлайнах и новостях.</li>
+      <li>Работа ИИ-консультанта (TANDAU AI).</li>
+      <li>Улучшение работы сервиса через анонимную аналитику.</li>
+    </ul>
+  </section>
 
-    <h2>3. Защита данных и передача третьим лицам</h2>
-    <p>Ваши данные надежно защищены с помощью протоколов безопасности Google (Firebase Authentication, Firestore). Мы не продаем ваши личные данные третьим лицам. Доступ к данным имеет только автоматизированная система генерации рекомендаций.</p>
+  <section>
+    <h2>4. Передача данных третьим лицам</h2>
+    <p>Данные не продаются третьим лицам. Данные передаются только:</p>
+    <ul>
+      <li><strong>Google Firebase</strong> — хранение, Auth, Analytics</li>
+      <li><strong>Google Gemini AI</strong> — для обработки запросов к AI-консультанту (только текст запросов).</li>
+      <li><strong>RevenueCat</strong> — обработка покупок и подписок.</li>
+    </ul>
+  </section>
 
-    <h2>4. Удаление аккаунта</h2>
-    <p>Вы можете запросить полное удаление вашего аккаунта и всех связанных с ним данных в любой момент прямо из настроек профиля внутри приложения.</p>
+  <section>
+    <h2>5. Права пользователя</h2>
+    <ul>
+      <li>Запросить удаление аккаунта и всех данных.</li>
+      <li>Отозвать разрешения (камера, уведомления) в настройках устройства.</li>
+      <li>Экспортировать свои данные — по письменному запросу.</li>
+    </ul>
+    <p>Для удаления данных напишите на: <a href="mailto:tandau.app.help@gmail.com">tandau.app.help@gmail.com</a>.</p>
+  </section>
 
-    <h2>5. Контакты</h2>
-    <p>Если у вас есть вопросы к этой политике конфиденциальности, пожалуйста, свяжитесь с нами:</p>
-    <p>Email: <a href="mailto:tandau.app.help@gmail.com">tandau.app.help@gmail.com</a></p>
+  <section>
+    <h2>6. Хранение данных</h2>
+    <p>Данные хранятся на серверах Google (Firebase) в соответствии с их стандартами безопасности.
+       Данные хранятся до удаления аккаунта пользователем.</p>
+  </section>
+
+  <section>
+    <h2>7. Возрастные ограничения</h2>
+    <p>Приложение TANDAU предназначено для абитуриентов в возрасте <strong>от 16 до 18 лет</strong>,
+       готовящихся к поступлению в вузы Казахстана.</p>
+    <p>Мы не собираем намеренно данные лиц моложе 16 лет. Если вы являетесь родителем или законным
+       представителем и считаете, что ваш ребёнок предоставил нам данные, свяжитесь с нами для их удаления.</p>
+  </section>
+
+  <section>
+    <h2>8. Контакты</h2>
+    <p>По вопросам конфиденциальности: <a href="mailto:tandau.app.help@gmail.com">tandau.app.help@gmail.com</a></p>
+  </section>
+
+  <footer>
+    <p>© 2026 TANDAU. Все права защищены.</p>
+    <p>kz.tandau.app</p>
+  </footer>
+</div>
 </body>
 </html>
 ''';
