@@ -1488,7 +1488,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiThinkingZhStep4 => 'Составляю план поступления';
 
   @override
-  String get aiThinkingZhStep5 => 'Оформляю ваш Жеке Жоспар';
+  String get aiThinkingZhStep5 => 'Оформляю ваш индивидуальный план';
 
   @override
   String get aiNewChat => 'Новый чат';

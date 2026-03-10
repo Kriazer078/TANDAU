@@ -47,6 +47,9 @@ class AuthService {
     // ⚡ Cancel previous listener to prevent double-subscription
     await _authSubscription?.cancel();
 
+    final Completer<void> completer = Completer<void>();
+    bool isFirstEvent = true;
+
     // Listen to auth state changes
     _authSubscription = _auth.authStateChanges().listen((User? user) async {
       if (_isRegistering) {
@@ -68,17 +71,15 @@ class AuthService {
         isLoggedIn.value = false;
         currentUser.value = null;
       }
+
+      if (isFirstEvent) {
+        isFirstEvent = false;
+        completer.complete();
+      }
     });
 
-    // Check if user is already logged in
-    final user = _auth.currentUser;
-    if (user != null) {
-      // SECURITY: await ban check before marking as logged in
-      await _loadUserData(user.uid);
-      if (bannedReason.value == null) {
-        isLoggedIn.value = true;
-      }
-    }
+    // Wait for the first auth state to resolve to prevent race condition on restart
+    await completer.future;
   }
 
   /// Ban info notifier — non-null when user is banned and forced to log out
