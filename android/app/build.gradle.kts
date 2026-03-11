@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "kz.tandau.app"
+    namespace = "kz.tandau.kz"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "kz.tandau.app"
+        applicationId = "kz.tandau.kz"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

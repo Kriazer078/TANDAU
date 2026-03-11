@@ -1,4 +1,4 @@
-package kz.tandau.app
+package kz.tandau.kz
 
 import io.flutter.embedding.android.FlutterActivity
 
