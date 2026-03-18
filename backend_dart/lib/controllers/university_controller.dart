@@ -124,7 +124,7 @@ class UniversityController {
         stderr.writeln('🎯 Intent: ${intentResult.intent.name} (quick reply)');
         final quickReply = intentResult.quickReply!;
         final encodedText = jsonEncode(quickReply);
-        final sseData = 'data: {"text": $encodedText}\n\n';
+        final sseData = 'data: {"answer": $encodedText}\n\ndata: [DONE]\n\n';
         return Response.ok(
           Stream.value(sseData),
           headers: {
@@ -199,12 +199,14 @@ class UniversityController {
       }
 
       // Write SSE chunks
-      final sseStream = stream.map((text) {
-        // Properly encode the value to handle all special characters
-        final encodedText = jsonEncode(text);
-        // encodedText is already quoted, e.g. "hello\nworld"
-        return utf8.encode('data: {"answer": $encodedText}\n\n');
-      });
+      // Convert stream to list of SSE bytes, appending [DONE] at the end
+      final sseStream = () async* {
+        await for (final text in stream) {
+          final encodedText = jsonEncode(text);
+          yield utf8.encode('data: {"answer": $encodedText}\n\n');
+        }
+        yield utf8.encode('data: [DONE]\n\n');
+      }();
 
       // 📊 Log AI interaction (fire-and-forget)
       chatStopwatch.stop();
@@ -562,10 +564,13 @@ class UniversityController {
         success: true,
       );
 
-      final sseStream = stream.map((text) {
-        final encodedText = jsonEncode(text);
-        return utf8.encode('data: {"answer": $encodedText}\n\n');
-      });
+      final sseStream = () async* {
+        await for (final text in stream) {
+          final encodedText = jsonEncode(text);
+          yield utf8.encode('data: {"answer": $encodedText}\n\n');
+        }
+        yield utf8.encode('data: [DONE]\n\n');
+      }();
 
       return Response.ok(
         sseStream,

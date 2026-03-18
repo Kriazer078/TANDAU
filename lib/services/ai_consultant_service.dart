@@ -237,8 +237,13 @@ class AIConsultantService {
     List<String>? preferredMajors,
     String? currentEducation,
   }) async* {
+    final client = http.Client();
     try {
       final bodyData = <String, dynamic>{'question': message};
+
+      // BUG #3 fix: Send language so backend can localize responses
+      final language = LocaleManager().locale.value?.languageCode ?? 'ru';
+      bodyData['language'] = language;
 
       final List<String> contextParts = [];
 
@@ -286,9 +291,9 @@ class AIConsultantService {
       request.headers['Content-Type'] = 'application/json';
       request.body = jsonEncode(bodyData);
 
-      final client = http.Client();
+      // BUG #4 fix: Increase timeout from 30s to 60s for Render cold start
       final response =
-          await client.send(request).timeout(const Duration(seconds: 30));
+          await client.send(request).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         // Check content type to see if it's JSON (error/out of tokens) or event-stream
@@ -327,6 +332,9 @@ class AIConsultantService {
         rethrow;
       }
       throw Exception('Network error: $e');
+    } finally {
+      // BUG #2 fix: Always close the HTTP client to prevent resource leaks
+      client.close();
     }
   }
 
@@ -344,6 +352,7 @@ class AIConsultantService {
     String? currentEducation,
     String? achievements,
   }) async* {
+    final client = http.Client();
     try {
       final language = LocaleManager().locale.value?.languageCode ?? 'ru';
       final bodyData = <String, dynamic>{
@@ -374,9 +383,9 @@ class AIConsultantService {
       request.headers['Content-Type'] = 'application/json';
       request.body = jsonEncode(bodyData);
 
-      final client = http.Client();
+      // BUG #4 fix: Increase timeout from 45s to 60s for Render cold start
       final response =
-          await client.send(request).timeout(const Duration(seconds: 45));
+          await client.send(request).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final contentType = response.headers['content-type'] ?? '';
@@ -412,6 +421,9 @@ class AIConsultantService {
     } catch (e) {
       if (e is OutOfTokensException) rethrow;
       throw Exception('Network error: $e');
+    } finally {
+      // BUG #2 fix: Always close the HTTP client to prevent resource leaks
+      client.close();
     }
   }
 

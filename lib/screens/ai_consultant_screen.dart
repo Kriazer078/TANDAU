@@ -300,13 +300,17 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         if (aiMsgIndex == null) {
           // Stream completed but yielded no chunks at all
           _stopThinkingSteps();
+          // BUG #5 fix: Show error as chat message, not just SnackBar
+          final errorMsg = ChatMessage(
+            text: l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.',
+            isUser: false,
+            time: DateTime.now(),
+          );
           setState(() {
             _isTyping = false;
+            _messages.add(errorMsg);
           });
-          if (mounted) {
-            _showErrorSnackBar(
-                l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.');
-          }
+          _scrollToBottom();
         } else if (mounted && fullResponse.isNotEmpty) {
           unawaited(_historyService.addMessage(_messages[aiMsgIndex]));
         }
@@ -329,11 +333,17 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       if (mounted) {
         _stopThinkingSteps();
+        // BUG #7 fix: Show error as chat message for better UX
+        final errorMsg = ChatMessage(
+          text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
+          _messages.add(errorMsg);
         });
-        _showErrorSnackBar(
-            l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.');
+        _scrollToBottom();
       }
     }
   }
@@ -421,13 +431,17 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 
         if (aiMsgIndex == null) {
           _stopThinkingSteps();
+          // BUG #5 fix: Show error as chat message
+          final errorMsg = ChatMessage(
+            text: l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.',
+            isUser: false,
+            time: DateTime.now(),
+          );
           setState(() {
             _isTyping = false;
+            _messages.add(errorMsg);
           });
-          if (mounted) {
-            _showErrorSnackBar(
-                l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.');
-          }
+          _scrollToBottom();
         } else if (mounted && fullResponse.isNotEmpty) {
           unawaited(_historyService.addMessage(_messages[aiMsgIndex]));
         }
@@ -449,11 +463,17 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       if (mounted) {
         _stopThinkingSteps();
+        // BUG #7 fix: Show error as chat message
+        final errorMsg = ChatMessage(
+          text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
+          isUser: false,
+          time: DateTime.now(),
+        );
         setState(() {
           _isTyping = false;
+          _messages.add(errorMsg);
         });
-        _showErrorSnackBar(
-            l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.');
+        _scrollToBottom();
       }
     }
   }
