@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import '../models/university.dart';
 import '../services/university_service.dart';
@@ -36,8 +37,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Сақталғандар')),
+      appBar: AppBar(
+        title: Text(l10n?.favoritesSavedTitle ?? 'Saved'),
+      ),
       body: _favorites.isEmpty
           ? Center(
               child: Column(
@@ -50,14 +55,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Сақталған университеттер жоқ',
+                    l10n?.favoritesEmptyTitle ??
+                        'No saved universities',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: AppColors.textSecondary,
                         ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Ұнаған университеттерді сақтаңыз',
+                    l10n?.favoritesEmptySubtitle ??
+                        'Save universities you like',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -70,13 +77,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 final university = _favorites[index];
 
                 return UniversityCard(
-                  universityId: university.id, // ⭐ Добавлено
+                  universityId: university.id,
                   name: university.name,
                   city: university.city,
                   logoUrl: university.logoUrl,
                   features: [
-                    if (university.hasDormitory) 'Жатақхана',
-                    if (university.hasGrants) 'Грант',
+                    if (university.hasDormitory)
+                      l10n?.favoritesDormitory ?? 'Dormitory',
+                    if (university.hasGrants)
+                      l10n?.favoritesGrant ?? 'Grant',
                     '${university.rating} ⭐',
                   ],
                   isFavorite: true,

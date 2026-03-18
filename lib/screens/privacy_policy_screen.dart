@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'legal/legal_constants.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
@@ -6,28 +7,37 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Конфиденциальность'), elevation: 0),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+      appBar: AppBar(
+        title: Text(l10n?.privacyTitle ?? 'Privacy'),
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Политика конфиденциальности и Условия использования',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              l10n?.privacyHeading ??
+                  'Privacy Policy & Terms of Use',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Обновлено: 24 февраля 2026',
-              style: TextStyle(color: Colors.grey),
+              l10n?.privacyUpdated ?? 'Updated: February 24, 2026',
+              style: const TextStyle(color: Colors.grey),
             ),
-            Divider(height: 32),
-            Text(
+            const Divider(height: 32),
+            const Text(
               LegalConstants.termsContent,
               style: TextStyle(fontSize: 15, height: 1.6),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
           ],
         ),
       ),

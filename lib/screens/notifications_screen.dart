@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import 'package:intl/intl.dart';
 import '../services/notification_service.dart';
@@ -16,22 +17,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   final NotificationService _notificationService = NotificationService();
 
   void _clearNotifications() {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Очистить уведомления?'),
-        content: const Text('Все уведомления будут удалены навсегда.'),
+        title: Text(l10n?.notifClearTitle ?? 'Clear notifications?'),
+        content: Text(l10n?.notifClearContent ??
+            'All notifications will be permanently deleted.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(l10n?.commonCancel ?? 'Cancel'),
           ),
           TextButton(
             onPressed: () {
               _notificationService.clearAllNotifications();
               Navigator.pop(context);
             },
-            child: const Text('Очистить', style: TextStyle(color: Colors.red)),
+            child: Text(
+              l10n?.notifClearBtn ?? 'Clear',
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -41,13 +47,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'Уведомления',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          l10n?.notificationTitle ?? 'Notifications',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           StreamBuilder<List<AppNotification>>(
@@ -56,7 +63,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 return TextButton(
                   onPressed: _clearNotifications,
-                  child: const Text('Очистить'),
+                  child: Text(l10n?.notifClearBtn ?? 'Clear'),
                 );
               }
               return const SizedBox.shrink();
@@ -75,13 +82,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Ошибка: ${snapshot.error}'));
+            return Center(
+              child: Text(
+                l10n?.notifErrorPrefix('${snapshot.error}') ??
+                    'Error: ${snapshot.error}',
+              ),
+            );
           }
 
           final notifications = snapshot.data ?? [];
 
           if (notifications.isEmpty) {
-            return _buildEmptyState(isDark);
+            return _buildEmptyState(isDark, l10n);
           }
 
           return ListView.builder(
@@ -120,7 +132,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(bool isDark, AppLocalizations? l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +151,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            'Уведомлений пока нет',
+            l10n?.notifEmptyTitle ?? 'No notifications yet',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -148,7 +160,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Мы сообщим вам, когда появится что-то важное',
+            l10n?.notifEmptySubtitle ??
+                'We\'ll let you know when something important comes up',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.textSecondary.withValues(alpha: 0.6),

@@ -1369,7 +1369,7 @@ abstract class AppLocalizations {
   /// No description provided for @reviewOfficialReply.
   ///
   /// In en, this message translates to:
-  /// **'Official Reply'**
+  /// **'Official reply'**
   String get reviewOfficialReply;
 
   /// No description provided for @commonError.
@@ -1393,31 +1393,31 @@ abstract class AppLocalizations {
   /// No description provided for @aiChancesGrant.
   ///
   /// In en, this message translates to:
-  /// **'chance for grant'**
+  /// **'grant chance'**
   String get aiChancesGrant;
 
   /// No description provided for @aiChancesRisk.
   ///
   /// In en, this message translates to:
-  /// **'Risk: {risk}'**
-  String aiChancesRisk(String risk);
+  /// **'Risk: {level}'**
+  String aiChancesRisk(String level);
 
   /// No description provided for @aiChancesEntThreshold.
   ///
   /// In en, this message translates to:
-  /// **'UNT Threshold for this major: {score} points'**
-  String aiChancesEntThreshold(int score);
+  /// **'UNT threshold for this program: {threshold} points'**
+  String aiChancesEntThreshold(int threshold);
 
   /// No description provided for @aiChancesDetails.
   ///
   /// In en, this message translates to:
-  /// **'Calculation Details'**
+  /// **'Calculation details'**
   String get aiChancesDetails;
 
   /// No description provided for @aiChancesDetailedStrategy.
   ///
   /// In en, this message translates to:
-  /// **'Detailed AI Strategy'**
+  /// **'Detailed AI strategy'**
   String get aiChancesDetailedStrategy;
 
   /// No description provided for @detailErrorFavorites.
@@ -1579,7 +1579,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailAiStrategySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'TANDAU AI Strategy'**
+  /// **'AI Strategy TANDAU'**
   String get detailAiStrategySubtitle;
 
   /// No description provided for @profileSavedSubtitle.
@@ -1801,7 +1801,7 @@ abstract class AppLocalizations {
   /// No description provided for @reviewAuthRequiredMsg.
   ///
   /// In en, this message translates to:
-  /// **'Please authenticate to rate'**
+  /// **'Please sign in to rate'**
   String get reviewAuthRequiredMsg;
 
   /// No description provided for @reviewHelpfulLabel.
@@ -2467,7 +2467,7 @@ abstract class AppLocalizations {
   /// No description provided for @svdDataSource.
   ///
   /// In en, this message translates to:
-  /// **'Data: MON RK, {year}'**
+  /// **'Data: MES RK, {year}'**
   String svdDataSource(String year);
 
   /// No description provided for @svdHowWeCalculateTitle.
@@ -2479,7 +2479,7 @@ abstract class AppLocalizations {
   /// No description provided for @svdHowWeCalculateBody.
   ///
   /// In en, this message translates to:
-  /// **'The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.'**
+  /// **'The 4-university algorithm analyzes your UNT score, chosen profile subjects, and MES RK threshold score statistics from previous years.\n\nWe account for competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows you to choose an optimal strategy for distributing 4 universities when submitting documents.'**
   String get svdHowWeCalculateBody;
 
   /// No description provided for @svdUnderstood.
@@ -2491,7 +2491,7 @@ abstract class AppLocalizations {
   /// No description provided for @svdDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.'**
+  /// **'⚠️ This calculation is advisory. The final decision on grant allocation always rests with the MES RK admissions committee.'**
   String get svdDisclaimer;
 
   /// No description provided for @reviewDateJustNow.
@@ -2503,19 +2503,19 @@ abstract class AppLocalizations {
   /// No description provided for @reviewDateMinAgo.
   ///
   /// In en, this message translates to:
-  /// **'{min} min ago'**
-  String reviewDateMinAgo(int min);
+  /// **'{minutes} min ago'**
+  String reviewDateMinAgo(int minutes);
 
   /// No description provided for @reviewDateHoursAgo.
   ///
   /// In en, this message translates to:
-  /// **'{hours} h ago'**
+  /// **'{hours}h ago'**
   String reviewDateHoursAgo(int hours);
 
   /// No description provided for @reviewDateDaysAgo.
   ///
   /// In en, this message translates to:
-  /// **'{days} d ago'**
+  /// **'{days}d ago'**
   String reviewDateDaysAgo(int days);
 
   /// No description provided for @reviewMonthJan.
@@ -2659,7 +2659,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileCompletionMedium.
   ///
   /// In en, this message translates to:
-  /// **'Almost done! Add the remaining data'**
+  /// **'Almost done! Add remaining data'**
   String get profileCompletionMedium;
 
   /// No description provided for @profileCompletionHigh.
@@ -2689,13 +2689,13 @@ abstract class AppLocalizations {
   /// No description provided for @pickerErrorUpdateLink.
   ///
   /// In en, this message translates to:
-  /// **'Error updating link in profile'**
+  /// **'Error updating profile link'**
   String get pickerErrorUpdateLink;
 
   /// No description provided for @pickerErrorUploadCloud.
   ///
   /// In en, this message translates to:
-  /// **'Error uploading to cloud'**
+  /// **'Cloud upload error'**
   String get pickerErrorUploadCloud;
 
   /// No description provided for @pickerErrorGeneric.
@@ -2827,7 +2827,7 @@ abstract class AppLocalizations {
   /// No description provided for @validationCity.
   ///
   /// In en, this message translates to:
-  /// **'Enter a city'**
+  /// **'Enter city'**
   String get validationCity;
 
   /// No description provided for @profileSave.
@@ -2949,6 +2949,456 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Older'**
   String get aiOlder;
+
+  /// No description provided for @notifClearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear notifications?'**
+  String get notifClearTitle;
+
+  /// No description provided for @notifClearContent.
+  ///
+  /// In en, this message translates to:
+  /// **'All notifications will be permanently deleted.'**
+  String get notifClearContent;
+
+  /// No description provided for @notifClearBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get notifClearBtn;
+
+  /// No description provided for @notifErrorPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String notifErrorPrefix(String error);
+
+  /// No description provided for @notifEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notifEmptyTitle;
+
+  /// No description provided for @notifEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let you know when something important comes up'**
+  String get notifEmptySubtitle;
+
+  /// No description provided for @notifSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifSettingsTitle;
+
+  /// No description provided for @notifSectionStudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Study alerts'**
+  String get notifSectionStudy;
+
+  /// No description provided for @notifGrantUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant updates'**
+  String get notifGrantUpdates;
+
+  /// No description provided for @notifGrantUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to know about score and seat changes'**
+  String get notifGrantUpdatesDesc;
+
+  /// No description provided for @notifUniversityNews.
+  ///
+  /// In en, this message translates to:
+  /// **'University news'**
+  String get notifUniversityNews;
+
+  /// No description provided for @notifUniversityNewsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Open days and important dates'**
+  String get notifUniversityNewsDesc;
+
+  /// No description provided for @notifSectionOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get notifSectionOther;
+
+  /// No description provided for @notifMarketing.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing & promotions'**
+  String get notifMarketing;
+
+  /// No description provided for @notifMarketingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner discounts and platform news'**
+  String get notifMarketingDesc;
+
+  /// No description provided for @helpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpTitle;
+
+  /// No description provided for @helpSupportTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Support team'**
+  String get helpSupportTeam;
+
+  /// No description provided for @helpSupportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll reply within 24 hours\ntandau.app.help@gmail.com'**
+  String get helpSupportDesc;
+
+  /// No description provided for @helpWriteUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to us'**
+  String get helpWriteUs;
+
+  /// No description provided for @helpEmailFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to us at: tandau.app.help@gmail.com'**
+  String get helpEmailFallback;
+
+  /// No description provided for @helpEmailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'TANDAU Support: [Question]'**
+  String get helpEmailSubject;
+
+  /// No description provided for @helpFaqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get helpFaqTitle;
+
+  /// No description provided for @helpFaq1Q.
+  ///
+  /// In en, this message translates to:
+  /// **'How are admission chances calculated?'**
+  String get helpFaq1Q;
+
+  /// No description provided for @helpFaq1A.
+  ///
+  /// In en, this message translates to:
+  /// **'Our AI analyzes past years\' data, competition difficulty, and your UNT, GPA, and IELTS scores.'**
+  String get helpFaq1A;
+
+  /// No description provided for @helpFaq2Q.
+  ///
+  /// In en, this message translates to:
+  /// **'Is the grant data up-to-date?'**
+  String get helpFaq2Q;
+
+  /// No description provided for @helpFaq2A.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, we update the state grants database annually based on official data from the MES RK.'**
+  String get helpFaq2A;
+
+  /// No description provided for @helpFaq3Q.
+  ///
+  /// In en, this message translates to:
+  /// **'What does the PRO subscription offer?'**
+  String get helpFaq3Q;
+
+  /// No description provided for @helpFaq3A.
+  ///
+  /// In en, this message translates to:
+  /// **'PRO users get access to alternative university lists and extended AI analytics.'**
+  String get helpFaq3A;
+
+  /// No description provided for @helpFaq4Q.
+  ///
+  /// In en, this message translates to:
+  /// **'How to change the app language?'**
+  String get helpFaq4Q;
+
+  /// No description provided for @helpFaq4A.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Profile -> Settings -> Language and choose the one you need.'**
+  String get helpFaq4A;
+
+  /// No description provided for @helpAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version: 1.0.0'**
+  String get helpAppVersion;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy & Terms of Use'**
+  String get privacyHeading;
+
+  /// No description provided for @privacyUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated: February 24, 2026'**
+  String get privacyUpdated;
+
+  /// No description provided for @favoritesSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get favoritesSavedTitle;
+
+  /// No description provided for @favoritesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved universities'**
+  String get favoritesEmptyTitle;
+
+  /// No description provided for @favoritesEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save universities you like'**
+  String get favoritesEmptySubtitle;
+
+  /// No description provided for @favoritesDormitory.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory'**
+  String get favoritesDormitory;
+
+  /// No description provided for @favoritesGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant'**
+  String get favoritesGrant;
+
+  /// No description provided for @savedToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to favorites ❤️'**
+  String get savedToFavorites;
+
+  /// No description provided for @saveErrorText.
+  ///
+  /// In en, this message translates to:
+  /// **'Save error: {error}'**
+  String saveErrorText(String error);
+
+  /// No description provided for @adminAccessDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Access denied'**
+  String get adminAccessDenied;
+
+  /// No description provided for @adminNoRights.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ You don\'t have admin rights'**
+  String get adminNoRights;
+
+  /// No description provided for @adminMigrationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data migration'**
+  String get adminMigrationTitle;
+
+  /// No description provided for @adminUpdateData.
+  ///
+  /// In en, this message translates to:
+  /// **'🔄 Update data'**
+  String get adminUpdateData;
+
+  /// No description provided for @adminUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get adminUpdate;
+
+  /// No description provided for @adminWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Warning!'**
+  String get adminWarning;
+
+  /// No description provided for @adminDeleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data'**
+  String get adminDeleteAll;
+
+  /// No description provided for @adminCheckData.
+  ///
+  /// In en, this message translates to:
+  /// **'Check data'**
+  String get adminCheckData;
+
+  /// No description provided for @adminGenerateTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Dummy Stats (Test)'**
+  String get adminGenerateTest;
+
+  /// No description provided for @adminUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get adminUsers;
+
+  /// No description provided for @adminByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'By date'**
+  String get adminByDate;
+
+  /// No description provided for @adminByName.
+  ///
+  /// In en, this message translates to:
+  /// **'By name'**
+  String get adminByName;
+
+  /// No description provided for @adminResetSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset search'**
+  String get adminResetSearch;
+
+  /// No description provided for @adminDetailedInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed information'**
+  String get adminDetailedInfo;
+
+  /// No description provided for @adminDeleteUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete user?'**
+  String get adminDeleteUser;
+
+  /// No description provided for @adminDeleteAllBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all'**
+  String get adminDeleteAllBtn;
+
+  /// No description provided for @adminLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading error: {error}'**
+  String adminLoadError(String error);
+
+  /// No description provided for @adminRoleChangeDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Access denied'**
+  String get adminRoleChangeDenied;
+
+  /// No description provided for @adminSelfRole.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Cannot change own role'**
+  String get adminSelfRole;
+
+  /// No description provided for @adminSelfDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Cannot delete own account via admin panel'**
+  String get adminSelfDelete;
+
+  /// No description provided for @adminUserDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ User {name} data deleted'**
+  String adminUserDeleted(String name);
+
+  /// No description provided for @adminDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Delete error: {error}'**
+  String adminDeleteError(String error);
+
+  /// No description provided for @adminSendNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Send notification'**
+  String get adminSendNotification;
+
+  /// No description provided for @adminSendToAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to ALL users'**
+  String get adminSendToAll;
+
+  /// No description provided for @adminSendToAllDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Creates in-app notification for everyone'**
+  String get adminSendToAllDesc;
+
+  /// No description provided for @adminSyncStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync started...'**
+  String get adminSyncStarted;
+
+  /// No description provided for @adminReviewModeration.
+  ///
+  /// In en, this message translates to:
+  /// **'Review moderation'**
+  String get adminReviewModeration;
+
+  /// No description provided for @adminDeleteReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete review?'**
+  String get adminDeleteReview;
+
+  /// No description provided for @adminDeleteBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get adminDeleteBtn;
+
+  /// No description provided for @adminReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get adminReply;
+
+  /// No description provided for @adminSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get adminSave;
+
+  /// No description provided for @adminAllReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'All reviews'**
+  String get adminAllReviews;
+
+  /// No description provided for @adminAuditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit logs'**
+  String get adminAuditLogs;
+
+  /// No description provided for @errorOops.
+  ///
+  /// In en, this message translates to:
+  /// **'Oops! An error occurred.'**
+  String get errorOops;
 }
 
 class _AppLocalizationsDelegate

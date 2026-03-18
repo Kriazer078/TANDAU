@@ -323,11 +323,10 @@ class AuthService {
       debugPrint('📝 AUTH: START Registration process');
 
       // 1. Create User in Firebase Auth
-      // ⏱️ Reduced timeout from 30s→15s to prevent ANR
       final credential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .timeout(
-            const Duration(seconds: 15),
+            const Duration(seconds: 25),
             onTimeout: () =>
                 throw TimeoutException('Превышено время ожидания регистрации'),
           );
@@ -344,32 +343,27 @@ class AuthService {
         createdAt: DateTime.now(),
       );
 
-      // 3. Set local state FIRST — so UI can navigate immediately
+      // 3. Save to Firestore SYNCHRONOUSLY — critical for user data integrity
+      try {
+        await Future.wait([
+          _firestore
+              .collection('users')
+              .doc(uid)
+              .set(userModel.toMap()),
+          credential.user!.updateDisplayName(name),
+        ]).timeout(const Duration(seconds: 10));
+        debugPrint('✅ AUTH: Profile data saved to Firestore');
+      } catch (e) {
+        debugPrint('⚠️ AUTH: Firestore write failed: $e');
+        // Profile data didn't save — still let user in, data will sync later
+      }
+
+      // 4. Set local state — UI can navigate
       currentUser.value = userModel;
       isLoggedIn.value = true;
       debugPrint('✅ AUTH: Local state set, UI can navigate now');
 
-      // 4. Update Profile & Firestore in parallel (non-blocking with short timeout)
-      // These run in background — even if they fail, user is logged in
-      () async {
-        try {
-          await Future.wait([
-            _firestore
-                .collection('users')
-                .doc(uid)
-                .set(userModel.toMap())
-                .catchError((e) => debugPrint('⚠️ Firestore error: $e')),
-            credential.user!
-                .updateDisplayName(name)
-                .catchError((e) => debugPrint('⚠️ Display name error: $e')),
-          ]).timeout(const Duration(seconds: 8));
-          debugPrint('✅ AUTH: Profile data saved');
-        } catch (e) {
-          debugPrint('⚠️ Profile setup partially failed or timed out: $e');
-        }
-      }();
-
-      // 5. Save FCM Token (fire & forget)
+      // 5. Save FCM Token (fire & forget — non-critical)
       () async {
         try {
           final token = await NotificationService().getToken().timeout(
@@ -475,10 +469,8 @@ class AuthService {
     }
   }
 
-  // SECURITY: API key loaded from --dart-define at build time.
-  // Usage: flutter build apk --dart-define=IMGBB_API_KEY=your_key_here
-  // ⚠️ No fallback — key MUST be provided via --dart-define.
-  static const String _imgbbApiKey = String.fromEnvironment('IMGBB_API_KEY');
+  // API key provided by user to fix Google Play profile upload issues
+  static const String _imgbbApiKey = '16ea590b6156b5c9fbc737026770d231';
 
   /// Upload profile photo to ImgBB (Free storage)
   Future<String?> uploadProfilePhoto(File file) async {

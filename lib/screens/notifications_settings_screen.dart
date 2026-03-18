@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 class NotificationsSettingsScreen extends StatefulWidget {
@@ -28,7 +29,6 @@ class _NotificationsSettingsScreenState
   Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      // Default true because they are important core features
       _grantUpdates = prefs.getBool('notif_grantUpdates') ?? true;
       _universityNews = prefs.getBool('notif_universityNews') ?? true;
       _aiCareerAdvice = prefs.getBool('notif_aiCareerAdvice') ?? true;
@@ -36,7 +36,6 @@ class _NotificationsSettingsScreenState
       _isLoading = false;
     });
 
-    // Make sure init matches Firebase state if they were true by default but we never subscribed
     if (_grantUpdates) {
       FirebaseMessaging.instance.subscribeToTopic('grant_updates');
     }
@@ -52,7 +51,6 @@ class _NotificationsSettingsScreenState
   }
 
   Future<void> _updatePreference(String key, bool value, String topic) async {
-    // Optimistic UI update
     setState(() {
       if (key == 'notif_grantUpdates') _grantUpdates = value;
       if (key == 'notif_universityNews') _universityNews = value;
@@ -76,24 +74,33 @@ class _NotificationsSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Уведомления'), elevation: 0),
+        appBar: AppBar(
+          title: Text(l10n?.notifSettingsTitle ?? 'Notifications'),
+          elevation: 0,
+        ),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Уведомления'), elevation: 0),
+      appBar: AppBar(
+        title: Text(l10n?.notifSettingsTitle ?? 'Notifications'),
+        elevation: 0,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _buildNotificationSection(
-            title: 'Учебные оповещения',
+            title: l10n?.notifSectionStudy ?? 'Study alerts',
             children: [
               _buildSwitchTile(
-                title: 'Обновления по грантам',
-                subtitle: 'Узнавайте первыми об изменении баллов и мест',
+                title: l10n?.notifGrantUpdates ?? 'Grant updates',
+                subtitle: l10n?.notifGrantUpdatesDesc ??
+                    'Be the first to know about score and seat changes',
                 value: _grantUpdates,
                 onChanged: (val) => _updatePreference(
                   'notif_grantUpdates',
@@ -102,8 +109,9 @@ class _NotificationsSettingsScreenState
                 ),
               ),
               _buildSwitchTile(
-                title: 'Новости университетов',
-                subtitle: 'Дни открытых дверей и важные даты',
+                title: l10n?.notifUniversityNews ?? 'University news',
+                subtitle: l10n?.notifUniversityNewsDesc ??
+                    'Open days and important dates',
                 value: _universityNews,
                 onChanged: (val) => _updatePreference(
                   'notif_universityNews',
@@ -115,11 +123,12 @@ class _NotificationsSettingsScreenState
           ),
           const SizedBox(height: 24),
           _buildNotificationSection(
-            title: 'Другое',
+            title: l10n?.notifSectionOther ?? 'Other',
             children: [
               _buildSwitchTile(
-                title: 'Маркетинг и акции',
-                subtitle: 'Скидки от партнеров и новости платформы',
+                title: l10n?.notifMarketing ?? 'Marketing & promotions',
+                subtitle: l10n?.notifMarketingDesc ??
+                    'Partner discounts and platform news',
                 value: _marketingEmails,
                 onChanged: (val) => _updatePreference(
                   'notif_marketingEmails',

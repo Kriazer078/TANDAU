@@ -665,7 +665,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reviewOfficialReply => 'Official Reply';
+  String get reviewOfficialReply => 'Official reply';
 
   @override
   String commonError(String error) {
@@ -681,23 +681,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get aiChancesGrant => 'chance for grant';
+  String get aiChancesGrant => 'grant chance';
 
   @override
-  String aiChancesRisk(String risk) {
-    return 'Risk: $risk';
+  String aiChancesRisk(String level) {
+    return 'Risk: $level';
   }
 
   @override
-  String aiChancesEntThreshold(int score) {
-    return 'UNT Threshold for this major: $score points';
+  String aiChancesEntThreshold(int threshold) {
+    return 'UNT threshold for this program: $threshold points';
   }
 
   @override
-  String get aiChancesDetails => 'Calculation Details';
+  String get aiChancesDetails => 'Calculation details';
 
   @override
-  String get aiChancesDetailedStrategy => 'Detailed AI Strategy';
+  String get aiChancesDetailedStrategy => 'Detailed AI strategy';
 
   @override
   String get detailErrorFavorites => 'Error updating favorites';
@@ -786,7 +786,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailAiThinking => 'AI is generating strategy...';
 
   @override
-  String get detailAiStrategySubtitle => 'TANDAU AI Strategy';
+  String get detailAiStrategySubtitle => 'AI Strategy TANDAU';
 
   @override
   String get profileSavedSubtitle => 'Your saved universities';
@@ -902,7 +902,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewEditedLabel => 'edited';
 
   @override
-  String get reviewAuthRequiredMsg => 'Please authenticate to rate';
+  String get reviewAuthRequiredMsg => 'Please sign in to rate';
 
   @override
   String get reviewHelpfulLabel => 'Helpful';
@@ -1249,7 +1249,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String svdDataSource(String year) {
-    return 'Data: MON RK, $year';
+    return 'Data: MES RK, $year';
   }
 
   @override
@@ -1257,31 +1257,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get svdHowWeCalculateBody =>
-      'The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.';
+      'The 4-university algorithm analyzes your UNT score, chosen profile subjects, and MES RK threshold score statistics from previous years.\n\nWe account for competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows you to choose an optimal strategy for distributing 4 universities when submitting documents.';
 
   @override
   String get svdUnderstood => 'Got it';
 
   @override
   String get svdDisclaimer =>
-      '⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.';
+      '⚠️ This calculation is advisory. The final decision on grant allocation always rests with the MES RK admissions committee.';
 
   @override
   String get reviewDateJustNow => 'just now';
 
   @override
-  String reviewDateMinAgo(int min) {
-    return '$min min ago';
+  String reviewDateMinAgo(int minutes) {
+    return '$minutes min ago';
   }
 
   @override
   String reviewDateHoursAgo(int hours) {
-    return '$hours h ago';
+    return '${hours}h ago';
   }
 
   @override
   String reviewDateDaysAgo(int days) {
-    return '$days d ago';
+    return '${days}d ago';
   }
 
   @override
@@ -1360,7 +1360,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Complete your profile for better recommendations';
 
   @override
-  String get profileCompletionMedium => 'Almost done! Add the remaining data';
+  String get profileCompletionMedium => 'Almost done! Add remaining data';
 
   @override
   String get profileCompletionHigh => 'Great job! Profile is complete';
@@ -1375,10 +1375,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickerCamera => 'Camera';
 
   @override
-  String get pickerErrorUpdateLink => 'Error updating link in profile';
+  String get pickerErrorUpdateLink => 'Error updating profile link';
 
   @override
-  String get pickerErrorUploadCloud => 'Error uploading to cloud';
+  String get pickerErrorUploadCloud => 'Cloud upload error';
 
   @override
   String pickerErrorGeneric(String error) {
@@ -1453,7 +1453,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileCityEnter => 'Enter city name';
 
   @override
-  String get validationCity => 'Enter a city';
+  String get validationCity => 'Enter city';
 
   @override
   String get profileSave => 'Save changes';
@@ -1514,4 +1514,247 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiOlder => 'Older';
+
+  @override
+  String get notifClearTitle => 'Clear notifications?';
+
+  @override
+  String get notifClearContent =>
+      'All notifications will be permanently deleted.';
+
+  @override
+  String get notifClearBtn => 'Clear';
+
+  @override
+  String notifErrorPrefix(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get notifEmptyTitle => 'No notifications yet';
+
+  @override
+  String get notifEmptySubtitle =>
+      'We\'ll let you know when something important comes up';
+
+  @override
+  String get notifSettingsTitle => 'Notifications';
+
+  @override
+  String get notifSectionStudy => 'Study alerts';
+
+  @override
+  String get notifGrantUpdates => 'Grant updates';
+
+  @override
+  String get notifGrantUpdatesDesc =>
+      'Be the first to know about score and seat changes';
+
+  @override
+  String get notifUniversityNews => 'University news';
+
+  @override
+  String get notifUniversityNewsDesc => 'Open days and important dates';
+
+  @override
+  String get notifSectionOther => 'Other';
+
+  @override
+  String get notifMarketing => 'Marketing & promotions';
+
+  @override
+  String get notifMarketingDesc => 'Partner discounts and platform news';
+
+  @override
+  String get helpTitle => 'Help & Support';
+
+  @override
+  String get helpSupportTeam => 'Support team';
+
+  @override
+  String get helpSupportDesc =>
+      'We\'ll reply within 24 hours\ntandau.app.help@gmail.com';
+
+  @override
+  String get helpWriteUs => 'Write to us';
+
+  @override
+  String get helpEmailFallback => 'Write to us at: tandau.app.help@gmail.com';
+
+  @override
+  String get helpEmailSubject => 'TANDAU Support: [Question]';
+
+  @override
+  String get helpFaqTitle => 'Frequently Asked Questions';
+
+  @override
+  String get helpFaq1Q => 'How are admission chances calculated?';
+
+  @override
+  String get helpFaq1A =>
+      'Our AI analyzes past years\' data, competition difficulty, and your UNT, GPA, and IELTS scores.';
+
+  @override
+  String get helpFaq2Q => 'Is the grant data up-to-date?';
+
+  @override
+  String get helpFaq2A =>
+      'Yes, we update the state grants database annually based on official data from the MES RK.';
+
+  @override
+  String get helpFaq3Q => 'What does the PRO subscription offer?';
+
+  @override
+  String get helpFaq3A =>
+      'PRO users get access to alternative university lists and extended AI analytics.';
+
+  @override
+  String get helpFaq4Q => 'How to change the app language?';
+
+  @override
+  String get helpFaq4A =>
+      'Go to Profile -> Settings -> Language and choose the one you need.';
+
+  @override
+  String get helpAppVersion => 'App version: 1.0.0';
+
+  @override
+  String get privacyTitle => 'Privacy';
+
+  @override
+  String get privacyHeading => 'Privacy Policy & Terms of Use';
+
+  @override
+  String get privacyUpdated => 'Updated: February 24, 2026';
+
+  @override
+  String get favoritesSavedTitle => 'Saved';
+
+  @override
+  String get favoritesEmptyTitle => 'No saved universities';
+
+  @override
+  String get favoritesEmptySubtitle => 'Save universities you like';
+
+  @override
+  String get favoritesDormitory => 'Dormitory';
+
+  @override
+  String get favoritesGrant => 'Grant';
+
+  @override
+  String get savedToFavorites => 'Saved to favorites ❤️';
+
+  @override
+  String saveErrorText(String error) {
+    return 'Save error: $error';
+  }
+
+  @override
+  String get adminAccessDenied => 'Access denied';
+
+  @override
+  String get adminNoRights => '❌ You don\'t have admin rights';
+
+  @override
+  String get adminMigrationTitle => 'Data migration';
+
+  @override
+  String get adminUpdateData => '🔄 Update data';
+
+  @override
+  String get adminUpdate => 'Update';
+
+  @override
+  String get adminWarning => '⚠️ Warning!';
+
+  @override
+  String get adminDeleteAll => 'Delete all data';
+
+  @override
+  String get adminCheckData => 'Check data';
+
+  @override
+  String get adminGenerateTest => 'Generate Dummy Stats (Test)';
+
+  @override
+  String get adminUsers => 'Users';
+
+  @override
+  String get adminByDate => 'By date';
+
+  @override
+  String get adminByName => 'By name';
+
+  @override
+  String get adminResetSearch => 'Reset search';
+
+  @override
+  String get adminDetailedInfo => 'Detailed information';
+
+  @override
+  String get adminDeleteUser => 'Delete user?';
+
+  @override
+  String get adminDeleteAllBtn => 'Delete all';
+
+  @override
+  String adminLoadError(String error) {
+    return 'Loading error: $error';
+  }
+
+  @override
+  String get adminRoleChangeDenied => '❌ Access denied';
+
+  @override
+  String get adminSelfRole => '❌ Cannot change own role';
+
+  @override
+  String get adminSelfDelete => '❌ Cannot delete own account via admin panel';
+
+  @override
+  String adminUserDeleted(String name) {
+    return '✅ User $name data deleted';
+  }
+
+  @override
+  String adminDeleteError(String error) {
+    return '❌ Delete error: $error';
+  }
+
+  @override
+  String get adminSendNotification => 'Send notification';
+
+  @override
+  String get adminSendToAll => 'Send to ALL users';
+
+  @override
+  String get adminSendToAllDesc => 'Creates in-app notification for everyone';
+
+  @override
+  String get adminSyncStarted => 'Sync started...';
+
+  @override
+  String get adminReviewModeration => 'Review moderation';
+
+  @override
+  String get adminDeleteReview => 'Delete review?';
+
+  @override
+  String get adminDeleteBtn => 'Delete';
+
+  @override
+  String get adminReply => 'Reply';
+
+  @override
+  String get adminSave => 'Save';
+
+  @override
+  String get adminAllReviews => 'All reviews';
+
+  @override
+  String get adminAuditLogs => 'Audit logs';
+
+  @override
+  String get errorOops => 'Oops! An error occurred.';
 }

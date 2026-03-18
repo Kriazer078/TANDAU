@@ -513,7 +513,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
               style: TextButton.styleFrom(foregroundColor: Colors.grey),
-              child: const Text('Отмена'),
+              child: Text(AppLocalizations.of(context)?.commonCancel ?? 'Cancel'),
             ),
             ElevatedButton(
               onPressed: termsAccepted

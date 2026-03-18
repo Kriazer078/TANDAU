@@ -1638,10 +1638,10 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
-                children: const [
-                  Icon(Icons.favorite, color: Colors.white, size: 18),
-                  SizedBox(width: 8),
-                  Text('Сохранено в избранное ❤️'),
+                children: [
+                  const Icon(Icons.favorite, color: Colors.white, size: 18),
+                  const SizedBox(width: 8),
+                  Text(AppLocalizations.of(context)?.savedToFavorites ?? 'Saved to favorites ❤️'),
                 ],
               ),
               backgroundColor: const Color(0xFF6366F1),

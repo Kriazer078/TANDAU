@@ -41,34 +41,39 @@ void main() async {
   // 🛡️ Fallback Error Screen (Replaces Red Screen of Death)
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Material(
-      child: Container(
-        color: Colors.red.shade400,
-        padding: const EdgeInsets.all(20),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, color: Colors.white, size: 48),
-            const SizedBox(height: 16),
-            const Text(
-              'Упс! Произошла ошибка.',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+      child: Builder(
+        builder: (context) {
+          final l10n = AppLocalizations.of(context);
+          return Container(
+            color: Colors.red.shade400,
+            padding: const EdgeInsets.all(20),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white, size: 48),
+                const SizedBox(height: 16),
+                Text(
+                  l10n?.errorOops ?? 'Упс! Произошла ошибка.',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  details.exceptionAsString(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              details.exceptionAsString(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+          );
+        }
       ),
     );
   };

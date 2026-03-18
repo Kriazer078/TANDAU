@@ -99,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _passwordController.text, // 🛡️ Security: do not trim passwords
         )
             .timeout(
-          const Duration(seconds: 20),
+          const Duration(seconds: 35),
           onTimeout: () {
             debugPrint('🔴 REGSCR: Таймаут вызова register!');
             return timeoutErrorStr;
@@ -234,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               'Введите Email';
                         }
                         if (!RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                         ).hasMatch(v)) {
                           return AppLocalizations.of(
                                 context,

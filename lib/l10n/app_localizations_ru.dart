@@ -687,13 +687,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiChancesGrant => 'шанс на грант';
 
   @override
-  String aiChancesRisk(String risk) {
-    return 'Риск: $risk';
+  String aiChancesRisk(String level) {
+    return 'Риск: $level';
   }
 
   @override
-  String aiChancesEntThreshold(int score) {
-    return 'Порог ЕНТ для этого направления: $score баллов';
+  String aiChancesEntThreshold(int threshold) {
+    return 'Порог ЕНТ для этого направления: $threshold баллов';
   }
 
   @override
@@ -879,7 +879,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get detailAddressLabel => 'Адрес';
 
   @override
-  String get detailWebsiteLabel => 'Веб-сайт';
+  String get detailWebsiteLabel => 'Сайт';
 
   @override
   String get detailPhoneLabelFull => 'Телефон';
@@ -905,7 +905,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reviewEditedLabel => 'изменено';
 
   @override
-  String get reviewAuthRequiredMsg => 'Аутентифицируйтесь для оценки';
+  String get reviewAuthRequiredMsg => 'Войдите, чтобы оценить';
 
   @override
   String get reviewHelpfulLabel => 'Полезно';
@@ -1271,8 +1271,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reviewDateJustNow => 'только что';
 
   @override
-  String reviewDateMinAgo(int min) {
-    return '$min мин назад';
+  String reviewDateMinAgo(int minutes) {
+    return '$minutes мин назад';
   }
 
   @override
@@ -1516,4 +1516,248 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aiOlder => 'Ранее';
+
+  @override
+  String get notifClearTitle => 'Очистить уведомления?';
+
+  @override
+  String get notifClearContent => 'Все уведомления будут удалены навсегда.';
+
+  @override
+  String get notifClearBtn => 'Очистить';
+
+  @override
+  String notifErrorPrefix(String error) {
+    return 'Ошибка: $error';
+  }
+
+  @override
+  String get notifEmptyTitle => 'Уведомлений пока нет';
+
+  @override
+  String get notifEmptySubtitle =>
+      'Мы сообщим вам, когда появится что-то важное';
+
+  @override
+  String get notifSettingsTitle => 'Уведомления';
+
+  @override
+  String get notifSectionStudy => 'Учебные оповещения';
+
+  @override
+  String get notifGrantUpdates => 'Обновления по грантам';
+
+  @override
+  String get notifGrantUpdatesDesc =>
+      'Узнавайте первыми об изменении баллов и мест';
+
+  @override
+  String get notifUniversityNews => 'Новости университетов';
+
+  @override
+  String get notifUniversityNewsDesc => 'Дни открытых дверей и важные даты';
+
+  @override
+  String get notifSectionOther => 'Другое';
+
+  @override
+  String get notifMarketing => 'Маркетинг и акции';
+
+  @override
+  String get notifMarketingDesc => 'Скидки от партнеров и новости платформы';
+
+  @override
+  String get helpTitle => 'Помощь и поддержка';
+
+  @override
+  String get helpSupportTeam => 'Служба поддержки';
+
+  @override
+  String get helpSupportDesc =>
+      'Мы ответим в течение 24 часов\ntandau.app.help@gmail.com';
+
+  @override
+  String get helpWriteUs => 'Написать нам';
+
+  @override
+  String get helpEmailFallback => 'Напишите нам на: tandau.app.help@gmail.com';
+
+  @override
+  String get helpEmailSubject => 'Поддержка TANDAU: [Вопрос]';
+
+  @override
+  String get helpFaqTitle => 'Часто задаваемые вопросы';
+
+  @override
+  String get helpFaq1Q => 'Как рассчитываются шансы на поступление?';
+
+  @override
+  String get helpFaq1A =>
+      'Наша нейросеть анализирует данные прошлых лет, сложность конкурса и ваши баллы ЕНТ, GPA и IELTS.';
+
+  @override
+  String get helpFaq2Q => 'Данные по грантам актуальны?';
+
+  @override
+  String get helpFaq2A =>
+      'Да, мы обновляем базу данных государственных грантов ежегодно на основе официальных данных МНВО РК.';
+
+  @override
+  String get helpFaq3Q => 'Что дает PRO подписка?';
+
+  @override
+  String get helpFaq3A =>
+      'PRO пользователи получают доступ к списку альтернативных вузов и расширенной аналитике от ИИ.';
+
+  @override
+  String get helpFaq4Q => 'Как сменить язык приложения?';
+
+  @override
+  String get helpFaq4A =>
+      'Перейдите в Профиль -> Настройки -> Язык и выберите нужный.';
+
+  @override
+  String get helpAppVersion => 'Версия приложения: 1.0.0';
+
+  @override
+  String get privacyTitle => 'Конфиденциальность';
+
+  @override
+  String get privacyHeading =>
+      'Политика конфиденциальности и Условия использования';
+
+  @override
+  String get privacyUpdated => 'Обновлено: 24 февраля 2026';
+
+  @override
+  String get favoritesSavedTitle => 'Сохранённые';
+
+  @override
+  String get favoritesEmptyTitle => 'Сохранённых университетов нет';
+
+  @override
+  String get favoritesEmptySubtitle => 'Сохраняйте понравившиеся университеты';
+
+  @override
+  String get favoritesDormitory => 'Общежитие';
+
+  @override
+  String get favoritesGrant => 'Грант';
+
+  @override
+  String get savedToFavorites => 'Сохранено в избранное ❤️';
+
+  @override
+  String saveErrorText(String error) {
+    return 'Ошибка сохранения: $error';
+  }
+
+  @override
+  String get adminAccessDenied => 'Доступ запрещён';
+
+  @override
+  String get adminNoRights => '❌ У вас нет прав администратора';
+
+  @override
+  String get adminMigrationTitle => 'Миграция данных';
+
+  @override
+  String get adminUpdateData => '🔄 Обновление данных';
+
+  @override
+  String get adminUpdate => 'Обновить';
+
+  @override
+  String get adminWarning => '⚠️ Внимание!';
+
+  @override
+  String get adminDeleteAll => 'Удалить все данные';
+
+  @override
+  String get adminCheckData => 'Проверить данные';
+
+  @override
+  String get adminGenerateTest => 'Generate Dummy Stats (Test)';
+
+  @override
+  String get adminUsers => 'Пользователи';
+
+  @override
+  String get adminByDate => 'По дате';
+
+  @override
+  String get adminByName => 'По имени';
+
+  @override
+  String get adminResetSearch => 'Сбросить поиск';
+
+  @override
+  String get adminDetailedInfo => 'Подробная информация';
+
+  @override
+  String get adminDeleteUser => 'Удалить пользователя?';
+
+  @override
+  String get adminDeleteAllBtn => 'Удалить всё';
+
+  @override
+  String adminLoadError(String error) {
+    return 'Ошибка загрузки: $error';
+  }
+
+  @override
+  String get adminRoleChangeDenied => '❌ Доступ запрещён';
+
+  @override
+  String get adminSelfRole => '❌ Нельзя менять свою роль';
+
+  @override
+  String get adminSelfDelete =>
+      '❌ Нельзя удалить свой аккаунт через админ-панель';
+
+  @override
+  String adminUserDeleted(String name) {
+    return '✅ Данные пользователя $name удалены';
+  }
+
+  @override
+  String adminDeleteError(String error) {
+    return '❌ Ошибка удаления: $error';
+  }
+
+  @override
+  String get adminSendNotification => 'Отправить уведомление';
+
+  @override
+  String get adminSendToAll => 'Отправить ВСЕМ пользователям';
+
+  @override
+  String get adminSendToAllDesc => 'Создаст уведомление в приложении для всех';
+
+  @override
+  String get adminSyncStarted => 'Синхронизация начата...';
+
+  @override
+  String get adminReviewModeration => 'Модерация отзывов';
+
+  @override
+  String get adminDeleteReview => 'Удалить отзыв?';
+
+  @override
+  String get adminDeleteBtn => 'Удалить';
+
+  @override
+  String get adminReply => 'Ответить';
+
+  @override
+  String get adminSave => 'Сохранить';
+
+  @override
+  String get adminAllReviews => 'Все отзывы';
+
+  @override
+  String get adminAuditLogs => 'Аудит-логи';
+
+  @override
+  String get errorOops => 'Упс! Произошла ошибка.';
 }

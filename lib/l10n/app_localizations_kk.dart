@@ -680,23 +680,23 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get aiChancesGrant => 'грантқа түсу мүмкіндігі';
+  String get aiChancesGrant => 'грантқа мүмкіндік';
 
   @override
-  String aiChancesRisk(String risk) {
-    return 'Тәуекел: $risk';
+  String aiChancesRisk(String level) {
+    return 'Тәуекел: $level';
   }
 
   @override
-  String aiChancesEntThreshold(int score) {
-    return 'Осы бағыт үшін ҰБТ шегі: $score балл';
+  String aiChancesEntThreshold(int threshold) {
+    return 'Осы бағдарлама бойынша ҰБТ шегі: $threshold балл';
   }
 
   @override
-  String get aiChancesDetails => 'Есептеу бөлшектері';
+  String get aiChancesDetails => 'Есептеу мәліметтері';
 
   @override
-  String get aiChancesDetailedStrategy => 'Толық AI стратегиясы';
+  String get aiChancesDetailedStrategy => 'Толық AI стратегия';
 
   @override
   String get detailErrorFavorites => 'Таңдаулыларды жаңарту қатесі';
@@ -782,10 +782,10 @@ class AppLocalizationsKk extends AppLocalizations {
   String get detailRecommendations => '💡 Ұсыныстар';
 
   @override
-  String get detailAiThinking => 'AI стратегияны жасауда...';
+  String get detailAiThinking => 'AI стратегия жасауда...';
 
   @override
-  String get detailAiStrategySubtitle => 'TANDAU AI Стратегиясы';
+  String get detailAiStrategySubtitle => 'AI Стратегия TANDAU';
 
   @override
   String get profileSavedSubtitle => 'Сіздің сақталған университеттеріңіз';
@@ -875,7 +875,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get detailAddressLabel => 'Мекенжай';
 
   @override
-  String get detailWebsiteLabel => 'Веб-сайт';
+  String get detailWebsiteLabel => 'Сайт';
 
   @override
   String get detailPhoneLabelFull => 'Телефон';
@@ -898,10 +898,10 @@ class AppLocalizationsKk extends AppLocalizations {
   String get detailJustNow => 'жаңа ғана';
 
   @override
-  String get reviewEditedLabel => 'өзгертілген';
+  String get reviewEditedLabel => 'өзгертілді';
 
   @override
-  String get reviewAuthRequiredMsg => 'Бағалау үшін жүйеге кіріңіз';
+  String get reviewAuthRequiredMsg => 'Бағалау үшін кіріңіз';
 
   @override
   String get reviewHelpfulLabel => 'Пайдалы';
@@ -1244,7 +1244,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get wizardCityAny => 'Кез келген қала';
 
   @override
-  String get svdAnalyticsTitle => 'СБЖ Аналитика';
+  String get svdAnalyticsTitle => 'СВД Аналитика';
 
   @override
   String svdDataSource(String year) {
@@ -1252,25 +1252,25 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get svdHowWeCalculateTitle => 'Қалай есептейміз? 📝';
+  String get svdHowWeCalculateTitle => 'Біз қалай есептейміз? 📝';
 
   @override
   String get svdHowWeCalculateBody =>
-      '4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейіндік пәндерді және ҚР БҒМ-нің өткен жылдардағы шекті балл статистикасын талдайды.\n\nБіз сіздің мамандығыңыздағы бәсекені ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжаттарды тапсыру кезінде 4 ЖОО-ны бөлудің оңтайлы стратегиясын таңдауға мүмкіндік береді.';
+      '4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейін пәндерін және БҒМ РҚ өткен жылдардағы шекті баллдар статистикасын талдайды.\n\nБіз мамандығыңыздағы бәсекелестікті ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжат тапсыру кезінде 4 ЖОО-ды бөлудің тиімді стратегиясын таңдауға мүмкіндік береді.';
 
   @override
   String get svdUnderstood => 'Түсінікті';
 
   @override
   String get svdDisclaimer =>
-      '⚠️ Есептеу ұсыныс сипатында. Грант беру туралы түпкілікті шешім әрқашан ҚР БҒМ қабылдау комиссиясында қалады.';
+      '⚠️ Есептеу кеңес беру сипатында, грант тағайындау туралы түпкілікті шешім әрқашан БҒМ РҚ қабылдау комиссиясында.';
 
   @override
   String get reviewDateJustNow => 'жаңа ғана';
 
   @override
-  String reviewDateMinAgo(int min) {
-    return '$min мин бұрын';
+  String reviewDateMinAgo(int minutes) {
+    return '$minutes мин бұрын';
   }
 
   @override
@@ -1356,11 +1356,11 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get profileCompletionLow =>
-      'Жақсырақ ұсыныстар алу үшін профильді толтырыңыз';
+      'Жақсы ұсыныстар үшін профильді толтырыңыз';
 
   @override
   String get profileCompletionMedium =>
-      'Аяқталуға жақын! Қалған деректерді қосыңыз';
+      'Аздап қалды! Қалған деректерді қосыңыз';
 
   @override
   String get profileCompletionHigh => 'Тамаша жұмыс! Профиль толтырылды';
@@ -1375,7 +1375,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get pickerCamera => 'Камера';
 
   @override
-  String get pickerErrorUpdateLink => 'Профильдегі сілтемені жаңарту қатесі';
+  String get pickerErrorUpdateLink => 'Профиль сілтемесін жаңарту қатесі';
 
   @override
   String get pickerErrorUploadCloud => 'Бұлтқа жүктеу қатесі';
@@ -1449,7 +1449,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get profileChangePhoto => 'Суретті өзгерту';
 
   @override
-  String get profileCityEnter => 'Қала атын енгізіңіз';
+  String get profileCityEnter => 'Қала атауын енгізіңіз';
 
   @override
   String get validationCity => 'Қаланы енгізіңіз';
@@ -1513,4 +1513,248 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get aiOlder => 'Бұрынғы';
+
+  @override
+  String get notifClearTitle => 'Хабарламаларды тазалау?';
+
+  @override
+  String get notifClearContent => 'Барлық хабарламалар біржола жойылады.';
+
+  @override
+  String get notifClearBtn => 'Тазалау';
+
+  @override
+  String notifErrorPrefix(String error) {
+    return 'Қате: $error';
+  }
+
+  @override
+  String get notifEmptyTitle => 'Хабарламалар жоқ';
+
+  @override
+  String get notifEmptySubtitle => 'Маңызды нәрсе болғанда хабарлаймыз';
+
+  @override
+  String get notifSettingsTitle => 'Хабарламалар';
+
+  @override
+  String get notifSectionStudy => 'Оқу ескертулері';
+
+  @override
+  String get notifGrantUpdates => 'Грант жаңартулары';
+
+  @override
+  String get notifGrantUpdatesDesc =>
+      'Балл мен орын өзгерістерін бірінші біліңіз';
+
+  @override
+  String get notifUniversityNews => 'Университет жаңалықтары';
+
+  @override
+  String get notifUniversityNewsDesc => 'Ашық есік күндері және маңызды күндер';
+
+  @override
+  String get notifSectionOther => 'Басқа';
+
+  @override
+  String get notifMarketing => 'Маркетинг және акциялар';
+
+  @override
+  String get notifMarketingDesc =>
+      'Серіктестер жеңілдіктері мен платформа жаңалықтары';
+
+  @override
+  String get helpTitle => 'Көмек және қолдау';
+
+  @override
+  String get helpSupportTeam => 'Қолдау қызметі';
+
+  @override
+  String get helpSupportDesc =>
+      '24 сағат ішінде жауап береміз\ntandau.app.help@gmail.com';
+
+  @override
+  String get helpWriteUs => 'Бізге жазу';
+
+  @override
+  String get helpEmailFallback => 'Бізге жазыңыз: tandau.app.help@gmail.com';
+
+  @override
+  String get helpEmailSubject => 'TANDAU Қолдау: [Сұрақ]';
+
+  @override
+  String get helpFaqTitle => 'Жиі қойылатын сұрақтар';
+
+  @override
+  String get helpFaq1Q => 'Түсу мүмкіндіктері қалай есептеледі?';
+
+  @override
+  String get helpFaq1A =>
+      'Біздің AI өткен жылдардың деректерін, бәсеке күрделілігін және сіздің ҰБТ, GPA, IELTS балдарыңызды талдайды.';
+
+  @override
+  String get helpFaq2Q => 'Грант деректері өзекті ме?';
+
+  @override
+  String get helpFaq2A =>
+      'Иә, мемлекеттік гранттар базасын ҚР БҒМ ресми деректері негізінде жыл сайын жаңартып отырамыз.';
+
+  @override
+  String get helpFaq3Q => 'PRO жазылым не береді?';
+
+  @override
+  String get helpFaq3A =>
+      'PRO пайдаланушылар баламалы ЖОО тізіміне және кеңейтілген AI аналитикаға қол жеткізе алады.';
+
+  @override
+  String get helpFaq4Q => 'Қосымша тілін қалай өзгертуге болады?';
+
+  @override
+  String get helpFaq4A =>
+      'Профиль -> Баптаулар -> Тіл бөліміне өтіп, қажеттісін таңдаңыз.';
+
+  @override
+  String get helpAppVersion => 'Қосымша нұсқасы: 1.0.0';
+
+  @override
+  String get privacyTitle => 'Құпиялылық';
+
+  @override
+  String get privacyHeading => 'Құпиялылық саясаты және Пайдалану шарттары';
+
+  @override
+  String get privacyUpdated => 'Жаңартылған: 2026 жылғы 24 ақпан';
+
+  @override
+  String get favoritesSavedTitle => 'Сақталғандар';
+
+  @override
+  String get favoritesEmptyTitle => 'Сақталған университеттер жоқ';
+
+  @override
+  String get favoritesEmptySubtitle => 'Ұнаған университеттеріңізді сақтаңыз';
+
+  @override
+  String get favoritesDormitory => 'Жатақхана';
+
+  @override
+  String get favoritesGrant => 'Грант';
+
+  @override
+  String get savedToFavorites => 'Таңдаулыға сақталды ❤️';
+
+  @override
+  String saveErrorText(String error) {
+    return 'Сақтау қатесі: $error';
+  }
+
+  @override
+  String get adminAccessDenied => 'Қолжетімділік шектелген';
+
+  @override
+  String get adminNoRights => '❌ Сізде әкімші құқығы жоқ';
+
+  @override
+  String get adminMigrationTitle => 'Деректер миграциясы';
+
+  @override
+  String get adminUpdateData => '🔄 Деректерді жаңарту';
+
+  @override
+  String get adminUpdate => 'Жаңарту';
+
+  @override
+  String get adminWarning => '⚠️ Назар аударыңыз!';
+
+  @override
+  String get adminDeleteAll => 'Барлық деректерді жою';
+
+  @override
+  String get adminCheckData => 'Деректерді тексеру';
+
+  @override
+  String get adminGenerateTest => 'Generate Dummy Stats (Test)';
+
+  @override
+  String get adminUsers => 'Пайдаланушылар';
+
+  @override
+  String get adminByDate => 'Күні бойынша';
+
+  @override
+  String get adminByName => 'Аты бойынша';
+
+  @override
+  String get adminResetSearch => 'Іздеуді қалпына келтіру';
+
+  @override
+  String get adminDetailedInfo => 'Толық ақпарат';
+
+  @override
+  String get adminDeleteUser => 'Пайдаланушыны жою?';
+
+  @override
+  String get adminDeleteAllBtn => 'Барлығын жою';
+
+  @override
+  String adminLoadError(String error) {
+    return 'Жүктеу қатесі: $error';
+  }
+
+  @override
+  String get adminRoleChangeDenied => '❌ Қолжетімділік шектелген';
+
+  @override
+  String get adminSelfRole => '❌ Өз рөліңізді өзгерту мүмкін емес';
+
+  @override
+  String get adminSelfDelete =>
+      '❌ Әкімші панелі арқылы өз тіркелгіңізді жою мүмкін емес';
+
+  @override
+  String adminUserDeleted(String name) {
+    return '✅ $name пайдаланушысының деректері жойылды';
+  }
+
+  @override
+  String adminDeleteError(String error) {
+    return '❌ Жою қатесі: $error';
+  }
+
+  @override
+  String get adminSendNotification => 'Хабарлама жіберу';
+
+  @override
+  String get adminSendToAll => 'БАРЛЫҚ пайдаланушыларға жіберу';
+
+  @override
+  String get adminSendToAllDesc =>
+      'Барлығына қосымша ішіндегі хабарлама жасайды';
+
+  @override
+  String get adminSyncStarted => 'Синхрондау басталды...';
+
+  @override
+  String get adminReviewModeration => 'Пікірлерді модерациялау';
+
+  @override
+  String get adminDeleteReview => 'Пікірді жою?';
+
+  @override
+  String get adminDeleteBtn => 'Жою';
+
+  @override
+  String get adminReply => 'Жауап беру';
+
+  @override
+  String get adminSave => 'Сақтау';
+
+  @override
+  String get adminAllReviews => 'Барлық пікірлер';
+
+  @override
+  String get adminAuditLogs => 'Аудит-логтар';
+
+  @override
+  String get errorOops => 'Қап! Қате шықты.';
 }

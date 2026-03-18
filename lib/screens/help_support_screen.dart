@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
 
   Future<void> _sendEmail(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       path: 'tandau.app.help@gmail.com',
       query: encodeQueryParameters(<String, String>{
-        'subject': 'Поддержка TANDAU: [Вопрос]',
+        'subject': l10n?.helpEmailSubject ?? 'TANDAU Support: [Question]',
       }),
     );
 
@@ -20,9 +22,10 @@ class HelpSupportScreen extends StatelessWidget {
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Не удалось открыть почтовый клиент. Напишите нам на: tandau.app.help@gmail.com',
+                l10n?.helpEmailFallback ??
+                    'Write to us at: tandau.app.help@gmail.com',
               ),
             ),
           );
@@ -31,8 +34,11 @@ class HelpSupportScreen extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Напишите нам на: tandau.app.help@gmail.com'),
+          SnackBar(
+            content: Text(
+              l10n?.helpEmailFallback ??
+                  'Write to us at: tandau.app.help@gmail.com',
+            ),
           ),
         );
       }
@@ -50,8 +56,13 @@ class HelpSupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Помощь и поддержка'), elevation: 0),
+      appBar: AppBar(
+        title: Text(l10n?.helpTitle ?? 'Help & Support'),
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -60,40 +71,50 @@ class HelpSupportScreen extends StatelessWidget {
             _buildSupportCard(
               context,
               icon: Icons.chat_bubble_outline,
-              title: 'Служба поддержки',
-              subtitle:
-                  'Мы ответим в течение 24 часов\ntandau.app.help@gmail.com',
-              buttonLabel: 'Написать нам',
+              title: l10n?.helpSupportTeam ?? 'Support team',
+              subtitle: l10n?.helpSupportDesc ??
+                  'We\'ll reply within 24 hours\ntandau.app.help@gmail.com',
+              buttonLabel: l10n?.helpWriteUs ?? 'Write to us',
               onTap: () => _sendEmail(context),
             ),
             const SizedBox(height: 32),
-            const Text(
-              'Часто задаваемые вопросы',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              l10n?.helpFaqTitle ?? 'Frequently Asked Questions',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             _buildFaqItem(
-              'Как рассчитываются шансы на поступление?',
-              'Наша нейросеть анализирует данные прошлых лет, сложность конкурса и ваши баллы ЕНТ, GPA и IELTS.',
+              l10n?.helpFaq1Q ??
+                  'How are admission chances calculated?',
+              l10n?.helpFaq1A ??
+                  'Our AI analyzes past years\' data, competition difficulty, and your UNT, GPA, and IELTS scores.',
             ),
             _buildFaqItem(
-              'Данные по грантам актуальны?',
-              'Да, мы обновляем базу данных государственных грантов ежегодно на основе официальных данных МНВО РК.',
+              l10n?.helpFaq2Q ?? 'Is the grant data up-to-date?',
+              l10n?.helpFaq2A ??
+                  'Yes, we update the state grants database annually based on official data from the MES RK.',
             ),
             _buildFaqItem(
-              'Что дает PRO подписка?',
-              'PRO пользователи получают доступ к списку альтернативных вузов и расширенной аналитике от ИИ.',
+              l10n?.helpFaq3Q ??
+                  'What does the PRO subscription offer?',
+              l10n?.helpFaq3A ??
+                  'PRO users get access to alternative university lists and extended AI analytics.',
             ),
             _buildFaqItem(
-              'Как сменить язык приложения?',
-              'Перейдите в Профиль -> Настройки -> Язык и выберите нужный.',
+              l10n?.helpFaq4Q ??
+                  'How to change the app language?',
+              l10n?.helpFaq4A ??
+                  'Go to Profile -> Settings -> Language and choose the one you need.',
             ),
             const SizedBox(height: 120),
             Center(
               child: Column(
                 children: [
                   Text(
-                    'Версия приложения: 1.0.0',
+                    l10n?.helpAppVersion ?? 'App version: 1.0.0',
                     style: TextStyle(color: Colors.grey[500]),
                   ),
                   const SizedBox(height: 8),

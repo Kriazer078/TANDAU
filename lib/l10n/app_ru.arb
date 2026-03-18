@@ -638,5 +638,181 @@
     "aiToday": "Сегодня",
     "aiYesterday": "Вчера",
     "aiPrevious7Days": "Последние 7 дней",
-    "aiOlder": "Ранее"
+    "aiOlder": "Ранее",
+
+    "notifClearTitle": "Очистить уведомления?",
+    "notifClearContent": "Все уведомления будут удалены навсегда.",
+    "notifClearBtn": "Очистить",
+    "notifErrorPrefix": "Ошибка: {error}",
+    "@notifErrorPrefix": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "notifEmptyTitle": "Уведомлений пока нет",
+    "notifEmptySubtitle": "Мы сообщим вам, когда появится что-то важное",
+
+    "notifSettingsTitle": "Уведомления",
+    "notifSectionStudy": "Учебные оповещения",
+    "notifGrantUpdates": "Обновления по грантам",
+    "notifGrantUpdatesDesc": "Узнавайте первыми об изменении баллов и мест",
+    "notifUniversityNews": "Новости университетов",
+    "notifUniversityNewsDesc": "Дни открытых дверей и важные даты",
+    "notifSectionOther": "Другое",
+    "notifMarketing": "Маркетинг и акции",
+    "notifMarketingDesc": "Скидки от партнеров и новости платформы",
+
+    "helpTitle": "Помощь и поддержка",
+    "helpSupportTeam": "Служба поддержки",
+    "helpSupportDesc": "Мы ответим в течение 24 часов\ntandau.app.help@gmail.com",
+    "helpWriteUs": "Написать нам",
+    "helpEmailFallback": "Напишите нам на: tandau.app.help@gmail.com",
+    "helpEmailSubject": "Поддержка TANDAU: [Вопрос]",
+    "helpFaqTitle": "Часто задаваемые вопросы",
+    "helpFaq1Q": "Как рассчитываются шансы на поступление?",
+    "helpFaq1A": "Наша нейросеть анализирует данные прошлых лет, сложность конкурса и ваши баллы ЕНТ, GPA и IELTS.",
+    "helpFaq2Q": "Данные по грантам актуальны?",
+    "helpFaq2A": "Да, мы обновляем базу данных государственных грантов ежегодно на основе официальных данных МНВО РК.",
+    "helpFaq3Q": "Что дает PRO подписка?",
+    "helpFaq3A": "PRO пользователи получают доступ к списку альтернативных вузов и расширенной аналитике от ИИ.",
+    "helpFaq4Q": "Как сменить язык приложения?",
+    "helpFaq4A": "Перейдите в Профиль -> Настройки -> Язык и выберите нужный.",
+    "helpAppVersion": "Версия приложения: 1.0.0",
+
+    "privacyTitle": "Конфиденциальность",
+    "privacyHeading": "Политика конфиденциальности и Условия использования",
+    "privacyUpdated": "Обновлено: 24 февраля 2026",
+
+    "favoritesSavedTitle": "Сохранённые",
+    "favoritesEmptyTitle": "Сохранённых университетов нет",
+    "favoritesEmptySubtitle": "Сохраняйте понравившиеся университеты",
+    "favoritesDormitory": "Общежитие",
+    "favoritesGrant": "Грант",
+
+    "savedToFavorites": "Сохранено в избранное ❤️",
+    "saveErrorText": "Ошибка сохранения: {error}",
+    "@saveErrorText": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "adminAccessDenied": "Доступ запрещён",
+    "adminNoRights": "❌ У вас нет прав администратора",
+    "adminMigrationTitle": "Миграция данных",
+    "adminUpdateData": "🔄 Обновление данных",
+    "adminUpdate": "Обновить",
+    "adminWarning": "⚠️ Внимание!",
+    "adminDeleteAll": "Удалить все данные",
+    "adminCheckData": "Проверить данные",
+    "adminGenerateTest": "Generate Dummy Stats (Test)",
+    "adminUsers": "Пользователи",
+    "adminByDate": "По дате",
+    "adminByName": "По имени",
+    "adminResetSearch": "Сбросить поиск",
+    "adminDetailedInfo": "Подробная информация",
+    "adminDeleteUser": "Удалить пользователя?",
+    "adminDeleteAllBtn": "Удалить всё",
+    "adminLoadError": "Ошибка загрузки: {error}",
+    "@adminLoadError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminRoleChangeDenied": "❌ Доступ запрещён",
+    "adminSelfRole": "❌ Нельзя менять свою роль",
+    "adminSelfDelete": "❌ Нельзя удалить свой аккаунт через админ-панель",
+    "adminUserDeleted": "✅ Данные пользователя {name} удалены",
+    "@adminUserDeleted": {
+        "placeholders": { "name": { "type": "String" } }
+    },
+    "adminDeleteError": "❌ Ошибка удаления: {error}",
+    "@adminDeleteError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminSendNotification": "Отправить уведомление",
+    "adminSendToAll": "Отправить ВСЕМ пользователям",
+    "adminSendToAllDesc": "Создаст уведомление в приложении для всех",
+    "adminSyncStarted": "Синхронизация начата...",
+    "adminReviewModeration": "Модерация отзывов",
+    "adminDeleteReview": "Удалить отзыв?",
+    "adminDeleteBtn": "Удалить",
+    "adminReply": "Ответить",
+    "adminSave": "Сохранить",
+    "adminAllReviews": "Все отзывы",
+    "adminAuditLogs": "Аудит-логи",
+
+    "errorOops": "Упс! Произошла ошибка.",
+
+    "reviewEditedLabel": "изменено",
+    "reviewAuthRequiredMsg": "Войдите, чтобы оценить",
+    "reviewHelpful": "Полезно {count}",
+    "@reviewHelpful": {
+        "placeholders": { "count": { "type": "String" } }
+    },
+    "reviewOfficialReply": "Официальный ответ",
+    "reviewDateJustNow": "только что",
+    "reviewDateMinAgo": "{minutes} мин назад",
+    "@reviewDateMinAgo": {
+        "placeholders": { "minutes": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} ч назад",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} дн назад",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "янв",
+    "reviewMonthFeb": "фев",
+    "reviewMonthMar": "мар",
+    "reviewMonthApr": "апр",
+    "reviewMonthMay": "май",
+    "reviewMonthJun": "июн",
+    "reviewMonthJul": "июл",
+    "reviewMonthAug": "авг",
+    "reviewMonthSep": "сен",
+    "reviewMonthOct": "окт",
+    "reviewMonthNov": "ноя",
+    "reviewMonthDec": "дек",
+
+    "svdAnalyticsTitle": "СВД Аналитика",
+    "svdDataSource": "Данные: МОН РК, {year}",
+    "@svdDataSource": {
+        "placeholders": { "year": { "type": "String" } }
+    },
+    "svdHowWeCalculateTitle": "Как мы считаем? 📝",
+    "svdHowWeCalculateBody": "Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от \"Высокого\" до \"Низкого\").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.",
+    "svdUnderstood": "Понятно",
+    "svdDisclaimer": "⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.",
+
+    "aiChancesGrant": "шанс на грант",
+    "aiChancesRisk": "Риск: {level}",
+    "@aiChancesRisk": {
+        "placeholders": { "level": { "type": "String" } }
+    },
+    "aiChancesEntThreshold": "Порог ЕНТ для этого направления: {threshold} баллов",
+    "@aiChancesEntThreshold": {
+        "placeholders": { "threshold": { "type": "int" } }
+    },
+    "aiChancesDetails": "Детали расчёта",
+    "aiChancesDetailedStrategy": "Подробная AI стратегия",
+
+    "profileCompletionLow": "Заполните профиль для лучших рекомендаций",
+    "profileCompletionMedium": "Почти готово! Добавьте оставшиеся данные",
+    "profileCompletionHigh": "Отличная работа! Профиль заполнен",
+    "profileCompletionTitle": "Заполнение профиля",
+
+    "detailPhoneNotProvided": "Не указан",
+    "detailWebsiteNotProvided": "Сайт не указан",
+    "detailAddressLabel": "Адрес",
+    "detailWebsiteLabel": "Сайт",
+    "detailPhoneLabelFull": "Телефон",
+    "detailRecommendations": "💡 Рекомендации",
+    "detailAiThinking": "AI формирует стратегию...",
+    "detailAiStrategySubtitle": "AI Стратегия TANDAU",
+
+    "pickerChooseSource": "Выберите источник",
+    "pickerGallery": "Галерея",
+    "pickerCamera": "Камера",
+    "pickerErrorUpdateLink": "Ошибка обновления ссылки в профиле",
+    "pickerErrorUploadCloud": "Ошибка загрузки в облако",
+
+    "profileCityEnter": "Введите название города",
+    "validationCity": "Введите город"
 }

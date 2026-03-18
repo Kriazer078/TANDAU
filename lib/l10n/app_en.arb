@@ -657,5 +657,181 @@
     "aiToday": "Today",
     "aiYesterday": "Yesterday",
     "aiPrevious7Days": "Last 7 days",
-    "aiOlder": "Older"
+    "aiOlder": "Older",
+
+    "notifClearTitle": "Clear notifications?",
+    "notifClearContent": "All notifications will be permanently deleted.",
+    "notifClearBtn": "Clear",
+    "notifErrorPrefix": "Error: {error}",
+    "@notifErrorPrefix": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "notifEmptyTitle": "No notifications yet",
+    "notifEmptySubtitle": "We'll let you know when something important comes up",
+
+    "notifSettingsTitle": "Notifications",
+    "notifSectionStudy": "Study alerts",
+    "notifGrantUpdates": "Grant updates",
+    "notifGrantUpdatesDesc": "Be the first to know about score and seat changes",
+    "notifUniversityNews": "University news",
+    "notifUniversityNewsDesc": "Open days and important dates",
+    "notifSectionOther": "Other",
+    "notifMarketing": "Marketing & promotions",
+    "notifMarketingDesc": "Partner discounts and platform news",
+
+    "helpTitle": "Help & Support",
+    "helpSupportTeam": "Support team",
+    "helpSupportDesc": "We'll reply within 24 hours\ntandau.app.help@gmail.com",
+    "helpWriteUs": "Write to us",
+    "helpEmailFallback": "Write to us at: tandau.app.help@gmail.com",
+    "helpEmailSubject": "TANDAU Support: [Question]",
+    "helpFaqTitle": "Frequently Asked Questions",
+    "helpFaq1Q": "How are admission chances calculated?",
+    "helpFaq1A": "Our AI analyzes past years' data, competition difficulty, and your UNT, GPA, and IELTS scores.",
+    "helpFaq2Q": "Is the grant data up-to-date?",
+    "helpFaq2A": "Yes, we update the state grants database annually based on official data from the MES RK.",
+    "helpFaq3Q": "What does the PRO subscription offer?",
+    "helpFaq3A": "PRO users get access to alternative university lists and extended AI analytics.",
+    "helpFaq4Q": "How to change the app language?",
+    "helpFaq4A": "Go to Profile -> Settings -> Language and choose the one you need.",
+    "helpAppVersion": "App version: 1.0.0",
+
+    "privacyTitle": "Privacy",
+    "privacyHeading": "Privacy Policy & Terms of Use",
+    "privacyUpdated": "Updated: February 24, 2026",
+
+    "favoritesSavedTitle": "Saved",
+    "favoritesEmptyTitle": "No saved universities",
+    "favoritesEmptySubtitle": "Save universities you like",
+    "favoritesDormitory": "Dormitory",
+    "favoritesGrant": "Grant",
+
+    "savedToFavorites": "Saved to favorites ❤️",
+    "saveErrorText": "Save error: {error}",
+    "@saveErrorText": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "adminAccessDenied": "Access denied",
+    "adminNoRights": "❌ You don't have admin rights",
+    "adminMigrationTitle": "Data migration",
+    "adminUpdateData": "🔄 Update data",
+    "adminUpdate": "Update",
+    "adminWarning": "⚠️ Warning!",
+    "adminDeleteAll": "Delete all data",
+    "adminCheckData": "Check data",
+    "adminGenerateTest": "Generate Dummy Stats (Test)",
+    "adminUsers": "Users",
+    "adminByDate": "By date",
+    "adminByName": "By name",
+    "adminResetSearch": "Reset search",
+    "adminDetailedInfo": "Detailed information",
+    "adminDeleteUser": "Delete user?",
+    "adminDeleteAllBtn": "Delete all",
+    "adminLoadError": "Loading error: {error}",
+    "@adminLoadError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminRoleChangeDenied": "❌ Access denied",
+    "adminSelfRole": "❌ Cannot change own role",
+    "adminSelfDelete": "❌ Cannot delete own account via admin panel",
+    "adminUserDeleted": "✅ User {name} data deleted",
+    "@adminUserDeleted": {
+        "placeholders": { "name": { "type": "String" } }
+    },
+    "adminDeleteError": "❌ Delete error: {error}",
+    "@adminDeleteError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminSendNotification": "Send notification",
+    "adminSendToAll": "Send to ALL users",
+    "adminSendToAllDesc": "Creates in-app notification for everyone",
+    "adminSyncStarted": "Sync started...",
+    "adminReviewModeration": "Review moderation",
+    "adminDeleteReview": "Delete review?",
+    "adminDeleteBtn": "Delete",
+    "adminReply": "Reply",
+    "adminSave": "Save",
+    "adminAllReviews": "All reviews",
+    "adminAuditLogs": "Audit logs",
+
+    "errorOops": "Oops! An error occurred.",
+
+    "reviewEditedLabel": "edited",
+    "reviewAuthRequiredMsg": "Please sign in to rate",
+    "reviewHelpful": "Helpful {count}",
+    "@reviewHelpful": {
+        "placeholders": { "count": { "type": "String" } }
+    },
+    "reviewOfficialReply": "Official reply",
+    "reviewDateJustNow": "just now",
+    "reviewDateMinAgo": "{minutes} min ago",
+    "@reviewDateMinAgo": {
+        "placeholders": { "minutes": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours}h ago",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days}d ago",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "Jan",
+    "reviewMonthFeb": "Feb",
+    "reviewMonthMar": "Mar",
+    "reviewMonthApr": "Apr",
+    "reviewMonthMay": "May",
+    "reviewMonthJun": "Jun",
+    "reviewMonthJul": "Jul",
+    "reviewMonthAug": "Aug",
+    "reviewMonthSep": "Sep",
+    "reviewMonthOct": "Oct",
+    "reviewMonthNov": "Nov",
+    "reviewMonthDec": "Dec",
+
+    "svdAnalyticsTitle": "SVD Analytics",
+    "svdDataSource": "Data: MES RK, {year}",
+    "@svdDataSource": {
+        "placeholders": { "year": { "type": "String" } }
+    },
+    "svdHowWeCalculateTitle": "How do we calculate? 📝",
+    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and MES RK threshold score statistics from previous years.\n\nWe account for competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows you to choose an optimal strategy for distributing 4 universities when submitting documents.",
+    "svdUnderstood": "Got it",
+    "svdDisclaimer": "⚠️ This calculation is advisory. The final decision on grant allocation always rests with the MES RK admissions committee.",
+
+    "aiChancesGrant": "grant chance",
+    "aiChancesRisk": "Risk: {level}",
+    "@aiChancesRisk": {
+        "placeholders": { "level": { "type": "String" } }
+    },
+    "aiChancesEntThreshold": "UNT threshold for this program: {threshold} points",
+    "@aiChancesEntThreshold": {
+        "placeholders": { "threshold": { "type": "int" } }
+    },
+    "aiChancesDetails": "Calculation details",
+    "aiChancesDetailedStrategy": "Detailed AI strategy",
+
+    "profileCompletionLow": "Complete your profile for better recommendations",
+    "profileCompletionMedium": "Almost done! Add remaining data",
+    "profileCompletionHigh": "Great job! Profile is complete",
+    "profileCompletionTitle": "Profile completion",
+
+    "detailPhoneNotProvided": "Not provided",
+    "detailWebsiteNotProvided": "Website not provided",
+    "detailAddressLabel": "Address",
+    "detailWebsiteLabel": "Website",
+    "detailPhoneLabelFull": "Phone",
+    "detailRecommendations": "💡 Recommendations",
+    "detailAiThinking": "AI is generating strategy...",
+    "detailAiStrategySubtitle": "AI Strategy TANDAU",
+
+    "pickerChooseSource": "Choose source",
+    "pickerGallery": "Gallery",
+    "pickerCamera": "Camera",
+    "pickerErrorUpdateLink": "Error updating profile link",
+    "pickerErrorUploadCloud": "Cloud upload error",
+
+    "profileCityEnter": "Enter city name",
+    "validationCity": "Enter city"
 }
