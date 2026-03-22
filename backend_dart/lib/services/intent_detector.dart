@@ -15,15 +15,33 @@ class IntentDetector {
   IntentDetector._();
 
   /// Detect intent from user query
-  static IntentResult detect(String query) {
+  static IntentResult detect(String query, {String language = 'ru'}) {
     final q = query.toLowerCase().trim();
+
+    // Multilingual Quick Replies
+    final Map<String, String> emptyQueryMsg = {
+      'ru': 'Привет! 👋 Я — TANDAU AI, твой помощник по поступлению. Задай вопрос о вузах, ЕНТ или грантах!',
+      'kk': 'Сәлем! 👋 Мен — TANDAU AI, оқуға түсу бойынша көмекшіңмін. Университеттер, ҰБТ немесе гранттар туралы сұрақ қой!',
+      'en': 'Hi! 👋 I am TANDAU AI, your admission assistant. Ask me about universities, exams, or grants!'
+    };
+
+    final Map<String, String> greetingMsg = {
+      'ru': 'Привет! 👋 Я — TANDAU AI, твой персональный помощник по поступлению в Казахстане. Спрашивай про ЕНТ, гранты, вузы — помогу разобраться! 🎓',
+      'kk': 'Сәлем! 👋 Мен — Қазақстанда оқуға түсуге арналған жеке көмекшің TANDAU AI-мын. ҰБТ, гранттар, университеттер туралы сұрай бер! 🎓',
+      'en': 'Hi! 👋 I am TANDAU AI, your personal admission assistant in Kazakhstan. Ask me about exams, grants, and universities! 🎓'
+    };
+
+    final Map<String, String> offTopicMsg = {
+      'ru': 'Я специализируюсь на поступлении в вузы Казахстана 🇰🇿\n\nМогу помочь с:\n• Баллы ЕНТ и пороги\n• Гранты и стипендии\n• Выбор вуза и специальности\n\nЗадай вопрос по этим темам!',
+      'kk': 'Мен Қазақстан университеттеріне түсу бойынша маманданғанмын 🇰🇿\n\nКелесі тақырыптарда көмектесе аламын:\n• ҰБТ балдары және шекті балдар\n• Гранттар және стипендиялар\n• Университет және мамандық таңдау\n\nОсы тақырыптар бойынша сұрақ қой!',
+      'en': 'I specialize in university admissions in Kazakhstan 🇰🇿\n\nI can help with:\n• Exam scores and thresholds\n• Grants and scholarships\n• Choosing university and major\n\nAsk me about these topics!'
+    };
 
     // 1. Empty query
     if (q.isEmpty) {
       return IntentResult(
         intent: QueryIntent.greeting,
-        quickReply:
-            'Привет! 👋 Я — TANDAU AI, твой помощник по поступлению. Задай вопрос о вузах, ЕНТ или грантах!',
+        quickReply: emptyQueryMsg[language] ?? emptyQueryMsg['ru'],
       );
     }
 
@@ -31,8 +49,7 @@ class IntentDetector {
     if (_matchesAny(q, _greetings) && q.length < 30) {
       return IntentResult(
         intent: QueryIntent.greeting,
-        quickReply:
-            'Привет! 👋 Я — TANDAU AI, твой персональный помощник по поступлению в Казахстане. Спрашивай про ЕНТ, гранты, вузы — помогу разобраться! 🎓',
+        quickReply: greetingMsg[language] ?? greetingMsg['ru'],
       );
     }
 
@@ -40,8 +57,7 @@ class IntentDetector {
     if (_matchesAny(q, _offTopic) && !_matchesAny(q, _topicKeywords)) {
       return IntentResult(
         intent: QueryIntent.offTopic,
-        quickReply:
-            'Я специализируюсь на поступлении в вузы Казахстана 🇰🇿\n\nМогу помочь с:\n• Баллы ЕНТ и пороги\n• Гранты и стипендии\n• Выбор вуза и специальности\n\nЗадай вопрос по этим темам!',
+        quickReply: offTopicMsg[language] ?? offTopicMsg['ru'],
       );
     }
 
@@ -140,9 +156,13 @@ class IntentDetector {
     'vs',
     'или',
     'салыстыр',
+    'салыстыру',
     'что лучше',
     'разница',
     'отличи',
+    'қайсысы жақсы',
+    'айырмашылығы',
+    'артықшылығы',
   ];
 
   static const List<String> _strategyKeywords = [
@@ -158,6 +178,16 @@ class IntentDetector {
     'пройду',
     'попаду',
     'успею',
+    'документ',
+    'нужно для',
+    'какие предметы',
+    'проходной',
+    'түсе алам ба',
+    'өту балы',
+    'қандай пәндер',
+    'құжаттар',
+    'қалай түсуге болады',
+    'қанша балл',
   ];
 
   static const List<String> _actionKeywords = [
@@ -182,6 +212,8 @@ class IntentDetector {
     'қорқ',
     'уайым',
     'мотивац',
+    'білмеймін',
+    'көмектесші',
   ];
 }
 

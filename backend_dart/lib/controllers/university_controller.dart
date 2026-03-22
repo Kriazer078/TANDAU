@@ -40,18 +40,29 @@ class UniversityController {
       final question = data['question'] as String?;
       final uid = data['uid'] as String?; // Added to identify user for limits
       final userContext = data['userContext'] as String?;
+      final language = data['language'] as String? ?? 'ru';
 
-      // Parse history if available
+      // SECURITY: Parse history and limit length to max 10 messages, max 1500 chars per text
       final rawHistory = data['history'] as List<dynamic>?;
       List<Map<String, dynamic>>? history;
 
       if (rawHistory != null) {
-        history = rawHistory.map((item) {
+        // Take only last 10 messages to prevent token bloat
+        final limitedHistory = rawHistory.length > 10
+            ? rawHistory.sublist(rawHistory.length - 10)
+            : rawHistory;
+
+        history = limitedHistory.map((item) {
           final isUser = item['isUser'] == true;
+          String text = item['text'].toString();
+          // Truncate overly long history messages
+          if (text.length > 1500) {
+            text = '${text.substring(0, 1500)}...';
+          }
           return {
             'role': isUser ? 'user' : 'model',
             'parts': [
-              {'text': item['text'].toString()}
+              {'text': text}
             ]
           };
         }).toList();
@@ -68,8 +79,9 @@ class UniversityController {
 
       // --- 💎 AI LIMITS LOGIC START ---
       bool shouldDeductToken = false;
+      Map<String, dynamic>? userDoc;
       if (uid != null) {
-        final userDoc = await _firebaseService.getUserDocument(uid);
+        userDoc = await _firebaseService.getUserDocument(uid);
         if (userDoc != null) {
           final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
           int tokens =
@@ -103,6 +115,8 @@ class UniversityController {
               jsonEncode({
                 'answer':
                     '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные ИИ-запросы на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить больше возможностей и открыть генератор стратегии НЦТ 🚀',
+                'message': 'No free tokens left.',
+                'description': '💎 **Лимит запросов исчерпан.**',
                 'outOfTokens': true
               }),
               headers: {'Content-Type': 'application/json'},
@@ -116,8 +130,10 @@ class UniversityController {
       }
       // --- 💎 AI LIMITS LOGIC END ---
 
+      // (Moved history processing to top of method)
+
       // 🎯 Intent Detection — classify query before calling AI
-      final intentResult = IntentDetector.detect(question);
+      final intentResult = IntentDetector.detect(question, language: language);
 
       // Quick reply for greetings/off-topic (no AI call needed)
       if (!intentResult.needsAI) {
@@ -158,6 +174,34 @@ class UniversityController {
 
       // 🔗 Inject real university ID→name mapping for correct app:// links
       String enrichedContext = userContext ?? '';
+      
+      // 🧑‍🎓 Inject User Context (RAG)
+      if (userDoc != null) {
+        enrichedContext += '\n\n### ПРОФИЛЬ АБИТУРИЕНТА:\n';
+        if (userDoc['score'] != null) {
+          enrichedContext += '- Балл ЕНТ: ${userDoc['score']}\n';
+        }
+        if (userDoc['city'] != null) {
+          enrichedContext += '- Город: ${userDoc['city']}\n';
+        }
+        if (userDoc['subjects'] != null) {
+          final subj = userDoc['subjects'];
+          if (subj is List) {
+            enrichedContext += '- Профильные предметы: ${subj.join(', ')}\n';
+          } else {
+            enrichedContext += '- Профильные предметы: $subj\n';
+          }
+        }
+        if (userDoc['achievements'] != null) {
+          final ach = userDoc['achievements'];
+          if (ach is List) {
+            enrichedContext += '- Достижения: ${ach.join(', ')}\n';
+          } else {
+            enrichedContext += '- Достижения: $ach\n';
+          }
+        }
+      }
+
       try {
         final universities = await _firebaseService.getUniversities();
         if (universities.isNotEmpty) {
@@ -188,22 +232,27 @@ class UniversityController {
       );
 
       // Deduct token if successful and not premium
-      if (shouldDeductToken && uid != null) {
-        final userDoc = await _firebaseService.getUserDocument(uid);
-        if (userDoc != null) {
-          int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
-          if (currentTokens > 0) {
-            await _firebaseService.decrementUserTokens(uid, 1);
-          }
+      if (shouldDeductToken && uid != null && userDoc != null) {
+        int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
+        if (currentTokens > 0) {
+          await _firebaseService.decrementUserTokens(uid, 1);
         }
       }
 
       // Write SSE chunks
       // Convert stream to list of SSE bytes, appending [DONE] at the end
+      // 🛡️ BUG#7+BUG#8: Filter empty chunks + handle mid-stream errors
       final sseStream = () async* {
-        await for (final text in stream) {
-          final encodedText = jsonEncode(text);
-          yield utf8.encode('data: {"answer": $encodedText}\n\n');
+        try {
+          await for (final text in stream) {
+            if (text.trim().isEmpty) continue; // Skip empty/whitespace chunks
+            final encodedText = jsonEncode(text);
+            yield utf8.encode('data: {"answer": $encodedText}\n\n');
+          }
+        } catch (e) {
+          stderr.writeln('⚠️ Stream error mid-chat: $e');
+          final errMsg = jsonEncode('\n\n📍 *Ошибка соединения. Попробуйте снова.*');
+          yield utf8.encode('data: {"answer": $errMsg}\n\n');
         }
         yield utf8.encode('data: [DONE]\n\n');
       }();
@@ -373,7 +422,9 @@ class UniversityController {
               jsonEncode({
                 'success': false,
                 'outOfTokens': true,
-                'message': 'No free tokens left.'
+                'message': 'No free tokens left.',
+                'description': '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные ИИ-запросы на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить больше возможностей 🚀',
+                'answer': '💎 **Лимит запросов исчерпан.**'
               }),
               headers: {'Content-Type': 'application/json'},
             );
@@ -564,10 +615,18 @@ class UniversityController {
         success: true,
       );
 
+      // 🛡️ BUG#7+BUG#8: Filter empty chunks + handle mid-stream errors
       final sseStream = () async* {
-        await for (final text in stream) {
-          final encodedText = jsonEncode(text);
-          yield utf8.encode('data: {"answer": $encodedText}\n\n');
+        try {
+          await for (final text in stream) {
+            if (text.trim().isEmpty) continue; // Skip empty/whitespace chunks
+            final encodedText = jsonEncode(text);
+            yield utf8.encode('data: {"answer": $encodedText}\n\n');
+          }
+        } catch (e) {
+          stderr.writeln('⚠️ Stream error mid-zheke: $e');
+          final errMsg = jsonEncode('\n\n📍 *Ошибка соединения. Попробуйте снова.*');
+          yield utf8.encode('data: {"answer": $errMsg}\n\n');
         }
         yield utf8.encode('data: [DONE]\n\n');
       }();

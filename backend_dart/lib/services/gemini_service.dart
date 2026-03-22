@@ -303,6 +303,7 @@ $context
     return _generateAdvanced(
       systemInstruction: systemInstruction,
       contents: contents,
+      useGrounding: true,
     );
   }
 
@@ -337,6 +338,7 @@ $context
           ]
         }
       ],
+      useGrounding: true,
     );
   }
 
@@ -374,6 +376,7 @@ $context
         userProfile: userProfile,
         ragContext: ragContext,
       ),
+      useGrounding: true,
     );
   }
 
@@ -388,6 +391,7 @@ $context
         userProfile: userProfile,
         ragContext: ragContext,
       ),
+      useGrounding: true,
     );
   }
   // ═══════════════════════════════════════════════════════════════

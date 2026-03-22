@@ -37,6 +37,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 
   final List<ChatMessage> _messages = [];
   bool _isTyping = false;
+  bool _isSending = false; // 🛡️ BUG#1: debounce guard
+  String? _lastFailedMessage; // 🔄 BUG#6: retry support
   bool _isZhekeZhospar = false;
   int _thinkingStep = 0;
   Timer? _thinkingTimer;
@@ -169,9 +171,23 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
   // ═══════════════════════════════════════════
   //  SEND MESSAGE
   // ═══════════════════════════════════════════
+  // 🔄 BUG#6: Retry last failed message
+  void _retryLastMessage() {
+    if (_lastFailedMessage != null && _lastFailedMessage!.isNotEmpty) {
+      final msg = _lastFailedMessage!;
+      _lastFailedMessage = null;
+      _sendMessage(text: msg);
+    }
+  }
+
   Future<void> _sendMessage({String? text}) async {
     final messageText = text ?? _messageController.text.trim();
     if (messageText.isEmpty) return;
+
+    // 🛡️ BUG#1 + BUG#4: Prevent duplicate sends
+    if (_isSending || _isTyping) return;
+    _isSending = true;
+    _lastFailedMessage = null;
 
     final l10n = AppLocalizations.of(context);
 
@@ -290,17 +306,21 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             }
           }
 
-          setState(() {
-            _messages[aiMsgIndex!] =
-                _messages[aiMsgIndex].copyWith(text: displayedText.trim());
-          });
-          _scrollToBottom();
+          // 🛡️ BUG#2+BUG#5: Only update UI when there is visible text
+          final trimmedDisplay = displayedText.trim();
+          if (trimmedDisplay.isNotEmpty) {
+            setState(() {
+              _messages[aiMsgIndex!] =
+                  _messages[aiMsgIndex].copyWith(text: trimmedDisplay);
+            });
+            _scrollToBottom();
+          }
         }
 
         if (aiMsgIndex == null) {
           // Stream completed but yielded no chunks at all
           _stopThinkingSteps();
-          // BUG #5 fix: Show error as chat message, not just SnackBar
+          _lastFailedMessage = messageText; // 🔄 BUG#6: Save for retry
           final errorMsg = ChatMessage(
             text: l10n?.aiError ?? 'Произошла ошибка связи. Попробуйте снова.',
             isUser: false,
@@ -311,8 +331,25 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _messages.add(errorMsg);
           });
           _scrollToBottom();
-        } else if (mounted && fullResponse.isNotEmpty) {
-          unawaited(_historyService.addMessage(_messages[aiMsgIndex]));
+        } else if (mounted) {
+          // 🛡️ BUG#2: Check for empty final response
+          final idx = aiMsgIndex;
+          final finalText = _messages[idx].text.trim();
+          if (finalText.isEmpty) {
+            if (executedActions.isNotEmpty) {
+              setState(() => _messages.removeAt(idx));
+            } else {
+              // Replace empty bubble with error
+              _lastFailedMessage = messageText;
+              setState(() {
+                _messages[idx] = _messages[idx].copyWith(
+                  text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте снова.',
+                );
+              });
+            }
+          } else {
+            unawaited(_historyService.addMessage(_messages[idx]));
+          }
         }
       }
     } on OutOfTokensException catch (e) {
@@ -333,7 +370,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       if (mounted) {
         _stopThinkingSteps();
-        // BUG #7 fix: Show error as chat message for better UX
+        _lastFailedMessage = messageText; // 🔄 BUG#6: Save for retry
         final errorMsg = ChatMessage(
           text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
           isUser: false,
@@ -345,11 +382,17 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         });
         _scrollToBottom();
       }
+    } finally {
+      _isSending = false; // 🛡️ BUG#1: Always release guard
     }
   }
 
   /// Request Жеке Жоспар (personalized admission plan)
   Future<void> _requestZhekeZhospar() async {
+    // 🛡️ BUG#1: Prevent duplicate sends
+    if (_isSending || _isTyping) return;
+    _isSending = true;
+
     final l10n = AppLocalizations.of(context);
 
     await _ensureActiveConversation();
@@ -422,11 +465,15 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             displayedText = displayedText.substring(0, openThinkingIdx);
           }
 
-          setState(() {
-            _messages[aiMsgIndex!] =
-                _messages[aiMsgIndex].copyWith(text: displayedText.trim());
-          });
-          _scrollToBottom();
+          // 🛡️ BUG#2+BUG#5: Only update UI when there is visible text
+          final trimmedDisplay = displayedText.trim();
+          if (trimmedDisplay.isNotEmpty) {
+            setState(() {
+              _messages[aiMsgIndex!] =
+                  _messages[aiMsgIndex].copyWith(text: trimmedDisplay);
+            });
+            _scrollToBottom();
+          }
         }
 
         if (aiMsgIndex == null) {
@@ -442,8 +489,14 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             _messages.add(errorMsg);
           });
           _scrollToBottom();
-        } else if (mounted && fullResponse.isNotEmpty) {
-          unawaited(_historyService.addMessage(_messages[aiMsgIndex]));
+        } else if (mounted) {
+          final idx = aiMsgIndex;
+          final finalText = _messages[idx].text.trim();
+          if (finalText.isEmpty) {
+             setState(() => _messages.removeAt(idx));
+          } else {
+             unawaited(_historyService.addMessage(_messages[idx]));
+          }
         }
       }
     } on OutOfTokensException catch (e) {
@@ -463,7 +516,6 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       if (mounted) {
         _stopThinkingSteps();
-        // BUG #7 fix: Show error as chat message
         final errorMsg = ChatMessage(
           text: l10n?.aiError ?? 'Произошла ошибка. Попробуйте позже.',
           isUser: false,
@@ -475,6 +527,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         });
         _scrollToBottom();
       }
+    } finally {
+      _isSending = false; // 🛡️ BUG#1: Always release guard
     }
   }
 
@@ -1059,7 +1113,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _sendMessage(text: label),
+        onTap: (_isSending || _isTyping) ? null : () => _sendMessage(text: label),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -1102,7 +1156,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: _requestZhekeZhospar,
+        onTap: (_isSending || _isTyping) ? null : _requestZhekeZhospar,
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -1375,6 +1429,50 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
               ],
             ),
           ),
+
+          // 🔄 BUG#6: Retry button for error messages
+          if (!isUser &&
+              _lastFailedMessage != null &&
+              _messages.isNotEmpty &&
+              _messages.last == msg &&
+              !_isSending)
+            Padding(
+              padding: const EdgeInsets.only(top: 6, left: 4),
+              child: InkWell(
+                onTap: _retryLastMessage,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.refresh_rounded,
+                        size: 14,
+                        color: Color(0xFF6366F1),
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Повторить',
+                        style: TextStyle(
+                          color: Color(0xFF6366F1),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -1443,7 +1541,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 ),
                 isDense: true,
               ),
-              onSubmitted: (_) => _sendMessage(),
+              onSubmitted: (_isSending || _isTyping) ? null : (_) => _sendMessage(),
               textCapitalization: TextCapitalization.sentences,
               maxLines: 4,
               minLines: 1,
@@ -1468,7 +1566,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => _sendMessage(),
+                onTap: (_isSending || _isTyping) ? null : () => _sendMessage(),
                 borderRadius: BorderRadius.circular(24),
                 child: const Padding(
                   padding: EdgeInsets.all(12),

@@ -97,9 +97,9 @@ class AIConsultantService {
     Map<String, int>? subjectScores,
   }) async {
     try {
-      // final currentUser = AuthService().currentUser.value;
+      final currentUser = AuthService().currentUser.value;
       final language = LocaleManager().locale.value?.languageCode ?? 'ru';
-      final requestBody = {
+      final requestBody = <String, dynamic>{
         'user_unt_score': untScore,
         'specialty_id': specialtyId,
         'university_id': universityId,
@@ -107,9 +107,9 @@ class AIConsultantService {
         'language': language,
       };
 
-      // if (currentUser != null) {
-      //   requestBody['uid'] = currentUser.uid;
-      // }
+      if (currentUser != null) {
+        requestBody['uid'] = currentUser.uid;
+      }
 
       final response = await http
           .post(
@@ -155,39 +155,7 @@ class AIConsultantService {
       // (AIConsultantScreen._sendMessage) before calling this method.
 
       if (!isInternalStrategyCall) {
-        // Build structured context for better AI personalization
-        final List<String> contextParts = [];
-
-        if (entScore != null && entScore > 0) {
-          contextParts.add('ЕНТ балл: $entScore из 140');
-        }
-        if (gpa != null && gpa > 0) {
-          contextParts.add('GPA: $gpa');
-        }
-        if (ieltsScore != null && ieltsScore > 0) {
-          contextParts.add('IELTS: $ieltsScore');
-        }
-        if (mathScore != null && mathScore > 0) {
-          contextParts.add('Математика: $mathScore');
-        }
-        if (preferredCities != null && preferredCities.isNotEmpty) {
-          contextParts.add('Город: ${preferredCities.join(", ")}');
-        }
-        if (currentEducation != null && currentEducation.isNotEmpty) {
-          contextParts.add('Образование: $currentEducation');
-        }
-        if (preferredMajors != null && preferredMajors.isNotEmpty) {
-          contextParts.add(
-            'Интересующие специальности: ${preferredMajors.join(", ")}',
-          );
-        }
-        if (userAchievements != null && userAchievements.isNotEmpty) {
-          contextParts.add('Достижения: ${userAchievements.join(", ")}');
-        }
-
-        if (contextParts.isNotEmpty) {
-          bodyData['userContext'] = contextParts.join('\n');
-        }
+        // userContext is now built entirely on the backend securely via `uid`.
       }
 
       // Send uid for token tracking
@@ -245,38 +213,7 @@ class AIConsultantService {
       final language = LocaleManager().locale.value?.languageCode ?? 'ru';
       bodyData['language'] = language;
 
-      final List<String> contextParts = [];
-
-      if (entScore != null && entScore > 0) {
-        contextParts.add('ЕНТ балл: $entScore из 140');
-      }
-      if (gpa != null && gpa > 0) {
-        contextParts.add('GPA: $gpa');
-      }
-      if (ieltsScore != null && ieltsScore > 0) {
-        contextParts.add('IELTS: $ieltsScore');
-      }
-      if (mathScore != null && mathScore > 0) {
-        contextParts.add('Математика: $mathScore');
-      }
-      if (preferredCities != null && preferredCities.isNotEmpty) {
-        contextParts.add('Город: ${preferredCities.join(", ")}');
-      }
-      if (currentEducation != null && currentEducation.isNotEmpty) {
-        contextParts.add('Образование: $currentEducation');
-      }
-      if (preferredMajors != null && preferredMajors.isNotEmpty) {
-        contextParts.add(
-          'Интересующие специальности: ${preferredMajors.join(", ")}',
-        );
-      }
-      if (userAchievements != null && userAchievements.isNotEmpty) {
-        contextParts.add('Достижения: ${userAchievements.join(", ")}');
-      }
-
-      if (contextParts.isNotEmpty) {
-        bodyData['userContext'] = contextParts.join('\n');
-      }
+      // userContext is now built entirely on the backend securely via `uid`.
 
       final currentUser = AuthService().currentUser.value;
       if (currentUser != null) {

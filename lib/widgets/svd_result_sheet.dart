@@ -80,6 +80,7 @@ class _SvdResultSheetState extends State<SvdResultSheet> {
   }
 
   Future<void> _loadAiStrategy() async {
+    if (_isLoadingAiStrategy) return;
     setState(() => _isLoadingAiStrategy = true);
     try {
       final String strategy = await AIConsultantService().getAdmissionStrategy(
