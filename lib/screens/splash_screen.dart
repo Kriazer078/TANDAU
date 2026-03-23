@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (mounted) {
       // Check for updates BEFORE navigating anywhere else
-      // await UpdateService().checkForUpdate(context);
+      await UpdateService().checkForUpdate(context);
       if (!mounted) return;
 
       final prefs = await SharedPreferences.getInstance();

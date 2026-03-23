@@ -1760,4 +1760,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get errorOops => 'Упс! Произошла ошибка.';
+
+  @override
+  String get updateAvailableTitle => 'Доступно обновление! 🚀';
+
+  @override
+  String get updateForceTitle => 'Обязательное обновление';
+
+  @override
+  String get updateForceBody =>
+      'Для продолжения использования TANDAU необходимо установить последнюю версию приложения.';
+
+  @override
+  String get updateRecommendedBody =>
+      'Мы подготовили новую версию TANDAU с улучшениями и новыми возможностями!';
+
+  @override
+  String get updateWhatsNew => 'Что нового';
+
+  @override
+  String get updateNowBtn => 'Обновить сейчас';
+
+  @override
+  String get updateLaterBtn => 'Позже';
+
+  @override
+  String updateVersion(String version) {
+    return 'Версия $version';
+  }
 }

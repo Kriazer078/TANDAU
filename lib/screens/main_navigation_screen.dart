@@ -7,6 +7,7 @@ import '../screens/ai_consultant_screen.dart';
 import '../screens/profile_screen.dart';
 import '../utils/guest_guard.dart'; // ⭐ Import GuestGuard
 import '../widgets/like_review_widgets.dart'; // ⚡ For preloading likes
+import '../services/update_service.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -28,6 +29,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     LikeButton.preloadLikes();
     // ⚡ Pre-cache home tab so it renders immediately
     _getPage(0);
+
+    // ⚡ Check for updates when the main screen is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        UpdateService().checkForUpdate(context);
+      }
+    });
   }
 
   /// Build and cache tab widget on first access

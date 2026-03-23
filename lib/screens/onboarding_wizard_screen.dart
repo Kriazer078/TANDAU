@@ -90,6 +90,32 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
         curve: Curves.easeOutCubic,
       ),
     );
+
+    // 📋 Pre-populate from existing profile
+    _prefillFromProfile();
+  }
+
+  /// Load existing profile data so wizard shows current values
+  void _prefillFromProfile() {
+    final user = AuthService().currentUser.value;
+    if (user == null) return;
+
+    if (user.untScore != null) _entScore = user.untScore!;
+    if (user.preferredMajors.isNotEmpty) {
+      _selectedMajors.addAll(user.preferredMajors);
+    }
+    if (user.preferredCities.isNotEmpty) {
+      _selectedCities.addAll(user.preferredCities);
+    }
+    if (user.financialSituation != null) {
+      _financialSituation = user.financialSituation;
+    }
+    _isRural = user.isRural ?? false;
+    _isOrphan = user.isOrphan ?? false;
+    _hasDisability = user.hasDisability ?? false;
+    if (user.achievements.isNotEmpty) {
+      _selectedAchievements.addAll(user.achievements);
+    }
   }
 
   @override
@@ -137,7 +163,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
 
     try {
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'entScore': _entScore,
+        'untScore': _entScore,
         'preferredMajors': _selectedMajors.toList(),
         'preferredCities': _selectedCities.toList(),
         'financialSituation': _financialSituation,

@@ -1757,4 +1757,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorOops => 'Oops! An error occurred.';
+
+  @override
+  String get updateAvailableTitle => 'Update Available! 🚀';
+
+  @override
+  String get updateForceTitle => 'Critical Update Required';
+
+  @override
+  String get updateForceBody =>
+      'To continue using TANDAU, please install the latest version of the app.';
+
+  @override
+  String get updateRecommendedBody =>
+      'We\'ve prepared a new version of TANDAU with improvements and new features!';
+
+  @override
+  String get updateWhatsNew => 'What\'s New';
+
+  @override
+  String get updateNowBtn => 'Update Now';
+
+  @override
+  String get updateLaterBtn => 'Later';
+
+  @override
+  String updateVersion(String version) {
+    return 'Version $version';
+  }
 }

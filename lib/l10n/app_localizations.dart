@@ -3399,6 +3399,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Oops! An error occurred.'**
   String get errorOops;
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available! 🚀'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateForceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Update Required'**
+  String get updateForceTitle;
+
+  /// No description provided for @updateForceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'To continue using TANDAU, please install the latest version of the app.'**
+  String get updateForceBody;
+
+  /// No description provided for @updateRecommendedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve prepared a new version of TANDAU with improvements and new features!'**
+  String get updateRecommendedBody;
+
+  /// No description provided for @updateWhatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get updateWhatsNew;
+
+  /// No description provided for @updateNowBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Now'**
+  String get updateNowBtn;
+
+  /// No description provided for @updateLaterBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLaterBtn;
+
+  /// No description provided for @updateVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String updateVersion(String version);
 }
 
 class _AppLocalizationsDelegate

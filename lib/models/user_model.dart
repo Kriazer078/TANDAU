@@ -148,7 +148,7 @@ class UserModel {
       age: map['age'],
       education: map['education'],
       city: map['city'],
-      untScore: map['untScore'],
+      untScore: map['untScore'] ?? map['entScore'],
       ieltsScore: (map['ieltsScore'] is String)
           ? double.tryParse(map['ieltsScore'])
           : (map['ieltsScore'] as num?)?.toDouble(),

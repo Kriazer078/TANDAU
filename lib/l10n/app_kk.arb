@@ -816,5 +816,19 @@
     "pickerErrorUploadCloud": "Бұлтқа жүктеу қатесі",
 
     "profileCityEnter": "Қала атауын енгізіңіз",
-    "validationCity": "Қаланы енгізіңіз"
+    "validationCity": "Қаланы енгізіңіз",
+
+    "updateAvailableTitle": "Жаңарту қол жетімді! 🚀",
+    "updateForceTitle": "Міндетті жаңарту",
+    "updateForceBody": "TANDAU-ды пайдалануды жалғастыру үшін қосымшаның соңғы нұсқасын орнатыңыз.",
+    "updateRecommendedBody": "Біз TANDAU-дың жаңа нұсқасын жақсартулар мен жаңа мүмкіндіктермен дайындадық!",
+    "updateWhatsNew": "Жаңалықтар",
+    "updateNowBtn": "Қазір жаңарту",
+    "updateLaterBtn": "Кейінірек",
+    "updateVersion": "{version} нұсқасы",
+    "@updateVersion": {
+        "placeholders": {
+            "version": { "type": "String" }
+        }
+    }
 }

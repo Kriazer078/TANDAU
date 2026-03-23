@@ -1757,4 +1757,32 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get errorOops => 'Қап! Қате шықты.';
+
+  @override
+  String get updateAvailableTitle => 'Жаңарту қол жетімді! 🚀';
+
+  @override
+  String get updateForceTitle => 'Міндетті жаңарту';
+
+  @override
+  String get updateForceBody =>
+      'TANDAU-ды пайдалануды жалғастыру үшін қосымшаның соңғы нұсқасын орнатыңыз.';
+
+  @override
+  String get updateRecommendedBody =>
+      'Біз TANDAU-дың жаңа нұсқасын жақсартулар мен жаңа мүмкіндіктермен дайындадық!';
+
+  @override
+  String get updateWhatsNew => 'Жаңалықтар';
+
+  @override
+  String get updateNowBtn => 'Қазір жаңарту';
+
+  @override
+  String get updateLaterBtn => 'Кейінірек';
+
+  @override
+  String updateVersion(String version) {
+    return '$version нұсқасы';
+  }
 }

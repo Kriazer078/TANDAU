@@ -246,7 +246,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         gpa: user?.gpa,
         mathScore: user?.mathScore,
         currentEducation: user?.education,
-        preferredCities: user?.city != null ? [user!.city!] : null,
+        preferredCities: (user?.preferredCities.isNotEmpty ?? false)
+            ? user!.preferredCities
+            : (user?.city != null ? [user!.city!] : null),
         userAchievements: user?.achievements,
         preferredMajors: user?.preferredMajors,
       );

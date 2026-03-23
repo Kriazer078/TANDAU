@@ -833,5 +833,19 @@
     "pickerErrorUploadCloud": "Cloud upload error",
 
     "profileCityEnter": "Enter city name",
-    "validationCity": "Enter city"
+    "validationCity": "Enter city",
+
+    "updateAvailableTitle": "Update Available! 🚀",
+    "updateForceTitle": "Critical Update Required",
+    "updateForceBody": "To continue using TANDAU, please install the latest version of the app.",
+    "updateRecommendedBody": "We've prepared a new version of TANDAU with improvements and new features!",
+    "updateWhatsNew": "What's New",
+    "updateNowBtn": "Update Now",
+    "updateLaterBtn": "Later",
+    "updateVersion": "Version {version}",
+    "@updateVersion": {
+        "placeholders": {
+            "version": { "type": "String" }
+        }
+    }
 }

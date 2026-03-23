@@ -814,5 +814,19 @@
     "pickerErrorUploadCloud": "Ошибка загрузки в облако",
 
     "profileCityEnter": "Введите название города",
-    "validationCity": "Введите город"
+    "validationCity": "Введите город",
+
+    "updateAvailableTitle": "Доступно обновление! 🚀",
+    "updateForceTitle": "Обязательное обновление",
+    "updateForceBody": "Для продолжения использования TANDAU необходимо установить последнюю версию приложения.",
+    "updateRecommendedBody": "Мы подготовили новую версию TANDAU с улучшениями и новыми возможностями!",
+    "updateWhatsNew": "Что нового",
+    "updateNowBtn": "Обновить сейчас",
+    "updateLaterBtn": "Позже",
+    "updateVersion": "Версия {version}",
+    "@updateVersion": {
+        "placeholders": {
+            "version": { "type": "String" }
+        }
+    }
 }

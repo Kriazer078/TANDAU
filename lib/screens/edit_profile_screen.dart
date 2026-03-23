@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -16,6 +18,8 @@ import '../widgets/profile/profile_city_fields.dart';
 import '../widgets/profile/profile_academic_fields.dart';
 import '../widgets/profile/profile_bottom_save_bar.dart';
 import '../widgets/profile/profile_image_picker_sheet.dart';
+import '../widgets/profile/profile_preferences_fields.dart';
+import '../widgets/profile/profile_quotas_fields.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -42,6 +46,15 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   String? _selectedEducation;
   bool _isLoading = false;
   bool _hasChanges = false;
+
+  // 📋 Расширенные поля профиля (из OnboardingWizard)
+  final Set<String> _selectedMajors = {};
+  final Set<String> _selectedCities = {};
+  final Set<String> _selectedAchievements = {};
+  String? _financialSituation;
+  bool _isRural = false;
+  bool _isOrphan = false;
+  bool _hasDisability = false;
 
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -101,6 +114,15 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         _selectedCityDropdown = 'Другой';
       }
     }
+
+    // 📋 Initialize extended profile fields from UserModel
+    _selectedMajors.addAll(widget.user.preferredMajors);
+    _selectedCities.addAll(widget.user.preferredCities);
+    _selectedAchievements.addAll(widget.user.achievements);
+    _financialSituation = widget.user.financialSituation;
+    _isRural = widget.user.isRural ?? false;
+    _isOrphan = widget.user.isOrphan ?? false;
+    _hasDisability = widget.user.hasDisability ?? false;
   }
 
   void _markChanged() {
@@ -110,7 +132,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   /// How complete is the profile (0.0 – 1.0)
   double get _completionProgress {
     int filled = 0;
-    int total = 7; // name, age, education, city, unt, ielts/gpa, mathScore
+    int total = 10; // name, age, education, city, unt, ielts/gpa, math, majors, achievements, financial
     if (_nameController.text.trim().isNotEmpty) filled++;
     if (_ageController.text.isNotEmpty) filled++;
     if (_selectedEducation != null) filled++;
@@ -121,6 +143,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       filled++;
     }
     if (_mathScoreController.text.trim().isNotEmpty) filled++;
+    if (_selectedMajors.isNotEmpty) filled++;
+    if (_selectedAchievements.isNotEmpty) filled++;
+    if (_financialSituation != null) filled++;
     return filled / total;
   }
 
@@ -138,19 +163,31 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     super.dispose();
   }
 
-  // ── Save ───────────────────────────────────────────────
+  // ── Save ─────────────────────────────────────────────────────
+
+  /// 📋 Save extended fields (preferredMajors, achievements) directly to Firestore
+  Future<void> _saveExtendedFields() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'preferredMajors': _selectedMajors.toList(),
+        'achievements': _selectedAchievements.toList(),
+      });
+
+      // Refresh AuthService local state so AI sees new data
+      await AuthService().refreshUserData();
+    } catch (e) {
+      debugPrint('⚠️ Error saving extended fields: $e');
+    }
+  }
 
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
-
-    if (_completionProgress < 1.0) {
-      final l10n = AppLocalizations.of(context);
-      _showError(
-        l10n?.profileFillAllData ??
-            'Пожалуйста, заполните все данные профиля (включая имя и академические баллы).',
-      );
-      return;
-    }
 
     if (ModerationService().hasProfanity(_nameController.text.trim())) {
       final l10n = AppLocalizations.of(context);
@@ -173,7 +210,18 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         ieltsScore: double.tryParse(_ieltsScoreController.text.trim()),
         gpa: double.tryParse(_gpaController.text.trim()),
         mathScore: int.tryParse(_mathScoreController.text.trim()),
+        // 📋 Расширенные поля
+        preferredCities: _selectedCities.toList(),
+        financialSituation: _financialSituation,
+        hasDisability: _hasDisability,
+        isOrphan: _isOrphan,
+        isRural: _isRural,
       );
+
+      // 📋 Сохранить списковые поля напрямую (не через updateProfile)
+      if (success) {
+        await _saveExtendedFields();
+      }
 
       if (mounted) {
         if (success) {
@@ -198,7 +246,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               margin: const EdgeInsets.all(16),
             ),
           );
-          Navigator.pop(context);
+          Navigator.pop(context, true); // true = profile updated
         } else {
           _showError(
             AppLocalizations.of(context)?.profileErrorUpdate ??
@@ -496,6 +544,97 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   ieltsScoreController: _ieltsScoreController,
                                   gpaController: _gpaController,
                                   mathScoreController: _mathScoreController,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // ═══ Preferences Card ═══
+                          _buildSectionCard(
+                            isDark: isDark,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileSectionHeader(
+                                  icon: Icons.interests_outlined,
+                                  title: 'Предпочтения',
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 18),
+                                ProfilePreferencesFields(
+                                  selectedMajors: _selectedMajors,
+                                  selectedCities: _selectedCities,
+                                  selectedAchievements: _selectedAchievements,
+                                  onMajorToggle: (v) {
+                                    setState(() {
+                                      if (_selectedMajors.contains(v)) {
+                                        _selectedMajors.remove(v);
+                                      } else {
+                                        _selectedMajors.add(v);
+                                      }
+                                    });
+                                    _markChanged();
+                                  },
+                                  onCityToggle: (v) {
+                                    setState(() {
+                                      if (_selectedCities.contains(v)) {
+                                        _selectedCities.remove(v);
+                                      } else {
+                                        _selectedCities.add(v);
+                                      }
+                                    });
+                                    _markChanged();
+                                  },
+                                  onAchievementToggle: (v) {
+                                    setState(() {
+                                      if (_selectedAchievements.contains(v)) {
+                                        _selectedAchievements.remove(v);
+                                      } else {
+                                        _selectedAchievements.add(v);
+                                      }
+                                    });
+                                    _markChanged();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // ═══ Quotas & Financial Card ═══
+                          _buildSectionCard(
+                            isDark: isDark,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileSectionHeader(
+                                  icon: Icons.account_balance_outlined,
+                                  title: 'Финансы и квоты',
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 18),
+                                ProfileQuotasFields(
+                                  financialSituation: _financialSituation,
+                                  isRural: _isRural,
+                                  isOrphan: _isOrphan,
+                                  hasDisability: _hasDisability,
+                                  onFinancialChanged: (v) {
+                                    setState(() => _financialSituation = v);
+                                    _markChanged();
+                                  },
+                                  onRuralChanged: (v) {
+                                    setState(() => _isRural = v);
+                                    _markChanged();
+                                  },
+                                  onOrphanChanged: (v) {
+                                    setState(() => _isOrphan = v);
+                                    _markChanged();
+                                  },
+                                  onDisabilityChanged: (v) {
+                                    setState(() => _hasDisability = v);
+                                    _markChanged();
+                                  },
                                 ),
                               ],
                             ),
