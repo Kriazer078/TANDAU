@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../services/auth_service.dart';
 import '../theme/app_colors.dart';
 
 /// 6-шаговый AI Onboarding Wizard
@@ -147,6 +148,9 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
         'onboardingCompleted': true,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
+      // 🔄 FIX: Refresh AuthService local state so AI sees updated profile
+      await AuthService().refreshUserData();
 
       if (mounted) {
         Navigator.pop(context, true); // true = profile was updated

@@ -193,11 +193,13 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 
     // Moderation check
     if (_moderationService.isSpamming()) {
+      _isSending = false; // 🛡️ FIX: Reset guard on early return
       _showErrorSnackBar(l10n?.moderationSpam ?? 'Подождите немного...');
       return;
     }
 
     if (_moderationService.hasProfanity(messageText)) {
+      _isSending = false; // 🛡️ FIX: Reset guard on early return
       _showErrorSnackBar(
         l10n?.moderationProfanity ?? 'Нецензурная лексика запрещена',
       );
@@ -1051,6 +1053,8 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                     ),
                   );
                   if (result == true && mounted) {
+                    // 🔄 FIX: Refresh user data so AI sees updated profile
+                    await AuthService().refreshUserData();
                     _sendMessage(
                       text: l10n?.wizardProfileUpdated ??
                           'Мой профиль обновлён! Покажи мне подходящие вузы.',

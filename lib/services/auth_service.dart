@@ -112,6 +112,18 @@ class AuthService {
       debugPrint(
         'Error loading user data (might be offline or permission denied): $e',
       );
+      // 🛡️ FIX: If Firestore fails but Firebase Auth user exists,
+      // keep them logged in to avoid re-registration loop.
+      // The profile data may be stale, but the session is preserved.
+    }
+  }
+
+  /// 🔄 Public method to refresh user data from Firestore.
+  /// Call after profile updates (e.g. OnboardingWizard) to sync local state.
+  Future<void> refreshUserData() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await _loadUserData(user.uid);
     }
   }
 
