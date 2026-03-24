@@ -254,6 +254,10 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             : (user?.city != null ? [user!.city!] : null),
         userAchievements: user?.achievements,
         preferredMajors: user?.preferredMajors,
+        financialSituation: user?.financialSituation,
+        isRural: user?.isRural,
+        isOrphan: user?.isOrphan,
+        hasDisability: user?.hasDisability,
       );
 
       if (mounted) {
@@ -434,6 +438,11 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         preferredMajors: user?.preferredMajors.join(', '),
         currentEducation: user?.education,
         achievements: user?.achievements.join(', '),
+        financialSituation: user?.financialSituation,
+        isRural: user?.isRural,
+        isOrphan: user?.isOrphan,
+        hasDisability: user?.hasDisability,
+        preferredCities: user?.preferredCities,
       );
 
       if (mounted) {

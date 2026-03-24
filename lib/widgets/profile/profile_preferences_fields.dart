@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 
-
-
-/// Виджет для выбора предпочтений: специальности, города, достижения
+/// Виджет для выбора предпочтений: специальности и достижения
 class ProfilePreferencesFields extends StatelessWidget {
   final Set<String> selectedMajors;
-  final Set<String> selectedCities;
   final Set<String> selectedAchievements;
   final ValueChanged<String> onMajorToggle;
-  final ValueChanged<String> onCityToggle;
   final ValueChanged<String> onAchievementToggle;
 
   const ProfilePreferencesFields({
     super.key,
     required this.selectedMajors,
-    required this.selectedCities,
     required this.selectedAchievements,
     required this.onMajorToggle,
-    required this.onCityToggle,
     required this.onAchievementToggle,
   });
 
@@ -33,20 +27,6 @@ class ProfilePreferencesFields extends StatelessWidget {
     'Нефтегаз',
     'Искусство / Дизайн',
     'Не определился',
-  ];
-
-  static const List<String> cityOptions = [
-    'Алматы',
-    'Астана',
-    'Шымкент',
-    'Караганда',
-    'Актобе',
-    'Павлодар',
-    'Семей',
-    'Атырау',
-    'Костанай',
-    'Актау',
-    'Любой город',
   ];
 
   static const List<String> achievementOptions = [
@@ -86,31 +66,6 @@ class ProfilePreferencesFields extends StatelessWidget {
               selected: selected,
               isDark: isDark,
               onTap: () => onMajorToggle(major),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 20),
-
-        // 🏙️ Города
-        Text(
-          'Предпочитаемые города',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white70 : AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: cityOptions.map((city) {
-            final selected = selectedCities.contains(city);
-            return _buildChip(
-              label: city,
-              selected: selected,
-              isDark: isDark,
-              onTap: () => onCityToggle(city),
             );
           }).toList(),
         ),

@@ -208,6 +208,10 @@ class AIConsultantService {
     List<String>? preferredCities,
     List<String>? preferredMajors,
     String? currentEducation,
+    String? financialSituation,
+    bool? isRural,
+    bool? isOrphan,
+    bool? hasDisability,
   }) async* {
     final client = http.Client();
     try {
@@ -227,6 +231,14 @@ class AIConsultantService {
       if (history != null && history.isNotEmpty) {
         bodyData['history'] = history;
       }
+
+      // 📋 Extended profile fields for AI context
+      if (financialSituation != null) {
+        bodyData['financialSituation'] = financialSituation;
+      }
+      if (isRural == true) bodyData['isRural'] = true;
+      if (isOrphan == true) bodyData['isOrphan'] = true;
+      if (hasDisability == true) bodyData['hasDisability'] = true;
 
       final request = http.Request('POST', Uri.parse('$_baseUrl/chat'));
       request.headers['Content-Type'] = 'application/json';
@@ -292,6 +304,11 @@ class AIConsultantService {
     String? preferredMajors,
     String? currentEducation,
     String? achievements,
+    String? financialSituation,
+    bool? isRural,
+    bool? isOrphan,
+    bool? hasDisability,
+    List<String>? preferredCities,
   }) async* {
     final client = http.Client();
     try {
@@ -312,6 +329,17 @@ class AIConsultantService {
         bodyData['currentEducation'] = currentEducation;
       }
       if (achievements != null) bodyData['achievements'] = achievements;
+
+      // 📋 Extended profile fields
+      if (financialSituation != null) {
+        bodyData['financialSituation'] = financialSituation;
+      }
+      if (isRural == true) bodyData['isRural'] = true;
+      if (isOrphan == true) bodyData['isOrphan'] = true;
+      if (hasDisability == true) bodyData['hasDisability'] = true;
+      if (preferredCities != null && preferredCities.isNotEmpty) {
+        bodyData['preferredCities'] = preferredCities.join(', ');
+      }
 
       // Send uid for token tracking
       final currentUser = AuthService().currentUser.value;

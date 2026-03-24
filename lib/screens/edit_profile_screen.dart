@@ -165,7 +165,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
   // ── Save ─────────────────────────────────────────────────────
 
-  /// 📋 Save extended fields (preferredMajors, achievements) directly to Firestore
+  /// 📋 Save extended fields (preferredMajors, achievements, cities, quotas) directly to Firestore
   Future<void> _saveExtendedFields() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -177,6 +177,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           .update({
         'preferredMajors': _selectedMajors.toList(),
         'achievements': _selectedAchievements.toList(),
+        'preferredCities': _selectedCities.toList(),
+        'financialSituation': _financialSituation,
+        'isRural': _isRural,
+        'isOrphan': _isOrphan,
+        'hasDisability': _hasDisability,
       });
 
       // Refresh AuthService local state so AI sees new data
@@ -564,7 +569,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                 const SizedBox(height: 18),
                                 ProfilePreferencesFields(
                                   selectedMajors: _selectedMajors,
-                                  selectedCities: _selectedCities,
                                   selectedAchievements: _selectedAchievements,
                                   onMajorToggle: (v) {
                                     setState(() {
@@ -572,16 +576,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                         _selectedMajors.remove(v);
                                       } else {
                                         _selectedMajors.add(v);
-                                      }
-                                    });
-                                    _markChanged();
-                                  },
-                                  onCityToggle: (v) {
-                                    setState(() {
-                                      if (_selectedCities.contains(v)) {
-                                        _selectedCities.remove(v);
-                                      } else {
-                                        _selectedCities.add(v);
                                       }
                                     });
                                     _markChanged();
