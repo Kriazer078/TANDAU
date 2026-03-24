@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../theme/theme_manager.dart';
 import '../services/locale_manager.dart';
 import '../services/auth_service.dart';
@@ -555,15 +556,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showAboutDialog() {
+  Future<void> _showAboutDialog() async {
+    String version = '1.0.0';
+    try {
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      version = packageInfo.version;
+    } catch (_) {}
+
+    if (!mounted) return;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
           AppLocalizations.of(context)?.settingsAbout ?? 'About TANDAU',
         ),
-        content: Text(
-          AppLocalizations.of(context)?.aboutContent ?? 'TANDAU application...',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)?.aboutContent ?? 'TANDAU application...',
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Версия: $version',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         actions: [
           TextButton(

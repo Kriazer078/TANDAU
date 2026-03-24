@@ -18,6 +18,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
     with TickerProviderStateMixin {
   int _currentStep = 0;
   final int _totalSteps = 6;
+  bool _isSaving = false; // 🛡️ BUG F FIX: Guard against double-save
 
   // Step 1: ENT Score
   int _entScore = 80;
@@ -158,8 +159,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
   }
 
   Future<void> _saveProfile() async {
+    // 🛡️ BUG F FIX: Prevent double-save on rapid taps
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      if (mounted) setState(() => _isSaving = false);
+      return;
+    }
 
     try {
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
@@ -183,6 +191,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
       }
     } catch (e) {
       if (mounted) {
+        setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ошибка сохранения: $e'),
@@ -296,7 +305,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
                 width: double.infinity,
                 height: 56,
                 child: FilledButton(
-                  onPressed: _canProceed() ? _nextStep : null,
+                  onPressed: (_canProceed() && !_isSaving) ? _nextStep : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF6366F1),
                     disabledBackgroundColor: isDark
@@ -306,13 +315,24 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: Text(
-                    _currentStep == _totalSteps - 1 ? '✨ Завершить' : 'Далее →',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          _currentStep == _totalSteps - 1
+                              ? '✨ Завершить'
+                              : 'Далее →',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),

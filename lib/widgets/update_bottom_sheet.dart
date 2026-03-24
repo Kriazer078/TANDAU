@@ -432,11 +432,16 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet>
 
   Future<void> _launchStore() async {
     try {
-      final Uri url = Uri.parse(widget.storeUrl);
+      final String safeUrl = widget.storeUrl.trim().isNotEmpty
+          ? widget.storeUrl
+          : 'https://play.google.com/store/apps/details?id=com.tandau.kz';
+
+      final Uri url = Uri.parse(safeUrl);
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
-        debugPrint('UpdateBottomSheet: Could not launch ${widget.storeUrl}');
+        // Fallback: try launching anyway if intent query fails
+        await launchUrl(url, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
       debugPrint('UpdateBottomSheet: Error launching store: $e');

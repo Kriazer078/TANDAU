@@ -25,25 +25,32 @@ class UpdateService {
   static const String _dismissedTimeKey = 'update_dismissed_time';
   static const Duration _remindInterval = Duration(hours: 24);
 
+  Future<void>? _initFuture;
+
   /// Initialize Remote Config with defaults and fetch latest values.
-  Future<void> init() async {
+  Future<void> init() {
+    _initFuture ??= _initInternal();
+    return _initFuture!;
+  }
+
+  Future<void> _initInternal() async {
     try {
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(minutes: 1),
-          minimumFetchInterval: const Duration(hours: 1),
+          minimumFetchInterval: const Duration(minutes: 1), // Reduced for faster updates & testing
         ),
       );
 
       await _remoteConfig.setDefaults({
-        'force_update_current_version': '1.0.0',
+        'force_update_current_version': '1.2.1', // Current release version
         'min_supported_version': '1.0.0',
         'store_url_android':
             'https://play.google.com/store/apps/details?id=com.project.tandau',
         'store_url_ios': 'https://apps.apple.com/app/id123456789',
-        'whats_new_ru': '',
-        'whats_new_kk': '',
-        'whats_new_en': '',
+        'whats_new_ru': 'Изменения в новой версии: добавлена функция обновления.',
+        'whats_new_kk': 'Жаңа нұсқада: жаңарту мүмкіндігі қосылды.',
+        'whats_new_en': 'What\'s new: Update feature added.',
       });
 
       await _remoteConfig.fetchAndActivate();
@@ -55,6 +62,8 @@ class UpdateService {
   /// Check for available updates and show the update bottom sheet if needed.
   Future<void> checkForUpdate(BuildContext context) async {
     try {
+      await init(); // ⚡ Wait for RemoteConfig to initialize to ensure we have data
+
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       final String currentVersion = packageInfo.version;
 
@@ -123,8 +132,11 @@ class UpdateService {
     // Get localized changelog
     final String whatsNew = _getWhatsNew(context);
 
+    // ⚡ Show on the root navigator so tab switching or screen replacements don't destroy the dialog
+    final BuildContext globalContext = Navigator.of(context, rootNavigator: true).context;
+
     showModalBottomSheet(
-      context: context,
+      context: globalContext,
       isDismissible: !forceUpdate,
       enableDrag: !forceUpdate,
       isScrollControlled: true,

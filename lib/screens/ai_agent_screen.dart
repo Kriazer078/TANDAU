@@ -9,7 +9,7 @@ import 'university_detail_screen.dart';
 class AIAgentScreen extends StatelessWidget {
   final String title;
   final String description;
-  final List<dynamic> alternativeOptions;
+  final List<Map<String, dynamic>> alternativeOptions;
   final University targetUniversity;
 
   const AIAgentScreen({
@@ -194,7 +194,7 @@ class AIAgentScreen extends StatelessWidget {
 
   Widget _buildAlternativeCard(
     BuildContext context,
-    dynamic opt,
+    Map<String, dynamic> opt,
     bool isDark,
     AppLocalizations l10n,
   ) {

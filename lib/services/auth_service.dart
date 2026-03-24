@@ -47,10 +47,34 @@ class AuthService {
     // ⚡ Cancel previous listener to prevent double-subscription
     await _authSubscription?.cancel();
 
-    final Completer<void> completer = Completer<void>();
-    bool isFirstEvent = true;
+    // ⚡ Синхронная проверка кешированного пользователя сразу после инициализации Firebase.
+    // Если authStateChanges запаздывает (или выдает null первым событием),
+    // SplashScreen не увидит isLoggedIn = false и не пустит на RegisterScreen.
+    final initialUser = _auth.currentUser;
+    if (initialUser != null) {
+      debugPrint('🟢 AUTH INIT: Обнаружен кэшированный пользователь (${initialUser.uid})');
+      if (initialUser.isAnonymous) {
+        currentUser.value = UserModel(
+          uid: initialUser.uid,
+          name: 'Гость',
+          email: 'guest@tandau.app',
+          createdAt: DateTime.now(),
+        );
+        // Гостю данные загружать не нужно
+        isLoggedIn.value = true;
+      } else {
+        await _loadUserData(initialUser.uid);
+        if (bannedReason.value == null) {
+          isLoggedIn.value = true;
+        }
+      }
+    } else {
+      debugPrint('🔴 AUTH INIT: Пользователь не обнаружен в кэше');
+      isLoggedIn.value = false;
+      currentUser.value = null;
+    }
 
-    // Listen to auth state changes
+    // Слушаем последующие изменения (если токен обновился, логаут, etc.)
     _authSubscription = _auth.authStateChanges().listen((User? user) async {
       if (_isRegistering) {
         debugPrint(
@@ -59,27 +83,35 @@ class AuthService {
         return;
       }
       if (user != null) {
-        debugPrint(
-          '🟢 AUTH: Пользователь обнаружен (${user.uid}). Загрузка данных...',
-        );
-        await _loadUserData(user.uid);
-        // Only mark as logged in if NOT banned
-        if (bannedReason.value == null) {
+        if (user.isAnonymous) {
+          currentUser.value = UserModel(
+            uid: user.uid,
+            name: 'Гость',
+            email: 'guest@tandau.app',
+            createdAt: DateTime.now(),
+          );
           isLoggedIn.value = true;
+        } else {
+          // Запрашиваем данные только если это новый пользователь (избегаем дублирования с init)
+          if (currentUser.value?.uid != user.uid) {
+            debugPrint(
+              '🟢 AUTH: Новый пользователь обнаружен в Stream (${user.uid}). Загрузка...',
+            );
+            await _loadUserData(user.uid);
+          }
+          // Only mark as logged in if NOT banned
+          if (bannedReason.value == null) {
+            isLoggedIn.value = true;
+          }
         }
       } else {
         isLoggedIn.value = false;
         currentUser.value = null;
       }
-
-      if (isFirstEvent) {
-        isFirstEvent = false;
-        completer.complete();
-      }
     });
 
-    // Wait for the first auth state to resolve to prevent race condition on restart
-    await completer.future;
+    // ⚡ Важно: теперь init() заканчивает работу синхронно или сразу после
+    // загрузки данных начального юзера, что нужно дляSplashScreen.
   }
 
   /// Ban info notifier — non-null when user is banned and forced to log out

@@ -332,7 +332,7 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get aboutContent =>
-      'TANDAU — бұл студенттерге университет таңдауға көмектесетін қосымша.\n\nНұсқасы: 1.0.0\n\n© 2026 TANDAU Team';
+      'TANDAU — студенттерге университет таңдауға көмектесетін қосымша.\n\n© 2026 TANDAU Team';
 
   @override
   String get searchHistory => 'Іздеу тарихы';

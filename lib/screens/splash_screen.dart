@@ -42,10 +42,6 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 100));
 
     if (mounted) {
-      // Check for updates BEFORE navigating anywhere else
-      await UpdateService().checkForUpdate(context);
-      if (!mounted) return;
-
       final prefs = await SharedPreferences.getInstance();
       final bool termsAccepted = prefs.getBool('terms_accepted') ?? false;
       final bool onboardingDone = prefs.getBool('onboarding_done') ?? false;

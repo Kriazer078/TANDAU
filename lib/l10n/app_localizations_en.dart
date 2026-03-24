@@ -333,7 +333,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutContent =>
-      'TANDAU - is an application to help students choose a university.\n\nVersion: 1.0.0\n\n© 2026 TANDAU Team';
+      'TANDAU is an application to help students choose their university.\n\n© 2026 TANDAU Team';
 
   @override
   String get searchHistory => 'Search History';

@@ -739,7 +739,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutContent.
   ///
   /// In en, this message translates to:
-  /// **'TANDAU - is an application to help students choose a university.\n\nVersion: 1.0.0\n\n© 2026 TANDAU Team'**
+  /// **'TANDAU is an application to help students choose their university.\n\n© 2026 TANDAU Team'**
   String get aboutContent;
 
   /// No description provided for @searchHistory.

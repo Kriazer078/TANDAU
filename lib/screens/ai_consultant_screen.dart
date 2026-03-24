@@ -128,9 +128,12 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       if (_thinkingStep < maxSteps - 1) {
         setState(() => _thinkingStep++);
         _scrollToBottom();
-      } else {
-        timer.cancel();
       }
+      // 🔧 BUG B FIX: Don't cancel timer at last step.
+      // The thinking indicator keeps pulsing (via its built-in
+      // CircularProgressIndicator) until _stopThinkingSteps() is called
+      // when the first chunk arrives from the backend.
+      // This prevents the UI from looking "frozen" during backend cold start.
     });
   }
 
@@ -387,7 +390,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         _scrollToBottom();
       }
     } finally {
-      _isSending = false; // 🛡️ BUG#1: Always release guard
+      if (mounted) {
+        _isSending = false; // 🛡️ BUG#1: Always release guard
+      }
     }
   }
 
@@ -532,7 +537,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         _scrollToBottom();
       }
     } finally {
-      _isSending = false; // 🛡️ BUG#1: Always release guard
+      if (mounted) {
+        _isSending = false; // 🛡️ BUG#1: Always release guard
+      }
     }
   }
 
@@ -1055,8 +1062,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                     ),
                   );
                   if (result == true && mounted) {
-                    // 🔄 FIX: Refresh user data so AI sees updated profile
-                    await AuthService().refreshUserData();
+                    // 🔧 BUG A FIX: refreshUserData() is already called inside
+                    // OnboardingWizardScreen._saveProfile(), no need to call again.
+                    // Removed duplicate network call that added 10+ sec delay.
                     _sendMessage(
                       text: l10n?.wizardProfileUpdated ??
                           'Мой профиль обновлён! Покажи мне подходящие вузы.',

@@ -151,6 +151,10 @@ class AIConsultantService {
     try {
       final bodyData = <String, dynamic>{'question': message};
 
+      // 🔧 BUG C FIX: Send language so backend can localize responses
+      final language = LocaleManager().locale.value?.languageCode ?? 'ru';
+      bodyData['language'] = language;
+
       // NOTE: Moderation (profanity) is checked in the UI layer
       // (AIConsultantScreen._sendMessage) before calling this method.
 
