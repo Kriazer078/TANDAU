@@ -43,7 +43,7 @@ class UpdateService {
       );
 
       await _remoteConfig.setDefaults({
-        'force_update_current_version': '1.2.1', // Current release version
+        'force_update_current_version': '1.2.3', // Current release version
         'min_supported_version': '1.0.0',
         'store_url_android':
             'https://play.google.com/store/apps/details?id=com.project.tandau',
