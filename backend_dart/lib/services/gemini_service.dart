@@ -37,10 +37,10 @@ class GeminiService {
       contents.addAll(history);
     }
 
-    String enrichedQuestion = question;
+    String enrichedQuestion = '<user_input>\n$question\n</user_input>';
     if (ragContext != null && ragContext.isNotEmpty) {
       enrichedQuestion =
-          '$ragContext\n\n--- ВОПРОС ПОЛЬЗОВАТЕЛЯ ---\n$question';
+          '$ragContext\n\n--- ВОПРОС ПОЛЬЗОВАТЕЛЯ ---\n$enrichedQuestion';
     }
 
     contents.add({
@@ -118,6 +118,11 @@ class GeminiService {
               'Model $modelName failed: ${response.statusCode} - ${response.body}');
           errors.add(
               '$modelName failed: ${response.statusCode} - ${response.body}');
+          
+          // 🛡️ Circuit Breaker: Stop retrying on client errors or rate limits
+          if (response.statusCode == 429 || response.statusCode == 400) {
+            break; 
+          }
         }
       } catch (e) {
         stderr.writeln('Connection Error: $e');
@@ -203,6 +208,11 @@ class GeminiService {
           stderr.writeln(
               'Model $modelName stream failed: ${response.statusCode} - $errorBody');
           client.close();
+          
+          // 🛡️ Circuit Breaker: Stop retrying on client errors or rate limits
+          if (response.statusCode == 429 || response.statusCode == 400) {
+            break; 
+          }
         }
       } catch (e) {
         stderr.writeln('Stream Connection Error: $e');

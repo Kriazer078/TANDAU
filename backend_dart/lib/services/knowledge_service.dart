@@ -49,18 +49,38 @@ class KnowledgeService {
 
   /// Generate embeddings for all KB documents in batches
   Future<void> _computeEmbeddings() async {
-    print('🧮 Computing embeddings for ${_knowledgeBase.length} docs...');
-    final List<List<double>> allEmbeddings = [];
+    print('🧮 Checking embeddings for ${_knowledgeBase.length} docs...');
+    final List<List<double>> allEmbeddings = List.filled(_knowledgeBase.length, []);
 
-    // Process in batches of 20 (API limit)
+    // 1. Extract already computed embeddings from database
+    List<int> missingIndices = [];
+    for (int i = 0; i < _knowledgeBase.length; i++) {
+      final doc = _knowledgeBase[i];
+      if (doc['embedding'] != null && doc['embedding'] is List && (doc['embedding'] as List).isNotEmpty) {
+        allEmbeddings[i] = (doc['embedding'] as List).map((e) => (e as num).toDouble()).toList();
+      } else {
+        missingIndices.add(i);
+      }
+    }
+
+    if (missingIndices.isEmpty) {
+      _docEmbeddings = allEmbeddings;
+      print('✅ All embeddings loaded from database (${allEmbeddings.length} docs)');
+      return;
+    }
+
+    print('🧮 Computing missing embeddings for ${missingIndices.length} docs...');
+
+    // 2. Process missing ones in batches of 20 (API limit)
     const int batchSize = 20;
-    for (int i = 0; i < _knowledgeBase.length; i += batchSize) {
-      final batch = _knowledgeBase.sublist(
+    for (int i = 0; i < missingIndices.length; i += batchSize) {
+      final batchIndices = missingIndices.sublist(
         i,
-        min(i + batchSize, _knowledgeBase.length),
+        min(i + batchSize, missingIndices.length),
       );
 
-      final List<Map<String, dynamic>> requests = batch.map((doc) {
+      final List<Map<String, dynamic>> requests = batchIndices.map((idx) {
+        final doc = _knowledgeBase[idx];
         final text = '${doc['title'] ?? ''}: ${doc['content'] ?? ''}';
         return {
           'model': 'models/gemini-embedding-001',
@@ -83,36 +103,37 @@ class KnowledgeService {
         if (response.statusCode == 200) {
           final json = jsonDecode(response.body);
           final embeddings = json['embeddings'] as List<dynamic>;
-          for (final emb in embeddings) {
+          for (int j = 0; j < embeddings.length; j++) {
+            final emb = embeddings[j];
             final values = (emb['values'] as List<dynamic>)
                 .map((v) => (v as num).toDouble())
                 .toList();
-            allEmbeddings.add(values);
+            
+            final idx = batchIndices[j];
+            allEmbeddings[idx] = values;
+            
+            // 💾 Asynchronously save to Firestore to persist it
+            final docId = _knowledgeBase[idx]['id'];
+            if (docId != null) {
+              _firebaseService.updateKnowledgeDocEmbedding(docId.toString(), values);
+            }
           }
         } else {
           print('⚠️ Embedding batch failed: ${response.statusCode}');
-          print('   Body: ${response.body}');
-          // Fill with empty embeddings for this batch
-          for (int j = 0; j < batch.length; j++) {
-            allEmbeddings.add([]);
-          }
         }
       } catch (e) {
         print('⚠️ Embedding batch error: $e');
-        for (int j = 0; j < batch.length; j++) {
-          allEmbeddings.add([]);
-        }
       }
 
       // Small delay to avoid rate limiting
-      if (i + batchSize < _knowledgeBase.length) {
+      if (i + batchSize < missingIndices.length) {
         await Future.delayed(const Duration(milliseconds: 200));
       }
     }
 
     _docEmbeddings = allEmbeddings;
     final validCount = allEmbeddings.where((e) => e.isNotEmpty).length;
-    print('✅ Embeddings computed: $validCount/${_knowledgeBase.length} docs');
+    print('✅ Embeddings loaded/computed: $validCount/${_knowledgeBase.length} docs');
   }
 
   /// Embed a user query for retrieval

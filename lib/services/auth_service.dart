@@ -47,10 +47,15 @@ class AuthService {
     // ⚡ Cancel previous listener to prevent double-subscription
     await _authSubscription?.cancel();
 
-    // ⚡ Синхронная проверка кешированного пользователя сразу после инициализации Firebase.
-    // Если authStateChanges запаздывает (или выдает null первым событием),
-    // SplashScreen не увидит isLoggedIn = false и не пустит на RegisterScreen.
-    final initialUser = _auth.currentUser;
+    // ⚡ Ожидаем окончания инициализации состояния аутентификации от Firebase
+    // Используем authStateChanges().first вместо синхронного _auth.currentUser,
+    // так как токен считывается с диска асинхронно (состояние может быть null в первые мс).
+    User? initialUser;
+    try {
+      initialUser = await _auth.authStateChanges().first.timeout(const Duration(seconds: 2));
+    } catch (_) {
+      initialUser = _auth.currentUser;
+    }
     if (initialUser != null) {
       debugPrint('🟢 AUTH INIT: Обнаружен кэшированный пользователь (${initialUser.uid})');
       if (initialUser.isAnonymous) {

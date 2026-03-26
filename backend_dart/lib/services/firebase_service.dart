@@ -309,6 +309,9 @@ class FirebaseService {
           if (v.integerValue != null) return int.tryParse(v.integerValue!) ?? 0;
           if (v.doubleValue != null) return v.doubleValue;
           if (v.booleanValue != null) return v.booleanValue;
+          if (v.arrayValue != null) {
+            return v.arrayValue!.values?.map((e) => extractValue(e)).toList() ?? [];
+          }
           return null;
         }
 
@@ -321,6 +324,29 @@ class FirebaseService {
     } catch (e) {
       stderr.writeln('Error fetching knowledge base: $e');
       return [];
+    }
+  }
+
+  /// Update knowledge document with pre-computed embedding
+  Future<bool> updateKnowledgeDocEmbedding(String docId, List<double> embedding) async {
+    final name = 'projects/$_projectId/databases/(default)/documents/knowledge_base/$docId';
+    try {
+      final fields = <String, Value>{
+        'embedding': Value(
+          arrayValue: ArrayValue(
+            values: embedding.map((e) => Value(doubleValue: e)).toList(),
+          ),
+        ),
+      };
+
+      final document = Document(name: name, fields: fields);
+      await _firestoreApi.projects.databases.documents.patch(
+        document, name, updateMask_fieldPaths: ['embedding']
+      );
+      return true;
+    } catch (e) {
+      stderr.writeln('Error updating embedding for $docId: $e');
+      return false;
     }
   }
 }

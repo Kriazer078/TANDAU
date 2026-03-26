@@ -178,28 +178,73 @@ class UniversityController {
       // 🧑‍🎓 Inject User Context (RAG)
       if (userDoc != null) {
         enrichedContext += '\n\n### ПРОФИЛЬ АБИТУРИЕНТА:\n';
-        if (userDoc['score'] != null) {
-          enrichedContext += '- Балл ЕНТ: ${userDoc['score']}\n';
+        
+        final name = userDoc['name'];
+        if (name != null) enrichedContext += '- Имя: $name\n';
+        
+        final untScore = userDoc['untScore'] ?? userDoc['score'];
+        if (untScore != null) enrichedContext += '- Балл ЕНТ: $untScore\n';
+        
+        final ielts = userDoc['ieltsScore'];
+        if (ielts != null) enrichedContext += '- IELTS: $ielts\n';
+        
+        final gpa = userDoc['gpa'];
+        if (gpa != null) enrichedContext += '- GPA: $gpa\n';
+        
+        final mathScore = userDoc['mathScore'];
+        if (mathScore != null) enrichedContext += '- Математика/проф. предмет: $mathScore\n';
+
+        final city = userDoc['city'];
+        if (city != null && city.toString().isNotEmpty) {
+          enrichedContext += '- Текущий город: $city\n';
         }
-        if (userDoc['city'] != null) {
-          enrichedContext += '- Город: ${userDoc['city']}\n';
+        
+        final preferredCities = userDoc['preferredCities'];
+        if (preferredCities is List && preferredCities.isNotEmpty) {
+          enrichedContext += '- Желаемые города обучения: ${preferredCities.join(', ')}\n';
         }
-        if (userDoc['subjects'] != null) {
-          final subj = userDoc['subjects'];
-          if (subj is List) {
-            enrichedContext += '- Профильные предметы: ${subj.join(', ')}\n';
-          } else {
-            enrichedContext += '- Профильные предметы: $subj\n';
+        
+        final majors = userDoc['preferredMajors'] ?? userDoc['subjects'];
+        if (majors != null) {
+          if (majors is List && majors.isNotEmpty) {
+            enrichedContext += '- Желаемые специальности/направления: ${majors.join(', ')}\n';
+          } else if (majors is String && majors.isNotEmpty) {
+            enrichedContext += '- Желаемые специальности/направления: $majors\n';
           }
         }
-        if (userDoc['achievements'] != null) {
-          final ach = userDoc['achievements'];
-          if (ach is List) {
-            enrichedContext += '- Достижения: ${ach.join(', ')}\n';
-          } else {
-            enrichedContext += '- Достижения: $ach\n';
+        
+        final budget = userDoc['budget'];
+        if (budget != null) enrichedContext += '- Бюджет на обучение: $budget тг\n';
+        
+        final financial = userDoc['financialSituation'];
+        if (financial != null && financial.toString().isNotEmpty) {
+          enrichedContext += '- Финансовая ситуация: $financial\n';
+        }
+        
+        final targetProfession = userDoc['targetProfession'];
+        if (targetProfession != null && targetProfession.toString().isNotEmpty) {
+          enrichedContext += '- Целевая профессия: $targetProfession\n';
+        }
+        
+        final achievements = userDoc['achievements'];
+        if (achievements != null) {
+          if (achievements is List && achievements.isNotEmpty) {
+            enrichedContext += '- Достижения: ${achievements.join(', ')}\n';
+          } else if (achievements is String && achievements.isNotEmpty) {
+            enrichedContext += '- Достижения: $achievements\n';
           }
         }
+        
+        final extra = userDoc['extracurriculars'];
+        if (extra is List && extra.isNotEmpty) {
+          enrichedContext += '- Кружки и активность: ${extra.join(', ')}\n';
+        }
+
+        List<String> quotas = [];
+        if (userDoc['isRural'] == true) quotas.add('Сельская квота');
+        if (userDoc['isOrphan'] == true) quotas.add('Сирота/СУСН квота');
+        if (userDoc['hasDisability'] == true) quotas.add('Квота по инвалидности');
+        if (quotas.isNotEmpty) enrichedContext += '- Квоты: ${quotas.join(', ')}\n';
       }
 
       try {

@@ -90,7 +90,17 @@ class IntentDetector {
   // ═══════════════════════════════════════════════════════════════
 
   static bool _matchesAny(String query, List<String> keywords) {
-    return keywords.any((kw) => query.contains(kw));
+    for (final kw in keywords) {
+      if (kw.contains(' ')) {
+        // Multi-word phrases: simple contains
+        if (query.contains(kw)) return true;
+      } else {
+        // Single root: ensure it does not appear in the middle of another word
+        final regex = RegExp(r"(^|[\s.,!?;:\(\)\[\]'-])" '${RegExp.escape(kw)}');
+        if (regex.hasMatch(query)) return true;
+      }
+    }
+    return false;
   }
 
   static const List<String> _greetings = [
