@@ -12,11 +12,17 @@ import '../services/university_service.dart';
 import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
 import '../widgets/ai_logo_icon.dart';
+import '../data/ent_specialties_2026.dart';
 
 class GrantPredictionResultsScreen extends ConsumerWidget {
   final int entScore;
+  final EntSpecialty? specialty;
 
-  const GrantPredictionResultsScreen({super.key, required this.entScore});
+  const GrantPredictionResultsScreen({
+    super.key,
+    required this.entScore,
+    this.specialty,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,21 +84,40 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                   // 1. Кешируем результаты вычислений
                   final Map<String, int> chanceCache = {};
                   for (final uni in sortedUniversities) {
-                    final cat = uni.majors.isNotEmpty
-                        ? chanceService.detectCategory(uni.majors.first)
-                        : MajorCategory.other;
-                    final chance = chanceService.calculate(
-                      entScore: entScore,
-                      universityId: uni.id,
-                      universityPassingScore: uni.passingScore,
-                      majorCategory: cat,
-                      gpa: user?.gpa,
-                      ieltsScore: user?.ieltsScore,
-                      achievements: user?.achievements ?? [],
-                      userCity: user?.city,
-                      universityCity: uni.city,
-                    );
-                    chanceCache[uni.id] = chance.chancePercent;
+                    if (specialty != null) {
+                      // 🎯 Новый расчёт по ГОП
+                      final chance = chanceService.calculateBySpecialty(
+                        entScore: entScore,
+                        minPassingScore: specialty!.predictedMin2026,
+                        grantQuota: specialty!.grantQuota2025,
+                        trendName: specialty!.trend.name,
+                        universityId: uni.id,
+                        gpa: user?.gpa,
+                        ieltsScore: user?.ieltsScore,
+                        achievements: user?.achievements ?? [],
+                        hasDisability: user?.hasDisability ?? false,
+                        isOrphan: user?.isOrphan ?? false,
+                        isRural: user?.isRural ?? false,
+                      );
+                      chanceCache[uni.id] = chance.chancePercent;
+                    } else {
+                      // Старый расчёт
+                      final cat = uni.majors.isNotEmpty
+                          ? chanceService.detectCategory(uni.majors.first)
+                          : MajorCategory.other;
+                      final chance = chanceService.calculate(
+                        entScore: entScore,
+                        universityId: uni.id,
+                        universityPassingScore: uni.passingScore,
+                        majorCategory: cat,
+                        gpa: user?.gpa,
+                        ieltsScore: user?.ieltsScore,
+                        achievements: user?.achievements ?? [],
+                        userCity: user?.city,
+                        universityCity: uni.city,
+                      );
+                      chanceCache[uni.id] = chance.chancePercent;
+                    }
                   }
 
                   // 2. Сортируем используя кэш
@@ -107,20 +132,37 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final uni = sortedUniversities[index];
-                        final cat = uni.majors.isNotEmpty
-                            ? chanceService.detectCategory(uni.majors.first)
-                            : MajorCategory.other;
-                        final chanceResult = chanceService.calculate(
-                          entScore: entScore,
-                          universityId: uni.id,
-                          universityPassingScore: uni.passingScore,
-                          majorCategory: cat,
-                          gpa: user?.gpa,
-                          ieltsScore: user?.ieltsScore,
-                          achievements: user?.achievements ?? [],
-                          userCity: user?.city,
-                          universityCity: uni.city,
-                        );
+                        final GrantChanceResult chanceResult;
+                        if (specialty != null) {
+                          chanceResult = chanceService.calculateBySpecialty(
+                            entScore: entScore,
+                            minPassingScore: specialty!.predictedMin2026,
+                            grantQuota: specialty!.grantQuota2025,
+                            trendName: specialty!.trend.name,
+                            universityId: uni.id,
+                            gpa: user?.gpa,
+                            ieltsScore: user?.ieltsScore,
+                            achievements: user?.achievements ?? [],
+                            hasDisability: user?.hasDisability ?? false,
+                            isOrphan: user?.isOrphan ?? false,
+                            isRural: user?.isRural ?? false,
+                          );
+                        } else {
+                          final cat = uni.majors.isNotEmpty
+                              ? chanceService.detectCategory(uni.majors.first)
+                              : MajorCategory.other;
+                          chanceResult = chanceService.calculate(
+                            entScore: entScore,
+                            universityId: uni.id,
+                            universityPassingScore: uni.passingScore,
+                            majorCategory: cat,
+                            gpa: user?.gpa,
+                            ieltsScore: user?.ieltsScore,
+                            achievements: user?.achievements ?? [],
+                            userCity: user?.city,
+                            universityCity: uni.city,
+                          );
+                        }
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),

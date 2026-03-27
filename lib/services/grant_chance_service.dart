@@ -501,6 +501,183 @@ class GrantChanceService {
     }
     return false;
   }
+
+  // ═══════════════════════════════════════════
+  //  РАСЧЁТ ПО СПЕЦИАЛЬНОСТИ (ГОП)
+  // ═══════════════════════════════════════════
+
+  /// Рассчитать шанс на грант по конкретной специальности (ГОП).
+  /// Использует реальные проходные баллы и квоты МОН РК 2025.
+  GrantChanceResult calculateBySpecialty({
+    required int entScore,
+    required int minPassingScore, // Проходной балл по ГОП
+    required int grantQuota,      // Кол-во грантов по ГОП
+    required String trendName,    // 'rising' | 'stable' | 'falling'
+    String universityId = '',
+    double? gpa,
+    double? ieltsScore,
+    List<String> achievements = const [],
+    bool hasDisability = false,
+    bool isOrphan = false,
+    bool isRural = false,
+  }) {
+    final List<String> details = [];
+    final List<String> recommendations = [];
+
+    // 1. Проверка порога
+    final bool isNational = nationalUniversities.contains(universityId);
+    final int threshold = isNational
+        ? (thresholdNationalUni > 50 ? thresholdNationalUni : 50)
+        : thresholdRegularUni;
+
+    if (entScore < threshold) {
+      details.add(
+        '⛔ Балл ЕНТ ($entScore) ниже минимального порога ($threshold)',
+      );
+      return GrantChanceResult(
+        chancePercent: 0,
+        riskLevel: RiskLevel.critical,
+        verdict: 'Балл ЕНТ ниже порога. Грант невозможен.',
+        details: details,
+        recommendations: [
+          'Поднимите балл ЕНТ минимум до $threshold',
+        ],
+        entThreshold: threshold,
+        dataYear: '2025/2026',
+      );
+    }
+
+    // 2. Базовый шанс — насколько балл выше проходного
+    double baseChance;
+    final int scoreDiff = entScore - minPassingScore;
+
+    if (scoreDiff >= 15) {
+      baseChance = 85;
+      details.add(
+        '✅ Балл ($entScore) на $scoreDiff+ выше проходного ($minPassingScore)',
+      );
+    } else if (scoreDiff >= 8) {
+      baseChance = 68;
+      details.add(
+        '✅ Балл ($entScore) на $scoreDiff выше проходного ($minPassingScore)',
+      );
+    } else if (scoreDiff >= 3) {
+      baseChance = 50;
+      details.add(
+        '⚠️ Балл ($entScore) чуть выше проходного ($minPassingScore)',
+      );
+    } else if (scoreDiff >= 0) {
+      baseChance = 35;
+      details.add(
+        '⚠️ Балл ($entScore) на грани проходного ($minPassingScore)',
+      );
+      recommendations.add(
+        'Постарайтесь набрать на 5-10 баллов больше для уверенности',
+      );
+    } else {
+      // Below passing
+      baseChance = 12;
+      details.add(
+        '⛔ Балл ($entScore) ниже проходного ($minPassingScore) на ${-scoreDiff}',
+      );
+      recommendations.add(
+        'Необходимо поднять балл минимум до $minPassingScore',
+      );
+    }
+
+    // 3. Коррекция по тренду
+    if (trendName == 'rising') {
+      baseChance -= 5;
+      details.add('📈 Конкурс растёт — шанс чуть ниже');
+    } else if (trendName == 'falling') {
+      baseChance += 5;
+      details.add('📉 Конкурс падает — шанс чуть выше');
+    }
+
+    // 4. Коррекция по квоте грантов
+    if (grantQuota > 5000) {
+      baseChance += 5;
+      details.add(
+        '🎓 Большая квота грантов ($grantQuota мест) — шанс выше',
+      );
+    } else if (grantQuota < 1000) {
+      baseChance -= 5;
+      details.add(
+        '🎓 Маленькая квота грантов ($grantQuota мест) — высокая конкуренция',
+      );
+    }
+
+    // 5. Бонусы за дополнительные показатели
+    double bonus = 0;
+
+    if (gpa != null && gpa >= 3.5) {
+      bonus += 3;
+      details.add('📊 GPA $gpa — бонус +3%');
+    }
+
+    if (ieltsScore != null && ieltsScore >= 6.0) {
+      bonus += 4;
+      details.add('🌍 IELTS $ieltsScore — бонус +4%');
+    }
+
+    if (achievements.isNotEmpty) {
+      final int achievementBonus = (achievements.length * 2).clamp(0, 6);
+      bonus += achievementBonus;
+      details.add(
+        '🏆 ${achievements.length} достижений — бонус +$achievementBonus%',
+      );
+    }
+
+    // 6. Квоты (СУСН, сельская, инвалидность)
+    if (hasDisability) {
+      bonus += 12;
+      details.add('♿ Квота для лиц с инвалидностью — бонус +12%');
+    }
+    if (isOrphan) {
+      bonus += 10;
+      details.add('👤 Квота СУСН (сироты) — бонус +10%');
+    }
+    if (isRural) {
+      bonus += 8;
+      details.add('🏡 Сельская квота — бонус +8%');
+    }
+
+    // 7. Итого
+    final double totalChance = (baseChance + bonus).clamp(0, 98);
+    final int chancePercent = totalChance.round();
+
+    // 8. Вердикт
+    final RiskLevel riskLevel;
+    final String verdict;
+
+    if (chancePercent >= 75) {
+      riskLevel = RiskLevel.low;
+      verdict = 'Отличные шансы на грант! Продолжайте подготовку.';
+    } else if (chancePercent >= 50) {
+      riskLevel = RiskLevel.medium;
+      verdict = 'Хорошие шансы. Подтяните слабые стороны.';
+    } else if (chancePercent >= 30) {
+      riskLevel = RiskLevel.high;
+      verdict = 'Шансы есть, но конкуренция высокая.';
+      recommendations.add('Рассмотрите менее конкурентные специальности');
+    } else {
+      riskLevel = RiskLevel.critical;
+      verdict = 'Шансы низкие. Рассмотрите альтернативы.';
+      recommendations.add(
+        'Подумайте о смежных специальностях с более низким порогом',
+      );
+    }
+
+    return GrantChanceResult(
+      chancePercent: chancePercent,
+      riskLevel: riskLevel,
+      verdict: verdict,
+      details: details,
+      recommendations: recommendations,
+      entThreshold: minPassingScore,
+      dataYear: '2025/2026',
+    );
+  }
 }
 
 // ═══════════════════════════════════════════

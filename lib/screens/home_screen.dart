@@ -1,17 +1,20 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // dart:ui removed — BackdropFilter replaced with lightweight frosted glass
 import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import '../utils/guest_guard.dart';
+import '../utils/constants.dart';
 import '../widgets/compare_picker_sheet.dart';
 import '../widgets/premium_button.dart';
 import 'filter_screen.dart';
 import '../providers/grant_predictor_provider.dart';
+import '../data/ent_specialties_2026.dart';
 import 'grant_prediction_results_screen.dart';
 import 'university_list_screen.dart';
 import '../widgets/deadline_banner.dart';
+import '../services/auth_service.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -284,8 +287,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Widget _buildScoreInput(int untScore, bool isDark, AppLocalizations? l10n) {
+    final selectedType = ref.watch(subjectTypeProvider);
+    final selectedSubject = ref.watch(selectedSubjectProvider);
+    final selectedSpecialty = ref.watch(selectedSpecialtyProvider);
+
+    // Auto-load from profile if providers are empty
+    final user = AuthService().currentUser.value;
+    if (selectedType == null && user?.subjectType != null) {
+      Future.microtask(() {
+        ref.read(subjectTypeProvider.notifier).state = user!.subjectType;
+      });
+    }
+    if (selectedSubject == null && user?.entSubject1 != null) {
+      Future.microtask(() {
+        ref.read(selectedSubjectProvider.notifier).state = user!.entSubject1;
+      });
+    }
+
     return Column(
       children: [
+        // ── ENT Score Card ──
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           decoration: BoxDecoration(
@@ -387,26 +408,312 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   },
                 ),
               ),
+
+              // ── Step 1: Direction (физмат / гуманитарий) ──
+              const SizedBox(height: 24),
+              Text(
+                l10n?.subjectTypeTitle ?? 'Направление ЕНТ',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTypeButton(
+                      label: l10n?.subjectTypePhysMath ?? 'Физ-мат 🔬',
+                      value: 'physMath',
+                      selected: selectedType == 'physMath',
+                      isDark: isDark,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTypeButton(
+                      label: l10n?.subjectTypeHumanities ??
+                          'Гуманитарий 📚',
+                      value: 'humanities',
+                      selected: selectedType == 'humanities',
+                      isDark: isDark,
+                    ),
+                  ),
+                ],
+              ),
+
+              // ── Step 2: Subject (profile subject) ──
+              if (selectedType != null) ...[
+                const SizedBox(height: 20),
+                Text(
+                  l10n?.entSubjectsTitle ?? 'Профильный предмет',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: (AppConstants.entSubjectsByType[selectedType] ??
+                          [])
+                      .map(
+                        (subject) => _buildSubjectChip(
+                          label: subject,
+                          selected: selectedSubject == subject,
+                          isDark: isDark,
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
+
+              // ── Step 3: Specialty (ГОП) ──
+              if (selectedSubject != null) ...[
+                const SizedBox(height: 20),
+                Text(
+                  l10n?.selectSpecialty ?? 'Специальность (ГОП)',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _buildSpecialtyDropdown(
+                  selectedType!,
+                  selectedSubject,
+                  selectedSpecialty,
+                  isDark,
+                ),
+              ],
             ],
           ),
         ),
         const SizedBox(height: 24),
-        PremiumButton(
-          text: l10n?.detailChances ?? 'Оценить шансы',
-          icon: Icons.insights_rounded,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    GrantPredictionResultsScreen(entScore: untScore),
-              ),
-            );
-          },
-        ),
+
+        // ── Evaluate button ──
+        if (selectedSpecialty != null)
+          PremiumButton(
+            text: l10n?.detailChances ?? 'Оценить шансы',
+            icon: Icons.insights_rounded,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GrantPredictionResultsScreen(
+                    entScore: untScore,
+                    specialty: selectedSpecialty,
+                  ),
+                ),
+              );
+            },
+          )
+        else
+          PremiumButton(
+            text: l10n?.detailChances ?? 'Оценить шансы',
+            icon: Icons.insights_rounded,
+            onPressed: () {
+              // Fallback: show results without specialty filter
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GrantPredictionResultsScreen(
+                    entScore: untScore,
+                  ),
+                ),
+              );
+            },
+          ),
       ],
     );
   }
+
+  /// Direction toggle button
+  Widget _buildTypeButton({
+    required String label,
+    required String value,
+    required bool selected,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        ref.read(subjectTypeProvider.notifier).state = value;
+        // Reset downstream selections
+        ref.read(selectedSubjectProvider.notifier).state = null;
+        ref.read(selectedSpecialtyProvider.notifier).state = null;
+        // Sync to profile in background
+        AuthService().updateProfile(subjectType: value);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.primary.withValues(alpha: 0.15)
+              : isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected
+                ? AppColors.primary
+                : isDark
+                    ? Colors.white12
+                    : Colors.grey.shade300,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+              color: selected
+                  ? AppColors.primary
+                  : isDark
+                      ? Colors.white60
+                      : Colors.black54,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Subject chip
+  Widget _buildSubjectChip({
+    required String label,
+    required bool selected,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        ref.read(selectedSubjectProvider.notifier).state = label;
+        ref.read(selectedSpecialtyProvider.notifier).state = null;
+        // Sync to profile
+        AuthService().updateProfile(entSubject1: label);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.primary.withValues(alpha: 0.15)
+              : isDark
+                  ? Colors.white.withValues(alpha: 0.06)
+                  : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected
+                ? AppColors.primary
+                : isDark
+                    ? Colors.white10
+                    : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+            color: selected
+                ? AppColors.primary
+                : isDark
+                    ? Colors.white60
+                    : Colors.black54,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Specialty dropdown filtered by type + subject
+  Widget _buildSpecialtyDropdown(
+    String subjectType,
+    String subject,
+    EntSpecialty? currentSpecialty,
+    bool isDark,
+  ) {
+    final type =
+        subjectType == 'physMath' ? SubjectType.physMath : SubjectType.humanities;
+    final specialties = getSpecialtiesByTypeAndSubject(type, subject);
+
+    if (specialties.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          'Нет специальностей для данного предмета',
+          style: TextStyle(
+            color: isDark ? Colors.white38 : Colors.black38,
+            fontSize: 13,
+          ),
+        ),
+      );
+    }
+
+    // Determine language for titles
+    final locale = Localizations.localeOf(context).languageCode;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.grey.shade300,
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: currentSpecialty?.code,
+          hint: Text(
+            AppLocalizations.of(context)?.selectSpecialty ??
+                'Выберите специальность',
+            style: TextStyle(
+              color: isDark ? Colors.white38 : Colors.black38,
+              fontSize: 14,
+            ),
+          ),
+          isExpanded: true,
+          dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: isDark ? Colors.white38 : Colors.black38,
+          ),
+          items: specialties.map((s) {
+            return DropdownMenuItem<String>(
+              value: s.code,
+              child: Text(
+                '${s.getTitle(locale)} (${s.predictedMin2026}+)',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList(),
+          onChanged: (code) {
+            if (code == null) return;
+            final specialty =
+                specialties.firstWhere((s) => s.code == code);
+            ref.read(selectedSpecialtyProvider.notifier).state = specialty;
+            HapticFeedback.selectionClick();
+          },
+        ),
+      ),
+    );
+  }
+
 
   /// Dialog for precise ENT score entry
   void _showScoreInputDialog(int currentScore) {

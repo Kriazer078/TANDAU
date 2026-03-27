@@ -28,4 +28,26 @@ class AppConstants {
     17,
     (i) => (i + 14).toString(),
   );
+
+  // 🎯 Направления ЕНТ
+  static const List<String> subjectTypes = ['physMath', 'humanities'];
+
+  /// Профильные предметы ЕНТ по направлениям
+  static const Map<String, List<String>> entSubjectsByType = {
+    'physMath': [
+      'Математика',
+      'Физика',
+      'Химия',
+      'Биология',
+      'Информатика',
+      'География',
+    ],
+    'humanities': [
+      'Всемирная история',
+      'Человек. Общество. Право',
+      'Иностранный язык',
+      'География',
+      'Литература',
+    ],
+  };
 }

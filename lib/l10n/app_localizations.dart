@@ -3133,7 +3133,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAppVersion.
   ///
   /// In en, this message translates to:
-  /// **'App version: 1.2.3'**
+  /// **'App version: 1.2.5'**
   String get helpAppVersion;
 
   /// No description provided for @privacyTitle.
@@ -3447,6 +3447,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {version}'**
   String updateVersion(String version);
+
+  /// No description provided for @subjectTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'UNT Direction'**
+  String get subjectTypeTitle;
+
+  /// No description provided for @subjectTypePhysMath.
+  ///
+  /// In en, this message translates to:
+  /// **'PhysMath 🔬'**
+  String get subjectTypePhysMath;
+
+  /// No description provided for @subjectTypeHumanities.
+  ///
+  /// In en, this message translates to:
+  /// **'Humanities 📚'**
+  String get subjectTypeHumanities;
+
+  /// No description provided for @entSubjectsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Subject'**
+  String get entSubjectsTitle;
+
+  /// No description provided for @selectSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialty (GOP)'**
+  String get selectSpecialty;
 }
 
 class _AppLocalizationsDelegate

@@ -37,6 +37,11 @@ class UserModel {
   final List<String> extracurriculars; // кружки, проекты, олимпиады
   final double? profileStrength; // 0.0 to 1.0
 
+  // 🎯 ЕНТ направление и профильные предметы
+  final String? subjectType;  // 'physMath' | 'humanities'
+  final String? entSubject1;  // 1-й профильный предмет ЕНТ
+  final String? entSubject2;  // 2-й профильный предмет ЕНТ (опц.)
+
   UserModel({
     required this.uid,
     required this.name,
@@ -70,6 +75,10 @@ class UserModel {
     this.isRural,
     this.extracurriculars = const [],
     this.profileStrength,
+    // 🎯 ЕНТ направление
+    this.subjectType,
+    this.entSubject1,
+    this.entSubject2,
   });
 
   /// Алиас для совместимости с StudentProfile
@@ -137,6 +146,10 @@ class UserModel {
       'isRural': isRural,
       'extracurriculars': extracurriculars,
       'profileStrength': profileStrength,
+      // 🎯 ЕНТ направление
+      'subjectType': subjectType,
+      'entSubject1': entSubject1,
+      'entSubject2': entSubject2,
     };
   }
 
@@ -188,6 +201,10 @@ class UserModel {
       isRural: map['isRural'],
       extracurriculars: List<String>.from(map['extracurriculars'] ?? []),
       profileStrength: (map['profileStrength'] as num?)?.toDouble(),
+      // 🎯 ЕНТ направление
+      subjectType: map['subjectType'],
+      entSubject1: map['entSubject1'],
+      entSubject2: map['entSubject2'],
     );
   }
 
@@ -229,6 +246,10 @@ class UserModel {
     bool? isRural,
     List<String>? extracurriculars,
     double? profileStrength,
+    // 🎯 ЕНТ направление
+    String? subjectType,
+    String? entSubject1,
+    String? entSubject2,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -263,6 +284,10 @@ class UserModel {
       isRural: isRural ?? this.isRural,
       extracurriculars: extracurriculars ?? this.extracurriculars,
       profileStrength: profileStrength ?? this.profileStrength,
+      // 🎯 ЕНТ направление
+      subjectType: subjectType ?? this.subjectType,
+      entSubject1: entSubject1 ?? this.entSubject1,
+      entSubject2: entSubject2 ?? this.entSubject2,
     );
   }
 }

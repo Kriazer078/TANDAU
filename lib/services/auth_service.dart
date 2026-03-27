@@ -464,6 +464,10 @@ class AuthService {
     bool? isOrphan,
     bool? isRural,
     List<String>? extracurriculars,
+    // 🎯 ЕНТ направление
+    String? subjectType,
+    String? entSubject1,
+    String? entSubject2,
   }) async {
     try {
       final user = _auth.currentUser;
@@ -492,6 +496,10 @@ class AuthService {
         isRural: isRural ?? currentUser.value!.isRural,
         extracurriculars:
             extracurriculars ?? currentUser.value!.extracurriculars,
+        // 🎯 ЕНТ направление
+        subjectType: subjectType ?? currentUser.value!.subjectType,
+        entSubject1: entSubject1 ?? currentUser.value!.entSubject1,
+        entSubject2: entSubject2 ?? currentUser.value!.entSubject2,
       );
 
       // Moderation check is now handled exclusively in the UI (edit_profile_screen.dart)

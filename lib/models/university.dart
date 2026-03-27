@@ -28,6 +28,9 @@ class University {
   final String contactPhone; // Телефон университета
   final String email; // Email университета
 
+  // 🎯 ГОП специальности (коды из ent_specialties_2026.dart)
+  final List<String> specialtyCodes;
+
   University({
     required this.id,
     required this.name,
@@ -51,6 +54,7 @@ class University {
     this.averageRating = 0.0, // По умолчанию 0.0
     this.contactPhone = '', // По умолчанию пусто
     this.email = '', // По умолчанию пусто
+    this.specialtyCodes = const [], // По умолчанию пусто
   });
 
   // Convert University to Map for Firestore
@@ -78,6 +82,7 @@ class University {
       'averageRating': averageRating,
       'contactPhone': contactPhone,
       'email': email,
+      'specialtyCodes': specialtyCodes,
     };
   }
 
@@ -106,6 +111,7 @@ class University {
       averageRating: (map['averageRating'] ?? map['rating'] ?? 0.0).toDouble(),
       contactPhone: map['contactPhone'] ?? '',
       email: map['email'] ?? '',
+      specialtyCodes: List<String>.from(map['specialtyCodes'] ?? []),
     );
   }
 

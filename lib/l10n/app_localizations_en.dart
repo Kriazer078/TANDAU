@@ -1616,7 +1616,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Go to Profile -> Settings -> Language and choose the one you need.';
 
   @override
-  String get helpAppVersion => 'App version: 1.2.3';
+  String get helpAppVersion => 'App version: 1.2.5';
 
   @override
   String get privacyTitle => 'Privacy';
@@ -1785,4 +1785,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String updateVersion(String version) {
     return 'Version $version';
   }
+
+  @override
+  String get subjectTypeTitle => 'UNT Direction';
+
+  @override
+  String get subjectTypePhysMath => 'PhysMath 🔬';
+
+  @override
+  String get subjectTypeHumanities => 'Humanities 📚';
+
+  @override
+  String get entSubjectsTitle => 'Profile Subject';
+
+  @override
+  String get selectSpecialty => 'Specialty (GOP)';
 }

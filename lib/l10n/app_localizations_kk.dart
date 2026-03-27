@@ -1614,7 +1614,7 @@ class AppLocalizationsKk extends AppLocalizations {
       'Профиль -> Баптаулар -> Тіл бөліміне өтіп, қажеттісін таңдаңыз.';
 
   @override
-  String get helpAppVersion => 'Қосымша нұсқасы: 1.2.3';
+  String get helpAppVersion => 'Қосымша нұсқасы: 1.2.5';
 
   @override
   String get privacyTitle => 'Құпиялылық';
@@ -1785,4 +1785,19 @@ class AppLocalizationsKk extends AppLocalizations {
   String updateVersion(String version) {
     return '$version нұсқасы';
   }
+
+  @override
+  String get subjectTypeTitle => 'ҰБТ бағыты';
+
+  @override
+  String get subjectTypePhysMath => 'Физ-мат 🔬';
+
+  @override
+  String get subjectTypeHumanities => 'Гуманитарий 📚';
+
+  @override
+  String get entSubjectsTitle => 'Бейіндік пән';
+
+  @override
+  String get selectSpecialty => 'Мамандық (БББ)';
 }

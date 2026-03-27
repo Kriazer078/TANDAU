@@ -1617,7 +1617,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Перейдите в Профиль -> Настройки -> Язык и выберите нужный.';
 
   @override
-  String get helpAppVersion => 'Версия приложения: 1.2.3';
+  String get helpAppVersion => 'Версия приложения: 1.2.5';
 
   @override
   String get privacyTitle => 'Конфиденциальность';
@@ -1788,4 +1788,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String updateVersion(String version) {
     return 'Версия $version';
   }
+
+  @override
+  String get subjectTypeTitle => 'Направление ЕНТ';
+
+  @override
+  String get subjectTypePhysMath => 'Физ-мат 🔬';
+
+  @override
+  String get subjectTypeHumanities => 'Гуманитарий 📚';
+
+  @override
+  String get entSubjectsTitle => 'Профильный предмет';
+
+  @override
+  String get selectSpecialty => 'Специальность (ГОП)';
 }
