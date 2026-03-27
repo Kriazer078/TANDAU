@@ -250,6 +250,7 @@ tandau/
 ## 🗺 Roadmap
 
 - [x] Калькулятор грантов (СВД)
+- [x] Умный 3-шаговый подбор грантов (по ГОП 2025/2026)
 - [x] AI-Консультант с историей чатов
 - [x] Каталог 50+ вузов с кэшированием
 - [x] Сравнение вузов и дедлайны
@@ -267,6 +268,6 @@ tandau/
 
 **© 2026 TANDAU** · *Talent Analysis & Navigation for Dream University*
 
-**v1.1.0** · [tandau.app.help@gmail.com](mailto:tandau.app.help@gmail.com)
+**v1.2.5** · [tandau.app.help@gmail.com](mailto:tandau.app.help@gmail.com)
 
 </div>
