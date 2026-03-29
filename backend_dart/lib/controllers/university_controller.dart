@@ -123,8 +123,8 @@ class UniversityController {
             : rawHistory;
 
         history = limitedHistory.map((item) {
-          final isUser = item['isUser'] == true;
-          String text = item['text'].toString();
+          final isUser = item['role'] == 'user'; // FIX: Read 'role' from frontend
+          String text = item['text']?.toString() ?? '';
           // Truncate overly long history messages
           if (text.length > 1500) {
             text = '${text.substring(0, 1500)}...';
@@ -136,6 +136,9 @@ class UniversityController {
             ]
           };
         }).toList();
+        
+        // Remove empty or malformed histories
+        history = history.where((h) => h['parts']![0]['text'].toString().isNotEmpty).toList();
       }
 
       if (question == null || question.trim().isEmpty) {
@@ -149,11 +152,23 @@ class UniversityController {
 
       // --- 💎 AI LIMITS (shared logic) ---
       final tokenCheck = await _checkTokenLimit(uid);
-      if (tokenCheck.limitResponse != null) return tokenCheck.limitResponse!;
+      if (tokenCheck.limitResponse != null) {
+        // Token Limit returns a static JSON, we need to map it to SSE if we want
+        final bodyText = await tokenCheck.limitResponse!.readAsString();
+        final bodyJson = jsonDecode(bodyText);
+        final encodedText = jsonEncode(bodyJson['answer']);
+        final sseData = 'data: {"answer": $encodedText}\n\ndata: [DONE]\n\n';
+        return Response.ok(
+          Stream.value(sseData),
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+        );
+      }
       final bool shouldDeductToken = tokenCheck.shouldDeduct;
       final Map<String, dynamic>? userDoc = tokenCheck.userDoc;
-
-      // (Moved history processing to top of method)
 
       // 🎯 Intent Detection — classify query before calling AI
       final intentResult = IntentDetector.detect(question, language: language);
@@ -303,8 +318,6 @@ class UniversityController {
       _deductToken(uid, shouldDeductToken);
 
       // Write SSE chunks
-      // Convert stream to list of SSE bytes, appending [DONE] at the end
-      // 🛡️ BUG#7+BUG#8: Filter empty chunks + handle mid-stream errors
       final sseStream = () async* {
         try {
           await for (final text in stream) {
@@ -351,12 +364,17 @@ class UniversityController {
         success: false,
         errorMessage: e.toString(),
       );
+      
+      final errorAnswer = jsonEncode('📍 **Сервис временно недоступен.**\n\nПроизошла техническая ошибка. Мы уже уведомлены и работаем над исправлением. Пожалуйста, попробуйте позже.');
+      // Return error as valid SSE so client UI parses it
+      final sseData = 'data: {"answer": $errorAnswer}\n\ndata: [DONE]\n\n';
       return Response.ok(
-        jsonEncode({
-          'answer':
-              '📍 **Сервис временно недоступен.**\n\nПроизошла техническая ошибка. Мы уже уведомлены и работаем над исправлением. Пожалуйста, попробуйте позже.'
-        }),
-        headers: {'Content-Type': 'application/json'},
+        Stream.value(sseData),
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
       );
     }
   }
@@ -573,7 +591,20 @@ class UniversityController {
 
       // --- 💎 AI LIMITS (shared logic) ---
       final tokenCheck = await _checkTokenLimit(uid);
-      if (tokenCheck.limitResponse != null) return tokenCheck.limitResponse!;
+      if (tokenCheck.limitResponse != null) {
+        final bodyText = await tokenCheck.limitResponse!.readAsString();
+        final bodyJson = jsonDecode(bodyText);
+        final encodedText = jsonEncode(bodyJson['answer']);
+        final sseData = 'data: {"answer": $encodedText}\n\ndata: [DONE]\n\n';
+        return Response.ok(
+          Stream.value(sseData),
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+        );
+      }
       final bool shouldDeductToken = tokenCheck.shouldDeduct;
 
       // RAG context
@@ -631,12 +662,16 @@ class UniversityController {
         success: false,
         errorMessage: e.toString(),
       );
+      
+      final errorAnswer = jsonEncode('📍 **Не удалось создать Жеке Жоспар.**\n\nПроизошла ошибка. Попробуйте позже.');
+      final sseData = 'data: {"answer": $errorAnswer}\n\ndata: [DONE]\n\n';
       return Response.ok(
-        jsonEncode({
-          'answer':
-              '📍 **Не удалось создать Жеке Жоспар.**\n\nПроизошла ошибка. Попробуйте позже.'
-        }),
-        headers: {'Content-Type': 'application/json'},
+        Stream.value(sseData),
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
       );
     }
   }
