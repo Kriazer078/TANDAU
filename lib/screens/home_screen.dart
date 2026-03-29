@@ -5,16 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import '../utils/guest_guard.dart';
-import '../utils/constants.dart';
 import '../widgets/compare_picker_sheet.dart';
-import '../widgets/premium_button.dart';
 import 'filter_screen.dart';
 import '../providers/grant_predictor_provider.dart';
-import '../data/ent_specialties_2026.dart';
-import 'grant_prediction_results_screen.dart';
+import 'grant_wizard_screen.dart';
 import 'university_list_screen.dart';
 import '../widgets/deadline_banner.dart';
-import '../services/auth_service.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -76,7 +72,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
-    final untScore = ref.watch(untScoreProvider);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -106,7 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           const SizedBox(height: 16),
                           const DeadlineBanner(),
                           const SizedBox(height: 16),
-                          _buildScoreInput(untScore, isDark, l10n),
+                          _buildWizardLauncher(context, isDark, l10n),
                           const SizedBox(height: 24),
                           Text(
                             l10n?.homeTools ?? 'Инструменты',
@@ -286,527 +281,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _buildScoreInput(int untScore, bool isDark, AppLocalizations? l10n) {
-    final selectedType = ref.watch(subjectTypeProvider);
-    final selectedSubject = ref.watch(selectedSubjectProvider);
-    final selectedSpecialty = ref.watch(selectedSpecialtyProvider);
-
-    // Auto-load from profile if providers are empty
-    final user = AuthService().currentUser.value;
-    if (selectedType == null && user?.subjectType != null) {
-      Future.microtask(() {
-        ref.read(subjectTypeProvider.notifier).state = user!.subjectType;
-      });
-    }
-    if (selectedSubject == null && user?.entSubject1 != null) {
-      Future.microtask(() {
-        ref.read(selectedSubjectProvider.notifier).state = user!.entSubject1;
-      });
-    }
-
-    return Column(
-      children: [
-        // ── ENT Score Card ──
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : AppColors.border,
-              width: 1,
-            ),
-            boxShadow: isDark
-                ? null
-                : [
+  Widget _buildWizardLauncher(BuildContext context, bool isDark, AppLocalizations? l10n) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: isDark
+            ? Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1.5)
+            : Border.all(color: AppColors.border.withValues(alpha: 0.5), width: 1.5),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  shape: BoxShape.circle,
+                  boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      color: AppColors.primary.withValues(alpha: 0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l10n?.homeEntScore ?? 'Ваш балл ЕНТ:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : AppColors.textPrimary,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  // Tappable score badge for precise input
-                  GestureDetector(
-                    onTap: () => _showScoreInputDialog(untScore),
-                    child: Container(
-                      width: 70,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1E40AF).withValues(alpha: 0.4)
-                            : AppColors.primary.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        '$untScore',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: isDark
-                              ? const Color(0xFF60A5FA)
-                              : AppColors.primary,
-                        ),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n?.detailChances ?? 'Оценить шансы',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Hint to tap
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  l10n?.scoreInputTapHint ??
-                      'Нажмите на число для точного ввода',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: isDark ? Colors.white30 : Colors.black26,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: const Color(0xFF38BDF8),
-                  inactiveTrackColor: isDark ? Colors.white12 : Colors.black12,
-                  thumbColor: const Color(0xFF38BDF8),
-                  overlayColor: const Color(0xFF38BDF8).withValues(alpha: 0.2),
-                  trackHeight: 4.0,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 10,
-                  ),
-                  overlayShape: const RoundSliderOverlayShape(
-                    overlayRadius: 20,
-                  ),
-                ),
-                child: Slider(
-                  value: untScore.toDouble(),
-                  min: 0,
-                  max: 140,
-                  divisions: 140,
-                  onChanged: (value) {
-                    ref.read(untScoreProvider.notifier).state = value.round();
-                  },
-                ),
-              ),
-
-              // ── Step 1: Direction (физмат / гуманитарий) ──
-              const SizedBox(height: 24),
-              Text(
-                l10n?.subjectTypeTitle ?? 'Направление ЕНТ',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTypeButton(
-                      label: l10n?.subjectTypePhysMath ?? 'Физ-мат 🔬',
-                      value: 'physMath',
-                      selected: selectedType == 'physMath',
-                      isDark: isDark,
+                    const SizedBox(height: 4),
+                    Text(
+                      'AI-анализ параметров', // Compact description
+                      style: TextStyle(
+                        color: isDark ? Colors.white60 : AppColors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildTypeButton(
-                      label: l10n?.subjectTypeHumanities ??
-                          'Гуманитарий 📚',
-                      value: 'humanities',
-                      selected: selectedType == 'humanities',
-                      isDark: isDark,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-
-              // ── Step 2: Subject (profile subject) ──
-              if (selectedType != null) ...[
-                const SizedBox(height: 20),
-                Text(
-                  l10n?.entSubjectsTitle ?? 'Профильный предмет',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: (AppConstants.entSubjectsByType[selectedType] ??
-                          [])
-                      .map(
-                        (subject) => _buildSubjectChip(
-                          label: subject,
-                          selected: selectedSubject == subject,
-                          isDark: isDark,
-                        ),
-                      )
-                      .toList(),
-                ),
-              ],
-
-              // ── Step 3: Specialty (ГОП) ──
-              if (selectedSubject != null) ...[
-                const SizedBox(height: 20),
-                Text(
-                  l10n?.selectSpecialty ?? 'Специальность (ГОП)',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _buildSpecialtyDropdown(
-                  selectedType!,
-                  selectedSubject,
-                  selectedSpecialty,
-                  isDark,
-                ),
-              ],
             ],
           ),
-        ),
-        const SizedBox(height: 24),
-
-        // ── Evaluate button ──
-        if (selectedSpecialty != null)
-          PremiumButton(
-            text: l10n?.detailChances ?? 'Оценить шансы',
-            icon: Icons.insights_rounded,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GrantPredictionResultsScreen(
-                    entScore: untScore,
-                    specialty: selectedSpecialty,
-                  ),
+          const SizedBox(height: 24),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GrantWizardScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
-              );
-            },
-          )
-        else
-          PremiumButton(
-            text: l10n?.detailChances ?? 'Оценить шансы',
-            icon: Icons.insights_rounded,
-            onPressed: () {
-              // Fallback: show results without specialty filter
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GrantPredictionResultsScreen(
-                    entScore: untScore,
-                  ),
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'Начать расчет',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-      ],
-    );
-  }
-
-  /// Direction toggle button
-  Widget _buildTypeButton({
-    required String label,
-    required String value,
-    required bool selected,
-    required bool isDark,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        ref.read(subjectTypeProvider.notifier).state = value;
-        // Reset downstream selections
-        ref.read(selectedSubjectProvider.notifier).state = null;
-        ref.read(selectedSpecialtyProvider.notifier).state = null;
-        // Sync to profile in background
-        AuthService().updateProfile(subjectType: value);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColors.primary.withValues(alpha: 0.15)
-              : isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected
-                ? AppColors.primary
-                : isDark
-                    ? Colors.white12
-                    : Colors.grey.shade300,
-            width: selected ? 2 : 1,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-              color: selected
-                  ? AppColors.primary
-                  : isDark
-                      ? Colors.white60
-                      : Colors.black54,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Subject chip
-  Widget _buildSubjectChip({
-    required String label,
-    required bool selected,
-    required bool isDark,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        ref.read(selectedSubjectProvider.notifier).state = label;
-        ref.read(selectedSpecialtyProvider.notifier).state = null;
-        // Sync to profile
-        AuthService().updateProfile(entSubject1: label);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColors.primary.withValues(alpha: 0.15)
-              : isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected
-                ? AppColors.primary
-                : isDark
-                    ? Colors.white10
-                    : Colors.grey.shade300,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-            color: selected
-                ? AppColors.primary
-                : isDark
-                    ? Colors.white60
-                    : Colors.black54,
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Specialty dropdown filtered by type + subject
-  Widget _buildSpecialtyDropdown(
-    String subjectType,
-    String subject,
-    EntSpecialty? currentSpecialty,
-    bool isDark,
-  ) {
-    final type =
-        subjectType == 'physMath' ? SubjectType.physMath : SubjectType.humanities;
-    final specialties = getSpecialtiesByTypeAndSubject(type, subject);
-
-    if (specialties.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Text(
-          'Нет специальностей для данного предмета',
-          style: TextStyle(
-            color: isDark ? Colors.white38 : Colors.black38,
-            fontSize: 13,
-          ),
-        ),
-      );
-    }
-
-    // Determine language for titles
-    final locale = Localizations.localeOf(context).languageCode;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.06)
-            : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade300,
-        ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: currentSpecialty?.code,
-          hint: Text(
-            AppLocalizations.of(context)?.selectSpecialty ??
-                'Выберите специальность',
-            style: TextStyle(
-              color: isDark ? Colors.white38 : Colors.black38,
-              fontSize: 14,
-            ),
-          ),
-          isExpanded: true,
-          dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: isDark ? Colors.white38 : Colors.black38,
-          ),
-          items: specialties.map((s) {
-            return DropdownMenuItem<String>(
-              value: s.code,
-              child: Text(
-                '${s.getTitle(locale)} (${s.predictedMin2026}+)',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            );
-          }).toList(),
-          onChanged: (code) {
-            if (code == null) return;
-            final specialty =
-                specialties.firstWhere((s) => s.code == code);
-            ref.read(selectedSpecialtyProvider.notifier).state = specialty;
-            HapticFeedback.selectionClick();
-          },
-        ),
-      ),
-    );
-  }
-
-
-  /// Dialog for precise ENT score entry
-  void _showScoreInputDialog(int currentScore) {
-    final controller = TextEditingController(text: '$currentScore');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          AppLocalizations.of(context)?.scoreInputTitle ?? 'Введите балл ЕНТ',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : AppColors.textPrimary,
-          ),
-        ),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(3),
-          ],
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)?.scoreInputHint ?? '0 – 140',
-            hintStyle: TextStyle(
-              color: isDark ? Colors.white38 : Colors.black26,
-            ),
-            filled: true,
-            fillColor: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : Colors.grey.shade100,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-          ),
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : AppColors.textPrimary,
-          ),
-          textAlign: TextAlign.center,
-          onSubmitted: (value) {
-            _applyScoreFromText(value, ctx);
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)?.commonCancel ?? 'Отмена',
-              style: TextStyle(color: isDark ? Colors.white54 : Colors.grey),
-            ),
-          ),
-          FilledButton(
-            onPressed: () => _applyScoreFromText(controller.text, ctx),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(AppLocalizations.of(context)?.commonDone ?? 'Готово'),
           ),
         ],
       ),
     );
-  }
-
-  void _applyScoreFromText(String text, BuildContext dialogCtx) {
-    final parsed = int.tryParse(text.trim());
-    if (parsed != null && parsed >= 0 && parsed <= 140) {
-      ref.read(untScoreProvider.notifier).state = parsed;
-      Navigator.pop(dialogCtx);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)?.scoreInputError ??
-                'Введите число от 0 до 140',
-          ),
-          backgroundColor: Colors.red.shade400,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
-    }
   }
 
   Widget _buildActionCard(

@@ -32,6 +32,76 @@ class UniversityController {
     _aiLogger = logger;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  💎 SHARED TOKEN LIMIT LOGIC (single source of truth)
+  // ═══════════════════════════════════════════════════════════════
+
+  /// Check AI token limits for a user. Returns:
+  /// - `null` if the user has tokens (or uid is null) → proceed with AI call
+  /// - `Response` if tokens are exhausted → return this response immediately
+  ///
+  /// Also sets [shouldDeduct] to true when a token should be deducted after
+  /// the AI call completes successfully.
+  Future<({Response? limitResponse, bool shouldDeduct, Map<String, dynamic>? userDoc})>
+      _checkTokenLimit(String? uid) async {
+    if (uid == null) {
+      return (limitResponse: null, shouldDeduct: false, userDoc: null);
+    }
+
+    final userDoc = await _firebaseService.getUserDocument(uid);
+    if (userDoc == null) {
+      return (limitResponse: null, shouldDeduct: false, userDoc: null);
+    }
+
+    final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
+    int tokens = userDoc['aiTokensRemaining'] as int? ?? 1000;
+    final lastResetStr = userDoc['lastTokenResetDate'] as String?;
+
+    // Check if we need to reset tokens (different day)
+    DateTime now = DateTime.now().toUtc();
+    DateTime? lastResetDate;
+    if (lastResetStr != null) {
+      lastResetDate = DateTime.tryParse(lastResetStr);
+    }
+
+    bool isNewDay = true;
+    if (lastResetDate != null) {
+      isNewDay = now.day != lastResetDate.day ||
+          now.month != lastResetDate.month ||
+          now.year != lastResetDate.year;
+    }
+
+    if (isNewDay) {
+      tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 1000 : 9999);
+      await _firebaseService.updateUserFields(
+          uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
+    }
+
+    if (plan == 'free' && tokens <= 0) {
+      final response = Response.ok(
+        jsonEncode({
+          'answer':
+              '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные ИИ-запросы на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить больше возможностей 🚀',
+          'message': 'No free tokens left.',
+          'description': '💎 **Лимит запросов исчерпан.**',
+          'outOfTokens': true,
+          'success': false,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+      return (limitResponse: response, shouldDeduct: false, userDoc: userDoc);
+    }
+
+    final shouldDeduct = plan != 'premium';
+    return (limitResponse: null, shouldDeduct: shouldDeduct, userDoc: userDoc);
+  }
+
+  /// Deduct one AI token (fire-and-forget, uses atomic decrement)
+  Future<void> _deductToken(String? uid, bool shouldDeduct) async {
+    if (!shouldDeduct || uid == null) return;
+    await _firebaseService.decrementUserTokens(uid, 1);
+  }
+
   Future<Response> _chat(Request request) async {
     final chatStopwatch = Stopwatch()..start();
     try {
@@ -77,58 +147,11 @@ class UniversityController {
         return Response.badRequest(body: 'Question too long (max 5000 chars)');
       }
 
-      // --- 💎 AI LIMITS LOGIC START ---
-      bool shouldDeductToken = false;
-      Map<String, dynamic>? userDoc;
-      if (uid != null) {
-        userDoc = await _firebaseService.getUserDocument(uid);
-        if (userDoc != null) {
-          final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
-          int tokens =
-              userDoc['aiTokensRemaining'] as int? ?? 1000; // default 1000
-          final lastResetStr = userDoc['lastTokenResetDate'] as String?;
-
-          DateTime now = DateTime.now().toUtc();
-          DateTime? lastResetDate;
-          if (lastResetStr != null) {
-            lastResetDate = DateTime.tryParse(lastResetStr);
-          }
-
-          // Check if we need to reset tokens (different day)
-          bool isNewDay = true;
-          if (lastResetDate != null) {
-            isNewDay = now.day != lastResetDate.day ||
-                now.month != lastResetDate.month ||
-                now.year != lastResetDate.year;
-          }
-
-          if (isNewDay) {
-            // Reset logic based on plan
-            tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 1000 : 9999);
-            // Update immediately to prevent race conditions (simple approach)
-            await _firebaseService.updateUserFields(
-                uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
-          }
-
-          if (plan == 'free' && tokens <= 0) {
-            return Response.ok(
-              jsonEncode({
-                'answer':
-                    '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные ИИ-запросы на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить больше возможностей и открыть генератор стратегии НЦТ 🚀',
-                'message': 'No free tokens left.',
-                'description': '💎 **Лимит запросов исчерпан.**',
-                'outOfTokens': true
-              }),
-              headers: {'Content-Type': 'application/json'},
-            );
-          }
-
-          if (plan != 'premium') {
-            shouldDeductToken = true;
-          }
-        }
-      }
-      // --- 💎 AI LIMITS LOGIC END ---
+      // --- 💎 AI LIMITS (shared logic) ---
+      final tokenCheck = await _checkTokenLimit(uid);
+      if (tokenCheck.limitResponse != null) return tokenCheck.limitResponse!;
+      final bool shouldDeductToken = tokenCheck.shouldDeduct;
+      final Map<String, dynamic>? userDoc = tokenCheck.userDoc;
 
       // (Moved history processing to top of method)
 
@@ -277,12 +300,7 @@ class UniversityController {
       );
 
       // Deduct token if successful and not premium
-      if (shouldDeductToken && uid != null && userDoc != null) {
-        int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
-        if (currentTokens > 0) {
-          await _firebaseService.decrementUserTokens(uid, 1);
-        }
-      }
+      _deductToken(uid, shouldDeductToken);
 
       // Write SSE chunks
       // Convert stream to list of SSE bytes, appending [DONE] at the end
@@ -430,57 +448,10 @@ class UniversityController {
         return Response.badRequest(body: 'Missing university_id');
       }
 
-      // --- 💎 AI LIMITS LOGIC START ---
-      bool shouldDeductToken = false;
-      if (uid != null) {
-        final userDoc = await _firebaseService.getUserDocument(uid);
-        if (userDoc != null) {
-          final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
-          int tokens =
-              userDoc['aiTokensRemaining'] as int? ?? 1000; // default 1000
-          final lastResetStr = userDoc['lastTokenResetDate'] as String?;
-
-          DateTime now = DateTime.now().toUtc();
-          DateTime? lastResetDate;
-          if (lastResetStr != null) {
-            lastResetDate = DateTime.tryParse(lastResetStr);
-          }
-
-          // Check if we need to reset tokens (different day)
-          bool isNewDay = true;
-          if (lastResetDate != null) {
-            isNewDay = now.day != lastResetDate.day ||
-                now.month != lastResetDate.month ||
-                now.year != lastResetDate.year;
-          }
-
-          if (isNewDay) {
-            // Reset logic based on plan
-            tokens = plan == 'free' ? 1000 : (plan == 'pro' ? 1000 : 9999);
-            // Update immediately to prevent race conditions
-            await _firebaseService.updateUserFields(
-                uid, {'aiTokensRemaining': tokens, 'lastTokenResetDate': now});
-          }
-
-          if (plan == 'free' && tokens <= 0) {
-            return Response.ok(
-              jsonEncode({
-                'success': false,
-                'outOfTokens': true,
-                'message': 'No free tokens left.',
-                'description': '💎 **Лимит запросов исчерпан.**\n\nВы использовали все бесплатные ИИ-запросы на сегодня. Обновите подписку до **TANDAU PRO**, чтобы получить больше возможностей 🚀',
-                'answer': '💎 **Лимит запросов исчерпан.**'
-              }),
-              headers: {'Content-Type': 'application/json'},
-            );
-          }
-
-          if (plan != 'premium') {
-            shouldDeductToken = true;
-          }
-        }
-      }
-      // --- 💎 AI LIMITS LOGIC END ---
+      // --- 💎 AI LIMITS (shared logic) ---
+      final tokenCheck = await _checkTokenLimit(uid);
+      if (tokenCheck.limitResponse != null) return tokenCheck.limitResponse!;
+      final bool shouldDeductToken = tokenCheck.shouldDeduct;
 
       // Fetch university name
       final universities = await _firebaseService.getUniversities();
@@ -526,16 +497,7 @@ class UniversityController {
       );
 
       // Deduct token if successful and not premium
-      if (shouldDeductToken && uid != null) {
-        final userDoc = await _firebaseService.getUserDocument(uid);
-        if (userDoc != null) {
-          int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
-          if (currentTokens > 0) {
-            await _firebaseService.updateUserFields(
-                uid, {'aiTokensRemaining': currentTokens - 1});
-          }
-        }
-      }
+      _deductToken(uid, shouldDeductToken);
 
       stratStopwatch.stop();
       _aiLogger?.logInteraction(
@@ -609,27 +571,10 @@ class UniversityController {
 
       final userProfile = profileBuffer.toString();
 
-      // --- Token check (same as _chat) ---
-      bool shouldDeductToken = false;
-      if (uid != null) {
-        final userDoc = await _firebaseService.getUserDocument(uid);
-        if (userDoc != null) {
-          final plan = userDoc['subscriptionPlan'] as String? ?? 'free';
-          int tokens = userDoc['aiTokensRemaining'] as int? ?? 1000;
-
-          if (plan == 'free' && tokens <= 0) {
-            return Response.ok(
-              jsonEncode({
-                'answer':
-                    '💎 **Лимит запросов исчерпан.**\n\nОбновите подписку до **TANDAU PRO** для генерации Жеке Жоспар 🚀',
-                'outOfTokens': true
-              }),
-              headers: {'Content-Type': 'application/json'},
-            );
-          }
-          if (plan != 'premium') shouldDeductToken = true;
-        }
-      }
+      // --- 💎 AI LIMITS (shared logic) ---
+      final tokenCheck = await _checkTokenLimit(uid);
+      if (tokenCheck.limitResponse != null) return tokenCheck.limitResponse!;
+      final bool shouldDeductToken = tokenCheck.shouldDeduct;
 
       // RAG context
       final ragContext = await _knowledgeService.searchAndFormatAsync(
@@ -641,16 +586,7 @@ class UniversityController {
       );
 
       // Deduct token
-      if (shouldDeductToken && uid != null) {
-        final userDoc = await _firebaseService.getUserDocument(uid);
-        if (userDoc != null) {
-          int currentTokens = userDoc['aiTokensRemaining'] as int? ?? 0;
-          if (currentTokens > 0) {
-            await _firebaseService.updateUserFields(
-                uid, {'aiTokensRemaining': currentTokens - 1});
-          }
-        }
-      }
+      _deductToken(uid, shouldDeductToken);
 
       zhekeStopwatch.stop();
       _aiLogger?.logInteraction(

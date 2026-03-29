@@ -279,6 +279,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+
                     // Admin Panel - Migration (Visible only to specific admin)
                     // Admin Panel - Migration (Visible ONLY temporarily for setup)
                     if (AuthService().isAdmin)

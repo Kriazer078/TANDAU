@@ -81,17 +81,18 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     universities,
                   );
 
-                  // 1. Кешируем результаты вычислений
-                  final Map<String, int> chanceCache = {};
+                  // 1. Кешируем полные результаты вычислений (не только %, а весь GrantChanceResult)
+                  final Map<String, GrantChanceResult> chanceCache = {};
                   for (final uni in sortedUniversities) {
                     if (specialty != null) {
                       // 🎯 Новый расчёт по ГОП
-                      final chance = chanceService.calculateBySpecialty(
+                      chanceCache[uni.id] = chanceService.calculateBySpecialty(
                         entScore: entScore,
                         minPassingScore: specialty!.predictedMin2026,
                         grantQuota: specialty!.grantQuota2025,
                         trendName: specialty!.trend.name,
                         universityId: uni.id,
+                        universityPassingScore: uni.passingScore,
                         gpa: user?.gpa,
                         ieltsScore: user?.ieltsScore,
                         achievements: user?.achievements ?? [],
@@ -99,13 +100,12 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                         isOrphan: user?.isOrphan ?? false,
                         isRural: user?.isRural ?? false,
                       );
-                      chanceCache[uni.id] = chance.chancePercent;
                     } else {
                       // Старый расчёт
                       final cat = uni.majors.isNotEmpty
                           ? chanceService.detectCategory(uni.majors.first)
                           : MajorCategory.other;
-                      final chance = chanceService.calculate(
+                      chanceCache[uni.id] = chanceService.calculate(
                         entScore: entScore,
                         universityId: uni.id,
                         universityPassingScore: uni.passingScore,
@@ -116,14 +116,13 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                         userCity: user?.city,
                         universityCity: uni.city,
                       );
-                      chanceCache[uni.id] = chance.chancePercent;
                     }
                   }
 
                   // 2. Сортируем используя кэш
                   sortedUniversities.sort((a, b) {
-                    final chanceA = chanceCache[a.id] ?? 0;
-                    final chanceB = chanceCache[b.id] ?? 0;
+                    final chanceA = chanceCache[a.id]?.chancePercent ?? 0;
+                    final chanceB = chanceCache[b.id]?.chancePercent ?? 0;
                     return chanceB.compareTo(chanceA);
                   });
 
@@ -132,37 +131,8 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final uni = sortedUniversities[index];
-                        final GrantChanceResult chanceResult;
-                        if (specialty != null) {
-                          chanceResult = chanceService.calculateBySpecialty(
-                            entScore: entScore,
-                            minPassingScore: specialty!.predictedMin2026,
-                            grantQuota: specialty!.grantQuota2025,
-                            trendName: specialty!.trend.name,
-                            universityId: uni.id,
-                            gpa: user?.gpa,
-                            ieltsScore: user?.ieltsScore,
-                            achievements: user?.achievements ?? [],
-                            hasDisability: user?.hasDisability ?? false,
-                            isOrphan: user?.isOrphan ?? false,
-                            isRural: user?.isRural ?? false,
-                          );
-                        } else {
-                          final cat = uni.majors.isNotEmpty
-                              ? chanceService.detectCategory(uni.majors.first)
-                              : MajorCategory.other;
-                          chanceResult = chanceService.calculate(
-                            entScore: entScore,
-                            universityId: uni.id,
-                            universityPassingScore: uni.passingScore,
-                            majorCategory: cat,
-                            gpa: user?.gpa,
-                            ieltsScore: user?.ieltsScore,
-                            achievements: user?.achievements ?? [],
-                            userCity: user?.city,
-                            universityCity: uni.city,
-                          );
-                        }
+                        // ⚡ Используем кэш вместо повторного вычисления
+                        final chanceResult = chanceCache[uni.id]!;
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
@@ -277,6 +247,35 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     color: Colors.white,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // 🏷️ Source indicator
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.calculate_rounded,
+                        color: Colors.white,
+                        size: 13,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        '🧮 Расчёт МОН РК 2026',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -671,6 +670,7 @@ class _ResultUniCardState extends State<_ResultUniCard> {
               description: strategy.toString(),
               alternativeOptions: topAlternatives,
               targetUniversity: widget.uni,
+              isLocalStrategy: true,
             ),
           ),
         );

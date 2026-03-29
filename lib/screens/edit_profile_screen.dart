@@ -20,6 +20,7 @@ import '../widgets/profile/profile_bottom_save_bar.dart';
 import '../widgets/profile/profile_image_picker_sheet.dart';
 import '../widgets/profile/profile_preferences_fields.dart';
 import '../widgets/profile/profile_quotas_fields.dart';
+import '../widgets/profile/profile_ent_fields.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -55,6 +56,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   bool _isRural = false;
   bool _isOrphan = false;
   bool _hasDisability = false;
+
+  // 🎯 ЕНТ
+  String? _subjectType;
+  String? _entSubject1;
+  String? _entSubject2;
 
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -123,6 +129,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     _isRural = widget.user.isRural ?? false;
     _isOrphan = widget.user.isOrphan ?? false;
     _hasDisability = widget.user.hasDisability ?? false;
+
+    // 🎯 Initialize ENT direction fields
+    _subjectType = widget.user.subjectType;
+    _entSubject1 = widget.user.entSubject1;
+    _entSubject2 = widget.user.entSubject2;
   }
 
   void _markChanged() {
@@ -132,7 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   /// How complete is the profile (0.0 – 1.0)
   double get _completionProgress {
     int filled = 0;
-    int total = 10; // name, age, education, city, unt, ielts/gpa, math, majors, achievements, financial
+    int total = 11; // name, age, education, city, unt, ielts/gpa, math, majors, achievements, financial, ent_direction
     if (_nameController.text.trim().isNotEmpty) filled++;
     if (_ageController.text.isNotEmpty) filled++;
     if (_selectedEducation != null) filled++;
@@ -146,6 +157,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (_selectedMajors.isNotEmpty) filled++;
     if (_selectedAchievements.isNotEmpty) filled++;
     if (_financialSituation != null) filled++;
+    if (_subjectType != null && _entSubject1 != null) filled++;
     return filled / total;
   }
 
@@ -182,6 +194,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         'isRural': _isRural,
         'isOrphan': _isOrphan,
         'hasDisability': _hasDisability,
+        'subjectType': _subjectType,
+        'entSubject1': _entSubject1,
+        'entSubject2': _entSubject2,
       });
 
       // Refresh AuthService local state so AI sees new data
@@ -523,6 +538,45 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                         _cityController.clear();
                                       }
                                     });
+                                    _markChanged();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // ═══ ENT Direction Card ═══
+                          _buildSectionCard(
+                            isDark: isDark,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ProfileSectionHeader(
+                                  icon: Icons.explore_outlined,
+                                  title: 'Направление и предметы ЕНТ',
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 18),
+                                ProfileEntFields(
+                                  subjectType: _subjectType,
+                                  entSubject1: _entSubject1,
+                                  entSubject2: _entSubject2,
+                                  onSubjectTypeChanged: (v) {
+                                    setState(() {
+                                      _subjectType = v;
+                                      // Reset subjects if direction changes
+                                      _entSubject1 = null;
+                                      _entSubject2 = null;
+                                    });
+                                    _markChanged();
+                                  },
+                                  onSubject1Changed: (v) {
+                                    setState(() => _entSubject1 = v);
+                                    _markChanged();
+                                  },
+                                  onSubject2Changed: (v) {
+                                    setState(() => _entSubject2 = v);
                                     _markChanged();
                                   },
                                 ),

@@ -11,6 +11,7 @@ class AIAgentScreen extends StatelessWidget {
   final String description;
   final List<Map<String, dynamic>> alternativeOptions;
   final University targetUniversity;
+  final bool isLocalStrategy;
 
   const AIAgentScreen({
     super.key,
@@ -18,6 +19,7 @@ class AIAgentScreen extends StatelessWidget {
     required this.description,
     required this.alternativeOptions,
     required this.targetUniversity,
+    this.isLocalStrategy = false,
   });
 
   @override
@@ -134,6 +136,36 @@ class AIAgentScreen extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.9),
               fontSize: 16,
               fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 12),
+          // 🏷️ Source indicator
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isLocalStrategy ? Icons.calculate_rounded : Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 14,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  isLocalStrategy
+                      ? '🧮 Расчёт МОН РК 2026'
+                      : '🤖 Сгенерировано TANDAU AI',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

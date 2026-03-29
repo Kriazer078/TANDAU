@@ -244,16 +244,6 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       final stream = _aiService.sendStreamMessage(
         messageText,
         history: recentHistory,
-        entScore: user?.untScore,
-        ieltsScore: user?.ieltsScore,
-        gpa: user?.gpa,
-        mathScore: user?.mathScore,
-        currentEducation: user?.education,
-        preferredCities: (user?.preferredCities.isNotEmpty ?? false)
-            ? user!.preferredCities
-            : (user?.city != null ? [user!.city!] : null),
-        userAchievements: user?.achievements,
-        preferredMajors: user?.preferredMajors,
         financialSituation: user?.financialSituation,
         isRural: user?.isRural,
         isOrphan: user?.isOrphan,

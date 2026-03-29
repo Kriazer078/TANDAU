@@ -1616,7 +1616,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Go to Profile -> Settings -> Language and choose the one you need.';
 
   @override
-  String get helpAppVersion => 'App version: 1.2.5';
+  String get helpAppVersion => 'App version: 1.2.6';
 
   @override
   String get privacyTitle => 'Privacy';

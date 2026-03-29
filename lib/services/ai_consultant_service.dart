@@ -138,14 +138,6 @@ class AIConsultantService {
   Future<String> sendMessage(
     String message, {
     List<Map<String, dynamic>>? history,
-    List<String>? userAchievements,
-    int? entScore,
-    double? ieltsScore,
-    double? gpa,
-    int? mathScore,
-    List<String>? preferredCities,
-    List<String>? preferredMajors,
-    String? currentEducation,
     bool isInternalStrategyCall = false,
   }) async {
     try {
@@ -200,14 +192,6 @@ class AIConsultantService {
   Stream<String> sendStreamMessage(
     String message, {
     List<Map<String, dynamic>>? history,
-    List<String>? userAchievements,
-    int? entScore,
-    double? ieltsScore,
-    double? gpa,
-    int? mathScore,
-    List<String>? preferredCities,
-    List<String>? preferredMajors,
-    String? currentEducation,
     String? financialSituation,
     bool? isRural,
     bool? isOrphan,

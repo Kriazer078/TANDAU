@@ -514,6 +514,7 @@ class GrantChanceService {
     required int grantQuota,      // Кол-во грантов по ГОП
     required String trendName,    // 'rising' | 'stable' | 'falling'
     String universityId = '',
+    int? universityPassingScore,
     double? gpa,
     double? ieltsScore,
     List<String> achievements = const [],
@@ -526,9 +527,14 @@ class GrantChanceService {
 
     // 1. Проверка порога
     final bool isNational = nationalUniversities.contains(universityId);
-    final int threshold = isNational
+    int threshold = isNational
         ? (thresholdNationalUni > 50 ? thresholdNationalUni : 50)
         : thresholdRegularUni;
+
+    // Проверяем внутренний порог университета
+    if (universityPassingScore != null && universityPassingScore > threshold) {
+      threshold = universityPassingScore;
+    }
 
     if (entScore < threshold) {
       details.add(
@@ -537,10 +543,10 @@ class GrantChanceService {
       return GrantChanceResult(
         chancePercent: 0,
         riskLevel: RiskLevel.critical,
-        verdict: 'Балл ЕНТ ниже порога. Грант невозможен.',
+        verdict: 'Балл ЕНТ ниже проходного порога вуза. Грант невозможен.',
         details: details,
         recommendations: [
-          'Поднимите балл ЕНТ минимум до $threshold',
+          'Поднимите балл ЕНТ минимум до $threshold для поступления сюда',
         ],
         entThreshold: threshold,
         dataYear: '2025/2026',
@@ -605,6 +611,21 @@ class GrantChanceService {
       details.add(
         '🎓 Маленькая квота грантов ($grantQuota мест) — высокая конкуренция',
       );
+    }
+
+    // 4.5. Престижность вуза
+    if (isNational) {
+      baseChance -= 5;
+      details.add('🏛️ Национальный вуз — выше конкурс среди грантников');
+    }
+
+    if (universityPassingScore != null && universityPassingScore > minPassingScore) {
+      final int diff = universityPassingScore - minPassingScore;
+      if (diff > 0) {
+        final double penalty = (diff * 0.4).clamp(0, 15);
+        baseChance -= penalty;
+        details.add('🏢 Внутренний порог вуза высокий — повышенная конкуренция');
+      }
     }
 
     // 5. Бонусы за дополнительные показатели

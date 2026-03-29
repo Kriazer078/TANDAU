@@ -48,11 +48,11 @@ class AuthService {
     await _authSubscription?.cancel();
 
     // ⚡ Ожидаем окончания инициализации состояния аутентификации от Firebase
-    // Используем authStateChanges().first вместо синхронного _auth.currentUser,
-    // так как токен считывается с диска асинхронно (состояние может быть null в первые мс).
+    // Используем authStateChanges().first без жесткого таймаута, чтобы на медленных устройствах
+    // кэш Firebase гарантированно успел прочитаться.
     User? initialUser;
     try {
-      initialUser = await _auth.authStateChanges().first.timeout(const Duration(seconds: 2));
+      initialUser = await _auth.authStateChanges().first;
     } catch (_) {
       initialUser = _auth.currentUser;
     }
@@ -746,9 +746,12 @@ class AuthService {
   }
 
   /// Check if current user is admin.
-  /// Relies solely on Firestore 'role' field — no hardcoded email list.
+  /// Checks both the Firestore 'role' field and a hardcoded email list synced with firestore.rules.
   bool get isAdmin {
-    return currentUser.value?.role == 'admin';
+    final email = currentUser.value?.email.toLowerCase();
+    final isHardcodedAdmin = email != null && 
+        ['admin@tandau.app', 'tandau.admin@gmail.com', 'lolpro2312nn@gmail.com', 'robloxlolpro2312@gmail.com'].contains(email);
+    return isHardcodedAdmin || currentUser.value?.role == 'admin';
   }
 
   /// Track new user on backend
