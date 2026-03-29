@@ -16,9 +16,10 @@ class GeminiService {
 
   // List of models available to current key (Prioritizing stable models)
   static const List<String> _endpoints = [
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
   ];
 
   // ═══════════════════════════════════════════════════════════════
@@ -119,9 +120,9 @@ class GeminiService {
           errors.add(
               '$modelName failed: ${response.statusCode} - ${response.body}');
           
-          // 🛡️ Circuit Breaker: Stop retrying on client rate limits
+          // 🛡️ Circuit Breaker: Continue to fallback model on rate limits
           if (response.statusCode == 429) {
-            break; 
+            continue; 
           }
         }
       } catch (e) {
@@ -148,6 +149,9 @@ class GeminiService {
     }
 
     stderr.write('Sending advanced stream prompt to Gemini... ');
+
+    int lastStatusCode = 0;
+    List<String> errors = [];
 
     for (final endpoint in _endpoints) {
       try {
@@ -183,6 +187,8 @@ class GeminiService {
         final client = http.Client();
         final response = await client.send(request);
 
+        lastStatusCode = response.statusCode;
+
         if (response.statusCode == 200) {
           stderr.writeln('Stream OK ($modelName)');
           return response.stream
@@ -207,19 +213,25 @@ class GeminiService {
           final errorBody = await response.stream.bytesToString();
           stderr.writeln(
               'Model $modelName stream failed: ${response.statusCode} - $errorBody');
+          errors.add('$modelName failed: ${response.statusCode} - $errorBody');
           client.close();
           
-          // 🛡️ Circuit Breaker: Stop retrying on client rate limits
+          // 🛡️ Circuit Breaker: Continue to fallback model on rate limits
           if (response.statusCode == 429) {
-            break; 
+            continue; 
           }
         }
       } catch (e) {
         stderr.writeln('Stream Connection Error: $e');
+        errors.add('Connection Error: $e');
       }
     }
 
-    return Stream.value('Извините, сервис временно недоступен.');
+    if (lastStatusCode == 429) {
+      return Stream.value('📍 **Лимит запросов исчерпан.**\n\nИзвините, сейчас слишком много людей пользуются AI-консультантом. Пожалуйста, подождите немного (около 30-60 секунд) и попробуйте снова. Мы работаем над расширением лимитов!');
+    }
+
+    return Stream.value('Извините, сервис временно недоступен.\n\n[ДЛЯ РАЗРАБОТЧИКА]:\n${errors.join('\n\n')}');
   }
 
   // Backward compatibility

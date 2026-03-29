@@ -7,6 +7,7 @@ import 'theme/theme_manager.dart';
 
 import 'screens/splash_screen.dart';
 import 'screens/banned_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'services/locale_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
@@ -136,11 +137,15 @@ class _TandauAppState extends State<TandauApp> {
 
     // Listen for ban events globally — navigate to BannedScreen if banned
     AuthService().bannedReason.addListener(_onBanStateChanged);
+    
+    // Listen for login state changes globally to fix session restoral glitches
+    AuthService().isLoggedIn.addListener(_onLoginStateChanged);
   }
 
   @override
   void dispose() {
     AuthService().bannedReason.removeListener(_onBanStateChanged);
+    AuthService().isLoggedIn.removeListener(_onLoginStateChanged);
     super.dispose();
   }
 
@@ -158,6 +163,30 @@ class _TandauAppState extends State<TandauApp> {
         }
       });
     }
+  }
+
+  void _onLoginStateChanged() {
+    final bool loggedIn = AuthService().isLoggedIn.value;
+    final String? reason = AuthService().bannedReason.value;
+
+    if (reason != null) return; // Handled by _onBanStateChanged
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final NavigatorState? navigator = TandauApp.navigatorKey.currentState;
+      if (navigator != null) {
+        if (loggedIn) {
+          navigator.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+            (route) => false,
+          );
+        } else {
+          navigator.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const SplashScreen()),
+            (route) => false,
+          );
+        }
+      }
+    });
   }
 
   @override

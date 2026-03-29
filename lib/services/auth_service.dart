@@ -52,14 +52,13 @@ class AuthService {
     User? initialUser = _auth.currentUser;
     if (initialUser == null) {
       try {
-        // Если null, даем Firebase время восстановить сессию из кэша (не более 800мс).
-        // Пропускаем возможные первоначальные null-события из стрима.
+        // Если null, даем Firebase время восстановить сессию из кэша.
+        // Использование .first гарантирует, что мы получим начальное состояние (user или null).
         initialUser = await _auth.authStateChanges()
-            .skipWhile((u) => u == null)
             .first
-            .timeout(const Duration(milliseconds: 800));
+            .timeout(const Duration(seconds: 2));
       } catch (_) {
-        initialUser = null; // Пользователь действительно не авторизован (или таймаут)
+        initialUser = null; // Пользователь не авторизован или таймаут
       }
     }
     if (initialUser != null) {

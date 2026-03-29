@@ -320,7 +320,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ],
                 ),
                 child: const Icon(
-                  Icons.insights_rounded,
+                  Icons.pie_chart_rounded,
                   color: Colors.white,
                   size: 24,
                 ),
@@ -341,7 +341,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'AI-анализ параметров', // Compact description
+                      'Точный расчет шансов', // Compact description
                       style: TextStyle(
                         color: isDark ? Colors.white60 : AppColors.textSecondary,
                         fontSize: 13,
