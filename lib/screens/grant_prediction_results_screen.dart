@@ -29,7 +29,6 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
-    final universitiesAsync = ref.watch(universitiesProvider);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -60,9 +59,9 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                   child: _buildHeaderCard(context, entScore, isDark, l10n),
                 ),
               ),
-              universitiesAsync.when(
-                data: (universities) {
-                  if (universities.isEmpty) {
+              ref.watch(computedGrantResultsProvider(specialty)).when(
+                data: (results) {
+                  if (results.isEmpty) {
                     return SliverFillRemaining(
                       child: Center(
                         child: Text(
@@ -73,77 +72,22 @@ class GrantPredictionResultsScreen extends ConsumerWidget {
                     );
                   }
 
-                  // 🔥 Оптимизация: 미리 вычисляем шансы, чтобы не лагало при сортировке (O(N) вместо O(N log N))
-                  final chanceService = GrantChanceService();
-                  final user = AuthService().currentUser.value;
-
-                  final sortedUniversities = List<University>.from(
-                    universities,
-                  );
-
-                  // 1. Кешируем полные результаты вычислений (не только %, а весь GrantChanceResult)
-                  final Map<String, GrantChanceResult> chanceCache = {};
-                  for (final uni in sortedUniversities) {
-                    if (specialty != null) {
-                      // 🎯 Новый расчёт по ГОП
-                      chanceCache[uni.id] = chanceService.calculateBySpecialty(
-                        entScore: entScore,
-                        minPassingScore: specialty!.predictedMin2026,
-                        grantQuota: specialty!.grantQuota2025,
-                        trendName: specialty!.trend.name,
-                        universityId: uni.id,
-                        universityPassingScore: uni.passingScore,
-                        gpa: user?.gpa,
-                        ieltsScore: user?.ieltsScore,
-                        achievements: user?.achievements ?? [],
-                        hasDisability: user?.hasDisability ?? false,
-                        isOrphan: user?.isOrphan ?? false,
-                        isRural: user?.isRural ?? false,
-                      );
-                    } else {
-                      // Старый расчёт
-                      final cat = uni.majors.isNotEmpty
-                          ? chanceService.detectCategory(uni.majors.first)
-                          : MajorCategory.other;
-                      chanceCache[uni.id] = chanceService.calculate(
-                        entScore: entScore,
-                        universityId: uni.id,
-                        universityPassingScore: uni.passingScore,
-                        majorCategory: cat,
-                        gpa: user?.gpa,
-                        ieltsScore: user?.ieltsScore,
-                        achievements: user?.achievements ?? [],
-                        userCity: user?.city,
-                        universityCity: uni.city,
-                      );
-                    }
-                  }
-
-                  // 2. Сортируем используя кэш
-                  sortedUniversities.sort((a, b) {
-                    final chanceA = chanceCache[a.id]?.chancePercent ?? 0;
-                    final chanceB = chanceCache[b.id]?.chancePercent ?? 0;
-                    return chanceB.compareTo(chanceA);
-                  });
-
                   return SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        final uni = sortedUniversities[index];
-                        // ⚡ Используем кэш вместо повторного вычисления
-                        final chanceResult = chanceCache[uni.id]!;
+                        final item = results[index];
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: _ResultUniCard(
-                            uni: uni,
+                            uni: item.university,
                             isDark: isDark,
                             untScore: entScore,
-                            chanceResult: chanceResult,
+                            chanceResult: item.chanceResult,
                           ),
                         );
-                      }, childCount: sortedUniversities.length),
+                      }, childCount: results.length),
                     ),
                   );
                 },
