@@ -17,7 +17,7 @@ class GeminiService {
   // List of models available to current key (Prioritizing stable models)
   static const List<String> _endpoints = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
   ];
 
@@ -88,7 +88,7 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'google_search': {}}
+            {'googleSearch': {}}
           ];
         }
 
@@ -119,8 +119,8 @@ class GeminiService {
           errors.add(
               '$modelName failed: ${response.statusCode} - ${response.body}');
           
-          // 🛡️ Circuit Breaker: Stop retrying on client errors or rate limits
-          if (response.statusCode == 429 || response.statusCode == 400) {
+          // 🛡️ Circuit Breaker: Stop retrying on client rate limits
+          if (response.statusCode == 429) {
             break; 
           }
         }
@@ -171,7 +171,7 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'google_search': {}}
+            {'googleSearch': {}}
           ];
         }
 
@@ -209,8 +209,8 @@ class GeminiService {
               'Model $modelName stream failed: ${response.statusCode} - $errorBody');
           client.close();
           
-          // 🛡️ Circuit Breaker: Stop retrying on client errors or rate limits
-          if (response.statusCode == 429 || response.statusCode == 400) {
+          // 🛡️ Circuit Breaker: Stop retrying on client rate limits
+          if (response.statusCode == 429) {
             break; 
           }
         }

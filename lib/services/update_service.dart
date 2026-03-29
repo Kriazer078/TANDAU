@@ -46,7 +46,7 @@ class UpdateService {
         'force_update_current_version': '1.2.3', // Current release version
         'min_supported_version': '1.0.0',
         'store_url_android':
-            'https://play.google.com/store/apps/details?id=com.project.tandau',
+            'https://play.google.com/store/apps/details?id=kz.tandau.kz',
         'store_url_ios': 'https://apps.apple.com/app/id123456789',
         'whats_new_ru': 'Изменения в новой версии: добавлена функция обновления.',
         'whats_new_kk': 'Жаңа нұсқада: жаңарту мүмкіндігі қосылды.',
