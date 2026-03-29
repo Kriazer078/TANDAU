@@ -320,7 +320,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ],
                 ),
                 child: const Icon(
-                  Icons.auto_awesome_rounded,
+                  Icons.insights_rounded,
                   color: Colors.white,
                   size: 24,
                 ),
