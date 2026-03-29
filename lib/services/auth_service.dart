@@ -47,14 +47,20 @@ class AuthService {
     // ⚡ Cancel previous listener to prevent double-subscription
     await _authSubscription?.cancel();
 
-    // ⚡ Ожидаем окончания инициализации состояния аутентификации от Firebase
-    // Используем authStateChanges().first без жесткого таймаута, чтобы на медленных устройствах
-    // кэш Firebase гарантированно успел прочитаться.
-    User? initialUser;
-    try {
-      initialUser = await _auth.authStateChanges().first;
-    } catch (_) {
-      initialUser = _auth.currentUser;
+    // ⚡ Ожидаем окончания инициализации состояния аутентификации от Firebase.
+    // Сначала проверяем синхронное состояние (часто уже готово после Firebase.initializeApp).
+    User? initialUser = _auth.currentUser;
+    if (initialUser == null) {
+      try {
+        // Если null, даем Firebase время восстановить сессию из кэша (не более 800мс).
+        // Пропускаем возможные первоначальные null-события из стрима.
+        initialUser = await _auth.authStateChanges()
+            .skipWhile((u) => u == null)
+            .first
+            .timeout(const Duration(milliseconds: 800));
+      } catch (_) {
+        initialUser = null; // Пользователь действительно не авторизован (или таймаут)
+      }
     }
     if (initialUser != null) {
       debugPrint('🟢 AUTH INIT: Обнаружен кэшированный пользователь (${initialUser.uid})');
