@@ -207,6 +207,8 @@
     "profileAge": "Жасы",
     "profileEducation": "Оқу орны",
     "profileCity": "Қала",
+    "profileSpecialExam": "Арнайы емтихан тапсырылды",
+    "profileSpecialExamSubtitle": "Шығармашылық, медициналық немесе психометриялық",
     "profileUntScore": "ҰБТ балы",
     "profileIeltsScore": "IELTS (болса)",
     "profileErrorUpdate": "Профильді жаңарту қатесі",
@@ -677,7 +679,7 @@
     "helpFaq3A": "PRO пайдаланушылар баламалы ЖОО тізіміне және кеңейтілген AI аналитикаға қол жеткізе алады.",
     "helpFaq4Q": "Қосымша тілін қалай өзгертуге болады?",
     "helpFaq4A": "Профиль -> Баптаулар -> Тіл бөліміне өтіп, қажеттісін таңдаңыз.",
-    "helpAppVersion": "Қосымша нұсқасы: 1.2.7",
+    "helpAppVersion": "Қосымша нұсқасы: 1.2.9",
 
     "privacyTitle": "Құпиялылық",
     "privacyHeading": "Құпиялылық саясаты және Пайдалану шарттары",

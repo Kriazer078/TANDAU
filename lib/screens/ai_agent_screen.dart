@@ -11,7 +11,7 @@ class AIAgentScreen extends StatelessWidget {
   final String description;
   final List<Map<String, dynamic>> alternativeOptions;
   final University targetUniversity;
-  final bool isLocalStrategy;
+
 
   const AIAgentScreen({
     super.key,
@@ -19,7 +19,7 @@ class AIAgentScreen extends StatelessWidget {
     required this.description,
     required this.alternativeOptions,
     required this.targetUniversity,
-    this.isLocalStrategy = false,
+
   });
 
   @override
@@ -149,17 +149,15 @@ class AIAgentScreen extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  isLocalStrategy ? Icons.calculate_rounded : Icons.auto_awesome_rounded,
+                const Icon(
+                  Icons.auto_awesome_rounded,
                   color: Colors.white,
                   size: 14,
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  isLocalStrategy
-                      ? '🧮 Расчёт МОН РК 2026'
-                      : '🤖 Сгенерировано TANDAU AI',
-                  style: const TextStyle(
+                const Text(
+                  '🤖 Сгенерировано TANDAU AI',
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,

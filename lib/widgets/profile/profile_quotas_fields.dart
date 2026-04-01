@@ -8,10 +8,12 @@ class ProfileQuotasFields extends StatelessWidget {
   final bool isRural;
   final bool isOrphan;
   final bool hasDisability;
+  final bool specialExamPassed;
   final ValueChanged<String?> onFinancialChanged;
   final ValueChanged<bool> onRuralChanged;
   final ValueChanged<bool> onOrphanChanged;
   final ValueChanged<bool> onDisabilityChanged;
+  final ValueChanged<bool> onSpecialExamChanged;
 
   const ProfileQuotasFields({
     super.key,
@@ -19,10 +21,12 @@ class ProfileQuotasFields extends StatelessWidget {
     required this.isRural,
     required this.isOrphan,
     required this.hasDisability,
+    this.specialExamPassed = false,
     required this.onFinancialChanged,
     required this.onRuralChanged,
     required this.onOrphanChanged,
     required this.onDisabilityChanged,
+    required this.onSpecialExamChanged,
   });
 
   @override
@@ -160,6 +164,32 @@ class ProfileQuotasFields extends StatelessWidget {
           value: hasDisability,
           isDark: isDark,
           onChanged: onDisabilityChanged,
+        ),
+        const SizedBox(height: 16),
+
+        // 🎓 Специальный экзамен
+        Text(
+          'Специальный экзамен',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white70 : AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Творческий, медицинский или психометрический',
+          style: TextStyle(
+            fontSize: 11,
+            color: isDark ? Colors.white38 : Colors.grey.shade500,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _buildQuotaToggle(
+          label: '🎓 Специальный экзамен сдан',
+          value: specialExamPassed,
+          isDark: isDark,
+          onChanged: onSpecialExamChanged,
         ),
       ],
     );

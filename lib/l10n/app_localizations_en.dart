@@ -564,6 +564,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileCity => 'City';
 
   @override
+  String get profileSpecialExam => 'Special exam passed';
+
+  @override
+  String get profileSpecialExamSubtitle => 'Creative, medical, or psychometric';
+
+  @override
   String get profileUntScore => 'UNT Score';
 
   @override
@@ -1616,7 +1622,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Go to Profile -> Settings -> Language and choose the one you need.';
 
   @override
-  String get helpAppVersion => 'App version: 1.2.7';
+  String get helpAppVersion => 'App version: 1.2.9';
 
   @override
   String get privacyTitle => 'Privacy';

@@ -38,12 +38,12 @@ class DataMigrationHelper {
 
       // Migrate universities
       final success = await _universityService.migrateToFirestore(
-        sampleUniversities,
+        universitiesList,
       );
 
       if (success) {
         debugPrint(
-          '✅ Successfully migrated ${sampleUniversities.length} '
+          '✅ Successfully migrated ${universitiesList.length} '
           'universities to Firestore',
         );
         return true;

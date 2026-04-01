@@ -1174,6 +1174,18 @@ abstract class AppLocalizations {
   /// **'City'**
   String get profileCity;
 
+  /// No description provided for @profileSpecialExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Special exam passed'**
+  String get profileSpecialExam;
+
+  /// No description provided for @profileSpecialExamSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Creative, medical, or psychometric'**
+  String get profileSpecialExamSubtitle;
+
   /// No description provided for @profileUntScore.
   ///
   /// In en, this message translates to:
@@ -3133,7 +3145,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAppVersion.
   ///
   /// In en, this message translates to:
-  /// **'App version: 1.2.7'**
+  /// **'App version: 1.2.9'**
   String get helpAppVersion;
 
   /// No description provided for @privacyTitle.

@@ -13,12 +13,12 @@ class FirestoreUploadScript {
   static Future<bool> uploadAllUniversities() async {
     try {
       debugPrint(
-        '🚀 Starting upload of ${sampleUniversities.length} universities...',
+        '🚀 Starting upload of ${universitiesList.length} universities...',
       );
 
       final WriteBatch batch = _firestore.batch();
 
-      for (final university in sampleUniversities) {
+      for (final university in universitiesList) {
         final DocumentReference docRef =
             _firestore.collection('universities').doc(university.id);
 
@@ -50,7 +50,7 @@ class FirestoreUploadScript {
 
       await batch.commit();
       debugPrint(
-        '✅ Successfully uploaded ${sampleUniversities.length} universities!',
+        '✅ Successfully uploaded ${universitiesList.length} universities!',
       );
       return true;
     } catch (e, stack) {

@@ -42,6 +42,9 @@ class UserModel {
   final String? entSubject1;  // 1-й профильный предмет ЕНТ
   final String? entSubject2;  // 2-й профильный предмет ЕНТ (опц.)
 
+  // 🎓 Специальные экзамены (творческие, медицинские, психометрические)
+  final bool? specialExamPassed;
+
   UserModel({
     required this.uid,
     required this.name,
@@ -79,6 +82,7 @@ class UserModel {
     this.subjectType,
     this.entSubject1,
     this.entSubject2,
+    this.specialExamPassed,
   });
 
   /// Алиас для совместимости с StudentProfile
@@ -150,6 +154,7 @@ class UserModel {
       'subjectType': subjectType,
       'entSubject1': entSubject1,
       'entSubject2': entSubject2,
+      'specialExamPassed': specialExamPassed,
     };
   }
 
@@ -205,6 +210,7 @@ class UserModel {
       subjectType: map['subjectType'],
       entSubject1: map['entSubject1'],
       entSubject2: map['entSubject2'],
+      specialExamPassed: map['specialExamPassed'],
     );
   }
 
@@ -250,6 +256,7 @@ class UserModel {
     String? subjectType,
     String? entSubject1,
     String? entSubject2,
+    bool? specialExamPassed,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -288,6 +295,7 @@ class UserModel {
       subjectType: subjectType ?? this.subjectType,
       entSubject1: entSubject1 ?? this.entSubject1,
       entSubject2: entSubject2 ?? this.entSubject2,
+      specialExamPassed: specialExamPassed ?? this.specialExamPassed,
     );
   }
 }

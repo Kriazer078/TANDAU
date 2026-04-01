@@ -468,6 +468,7 @@ class AuthService {
     bool? hasDisability,
     bool? isOrphan,
     bool? isRural,
+    bool? specialExamPassed,
     List<String>? extracurriculars,
     // 🎯 ЕНТ направление
     String? subjectType,
@@ -499,6 +500,8 @@ class AuthService {
         hasDisability: hasDisability ?? currentUser.value!.hasDisability,
         isOrphan: isOrphan ?? currentUser.value!.isOrphan,
         isRural: isRural ?? currentUser.value!.isRural,
+        specialExamPassed:
+            specialExamPassed ?? currentUser.value!.specialExamPassed,
         extracurriculars:
             extracurriculars ?? currentUser.value!.extracurriculars,
         // 🎯 ЕНТ направление

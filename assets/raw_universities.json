@@ -1,0 +1,223 @@
+[
+  {
+    "name": "Назарбаев Университет (NU)",
+    "city": "Астана",
+    "website": "https://nu.edu.kz",
+    "email": "info@nu.edu.kz",
+    "phone": "+7 (7172) 70 66 88",
+    "description": "Автономная организация образования со статусом исследовательского университета.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B055"}, {"code": "B011"}
+    ]
+  },
+  {
+    "name": "Казахский национальный университет имени аль-Фараби (КазНУ)",
+    "city": "Алматы",
+    "website": "https://kaznu.kz",
+    "email": "info@kaznu.kz",
+    "phone": "+7 (727) 377 33 33",
+    "description": "Старейший классический вуз Республики Казахстан, лидер в национальных рейтингах.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B001"}, {"code": "B002"},
+      {"code": "B044"}, {"code": "B045"}, {"code": "B015"}
+    ]
+  },
+  {
+    "name": "Евразийский национальный университет имени Л.Н. Гумилева (ЕНУ)",
+    "city": "Астана",
+    "website": "https://enu.kz",
+    "email": "enu@enu.kz",
+    "phone": "+7 (7172) 70 95 00",
+    "description": "Ведущий национальный университет столицы.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B042"}, {"code": "B006"}
+    ]
+  },
+  {
+    "name": "Казахстанско-Британский технический университет (КБТУ)",
+    "city": "Алматы",
+    "website": "https://kbtu.edu.kz",
+    "email": "info@kbtu.kz",
+    "phone": "+7 (727) 357 42 42",
+    "description": "Университет, признанный лидер в IT и нефтегазовой сфере.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B059"}, {"code": "B069"}
+    ]
+  },
+  {
+    "name": "Сулейман Демирель Университет (SDU)",
+    "city": "Каскелен",
+    "website": "https://sdu.edu.kz",
+    "email": "info@sdu.edu.kz",
+    "phone": "+7 (727) 307 95 65",
+    "description": "Частный университет с обучением на английском языке.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B044"}, {"code": "B018"}, {"code": "B042"}
+    ]
+  },
+  {
+    "name": "Астана IT Университет (AITU)",
+    "city": "Астана",
+    "website": "https://astanait.edu.kz",
+    "email": "info@astanait.edu.kz",
+    "phone": "+7 (7172) 64 57 10",
+    "description": "Специализированный ИТ-университет в центре Евразии.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B059"}, {"code": "B044"}
+    ]
+  },
+  {
+    "name": "Международный университет информационных технологий (МУИТ)",
+    "city": "Алматы",
+    "website": "https://iitu.edu.kz",
+    "email": "info@iitu.edu.kz",
+    "phone": "+7 (727) 244 51 03",
+    "description": "Первый ИТ университет Казахстана.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B059"}, {"code": "B044"}
+    ]
+  },
+  {
+    "name": "Сатпаев Университет (КазНИТУ)",
+    "city": "Алматы",
+    "website": "https://satbayev.university",
+    "email": "info@satbayev.university",
+    "phone": "+7 (727) 257 71 11",
+    "description": "Крупнейший и старейший технический вуз.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B063"}, {"code": "B064"}, {"code": "B069"}
+    ]
+  },
+  {
+    "name": "Казахский национальный медицинский университет (КазНМУ)",
+    "city": "Алматы",
+    "website": "https://kaznmu.kz",
+    "email": "info@kaznmu.kz",
+    "phone": "+7 (727) 338 70 90",
+    "description": "Ведущий медицинский вуз страны.",
+    "specialties": [
+      {"code": "B086"}, {"code": "B087"}, {"code": "B088"}, {"code": "B089"}
+    ]
+  },
+  {
+    "name": "Медицинский Университет Астана (МУА)",
+    "city": "Астана",
+    "website": "https://amu.kz",
+    "email": "info@amu.kz",
+    "phone": "+7 (7172) 53 94 24",
+    "description": "Один из крупнейших и динамично развивающихся медицинских университетов.",
+    "specialties": [
+      {"code": "B086"}, {"code": "B087"}, {"code": "B089"}
+    ]
+  },
+  {
+    "name": "Казахский национальный педагогический университет (КазНПУ)",
+    "city": "Алматы",
+    "website": "https://kaznpu.kz",
+    "email": "info@kaznpu.kz",
+    "phone": "+7 (727) 291 18 20",
+    "description": "Первый и ведущий педагогический университет Казахстана.",
+    "specialties": [
+      {"code": "B010"}, {"code": "B011"}, {"code": "B012"}, {"code": "B013"}, {"code": "B014"}, {"code": "B018"}
+    ]
+  },
+  {
+    "name": "Казахский национальный аграрный исследовательский университет (КазНАИУ)",
+    "city": "Алматы",
+    "website": "https://kaznau.kz",
+    "email": "info@kaznau.kz",
+    "phone": "+7 (727) 261 03 51",
+    "description": "Крупнейшее аграрное высшее учебное заведение.",
+    "specialties": [
+      {"code": "B077"}, {"code": "B078"}, {"code": "B079"}
+    ]
+  },
+  {
+    "name": "Алматинский университет энергетики и связи (АУЭС)",
+    "city": "Алматы",
+    "website": "https://aues.edu.kz",
+    "email": "info@aues.edu.kz",
+    "phone": "+7 (727) 292 20 62",
+    "description": "Ведущий технический университет энергетики, телекоммуникаций и ИТ.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B058"}, {"code": "B062"}
+    ]
+  },
+  {
+    "name": "КИМЭП",
+    "city": "Алматы",
+    "website": "https://kimep.kz",
+    "email": "info@kimep.kz",
+    "phone": "+7 (727) 270 42 00",
+    "description": "Ведущий университет в области бизнеса и социальных наук с западной моделью обучения.",
+    "specialties": [
+      {"code": "B044"}, {"code": "B045"}, {"code": "B047"}, {"code": "B042"}
+    ]
+  },
+  {
+    "name": "Карагандинский технический университет (КарТУ)",
+    "city": "Караганда",
+    "website": "https://kstu.kz",
+    "email": "info@kstu.kz",
+    "phone": "+7 (7212) 56 59 32",
+    "description": "Один из старейших и крупнейших технических университетов.",
+    "specialties": [
+      {"code": "B057"}, {"code": "B064"}, {"code": "B074"}
+    ]
+  },
+  {
+    "name": "Университет Нархоз",
+    "city": "Алматы",
+    "website": "https://narxoz.kz",
+    "email": "info@narxoz.kz",
+    "phone": "+7 (727) 377 11 11",
+    "description": "Частный университет экономики и финансов в Алматы.",
+    "specialties": [
+      {"code": "B044"}, {"code": "B045"}, {"code": "B046"}, {"code": "B057"}
+    ]
+  },
+  {
+    "name": "Maqsut Narikbayev University (KAZGUU)",
+    "city": "Астана",
+    "website": "https://kazguu.kz",
+    "email": "info@kazguu.kz",
+    "phone": "+7 (7172) 70 30 50",
+    "description": "Лидер в образовании юриспруденции и права.",
+    "specialties": [
+      {"code": "B042"}, {"code": "B044"}, {"code": "B045"}, {"code": "B047"}
+    ]
+  },
+  {
+    "name": "Казахский университет международных отношений и мировых языков (КазУМОиМЯ)",
+    "city": "Алматы",
+    "website": "https://ablaikhan.kz",
+    "email": "info@ablaikhan.kz",
+    "phone": "+7 (727) 292 23 73",
+    "description": "Основной вуз, готовящий переводчиков и лингвистов.",
+    "specialties": [
+      {"code": "B036"}, {"code": "B041"}
+    ]
+  },
+  {
+    "name": "Западно-Казахстанский медицинский университет имени М. Оспанова",
+    "city": "Актобе",
+    "website": "https://zkgmu.kz",
+    "email": "info@zkgmu.kz",
+    "phone": "+7 (7132) 56 34 25",
+    "description": "Главный медицинский центр западного региона.",
+    "specialties": [
+      {"code": "B086"}, {"code": "B087"}, {"code": "B089"}
+    ]
+  },
+  {
+    "name": "Медицинский университет Караганды",
+    "city": "Караганда",
+    "website": "https://qmu.edu.kz",
+    "email": "info@qmu.edu.kz",
+    "phone": "+7 (7212) 51 05 91",
+    "description": "Один из лучших медицинских университетов страны.",
+    "specialties": [
+      {"code": "B086"}, {"code": "B087"}, {"code": "B089"}
+    ]
+  }
+]

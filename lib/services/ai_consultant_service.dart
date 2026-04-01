@@ -76,6 +76,34 @@ class AIConsultantService {
 
     final user = AuthService().currentUser.value;
 
+    // Маппим пару предметов пользователя
+    EntSubjectPair? subjectPair;
+    if (user?.entSubject1 != null) {
+      final s1 = user!.entSubject1!.toLowerCase();
+      final s2 = (user.entSubject2 ?? '').toLowerCase();
+      if (s1.contains('математ') && s2.contains('физик')) {
+        subjectPair = EntSubjectPair.mathPhysics;
+      } else if (s1.contains('математ') && s2.contains('информат')) {
+        subjectPair = EntSubjectPair.mathInformatics;
+      } else if (s1.contains('математ') && s2.contains('географ')) {
+        subjectPair = EntSubjectPair.mathGeography;
+      } else if (s1.contains('биолог') && s2.contains('хими')) {
+        subjectPair = EntSubjectPair.bioChemistry;
+      } else if (s1.contains('биолог') && s2.contains('географ')) {
+        subjectPair = EntSubjectPair.bioGeography;
+      } else if (s1.contains('географ') && s2.contains('истори')) {
+        subjectPair = EntSubjectPair.geographyHistory;
+      } else if (s1.contains('истори') && s2.contains('право')) {
+        subjectPair = EntSubjectPair.historyLaw;
+      } else if (s1.contains('язык') || s1.contains('литератур')) {
+        subjectPair = EntSubjectPair.languageLiterature;
+      } else if (s1.contains('творчес') || s1.contains('рисов')) {
+        subjectPair = EntSubjectPair.creativeExams;
+      } else {
+        subjectPair = EntSubjectPair.other;
+      }
+    }
+
     return GrantChanceService().calculate(
       entScore: profile.entScore,
       universityId: university.id,
@@ -86,6 +114,11 @@ class AIConsultantService {
       mathScore: profile.mathScore,
       userCity: user?.city,
       universityCity: university.city,
+      hasGrants: university.hasGrants,
+      hasMilitaryDepartment: university.hasMilitaryDepartment,
+      specialExamPassed: user?.specialExamPassed ?? false,
+      isRural: user?.isRural ?? false,
+      subjectPair: subjectPair,
     );
   }
 

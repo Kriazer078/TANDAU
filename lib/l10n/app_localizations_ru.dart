@@ -565,6 +565,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileCity => 'Город';
 
   @override
+  String get profileSpecialExam => 'Специальный экзамен сдан';
+
+  @override
+  String get profileSpecialExamSubtitle =>
+      'Творческий, медицинский или психометрический';
+
+  @override
   String get profileUntScore => 'Баллы ЕНТ';
 
   @override
@@ -1617,7 +1624,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Перейдите в Профиль -> Настройки -> Язык и выберите нужный.';
 
   @override
-  String get helpAppVersion => 'Версия приложения: 1.2.7';
+  String get helpAppVersion => 'Версия приложения: 1.2.9';
 
   @override
   String get privacyTitle => 'Конфиденциальность';

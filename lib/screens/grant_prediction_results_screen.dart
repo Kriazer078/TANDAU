@@ -13,6 +13,7 @@ import 'university_detail_screen.dart';
 import 'ai_agent_screen.dart';
 import '../widgets/ai_logo_icon.dart';
 import '../data/ent_specialties_2026.dart';
+// parseSubjectPair is in grant_predictor_provider.dart
 
 class GrantPredictionResultsScreen extends ConsumerWidget {
   final int entScore;
@@ -449,10 +450,15 @@ class _ResultUniCardState extends State<_ResultUniCard> {
       final aiService = AIConsultantService();
       final chanceService = GrantChanceService();
 
-      // Генерация альтернатив заранее для обоих случаев (онлайн и оффлайн)
+      // Расчёт шансов с передачей hasGrants
       final MajorCategory category = widget.uni.majors.isNotEmpty
           ? chanceService.detectCategory(widget.uni.majors.first)
           : MajorCategory.other;
+
+      final subjectPair = parseSubjectPair(
+        user?.entSubject1,
+        user?.entSubject2,
+      );
 
       final result = chanceService.calculate(
         entScore: widget.untScore,
@@ -463,8 +469,14 @@ class _ResultUniCardState extends State<_ResultUniCard> {
         achievements: user?.achievements ?? [],
         userCity: user?.city,
         universityCity: widget.uni.city,
+        hasGrants: widget.uni.hasGrants,
+        hasMilitaryDepartment: widget.uni.hasMilitaryDepartment,
+        specialExamPassed: user?.specialExamPassed ?? false,
+        isRural: user?.isRural ?? false,
+        subjectPair: subjectPair,
       );
 
+      // Генерация альтернатив
       final List<Map<String, dynamic>> alternatives = [];
       final allUniversities = (await UniversityService().getAllUniversities())
           .where((u) => u.id != widget.uni.id)
@@ -484,6 +496,11 @@ class _ResultUniCardState extends State<_ResultUniCard> {
           achievements: user?.achievements ?? [],
           userCity: user?.city,
           universityCity: altUni.city,
+          hasGrants: altUni.hasGrants,
+          hasMilitaryDepartment: altUni.hasMilitaryDepartment,
+          specialExamPassed: user?.specialExamPassed ?? false,
+          isRural: user?.isRural ?? false,
+          subjectPair: subjectPair,
         );
 
         if (altResult.chancePercent > result.chancePercent) {
@@ -498,124 +515,46 @@ class _ResultUniCardState extends State<_ResultUniCard> {
       }
 
       alternatives.sort(
-        (a, b) => (b['probability'] as int).compareTo(a['probability'] as int),
+        (a, b) =>
+            (b['probability'] as int).compareTo(a['probability'] as int),
       );
       final topAlternatives = alternatives.take(3).toList();
 
-      // Попытка получить стратегию от бэкенда
-      try {
-        final strategyData = await aiService.getAIStrategy(
-          universityId: widget.uni.id,
-          untScore: widget.untScore,
-          specialtyId: widget.uni.majors.isNotEmpty
-              ? widget.uni.majors.first
-              : 'unknown',
-          subjectScores:
-              user?.mathScore != null ? {'Математика': user!.mathScore!} : null,
-        );
-
-        if (strategyData['description'] != null &&
-            strategyData['description'].toString().contains(
-                  'сервис временно недоступен',
-                )) {
-          throw Exception('Backend returned explicit unavailable message');
-        }
-
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => AIAgentScreen(
-                title: strategyData['title'] ??
-                    (l10n?.aiStrategyFallbackTitle ?? 'Стратегия поступления'),
-                description: strategyData['description'] ?? '',
-                alternativeOptions: topAlternatives,
-                targetUniversity: widget.uni,
-              ),
-            ),
-          );
-          return;
-        }
-      } catch (_) {
-        // Бэкенд недоступен или токены закончились → используем локальную стратегию
-        debugPrint(
-          '⚠️ Backend unavailable or out of tokens, using local strategy',
-        );
-      }
-
-      // ═══════════════════════════════════════════
-      // 🔄 ЛОКАЛЬНАЯ СТРАТЕГИЯ (без бэкенда)
-      // Использует верифицированные данные МОН РК 2026
-      // ═══════════════════════════════════════════
-      // Использует верифицированные данные МОН РК 2026
-      // ═══════════════════════════════════════════
-
-      // Формируем описание стратегии из данных СВД
-      final StringBuffer strategy = StringBuffer();
-
-      strategy.writeln('## 📌 Анализ вашего профиля\n');
-      strategy.writeln('- **Ваш балл ЕНТ:** ${widget.untScore} из 140');
-      strategy.writeln(
-        '- **Пороговый балл:** ${result.entThreshold} (${category.displayName})',
+      // Получаем стратегию от AI бэкенда
+      final strategyData = await aiService.getAIStrategy(
+        universityId: widget.uni.id,
+        untScore: widget.untScore,
+        specialtyId: widget.uni.majors.isNotEmpty
+            ? widget.uni.majors.first
+            : 'unknown',
+        subjectScores:
+            user?.mathScore != null ? {'Математика': user!.mathScore!} : null,
       );
-      strategy.writeln('- **Шанс на грант:** ${result.chancePercent}%');
-      strategy.writeln(
-        '- **Уровень риска:** ${result.riskLevel.emoji} ${result.riskLevel.displayName}',
-      );
-      if (user?.gpa != null) {
-        strategy.writeln('- **GPA:** ${user!.gpa}');
-      }
-      if (user?.ieltsScore != null) {
-        strategy.writeln('- **IELTS:** ${user!.ieltsScore}');
-      }
-
-      strategy.writeln(
-        '\n## 📊 Детальный анализ (данные МОН РК ${result.dataYear})\n',
-      );
-      for (final detail in result.details) {
-        strategy.writeln('- $detail');
-      }
-
-      strategy.writeln('\n## 🎯 Вердикт\n');
-      strategy.writeln('**${result.verdict}**');
-
-      if (result.recommendations.isNotEmpty) {
-        strategy.writeln('\n## 🚀 Рекомендации\n');
-        for (int i = 0; i < result.recommendations.length; i++) {
-          strategy.writeln('${i + 1}. ${result.recommendations[i]}');
-        }
-      }
-
-      // Добавляем информацию о университете
-      strategy.writeln('\n## 🏛️ О ${widget.uni.name}\n');
-      strategy.writeln('- **Город:** ${widget.uni.city}');
-      strategy.writeln('- **Стоимость:** ${widget.uni.tuitionRange}');
-      strategy.writeln(
-        '- **Общежитие:** ${widget.uni.hasDormitory ? "✅ Есть" : "❌ Нет"}',
-      );
-      strategy.writeln(
-        '- **Гранты:** ${widget.uni.hasGrants ? "✅ Доступны" : "❌ Не доступны"}',
-      );
-      if (widget.uni.studentCount > 0) {
-        strategy.writeln('- **Студенты:** ${widget.uni.studentCount}');
-      }
-      strategy.writeln(
-        '- **Специальности:** ${widget.uni.majors.take(5).join(", ")}',
-      );
-
-      // Альтернативные варианты уже сгенерированы выше
 
       if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => AIAgentScreen(
-              title: 'Стратегия: ${widget.uni.name}',
-              description: strategy.toString(),
+              title: strategyData['title'] ??
+                  (l10n?.aiStrategyFallbackTitle ?? 'Стратегия поступления'),
+              description: strategyData['description'] ?? '',
               alternativeOptions: topAlternatives,
               targetUniversity: widget.uni,
-              isLocalStrategy: true,
             ),
+          ),
+        );
+      }
+    } on OutOfTokensException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.message.isNotEmpty
+                  ? e.message
+                  : 'Лимит AI-токенов исчерпан. Попробуйте позже.',
+            ),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -623,7 +562,14 @@ class _ResultUniCardState extends State<_ResultUniCard> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.commonError(e.toString()) ?? 'Ошибка: $e'),
+            content: const Text(
+              'AI-сервис временно недоступен. Попробуйте через минуту.',
+            ),
+            action: SnackBarAction(
+              label: 'Повторить',
+              onPressed: _launchAIStrategy,
+            ),
+            duration: const Duration(seconds: 5),
           ),
         );
       }

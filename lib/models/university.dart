@@ -9,6 +9,7 @@ class University {
   final String tuitionRange; // e.g., "500,000 - 1,200,000 ₸"
   final bool hasDormitory;
   final bool hasGrants;
+  final bool hasMilitaryDepartment;
   final String description;
   final List<String> requirements;
   final String applicationDeadline;
@@ -42,6 +43,7 @@ class University {
     required this.tuitionRange,
     required this.hasDormitory,
     required this.hasGrants,
+    this.hasMilitaryDepartment = false,
     required this.description,
     required this.requirements,
     required this.applicationDeadline,
@@ -70,6 +72,7 @@ class University {
       'tuitionRange': tuitionRange,
       'hasDormitory': hasDormitory,
       'hasGrants': hasGrants,
+      'hasMilitaryDepartment': hasMilitaryDepartment,
       'description': description,
       'requirements': requirements,
       'applicationDeadline': applicationDeadline,
@@ -99,6 +102,7 @@ class University {
       tuitionRange: map['tuitionRange'] ?? '',
       hasDormitory: map['hasDormitory'] ?? false,
       hasGrants: map['hasGrants'] ?? false,
+      hasMilitaryDepartment: map['hasMilitaryDepartment'] ?? false,
       description: map['description'] ?? '',
       requirements: List<String>.from(map['requirements'] ?? []),
       applicationDeadline: map['applicationDeadline'] ?? '',

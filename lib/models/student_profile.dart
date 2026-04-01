@@ -23,6 +23,7 @@ class StudentProfile {
   final bool? hasDisability;
   final bool? isOrphan;
   final bool? isRural;
+  final bool? specialExamPassed;
   final List<String> extracurriculars;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -44,6 +45,7 @@ class StudentProfile {
     this.hasDisability,
     this.isOrphan,
     this.isRural,
+    this.specialExamPassed,
     this.extracurriculars = const [],
     this.createdAt,
     this.updatedAt,
@@ -76,6 +78,7 @@ class StudentProfile {
       hasDisability: user.hasDisability,
       isOrphan: user.isOrphan,
       isRural: user.isRural,
+      specialExamPassed: user.specialExamPassed,
       extracurriculars: user.extracurriculars,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -101,6 +104,7 @@ class StudentProfile {
       'hasDisability': hasDisability,
       'isOrphan': isOrphan,
       'isRural': isRural,
+      'specialExamPassed': specialExamPassed,
       'extracurriculars': extracurriculars,
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
@@ -130,6 +134,7 @@ class StudentProfile {
       hasDisability: map['hasDisability'],
       isOrphan: map['isOrphan'],
       isRural: map['isRural'],
+      specialExamPassed: map['specialExamPassed'],
       extracurriculars: List<String>.from(map['extracurriculars'] ?? []),
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
@@ -163,6 +168,7 @@ class StudentProfile {
     bool? hasDisability,
     bool? isOrphan,
     bool? isRural,
+    bool? specialExamPassed,
     List<String>? extracurriculars,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -184,6 +190,7 @@ class StudentProfile {
       hasDisability: hasDisability ?? this.hasDisability,
       isOrphan: isOrphan ?? this.isOrphan,
       isRural: isRural ?? this.isRural,
+      specialExamPassed: specialExamPassed ?? this.specialExamPassed,
       extracurriculars: extracurriculars ?? this.extracurriculars,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

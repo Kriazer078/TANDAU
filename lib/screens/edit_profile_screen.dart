@@ -56,6 +56,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   bool _isRural = false;
   bool _isOrphan = false;
   bool _hasDisability = false;
+  bool _specialExamPassed = false;
 
   // 🎯 ЕНТ
   String? _subjectType;
@@ -129,6 +130,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     _isRural = widget.user.isRural ?? false;
     _isOrphan = widget.user.isOrphan ?? false;
     _hasDisability = widget.user.hasDisability ?? false;
+    _specialExamPassed = widget.user.specialExamPassed ?? false;
 
     // 🎯 Initialize ENT direction fields
     _subjectType = widget.user.subjectType;
@@ -194,6 +196,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         'isRural': _isRural,
         'isOrphan': _isOrphan,
         'hasDisability': _hasDisability,
+        'specialExamPassed': _specialExamPassed,
         'subjectType': _subjectType,
         'entSubject1': _entSubject1,
         'entSubject2': _entSubject2,
@@ -236,6 +239,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         hasDisability: _hasDisability,
         isOrphan: _isOrphan,
         isRural: _isRural,
+        specialExamPassed: _specialExamPassed,
       );
 
       // 📋 Сохранить списковые поля напрямую (не через updateProfile)
@@ -667,6 +671,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   isRural: _isRural,
                                   isOrphan: _isOrphan,
                                   hasDisability: _hasDisability,
+                                  specialExamPassed: _specialExamPassed,
                                   onFinancialChanged: (v) {
                                     setState(() => _financialSituation = v);
                                     _markChanged();
@@ -681,6 +686,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   },
                                   onDisabilityChanged: (v) {
                                     setState(() => _hasDisability = v);
+                                    _markChanged();
+                                  },
+                                  onSpecialExamChanged: (v) {
+                                    setState(() => _specialExamPassed = v);
                                     _markChanged();
                                   },
                                 ),

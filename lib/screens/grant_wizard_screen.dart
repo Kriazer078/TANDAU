@@ -39,8 +39,8 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
       });
       // Also sync Riverpod state with user's last choices safely
       Future.microtask(() {
-        if (user.entSubject1 != null && ref.read(selectedSubjectProvider) == null) {
-          ref.read(selectedSubjectProvider.notifier).state = user.entSubject1;
+        if (user.entSubject1 != null && ref.read(selectedSubjectPairProvider) == null) {
+          ref.read(selectedSubjectPairProvider.notifier).state = user.entSubject1;
         }
         if (user.subjectType != null && ref.read(subjectTypeProvider) == null) {
           ref.read(subjectTypeProvider.notifier).state = user.subjectType;
@@ -67,7 +67,7 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
     final l10n = AppLocalizations.of(context);
     final untScore = ref.watch(untScoreProvider);
     final selectedType = ref.watch(subjectTypeProvider);
-    final selectedSubject = ref.watch(selectedSubjectProvider);
+    final selectedSubjectPair = ref.watch(selectedSubjectPairProvider);
     final selectedSpecialty = ref.watch(selectedSpecialtyProvider);
 
     return Scaffold(
@@ -101,13 +101,13 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
               const SizedBox(height: 32),
               _buildStepHeader('2. Профильные предметы', isDark),
               const SizedBox(height: 16),
-              _buildDirectionAndSubjects(selectedType, selectedSubject, isDark, l10n),
+              _buildDirectionAndSubjects(selectedType, selectedSubjectPair, isDark, l10n),
 
-              if (selectedSubject != null) ...[
+              if (selectedSubjectPair != null) ...[
                 const SizedBox(height: 32),
                 _buildStepHeader('3. Специальность (ГОП)', isDark),
                 const SizedBox(height: 16),
-                _buildSpecialtyDropdown(selectedType!, selectedSubject, selectedSpecialty, isDark, l10n),
+                _buildSpecialtyDropdown(selectedType!, selectedSubjectPair, selectedSpecialty, isDark, l10n),
               ],
 
               const SizedBox(height: 32),
@@ -242,7 +242,7 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
     );
   }
 
-  Widget _buildDirectionAndSubjects(String? selectedType, String? selectedSubject, bool isDark, AppLocalizations? l10n) {
+  Widget _buildDirectionAndSubjects(String? selectedType, String? selectedSubjectPair, bool isDark, AppLocalizations? l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -268,15 +268,24 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
           ],
         ),
         if (selectedType != null) ...[
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          Text(
+            'Выберите пару профильных предметов:',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.white54 : Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 12),
           Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: (AppConstants.entSubjectsByType[selectedType] ?? [])
+            spacing: 10,
+            runSpacing: 10,
+            children: (AppConstants.entSubjectPairsByType[selectedType] ?? [])
                 .map(
-                  (subject) => _buildSubjectChip(
-                    label: subject,
-                    selected: selectedSubject == subject,
+                  (pair) => _buildSubjectPairChip(
+                    label: pair,
+                    selected: selectedSubjectPair == pair,
                     isDark: isDark,
                   ),
                 )
@@ -297,7 +306,7 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
       onTap: () {
         HapticFeedback.lightImpact();
         ref.read(subjectTypeProvider.notifier).state = value;
-        ref.read(selectedSubjectProvider.notifier).state = null;
+        ref.read(selectedSubjectPairProvider.notifier).state = null;
         ref.read(selectedSpecialtyProvider.notifier).state = null;
         AuthService().updateProfile(subjectType: value);
       },
@@ -338,21 +347,23 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
     );
   }
 
-  Widget _buildSubjectChip({
+  Widget _buildSubjectPairChip({
     required String label,
     required bool selected,
     required bool isDark,
   }) {
+    // Получаем количество ГОП для этой пары
+    final gopCount = getSpecialtiesBySubjectPair(label).length;
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
-        ref.read(selectedSubjectProvider.notifier).state = label;
+        ref.read(selectedSubjectPairProvider.notifier).state = label;
         ref.read(selectedSpecialtyProvider.notifier).state = null;
         AuthService().updateProfile(entSubject1: label);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: selected
               ? AppColors.primary.withValues(alpha: 0.15)
@@ -366,19 +377,33 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
                 : isDark
                     ? Colors.white10
                     : Colors.grey.shade300,
+            width: selected ? 2 : 1,
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-            color: selected
-                ? AppColors.primary
-                : isDark
-                    ? Colors.white60
-                    : Colors.black54,
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                color: selected
+                    ? AppColors.primary
+                    : isDark
+                        ? Colors.white70
+                        : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              '$gopCount ГОП',
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark ? Colors.white38 : Colors.black38,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -386,19 +411,18 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
 
   Widget _buildSpecialtyDropdown(
     String subjectType,
-    String subject,
+    String subjectPair,
     EntSpecialty? currentSpecialty,
     bool isDark,
     AppLocalizations? l10n,
   ) {
-    final type = subjectType == 'physMath' ? SubjectType.physMath : SubjectType.humanities;
-    final specialties = getSpecialtiesByTypeAndSubject(type, subject);
+    final specialties = getSpecialtiesBySubjectPair(subjectPair);
 
     if (specialties.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Text(
-          'Нет специальностей для данного предмета',
+          'Нет специальностей для данной пары предметов',
           style: TextStyle(
             color: isDark ? Colors.white38 : Colors.black38,
             fontSize: 14,
@@ -409,53 +433,131 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
 
     final locale = Localizations.localeOf(context).languageCode;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade300,
-        ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: currentSpecialty?.code,
-          hint: Text(
-            l10n?.selectSpecialty ?? 'Выберите специальность',
-            style: TextStyle(
-              color: isDark ? Colors.white38 : Colors.black45,
-              fontSize: 14,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? Colors.white12 : Colors.grey.shade300,
             ),
           ),
-          isExpanded: true,
-          dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: isDark ? Colors.white38 : Colors.black45,
-          ),
-          items: specialties.map((s) {
-            return DropdownMenuItem<String>(
-              value: s.code,
-              child: Text(
-                '${s.getTitle(locale)} (${s.predictedMin2026}+)',
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: currentSpecialty?.code,
+              hint: Text(
+                l10n?.selectSpecialty ?? 'Выберите специальность',
                 style: TextStyle(
+                  color: isDark ? Colors.white38 : Colors.black45,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : Colors.black87,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
-            );
-          }).toList(),
-          onChanged: (code) {
-            if (code == null) return;
-            final specialty = specialties.firstWhere((s) => s.code == code);
-            ref.read(selectedSpecialtyProvider.notifier).state = specialty;
-            HapticFeedback.selectionClick();
-          },
+              isExpanded: true,
+              dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+              icon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: isDark ? Colors.white38 : Colors.black45,
+              ),
+              items: specialties.map((s) {
+                return DropdownMenuItem<String>(
+                  value: s.code,
+                  child: Text(
+                    '${s.quotaEmoji} ${s.getTitle(locale)} (${s.predictedMin2026}+)',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+              onChanged: (code) {
+                if (code == null) return;
+                final specialty = specialties.firstWhere((s) => s.code == code);
+                ref.read(selectedSpecialtyProvider.notifier).state = specialty;
+                HapticFeedback.selectionClick();
+              },
+            ),
+          ),
         ),
-      ),
+        // Показать инфо о квоте выбранной специальности
+        if (currentSpecialty != null) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.04)
+                  : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? Colors.white10 : Colors.grey.shade200,
+              ),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  currentSpecialty.quotaEmoji,
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentSpecialty.quotaDescription,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        'Проходной балл 2025: ${currentSpecialty.minScore2025} • Прогноз 2026: ${currentSpecialty.predictedMin2026}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? Colors.white38 : Colors.black45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (currentSpecialty.grantQuotaLevel == GrantQuotaLevel.low ||
+              currentSpecialty.grantQuotaLevel == GrantQuotaLevel.veryLow) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Мало грантов — высокая конкуренция. Рассмотрите смежные ГОП.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.orange.shade200 : Colors.orange.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ],
     );
   }
 

@@ -562,6 +562,13 @@ class AppLocalizationsKk extends AppLocalizations {
   String get profileCity => 'Қала';
 
   @override
+  String get profileSpecialExam => 'Арнайы емтихан тапсырылды';
+
+  @override
+  String get profileSpecialExamSubtitle =>
+      'Шығармашылық, медициналық немесе психометриялық';
+
+  @override
   String get profileUntScore => 'ҰБТ балы';
 
   @override
@@ -1614,7 +1621,7 @@ class AppLocalizationsKk extends AppLocalizations {
       'Профиль -> Баптаулар -> Тіл бөліміне өтіп, қажеттісін таңдаңыз.';
 
   @override
-  String get helpAppVersion => 'Қосымша нұсқасы: 1.2.7';
+  String get helpAppVersion => 'Қосымша нұсқасы: 1.2.9';
 
   @override
   String get privacyTitle => 'Құпиялылық';
