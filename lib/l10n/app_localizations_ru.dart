@@ -1546,6 +1546,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Мы сообщим вам, когда появится что-то важное';
 
   @override
+  String get notifActionBtn => 'Перейти';
+
+  @override
   String get notifSettingsTitle => 'Уведомления';
 
   @override

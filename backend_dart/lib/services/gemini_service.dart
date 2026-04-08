@@ -97,7 +97,7 @@ class GeminiService {
           Uri.parse('$endpoint?key=$_apiKey'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(requestBody),
-        );
+        ).timeout(const Duration(seconds: 35));
 
         lastStatusCode = response.statusCode;
 
@@ -185,7 +185,7 @@ class GeminiService {
         request.body = jsonEncode(requestBody);
 
         final client = http.Client();
-        final response = await client.send(request);
+        final response = await client.send(request).timeout(const Duration(seconds: 35));
 
         lastStatusCode = response.statusCode;
 

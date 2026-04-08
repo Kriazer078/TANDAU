@@ -18,6 +18,14 @@ service cloud.firestore {
       );
     }
 
+    // Проверка прав модератора
+    function isModerator() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'moderator'
+      );
+    }
+
     // Проверка авторизации
     function isSignedIn() {
       return request.auth != null;
@@ -91,7 +99,7 @@ service cloud.firestore {
     // 👤 ПОЛЬЗОВАТЕЛИ
     // ═══════════════════════════════════════
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
+      allow read: if isOwner(userId) || isAdmin() || isModerator();
       // При создании нельзя сразу стать админом или снять бан
       allow create: if isOwner(userId)
                     && request.resource.data.get('role', 'user') == 'user'
@@ -123,6 +131,14 @@ service cloud.firestore {
         (request.resource.data.get('userId', '') == request.auth.uid) || 
         (resource != null && resource.data.userId == request.auth.uid)
       );
+    }
+
+    // ═══════════════════════════════════════
+    // 📈 СТАТИСТИКА
+    // ═══════════════════════════════════════
+    match /statistics/{statsId} {
+      allow read: if isAdmin() || isModerator();
+      allow write: if isAdmin();
     }
 
     // ═══════════════════════════════════════

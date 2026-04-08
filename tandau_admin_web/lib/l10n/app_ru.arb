@@ -1,0 +1,840 @@
+{
+    "appTitle": "TANDAU",
+    "homeSubtitle": "Найди правильный путь к своему будущему",
+    "ctaStart": "Начать выбор",
+    "statsUniversity": "Университетов",
+    "statsStudent": "Студентов",
+    "statsGraduates": "Выпускников",
+    "statsSpecialty": "Специальностей",
+    "profileTitle": "Профиль",
+    "settingsTitle": "Настройки",
+    "settingsLanguage": "Язык",
+    "settingsTheme": "Темная тема",
+    "settingsThemeSubtitle": "Переключить на темный режим",
+    "settingsNotifications": "Уведомления",
+    "settingsAbout": "О приложении",
+    "settingsHelp": "Помощь",
+    "settingsPrivacy": "Конфиденциальность",
+    "dialogLanguageTitle": "Выберите язык",
+    "navHome": "Главная",
+    "navSearch": "Поиск",
+    "navFavorites": "Избранное",
+    "navProfile": "Профиль",
+    "navAgent": "AI Агент",
+    "authRegister": "Зарегистрироваться",
+    "authLogin": "Войти",
+    "authCreateAccount": "Создать аккаунт",
+    "authWelcome": "Добро пожаловать в TANDAU!",
+    "authSubtitle": "Присоединяйтесь к TANDAU и начните свой путь к образованию",
+    "authWelcomeBack": "С возвращением!",
+    "authLoginToAccount": "Войдите в свой аккаунт",
+    "authFullName": "ФИО",
+    "authPhone": "Номер телефона",
+    "authEmail": "Email",
+    "authPassword": "Пароль",
+    "authAlreadyHaveAccount": "Уже есть аккаунт? ",
+    "authDontHaveAccount": "Нет аккаунта? ",
+    "authRegisterNow": "Зарегистрироваться",
+    "authLoginNow": "Войти",
+    "authGuestLogin": "Войти как гость",
+    "authGoogleLogin": "Войти через Google",
+    "authForgotPassword": "Забыли пароль?",
+    "authErrorRegister": "Ошибка регистрации. Попробуйте снова.",
+    "authErrorLogin": "Неверный email или пароль",
+    "authLogout": "Выйти из аккаунта",
+    "searchHint": "Поиск университета...",
+    "searchNoResults": "Университеты не найдены",
+    "searchTryOthers": "Попробуйте другие фильтры",
+    "filterTitle": "Фильтры",
+    "filterNext": "Далее",
+    "filterShowResults": "Показать результаты",
+    "filterCity": "Какой город?",
+    "filterCitySubtitle": "Выберите город, в котором хотите учиться",
+    "filterMajor": "Какая специальность?",
+    "filterMajorSubtitle": "Выберите интересующую вас специальность",
+    "filterBudget": "Какой ваш бюджет?",
+    "filterBudgetSubtitle": "Выберите диапазон годовой оплаты за обучение",
+    "filterClear": "Очистить",
+    "filterEducationType": "Тип обучения",
+    "filterGrant": "Грант",
+    "filterPaid": "Платное",
+    "filterMaxPrice": "Макс. цена (в год)",
+    "filterPricePerYear": "Цена за год",
+    "aiAgentTitle": "AI Консультант",
+    "aiAgentWelcome": "Нужна помощь в выборе университета?\nЗадайте мне вопрос!",
+    "aiAgentSubtitle": "Я анализирую тысячи университетов, чтобы найти идеальный вариант для вас.",
+    "aiAgentInputHint": "Задайте вопрос...",
+    "aiAgentSample1": "Какой университет лучше?",
+    "aiAgentSample2": "Где есть IT специальности?",
+    "aiAgentSample3": "Что нужно для гранта?",
+    "aiAgentZhekeZhosparTitle": "Индивидуальный план",
+    "aiAgentZhekeZhosparDesc": "📋 Создай мне индивидуальный план поступления",
+    "aiAgentStatusOnline": "В сети",
+    "aiClearChat": "Очистить чат",
+    "aiAbout": "О TANDAU AI",
+    "aiClearDialogTitle": "Очистить историю?",
+    "aiClearDialogContent": "Все сообщения будут удалены безвозвратно.",
+    "aiClearDialogConfirm": "Очистить",
+    "aiAboutDialogContent": "Я использую передовые алгоритмы для анализа данных университетов. Моя цель - помочь вам найти идеальное место для учебы и оценить шансы на поступление.",
+    "aiAboutDialogButton": "Понятно",
+    "aiTyping": "Думаю...",
+    "aiError": "Извини, произошла ошибка. Попробуй позже.",
+    "commonOk": "OK",
+    "majorIT": "IT",
+    "majorMedicine": "Медицина",
+    "majorPedagogy": "Педагогика",
+    "majorEconomics": "Экономика",
+    "majorEngineering": "Инженерия",
+    "majorArt": "Искусство",
+    "budgetOnlyGrants": "Только гранты",
+    "budgetUpTo500k": "До 500 000 Т",
+    "budget1To2m": "1-2 млн Т",
+    "budgetAny": "Неважно",
+    "validationEmail": "Введите email",
+    "validationPassword": "Введите пароль",
+    "validationName": "Введите имя",
+    "validationPhone": "Введите номер телефона",
+    "validationEmailInvalid": "Введите корректный email",
+    "validationPasswordTooShort": "Минимум 6 символов",
+    "validationNameLength": "Ник должен быть от 3 до 20 символов",
+    "validationNameChars": "Только буквы, цифры и знак _",
+    "validationEmailFormat": "Некорректный формат email",
+    "validationTerms": "Необходимо согласиться с Условиями использования",
+    "settingsNotificationsSubtitle": "Настройте получение уведомлений",
+    "settingsAboutSubtitle": "Информация о TANDAU",
+    "settingsHelpSubtitle": "FAQ и поддержка",
+    "settingsPrivacySubtitle": "Политика конфиденциальности",
+    "settingsInProgress": "Этот функционал в разработке",
+    "aboutContent": "TANDAU — это приложение для помощи студентам в выборе университета.\n\n© 2026 TANDAU Team",
+    "searchHistory": "История поиска",
+    "searchPopularCities": "Популярные города",
+    "searchDepartments": "Специальности",
+    "navComparison": "Сравнение",
+    "comparisonTitle": "Сравнить вузы",
+    "comparisonEmpty": "Список сравнения пуст",
+    "comparisonEmptySubtitle": "Добавьте университеты для сравнения их характеристик",
+    "comparisonBrowseUniversities": "Найти университеты",
+    "comparisonClear": "Очистить",
+    "comparisonClearTitle": "Очистить сравнение?",
+    "comparisonClearMessage": "Все университеты будут удалены из списка сравнения",
+    "comparisonClearConfirm": "Удалить все университеты из сравнения?",
+    "comparisonEmptyHint": "Добавьте университеты из списка, чтобы начать сравнение",
+    "comparisonRemoved": "Удалено из сравнения",
+    "comparisonAdded": "Добавлено в сравнение",
+    "comparisonFull": "Максимум {max} университетов для сравнения",
+    "@comparisonFull": {
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "comparisonInfo": "Сравнение {count} из {max} университетов",
+    "@comparisonInfo": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            },
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "comparisonParameters": "Параметры",
+    "comparisonParamName": "Название",
+    "comparisonParamCity": "Город",
+    "comparisonParamTuition": "Стоимость обучения",
+    "comparisonParamGrants": "Гранты/Бюджет",
+    "comparisonParamRating": "Рейтинг",
+    "comparisonParamSpecialties": "Специальности",
+    "comparisonParamDormitory": "Общежитие",
+    "comparisonParamStudents": "Студенты",
+    "comparisonParamPassingScore": "Проходной балл",
+    "commonYes": "Да",
+    "commonNo": "Нет",
+    "commonCancel": "Отмена",
+    "comparisonAddToCompare": "Добавить к сравнению",
+    "comparisonComparing": "Сравнение 2 университетов",
+    "comparisonAddMore": "Добавить еще университет",
+    "comparisonAddUniversity": "Добавить университет",
+    "backToList": "Назад к списку",
+    "available": "Доступно",
+    "notAvailable": "Недоступно",
+    "more": "еще",
+    "city": "Город",
+    "tuition": "Стоимость",
+    "grants": "Гранты",
+    "rating": "Рейтинг",
+    "specialties": "Специальности",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "inDevelopment": "В разработке",
+    "inDevelopmentMessage": "Этот функционал находится в разработке",
+    "commonOk": "OK",
+    "commonOr": "Или",
+
+    "tabOverview": "Обзор",
+    "tabMajors": "Специальности",
+    "tabAdmissions": "Поступление",
+    "tabContact": "Контакты",
+    "tabReviews": "Отзывы",
+
+    "detailAbout": "Об университете",
+    "detailTuition": "Стоимость обучения",
+    "detailPassingScore": "Проходной балл",
+    "detailDocuments": "Необходимые документы",
+    "detailDeadline": "Срок подачи",
+    "detailAddress": "Адрес",
+    "detailWebsite": "Веб-сайт",
+    "detailLeaveReview": "Оставить отзыв",
+    "detailNoReviews": "Пока нет отзывов",
+
+    "universityDormitory": "Общежитие",
+    "universityGrant": "Грант",
+    "universityMilitary": "Военная кафедра",
+    "universityStudentCount": "{count} студентов",
+    "@universityStudentCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "authGuestMessage": "Войдите в аккаунт, чтобы получить доступ ко всем функциям",
+    "editProfileTitle": "Редактировать профиль",
+    "saveChanges": "Сохранить изменения",
+    "profileUpdated": "Профиль успешно обновлен",
+    "profileAge": "Возраст",
+    "profileEducation": "Учёба",
+    "profileCity": "Город",
+    "profileSpecialExam": "Специальный экзамен сдан",
+    "profileSpecialExamSubtitle": "Творческий, медицинский или психометрический",
+    "profileUntScore": "Баллы ЕНТ",
+    "profileIeltsScore": "IELTS (если есть)",
+    "profileErrorUpdate": "Ошибка обновления профиля",
+    "profileErrorLoad": "Ошибка при загрузке профиля. Попробуйте перезагрузить.",
+    "authPleaseLogin": "Пожалуйста, войдите",
+    "authEmailHint": "Введите ваш email",
+    "detailChances": "Оценить шансы",
+    "detailRequirementsHeader": "Что нужно для поступления",
+    "detailScorePoints": "баллов",
+    "detailScoreSubtitle": "На основе данных прошлого года",
+    "detailPhoneLabel": "Телефон",
+    "moderationSpam": "Слишком много сообщений. Пожалуйста, подождите.",
+    "moderationProfanity": "Пожалуйста, соблюдайте правила приличия. Использование мата запрещено.",
+    "homeTools": "Инструменты",
+    "homeMarketInsights": "Обзор рынка",
+    "homeAIPowered": "На базе AI",
+    "homeGreetingMorning": "Доброе утро",
+    "homeGreetingAfternoon": "Добрый день",
+    "homeGreetingEvening": "Добрый вечер",
+    "homeChanceEstimation": "Оценка шансов",
+    "homeChanceAnalysis": "Анализ поступления на грант 2026",
+    "homeAdvancedFilter": "Расширенный фильтр",
+    "homeUniversitySearch": "Поиск ВУЗов",
+    "homeUniversities": "Университеты",
+    "homeNoUniversitiesFound": "Университеты не найдены",
+    "homeYourScore": "Ваш актуальный балл: {score}",
+    "@homeYourScore": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "homeAIAnalysisInProgress": "AI Анализ...",
+    "homeAIAnalyticsTitle": "AI Аналитика TANDAU",
+    "detailBeFirstReview": "Будьте первым, кто оставит отзыв!",
+    "reviewEdited": "изменено",
+    "reviewAuthRequired": "Аутентифицируйтесь для оценки",
+    "reviewHelpful": "Полезно {count}",
+    "@reviewHelpful": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "reviewOfficialReply": "Официальный ответ",
+    "commonError": "Ошибка: {error}",
+    "@commonError": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesAnalytics": "СВД Аналитика",
+    "aiChancesDataYear": "Данные {year}",
+    "@aiChancesDataYear": {
+        "placeholders": {
+            "year": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesGrant": "шанс на грант",
+    "aiChancesRisk": "Риск: {risk}",
+    "@aiChancesRisk": {
+        "placeholders": {
+            "risk": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesEntThreshold": "Порог ЕНТ для этого направления: {score} баллов",
+    "@aiChancesEntThreshold": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "aiChancesDetails": "Детали расчёта",
+    "aiChancesDetailedStrategy": "Подробная AI стратегия",
+    "detailErrorFavorites": "Ошибка обновления избранного",
+    "aiStrategyTitle": "AI Стратегия",
+    "aiStrategyGoal": "Цель: {university}",
+    "aiStrategyAlternatives": "Альтернативные варианты",
+    "aiStrategyUniversity": "Вуз",
+    "aiStrategySpecialty": "Специальность",
+    "aiStrategyLoading": "Сбор данных и анализ шансов для {university}...\nУзнайте, какие темы стоит подтянуть, чтобы гарантировать грант!",
+    "aiStrategyGetPlan": "Получить детальный план",
+    "aiStrategyFallbackTitle": "Стратегия поступления",
+    "authLoginContinue": "Войдите, чтобы продолжить путь",
+    "authLoginButton": "ВОЙТИ",
+    "authRegisterButton": "Зарегистрироваться",
+    "authTermsIHaveRead": "Я согласен с ",
+    "authTermsLink": "Условиями использования",
+    "authTermsAnd": " и ",
+    "authPrivacyLink": "Политикой конфиденциальности",
+    "authGuestTitle": "Войти как гость",
+    "authGuestWarning": "В режиме гостя доступ ограничен. Для полного доступа к AI-консультанту и другим функциям необходима регистрация.",
+    "authContinue": "Продолжить",
+    "authTermsRegister": "Регистрируясь, вы соглашаетесь с ",
+    "authRequired": "Обязательно",
+    "validationMinLength": "Минимум {count} символов",
+    "validationDigitRequired": "Пароль должен содержать хотя бы одну цифру",
+    "detailEstimateChances": "Оценить шансы",
+    "detailRecommendations": "💡 Рекомендации",
+    "detailAiThinking": "AI формирует стратегию...",
+    "detailAiStrategySubtitle": "AI Стратегия TANDAU",
+    "tabOverview": "Обзор",
+    "tabMajors": "Специальности",
+    "tabAdmissions": "Поступление",
+    "tabContact": "Контакты",
+    "tabReviews": "Отзывы",
+    "profileSavedSubtitle": "Ваши сохранённые университеты",
+    "adminPanelTitle": "Админ панель",
+    "adminPanelSubtitle": "Управление пушем и данными",
+    "authGuestMessage": "Войдите в аккаунт, чтобы получить доступ ко всем функциям",
+    "authTermsSuffix": "",
+
+    "homeGreetingNight": "Доброй ночи",
+    "homeEntScore": "Ваш балл ЕНТ:",
+
+    "promoCodeTitle": "Ввести промокод",
+    "promoCodeSubtitle": "Активировать PRO или Premium подписку",
+    "promoCodeActivation": "Активация промокода",
+    "promoCodeHint": "Введите промокод для активации подписки:",
+    "promoCodeActivate": "Активировать",
+    "promoCodeSuccess": "Промокод успешно активирован!",
+
+    "supportTitle": "Поддержать команду TANDAU ❤️",
+    "supportSubtitle": "Прямой перевод на Kaspi",
+    "supportProject": "Поддержать проект",
+    "supportDescription": "Будем рады любой поддержке! Все средства идут на оплату серверов для ИИ и развитие TANDAU.",
+    "supportOpenKaspi": "Открыть приложение Kaspi",
+    "supportNumberCopied": "Номер скопирован в буфер обмена",
+
+    "aiTokensRemaining": "Осталось ИИ-запросов: {count}",
+    "@aiTokensRemaining": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+
+    "detailAboutUniversity": "Об университете",
+    "detailPassingScoreTitle": "Проходной балл",
+    "detailPoints": "баллов",
+    "detailBasedOnLastYear": "На основе данных прошлого года",
+    "detailAdmissionRequirements": "Что нужно для поступления",
+    "detailApplicationDeadline": "Крайний срок подачи",
+    "detailPhoneNotProvided": "Не указан",
+    "detailWebsiteNotProvided": "Сайт не указан",
+    "detailAddressLabel": "Адрес",
+    "detailWebsiteLabel": "Веб-сайт",
+    "detailPhoneLabelFull": "Телефон",
+    "detailLeaveReviewBtn": "Оставить отзыв",
+    "detailNoReviewsYet": "Пока нет отзывов",
+    "detailBeFirstReviewer": "Будьте первым, кто оставит отзыв!",
+    "detailReviewsCount": "{count} отзывов",
+    "@detailReviewsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "detailJustNow": "только что",
+    "reviewEditedLabel": "изменено",
+    "reviewAuthRequiredMsg": "Аутентифицируйтесь для оценки",
+    "reviewHelpfulLabel": "Полезно",
+    "reviewOfficialReplyLabel": "Официальный ответ",
+
+    "majorBusiness": "Бизнес",
+    "majorLaw": "Право",
+
+    "commonOr": "Или",
+    "commonDone": "Готово",
+    "commonClose": "Закрыть",
+
+    "scoreInputTitle": "Введите балл ЕНТ",
+    "scoreInputHint": "0 – 140",
+    "scoreInputError": "Введите число от 0 до 140",
+    "scoreInputTapHint": "Нажмите на число для точного ввода",
+
+    "reviewTitle": "Оставить отзыв",
+    "reviewRateQuestion": "Как вы оцениваете?",
+    "reviewSelectRating": "Выберите оценку",
+    "reviewWriteComment": "Напишите комментарий",
+    "reviewCommentHint": "Расскажите о своём опыте...",
+    "reviewSubmit": "Отправить",
+    "reviewSuccess": "Отзыв успешно добавлен!",
+    "reviewModerationFail": "Не удалось отправить. Проверьте текст на нецензурные слова.",
+    "reviewAttachPhoto": "Прикрепить фото ({current}/3)",
+    "@reviewAttachPhoto": {
+        "placeholders": {
+            "current": { "type": "int" }
+        }
+    },
+    "reviewRatingBad": "Ужасно",
+    "reviewRatingPoor": "Плохо",
+    "reviewRatingOk": "Нормально",
+    "reviewRatingGood": "Хорошо",
+    "reviewRatingExcellent": "Отлично!",
+
+    "paywallTitle": "Раскройте свой\nпотенциал на максимум",
+    "paywallSubtitle": "Выберите план, который подходит именно вам, и поступите на грант с уверенностью.",
+    "paywallFree": "Бесплатно",
+    "paywallCurrentPlan": "Ваш текущий план",
+    "paywallChoosePro": "Выбрать PRO",
+    "paywallChoosePremium": "Выбрать Premium",
+    "paywallProSubtitle": "Идеально для 11-классников",
+    "paywallFeatureAiRequests": "100 ИИ-запросов",
+    "paywallFeatureBasicChances": "Базовая оценка шансов",
+    "paywallFeatureUniversityDb": "Доступ к базе университетов",
+    "paywallFeatureAiDaily": "100 ИИ-запросов в день",
+    "paywallFeatureStrategy": "Генератор стратегии (Алгоритм 4-х вузов) 🔥",
+    "paywallFeatureDetailedChances": "Детализированная оценка шансов",
+    "paywallFeaturePriority": "Приоритетный доступ",
+    "paywallFeatureUnlimited": "Безлимитные ИИ-запросы ♾️",
+    "paywallFeatureParents": "Аналитика для родителей",
+    "paywallFeaturePersonalSupport": "Персональная поддержка",
+    "paywallPerMonth": "{price} ₸ / месяц",
+    "@paywallPerMonth": {
+        "placeholders": {
+            "price": { "type": "String" }
+        }
+    },
+
+    "notificationTitle": "Уведомления",
+    "notificationEmpty": "Нет уведомлений",
+
+    "deadlineTitle": "Дедлайны поступления\n2026",
+    "deadlineImportantDates": "Важные даты",
+    "deadlineDays": "дней",
+    "deadlineCompleted": "Завершено",
+    "deadlineToday": "Сегодня!",
+    "deadlineTomorrow": "Завтра!",
+    "deadlineWeeks": "нед.",
+    "deadlineMonths": "мес.",
+
+    "wizardStepOf": "Шаг {current} из {total}",
+    "@wizardStepOf": {
+        "placeholders": {
+            "current": { "type": "int" },
+            "total": { "type": "int" }
+        }
+    },
+    "wizardSkip": "Пропустить",
+    "wizardNext": "Далее →",
+    "wizardFinish": "✨ Завершить",
+    "wizardEntTitle": "Какой у тебя балл ЕНТ?",
+    "wizardEntSubtitle": "Пробный или реальный — укажи примерный",
+    "wizardMajorTitle": "Какая специальность?",
+    "wizardMajorSubtitle": "Выбери одну или несколько",
+    "wizardCityTitle": "Какой город?",
+    "wizardCitySubtitle": "Где хочешь учиться",
+    "wizardFinanceTitle": "Финансовая ситуация?",
+    "wizardFinanceSubtitle": "Это поможет подобрать подходящие вузы",
+    "wizardQuotaTitle": "Есть ли квоты?",
+    "wizardQuotaSubtitle": "Квоты дают преимущество при поступлении",
+    "wizardAchievementTitle": "Достижения?",
+    "wizardAchievementSubtitle": "Алтын белгі, олимпиады, спорт",
+    "wizardFinanceOnlyGrant": "Только грант",
+    "wizardFinanceOnlyGrantDesc": "Не могу оплачивать обучение",
+    "wizardFinanceUpTo1m": "До 1 000 000 ₸",
+    "wizardFinanceUpTo1mDesc": "Могу оплатить частично",
+    "wizardFinanceAny": "Любой бюджет",
+    "wizardFinanceAnyDesc": "Финансы не ограничивают выбор",
+    "wizardQuotaRural": "🏡 Сельская квота",
+    "wizardQuotaRuralDesc": "Регистрация в селе / ауле",
+    "wizardQuotaOrphan": "👶 СУСН (дети-сироты)",
+    "wizardQuotaOrphanDesc": "Статус ребёнка-сироты",
+    "wizardQuotaDisability": "♿ Квота для лиц с инвалидностью",
+    "wizardQuotaDisabilityDesc": "Инвалидность I, II или III группы",
+    "wizardQuotaHint": "Нет квоты? Не страшно! AI учтёт это и подберёт лучшие варианты.",
+    "wizardProfileButton": "🚀 Заполни профиль за 2 мин",
+    "wizardProfileUpdated": "Мой профиль обновлён! Покажи мне подходящие вузы.",
+    "wizardSaveError": "Ошибка сохранения",
+    "wizardScoreExcellent": "Отлично! 🔥",
+    "wizardScoreGood": "Хорошо! 💪",
+    "wizardScoreOk": "Неплохо 👍",
+    "wizardScoreGrow": "Есть куда расти 📈",
+    "wizardScorePrep": "Нужна подготовка 📚",
+
+    "successStoriesChip": "📖 Истории успеха",
+
+    "wizardMajorIT": "IT / Программирование",
+    "wizardMajorMedicine": "Медицина",
+    "wizardMajorEngineering": "Инженерия",
+    "wizardMajorBusiness": "Бизнес / Экономика",
+    "wizardMajorPedagogy": "Педагогика",
+    "wizardMajorLaw": "Юриспруденция",
+    "wizardMajorArchitecture": "Архитектура",
+    "wizardMajorOilGas": "Нефтегаз",
+    "wizardMajorArt": "Искусство / Дизайн",
+    "wizardMajorUndecided": "Не определился",
+
+    "wizardAchAltynBelgi": "Алтын белгі",
+    "wizardAchOlympiadRepublic": "Олимпиада (республика)",
+    "wizardAchOlympiadRegion": "Олимпиада (область)",
+    "wizardAchSport": "Спортивные достижения",
+    "wizardAchVolunteer": "Волонтёрство",
+    "wizardAchScience": "Научный проект",
+    "wizardAchNone": "Нет достижений",
+
+    "wizardCityAny": "Любой город",
+
+    "svdAnalyticsTitle": "СВД Аналитика",
+    "svdDataSource": "Данные: МОН РК, {year}",
+    "@svdDataSource": {
+        "placeholders": {
+            "year": { "type": "String" }
+        }
+    },
+    "svdHowWeCalculateTitle": "Как мы считаем? 📝",
+    "svdHowWeCalculateBody": "Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от \"Высокого\" до \"Низкого\").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.",
+    "svdUnderstood": "Понятно",
+    "svdDisclaimer": "⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.",
+
+    "reviewDateJustNow": "только что",
+    "reviewDateMinAgo": "{min} мин назад",
+    "@reviewDateMinAgo": {
+        "placeholders": { "min": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} ч назад",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} дн назад",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "янв",
+    "reviewMonthFeb": "фев",
+    "reviewMonthMar": "мар",
+    "reviewMonthApr": "апр",
+    "reviewMonthMay": "май",
+    "reviewMonthJun": "июн",
+    "reviewMonthJul": "июл",
+    "reviewMonthAug": "авг",
+    "reviewMonthSep": "сен",
+    "reviewMonthOct": "окт",
+    "reviewMonthNov": "ноя",
+    "reviewMonthDec": "дек",
+
+    "reviewLeaveTitle": "Оставить отзыв",
+    "reviewRateQuestion": "Как вы оцениваете?",
+    "reviewCommentHint": "Расскажите о своём опыте...",
+    "reviewAttachPhotoLabel": "Прикрепить фото ({current}/3)",
+    "@reviewAttachPhotoLabel": {
+        "placeholders": { "current": { "type": "int" } }
+    },
+    "reviewCancelBtn": "Отмена",
+    "reviewSubmitBtn": "Отправить",
+    "reviewSelectRatingError": "Выберите оценку",
+    "reviewWriteCommentError": "Напишите комментарий",
+    "reviewSuccessMsg": "Отзыв успешно добавлен!",
+    "reviewModerationFailMsg": "Не удалось отправить. Проверьте текст на нецензурные слова.",
+    "reviewErrorGeneric": "Произошла ошибка: {error}",
+    "@reviewErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "profileCompletionTitle": "Заполнение профиля",
+    "profileCompletionLow": "Заполните профиль для лучших рекомендаций",
+    "profileCompletionMedium": "Почти готово! Добавьте оставшиеся данные",
+    "profileCompletionHigh": "Отличная работа! Профиль заполнен",
+
+    "pickerChooseSource": "Выберите источник",
+    "pickerGallery": "Галерея",
+    "pickerCamera": "Камера",
+    "pickerErrorUpdateLink": "Ошибка обновления ссылки в профиле",
+    "pickerErrorUploadCloud": "Ошибка загрузки в облако",
+    "pickerErrorGeneric": "Ошибка: {error}",
+    "@pickerErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "profileDeleteAccount": "Удалить аккаунт",
+    "profileDeleteAccountTitle": "Удалить аккаунт?",
+    "profileDeleteAccountContent": "Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.",
+    "profileDeleteAccountCancel": "Отмена",
+    "profileDeleteAccountConfirm": "Удалить",
+    "profileDeleteAccountErrorLink": "Не удалось открыть ссылку",
+    "errorTimeout": "Превышено время ожидания. Проверьте интернет.",
+    "errorCritical": "Критическая ошибка: {error}",
+    "@errorCritical": {
+        "placeholders": {
+            "error": { "type": "String" }
+        }
+    },
+
+    "profileFillAllData": "Пожалуйста, заполните все данные профиля (включая имя и академические баллы).",
+    "profileNameProfanity": "Имя содержит недопустимые слова (мат/оскорбления).",
+    "profileUnsavedChanges": "Несохранённые изменения",
+    "profileUnsavedMessage": "У вас есть несохранённые изменения. Вы уверены, что хотите выйти?",
+    "profileStay": "Остаться",
+    "profileLeave": "Выйти",
+    "profileSectionPersonal": "Личные данные",
+    "profileSectionAcademic": "Академические баллы",
+    "profilePhotoUpdated": "Фото успешно обновлено!",
+    "profileDeleteAccountSent": "Запрос на удаление отправлен. Следуйте инструкциям на открывшейся странице.",
+    "profileChangePhoto": "Изменить фото",
+    "commonError": "Ошибка:",
+    "profileCompletionLow": "Заполните профиль для лучших рекомендаций",
+    "profileCompletionMedium": "Почти готово! Добавьте оставшиеся данные",
+    "profileCityEnter": "Введите название города",
+    "validationCity": "Введите город",
+    "profileSave": "Сохранить изменения",
+    "profileMathScore": "Мат. (проф)",
+
+    "aiThinkingStep1": "Анализирую ваш запрос",
+    "aiThinkingStep2": "Ищу данные в базе вузов",
+    "aiThinkingStep3": "Формирую персональный ответ",
+    "aiThinkingStep4": "Оформляю рекомендацию",
+    "aiThinkingZhStep1": "Анализирую профиль абитуриента",
+    "aiThinkingZhStep2": "Подбираю подходящие вузы",
+    "aiThinkingZhStep3": "Рассчитываю шансы на грант",
+    "aiThinkingZhStep4": "Составляю план поступления",
+    "aiThinkingZhStep5": "Оформляю ваш индивидуальный план",
+
+    "aiNewChat": "Новый чат",
+    "aiChatHistory": "История чатов",
+    "aiDeleteChat": "Удалить чат",
+    "aiDeleteChatConfirm": "Удалить этот чат?",
+    "aiNoChats": "Нет чатов",
+    "aiToday": "Сегодня",
+    "aiYesterday": "Вчера",
+    "aiPrevious7Days": "Последние 7 дней",
+    "aiOlder": "Ранее",
+
+    "notifClearTitle": "Очистить уведомления?",
+    "notifClearContent": "Все уведомления будут удалены навсегда.",
+    "notifClearBtn": "Очистить",
+    "notifErrorPrefix": "Ошибка: {error}",
+    "@notifErrorPrefix": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "notifEmptyTitle": "Уведомлений пока нет",
+    "notifEmptySubtitle": "Мы сообщим вам, когда появится что-то важное",
+
+    "notifSettingsTitle": "Уведомления",
+    "notifSectionStudy": "Учебные оповещения",
+    "notifGrantUpdates": "Обновления по грантам",
+    "notifGrantUpdatesDesc": "Узнавайте первыми об изменении баллов и мест",
+    "notifUniversityNews": "Новости университетов",
+    "notifUniversityNewsDesc": "Дни открытых дверей и важные даты",
+    "notifSectionOther": "Другое",
+    "notifMarketing": "Маркетинг и акции",
+    "notifMarketingDesc": "Скидки от партнеров и новости платформы",
+
+    "helpTitle": "Помощь и поддержка",
+    "helpSupportTeam": "Служба поддержки",
+    "helpSupportDesc": "Мы ответим в течение 24 часов\ntandau.app.help@gmail.com",
+    "helpWriteUs": "Написать нам",
+    "helpEmailFallback": "Напишите нам на: tandau.app.help@gmail.com",
+    "helpEmailSubject": "Поддержка TANDAU: [Вопрос]",
+    "helpFaqTitle": "Часто задаваемые вопросы",
+    "helpFaq1Q": "Как рассчитываются шансы на поступление?",
+    "helpFaq1A": "Наша нейросеть анализирует данные прошлых лет, сложность конкурса и ваши баллы ЕНТ, GPA и IELTS.",
+    "helpFaq2Q": "Данные по грантам актуальны?",
+    "helpFaq2A": "Да, мы обновляем базу данных государственных грантов ежегодно на основе официальных данных МНВО РК.",
+    "helpFaq3Q": "Что дает PRO подписка?",
+    "helpFaq3A": "PRO пользователи получают доступ к списку альтернативных вузов и расширенной аналитике от ИИ.",
+    "helpFaq4Q": "Как сменить язык приложения?",
+    "helpFaq4A": "Перейдите в Профиль -> Настройки -> Язык и выберите нужный.",
+    "helpAppVersion": "Версия приложения: 1.2.10",
+
+    "privacyTitle": "Конфиденциальность",
+    "privacyHeading": "Политика конфиденциальности и Условия использования",
+    "privacyUpdated": "Обновлено: 24 февраля 2026",
+
+    "favoritesSavedTitle": "Сохранённые",
+    "favoritesEmptyTitle": "Сохранённых университетов нет",
+    "favoritesEmptySubtitle": "Сохраняйте понравившиеся университеты",
+    "favoritesDormitory": "Общежитие",
+    "favoritesGrant": "Грант",
+
+    "savedToFavorites": "Сохранено в избранное ❤️",
+    "saveErrorText": "Ошибка сохранения: {error}",
+    "@saveErrorText": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "adminAccessDenied": "Доступ запрещён",
+    "adminNoRights": "❌ У вас нет прав администратора",
+    "adminMigrationTitle": "Миграция данных",
+    "adminUpdateData": "🔄 Обновление данных",
+    "adminUpdate": "Обновить",
+    "adminWarning": "⚠️ Внимание!",
+    "adminDeleteAll": "Удалить все данные",
+    "adminCheckData": "Проверить данные",
+    "adminGenerateTest": "Generate Dummy Stats (Test)",
+    "adminUsers": "Пользователи",
+    "adminByDate": "По дате",
+    "adminByName": "По имени",
+    "adminResetSearch": "Сбросить поиск",
+    "adminDetailedInfo": "Подробная информация",
+    "adminDeleteUser": "Удалить пользователя?",
+    "adminDeleteAllBtn": "Удалить всё",
+    "adminLoadError": "Ошибка загрузки: {error}",
+    "@adminLoadError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminRoleChangeDenied": "❌ Доступ запрещён",
+    "adminSelfRole": "❌ Нельзя менять свою роль",
+    "adminSelfDelete": "❌ Нельзя удалить свой аккаунт через админ-панель",
+    "adminUserDeleted": "✅ Данные пользователя {name} удалены",
+    "@adminUserDeleted": {
+        "placeholders": { "name": { "type": "String" } }
+    },
+    "adminDeleteError": "❌ Ошибка удаления: {error}",
+    "@adminDeleteError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminSendNotification": "Отправить уведомление",
+    "adminSendToAll": "Отправить ВСЕМ пользователям",
+    "adminSendToAllDesc": "Создаст уведомление в приложении для всех",
+    "adminSyncStarted": "Синхронизация начата...",
+    "adminReviewModeration": "Модерация отзывов",
+    "adminDeleteReview": "Удалить отзыв?",
+    "adminDeleteBtn": "Удалить",
+    "adminReply": "Ответить",
+    "adminSave": "Сохранить",
+    "adminAllReviews": "Все отзывы",
+    "adminAuditLogs": "Аудит-логи",
+
+    "errorOops": "Упс! Произошла ошибка.",
+
+    "reviewEditedLabel": "изменено",
+    "reviewAuthRequiredMsg": "Войдите, чтобы оценить",
+    "reviewHelpful": "Полезно {count}",
+    "@reviewHelpful": {
+        "placeholders": { "count": { "type": "String" } }
+    },
+    "reviewOfficialReply": "Официальный ответ",
+    "reviewDateJustNow": "только что",
+    "reviewDateMinAgo": "{minutes} мин назад",
+    "@reviewDateMinAgo": {
+        "placeholders": { "minutes": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} ч назад",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} дн назад",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "янв",
+    "reviewMonthFeb": "фев",
+    "reviewMonthMar": "мар",
+    "reviewMonthApr": "апр",
+    "reviewMonthMay": "май",
+    "reviewMonthJun": "июн",
+    "reviewMonthJul": "июл",
+    "reviewMonthAug": "авг",
+    "reviewMonthSep": "сен",
+    "reviewMonthOct": "окт",
+    "reviewMonthNov": "ноя",
+    "reviewMonthDec": "дек",
+
+    "svdAnalyticsTitle": "СВД Аналитика",
+    "svdDataSource": "Данные: МОН РК, {year}",
+    "@svdDataSource": {
+        "placeholders": { "year": { "type": "String" } }
+    },
+    "svdHowWeCalculateTitle": "Как мы считаем? 📝",
+    "svdHowWeCalculateBody": "Алгоритм 4-х вузов анализирует ваш балл ЕНТ, выбранные профильные предметы и статистику пороговых баллов МОН РК за прошлые годы.\n\nМы учитываем конкуренцию на вашей специальности и распределяем шансы по зонам риска (от \"Высокого\" до \"Низкого\").\n\nЭто позволяет подобрать оптимальную стратегию распределения 4-х вузов при подаче документов.",
+    "svdUnderstood": "Понятно",
+    "svdDisclaimer": "⚠️ Расчёт рекомендательный, итоговое решение о присуждении гранта всегда остается за приёмной комиссией МОН РК.",
+
+    "aiChancesGrant": "шанс на грант",
+    "aiChancesRisk": "Риск: {level}",
+    "@aiChancesRisk": {
+        "placeholders": { "level": { "type": "String" } }
+    },
+    "aiChancesEntThreshold": "Порог ЕНТ для этого направления: {threshold} баллов",
+    "@aiChancesEntThreshold": {
+        "placeholders": { "threshold": { "type": "int" } }
+    },
+    "aiChancesDetails": "Детали расчёта",
+    "aiChancesDetailedStrategy": "Подробная AI стратегия",
+
+    "profileCompletionLow": "Заполните профиль для лучших рекомендаций",
+    "profileCompletionMedium": "Почти готово! Добавьте оставшиеся данные",
+    "profileCompletionHigh": "Отличная работа! Профиль заполнен",
+    "profileCompletionTitle": "Заполнение профиля",
+
+    "detailPhoneNotProvided": "Не указан",
+    "detailWebsiteNotProvided": "Сайт не указан",
+    "detailAddressLabel": "Адрес",
+    "detailWebsiteLabel": "Сайт",
+    "detailPhoneLabelFull": "Телефон",
+    "detailRecommendations": "💡 Рекомендации",
+    "detailAiThinking": "AI формирует стратегию...",
+    "detailAiStrategySubtitle": "AI Стратегия TANDAU",
+
+    "pickerChooseSource": "Выберите источник",
+    "pickerGallery": "Галерея",
+    "pickerCamera": "Камера",
+    "pickerErrorUpdateLink": "Ошибка обновления ссылки в профиле",
+    "pickerErrorUploadCloud": "Ошибка загрузки в облако",
+
+    "profileCityEnter": "Введите название города",
+    "validationCity": "Введите город",
+
+    "updateAvailableTitle": "Доступно обновление! 🚀",
+    "updateForceTitle": "Обязательное обновление",
+    "updateForceBody": "Для продолжения использования TANDAU необходимо установить последнюю версию приложения.",
+    "updateRecommendedBody": "Мы подготовили новую версию TANDAU с улучшениями и новыми возможностями!",
+    "updateWhatsNew": "Что нового",
+    "updateNowBtn": "Обновить сейчас",
+    "updateLaterBtn": "Позже",
+    "updateVersion": "Версия {version}",
+    "@updateVersion": {
+        "placeholders": {
+            "version": { "type": "String" }
+        }
+    },
+
+    "subjectTypeTitle": "Направление ЕНТ",
+    "subjectTypePhysMath": "Физ-мат 🔬",
+    "subjectTypeHumanities": "Гуманитарий 📚",
+    "entSubjectsTitle": "Профильный предмет",
+    "selectSpecialty": "Специальность (ГОП)"
+}

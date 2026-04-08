@@ -651,6 +651,7 @@
     },
     "notifEmptyTitle": "Уведомлений пока нет",
     "notifEmptySubtitle": "Мы сообщим вам, когда появится что-то важное",
+    "notifActionBtn": "Перейти",
 
     "notifSettingsTitle": "Уведомления",
     "notifSectionStudy": "Учебные оповещения",

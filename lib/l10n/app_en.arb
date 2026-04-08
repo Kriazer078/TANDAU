@@ -670,6 +670,7 @@
     },
     "notifEmptyTitle": "No notifications yet",
     "notifEmptySubtitle": "We'll let you know when something important comes up",
+    "notifActionBtn": "Open",
 
     "notifSettingsTitle": "Notifications",
     "notifSectionStudy": "Study alerts",

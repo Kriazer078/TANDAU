@@ -144,13 +144,37 @@ class AIConsultantService {
         requestBody['uid'] = currentUser.uid;
       }
 
-      final response = await http
-          .post(
-            Uri.parse('$_baseUrl/ai/getAIStrategy'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode(requestBody),
-          )
-          .timeout(const Duration(seconds: 60));
+      http.Response? response;
+      int retryCount = 0;
+      const maxRetries = 3;
+
+      while (retryCount < maxRetries) {
+        try {
+          response = await http
+              .post(
+                Uri.parse('$_baseUrl/ai/getAIStrategy'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode(requestBody),
+              )
+              .timeout(const Duration(seconds: 45));
+
+          if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
+            retryCount++;
+            if (retryCount >= maxRetries) break;
+            await Future.delayed(const Duration(seconds: 2));
+            continue;
+          }
+          break;
+        } catch (e) {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw Exception('Network error after retries: $e');
+          }
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+
+      if (response == null) throw Exception('No response received');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -197,13 +221,37 @@ class AIConsultantService {
         bodyData['history'] = history;
       }
 
-      final response = await http
-          .post(
-            Uri.parse('$_baseUrl/chat'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode(bodyData),
-          )
-          .timeout(const Duration(seconds: 30));
+      http.Response? response;
+      int retryCount = 0;
+      const maxRetries = 3;
+
+      while (retryCount < maxRetries) {
+        try {
+          response = await http
+              .post(
+                Uri.parse('$_baseUrl/chat'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode(bodyData),
+              )
+              .timeout(const Duration(seconds: 40));
+
+          if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
+            retryCount++;
+            if (retryCount >= maxRetries) break;
+            await Future.delayed(const Duration(seconds: 2));
+            continue;
+          }
+          break;
+        } catch (e) {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw Exception('Network error after retries: $e');
+          }
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+
+      if (response == null) throw Exception('No response received');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -257,13 +305,36 @@ class AIConsultantService {
       if (isOrphan == true) bodyData['isOrphan'] = true;
       if (hasDisability == true) bodyData['hasDisability'] = true;
 
-      final request = http.Request('POST', Uri.parse('$_baseUrl/chat'));
-      request.headers['Content-Type'] = 'application/json';
-      request.body = jsonEncode(bodyData);
+      http.StreamedResponse? response;
+      int retryCount = 0;
+      const maxRetries = 3;
 
-      // BUG #4 fix: Increase timeout from 30s to 60s for Render cold start
-      final response =
-          await client.send(request).timeout(const Duration(seconds: 60));
+      while (retryCount < maxRetries) {
+        try {
+          final request = http.Request('POST', Uri.parse('$_baseUrl/chat'));
+          request.headers['Content-Type'] = 'application/json';
+          request.body = jsonEncode(bodyData);
+
+          response = await client.send(request).timeout(const Duration(seconds: 40));
+
+          if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
+            retryCount++;
+            if (retryCount >= maxRetries) break;
+            await Future.delayed(const Duration(seconds: 2));
+            continue;
+          }
+          break;
+        } catch (e) {
+          if (e is OutOfTokensException) rethrow;
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw Exception('Network error after retries: $e');
+          }
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+
+      if (response == null) throw Exception('No response received');
 
       if (response.statusCode == 200) {
         // Check content type to see if it's JSON (error/out of tokens) or event-stream
@@ -364,14 +435,36 @@ class AIConsultantService {
         bodyData['uid'] = currentUser.uid;
       }
 
-      final request =
-          http.Request('POST', Uri.parse('$_baseUrl/zheke-zhospar'));
-      request.headers['Content-Type'] = 'application/json';
-      request.body = jsonEncode(bodyData);
+      http.StreamedResponse? response;
+      int retryCount = 0;
+      const maxRetries = 3;
 
-      // BUG #4 fix: Increase timeout from 45s to 60s for Render cold start
-      final response =
-          await client.send(request).timeout(const Duration(seconds: 60));
+      while (retryCount < maxRetries) {
+        try {
+          final request = http.Request('POST', Uri.parse('$_baseUrl/zheke-zhospar'));
+          request.headers['Content-Type'] = 'application/json';
+          request.body = jsonEncode(bodyData);
+
+          response = await client.send(request).timeout(const Duration(seconds: 45));
+
+          if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
+            retryCount++;
+            if (retryCount >= maxRetries) break;
+            await Future.delayed(const Duration(seconds: 2));
+            continue;
+          }
+          break;
+        } catch (e) {
+          if (e is OutOfTokensException) rethrow;
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw Exception('Network error after retries: $e');
+          }
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+
+      if (response == null) throw Exception('No response received');
 
       if (response.statusCode == 200) {
         final contentType = response.headers['content-type'] ?? '';
@@ -449,13 +542,37 @@ class AIConsultantService {
         bodyData['uid'] = currentUser.uid;
       }
 
-      final response = await http
-          .post(
-            Uri.parse('$_baseUrl/zheke-zhospar'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode(bodyData),
-          )
-          .timeout(const Duration(seconds: 45));
+      http.Response? response;
+      int retryCount = 0;
+      const maxRetries = 3;
+
+      while (retryCount < maxRetries) {
+        try {
+          response = await http
+              .post(
+                Uri.parse('$_baseUrl/zheke-zhospar'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode(bodyData),
+              )
+              .timeout(const Duration(seconds: 45));
+
+          if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
+            retryCount++;
+            if (retryCount >= maxRetries) break;
+            await Future.delayed(const Duration(seconds: 2));
+            continue;
+          }
+          break;
+        } catch (e) {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            throw Exception('Network error after retries: $e');
+          }
+          await Future.delayed(const Duration(seconds: 2));
+        }
+      }
+
+      if (response == null) throw Exception('No response received');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));

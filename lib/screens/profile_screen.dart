@@ -9,7 +9,6 @@ import '../services/locale_manager.dart';
 import '../services/auth_service.dart';
 import '../l10n/app_localizations.dart';
 import 'login_screen.dart';
-import 'admin/admin_panel_screen.dart';
 import '../models/user_model.dart';
 import 'edit_profile_screen.dart';
 import 'notifications_settings_screen.dart';
@@ -281,32 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
 
 
-                    // Admin Panel - Migration (Visible only to specific admin)
-                    // Admin Panel - Migration (Visible ONLY temporarily for setup)
-                    if (AuthService().isAdmin)
-                      _buildSettingCard(
-                        context,
-                        icon: Icons.admin_panel_settings,
-                        title: l10n?.adminPanelTitle ?? 'Админ Панель',
-                        subtitle: l10n?.adminPanelSubtitle ??
-                            'Управление пушем и данными',
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: Theme.of(
-                            context,
-                          ).iconTheme.color?.withValues(alpha: 0.5),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AdminPanelScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 16),
 
                     // Delete Account Button
                     SizedBox(

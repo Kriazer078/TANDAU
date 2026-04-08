@@ -652,7 +652,8 @@
         "placeholders": { "error": { "type": "String" } }
     },
     "notifEmptyTitle": "Хабарламалар жоқ",
-    "notifEmptySubtitle": "Маңызды нәрсе болғанда хабарлаймыз",
+    "notifEmptySubtitle": "Маңызды бір нәрсе пайда болғанда хабарлаймыз",
+    "notifActionBtn": "Өту",
 
     "notifSettingsTitle": "Хабарламалар",
     "notifSectionStudy": "Оқу ескертулері",

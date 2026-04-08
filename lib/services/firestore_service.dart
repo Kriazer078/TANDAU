@@ -65,7 +65,16 @@ class FirestoreService {
   /// Add university to Firestore
   Future<bool> addUniversity(University university) async {
     try {
-      await universitiesCollection.doc(university.id).set(university.toMap());
+      final docRef = university.id.isEmpty 
+          ? universitiesCollection.doc() 
+          : universitiesCollection.doc(university.id);
+          
+      final data = university.toMap();
+      if (university.id.isEmpty) {
+        data['id'] = docRef.id;
+      }
+      
+      await docRef.set(data);
       return true;
     } catch (e) {
       debugPrint('Error adding university: $e');
@@ -93,6 +102,88 @@ class FirestoreService {
       return true;
     } catch (e) {
       debugPrint('Error deleting university: $e');
+      return false;
+    }
+  }
+
+  /// ⚠️ Удаление ВСЕХ университетов и их специальностей (Только для Админа)
+  Future<bool> deleteAllUniversities() async {
+    try {
+      final snapshot = await universitiesCollection.get();
+      
+      // В Firestore батчи лимитированы до 500 операций.
+      // Если вузов и специальностей много, нужно разбивать на чанки.
+      // Для начала делаем просто батчем, если операций < 500.
+      // Простой и надежный метод для Flutter - удаление каждого документа и подколлекции по очереди
+      // Но оптимизировано через батчи там, где это возможно.
+      
+      int operationCount = 0;
+      WriteBatch batch = _firestore.batch();
+      
+      for (var doc in snapshot.docs) {
+        final specsSnapshot = await doc.reference.collection('specialties').get();
+        
+        for (var specDoc in specsSnapshot.docs) {
+          batch.delete(specDoc.reference);
+          operationCount++;
+          
+          if (operationCount >= 490) {
+            await batch.commit();
+            batch = _firestore.batch();
+            operationCount = 0;
+          }
+        }
+        
+        batch.delete(doc.reference);
+        operationCount++;
+        
+        if (operationCount >= 490) {
+          await batch.commit();
+          batch = _firestore.batch();
+          operationCount = 0;
+        }
+      }
+      
+      if (operationCount > 0) {
+        await batch.commit();
+      }
+      
+      debugPrint('Successfully deleted all universities and their specialties');
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting all universities: $e');
+      return false;
+    }
+  }
+
+  /// Загрузка университета вместе с его специальностями в рамках одной транзакции/батча
+  Future<bool> uploadUniversityWithSpecialties(University university, List<Specialty> specialties) async {
+    try {
+      final batch = _firestore.batch();
+      
+      // Назначаем ID универу, если он пустой
+      final docRef = university.id.isEmpty 
+          ? universitiesCollection.doc() 
+          : universitiesCollection.doc(university.id);
+          
+      final uniData = university.toMap();
+      if (university.id.isEmpty) {
+        uniData['id'] = docRef.id;
+      }
+      
+      batch.set(docRef, uniData);
+      
+      for (var spec in specialties) {
+        final specRef = (spec.id.isEmpty)
+            ? docRef.collection('specialties').doc()
+            : docRef.collection('specialties').doc(spec.id);
+        batch.set(specRef, spec.toMap());
+      }
+      
+      await batch.commit();
+      return true;
+    } catch (e) {
+      debugPrint('Error uploading university with specialties: $e');
       return false;
     }
   }

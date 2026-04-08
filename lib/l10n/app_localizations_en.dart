@@ -1544,6 +1544,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'We\'ll let you know when something important comes up';
 
   @override
+  String get notifActionBtn => 'Open';
+
+  @override
   String get notifSettingsTitle => 'Notifications';
 
   @override

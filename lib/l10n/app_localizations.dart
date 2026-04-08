@@ -2998,6 +2998,12 @@ abstract class AppLocalizations {
   /// **'We\'ll let you know when something important comes up'**
   String get notifEmptySubtitle;
 
+  /// No description provided for @notifActionBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get notifActionBtn;
+
   /// No description provided for @notifSettingsTitle.
   ///
   /// In en, this message translates to:

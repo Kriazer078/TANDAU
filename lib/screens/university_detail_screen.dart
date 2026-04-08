@@ -5,9 +5,6 @@ import '../models/user_model.dart';
 import '../services/university_service.dart';
 import '../services/auth_service.dart';
 import '../utils/guest_guard.dart';
-import '../models/student_profile.dart';
-import '../services/ai_consultant_service.dart';
-import '../services/grant_chance_service.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/university_header.dart';
 import '../widgets/university_overview_tab.dart';
@@ -15,7 +12,8 @@ import '../widgets/university_majors_tab.dart';
 import '../widgets/university_admission_tab.dart';
 import '../widgets/university_contact_tab.dart';
 import '../widgets/university_reviews_tab.dart';
-import '../widgets/svd_result_sheet.dart';
+import '../widgets/svd_result_sheet.dart'; // GridPainter
+import 'ai_consultant_screen.dart';
 
 class UniversityDetailScreen extends StatefulWidget {
   final University university;
@@ -330,27 +328,27 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
     final UserModel? user = _authService.currentUser.value;
     if (user == null) return;
 
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Build student profile from UserModel (единый источник данных)
-    final StudentProfile profile = StudentProfile.fromUserModel(user);
-
-    // Instant SVD calculation (no network!)
-    final GrantChanceResult svdResult = AIConsultantService()
-        .calculateGrantChance(profile: profile, university: widget.university);
+    // Build a rich query for the AI consultant
+    final uniName = widget.university.name;
+    final entScore = user.untScore ?? 0;
+    final parts = <String>[];
+    parts.add('Оцени мои шансы на поступление в $uniName.');
+    parts.add('Мой балл ЕНТ: $entScore из 140.');
+    if (user.isRural == true) parts.add('У меня сельская квота.');
+    if (user.isOrphan == true) parts.add('Я сирота (квота).');
+    if (user.hasDisability == true) {
+      parts.add('У меня инвалидность (квота).');
+    }
+    parts.add('Какую стратегию поступления выбрать?');
 
     if (!mounted) return;
 
-    // Show SVD result bottom sheet
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => SvdResultSheet(
-        svdResult: svdResult,
-        isDark: isDark,
-        university: widget.university,
-        profile: profile,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AIConsultantScreen(
+          initialQuery: parts.join(' '),
+        ),
       ),
     );
   }

@@ -8,7 +8,7 @@ import '../providers/grant_predictor_provider.dart';
 import '../data/ent_specialties_2026.dart';
 import '../services/auth_service.dart';
 import '../utils/constants.dart';
-import 'grant_prediction_results_screen.dart';
+import 'ai_consultant_screen.dart';
 
 class GrantWizardScreen extends ConsumerStatefulWidget {
   const GrantWizardScreen({super.key});
@@ -103,11 +103,11 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
               const SizedBox(height: 16),
               _buildDirectionAndSubjects(selectedType, selectedSubjectPair, isDark, l10n),
 
-              if (selectedSubjectPair != null) ...[
+              if (selectedType != null && selectedSubjectPair != null) ...[
                 const SizedBox(height: 32),
                 _buildStepHeader('3. Специальность (ГОП)', isDark),
                 const SizedBox(height: 16),
-                _buildSpecialtyDropdown(selectedType!, selectedSubjectPair, selectedSpecialty, isDark, l10n),
+                _buildSpecialtyDropdown(selectedType, selectedSubjectPair, selectedSpecialty, isDark, l10n),
               ],
 
               const SizedBox(height: 32),
@@ -131,13 +131,34 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
                 onPressed: () {
                   // Ensure current score is synced
                   AuthService().updateProfile(untScore: untScore);
-                  
+
+                  // Build AI query from wizard data
+                  final parts = <String>[];
+                  parts.add('Мой балл ЕНТ: $untScore из 140.');
+                  if (selectedSubjectPair != null) {
+                    parts.add('Профильные предметы: $selectedSubjectPair.');
+                  }
+                  if (selectedSpecialty != null) {
+                    parts.add(
+                      'Выбранная специальность (ГОП): '
+                      '${selectedSpecialty.titleRu} '
+                      '(код ${selectedSpecialty.code}).',
+                    );
+                  }
+                  if (_isRural) parts.add('У меня сельская квота.');
+                  if (_isOrphan) parts.add('Я сирота (квота).');
+                  if (_hasDisability) parts.add('У меня инвалидность (квота).');
+                  parts.add(
+                    'Оцени мои шансы на государственный грант. '
+                    'Дай подробный анализ.',
+                  );
+                  final query = parts.join(' ');
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => GrantPredictionResultsScreen(
-                        entScore: untScore,
-                        specialty: selectedSpecialty,
+                      builder: (_) => AIConsultantScreen(
+                        initialQuery: query,
                       ),
                     ),
                   );

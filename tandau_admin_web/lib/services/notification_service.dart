@@ -1,0 +1,238 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'university_service.dart';
+import '../models/notification.dart';
+
+class NotificationService {
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
+  FirebaseMessaging get _fcm => FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  GlobalKey<NavigatorState>? _navigatorKey;
+
+  void setNavigatorKey(GlobalKey<NavigatorState> key) {
+    _navigatorKey = key;
+  }
+
+  /// Initialize notification services
+  Future<void> init() async {
+    // 1. Request permission
+    NotificationSettings settings = await _fcm.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    debugPrint('User granted permission: ${settings.authorizationStatus}');
+
+    // ⚡ Early return if permission denied — no point setting up channels/tokens
+    if (settings.authorizationStatus != AuthorizationStatus.authorized &&
+        settings.authorizationStatus != AuthorizationStatus.provisional) {
+      debugPrint('🚫 Notifications permission denied, skipping setup');
+      return;
+    }
+
+    // 2. Setup Local Notifications
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings();
+
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+
+    await _localNotifications.initialize(
+      settings: initSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload != null) {
+          try {
+            final Map<String, dynamic> data = jsonDecode(response.payload!);
+            _handleMessageData(data);
+          } catch (e) {
+            debugPrint('Error parsing local notification payload: $e');
+          }
+        }
+      },
+    );
+
+    // 3. Background Handler
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // 4. Foreground messages - show local notification only (no Firestore save
+    //    because AdminService already writes to Firestore directly)
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        _showLocalNotification(message);
+      }
+    });
+
+    // 5. Handle clicks
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleMessageData(message.data);
+    });
+
+    // Handle Terminated state (Check after initialization)
+    _fcm.getInitialMessage().then((initialMessage) {
+      if (initialMessage != null) {
+        // Wait for navigator to be ready
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          _handleMessageData(initialMessage.data);
+        });
+      }
+    });
+
+    // 6. Token handling
+    String? token = await getToken();
+    if (token != null) {
+      saveTokenToFirestore(token);
+    }
+  }
+
+  Future<void> saveTokenToFirestore(String token) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && !user.isAnonymous) {
+      try {
+        await _firestore.collection('users').doc(user.uid).set({
+          'fcmToken': token,
+          'lastTokenUpdate': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+        debugPrint('FCM Token synced to Firestore for: ${user.uid}');
+      } catch (e) {
+        debugPrint('Firestore token sync error: $e');
+      }
+    }
+  }
+
+  Future<void> _handleMessageData(Map<String, dynamic> data) async {
+    debugPrint('Handling notification logic: $data');
+
+    final String? screen = data['screen'];
+    final String? id = data['id'];
+
+    if (screen == 'university' && id != null) {
+      final university = await UniversityService().getUniversityById(id);
+
+      if (university != null && _navigatorKey?.currentState != null) {
+        debugPrint(
+          'Admin received university notification for ${university.name}',
+        );
+      }
+    }
+  }
+
+  Future<String?> getToken() async {
+    try {
+      return await _fcm.getToken();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> _showLocalNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'high_importance_channel',
+          'High Importance Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
+
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(),
+    );
+
+    await _localNotifications.show(
+      id: message.hashCode,
+      title: message.notification?.title,
+      body: message.notification?.body,
+      notificationDetails: platformDetails,
+      payload: jsonEncode(message.data),
+    );
+  }
+
+  /// Get notifications stream for current user
+  Stream<List<AppNotification>> getNotificationsStream() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return Stream.value([]);
+
+    return _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .orderBy('time', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            return AppNotification.fromMap(doc.data(), doc.id);
+          }).toList();
+        });
+  }
+
+  /// Mark notification as read
+  Future<void> markAsRead(String notificationId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .doc(notificationId)
+        .update({'isRead': true});
+  }
+
+  /// Delete notification
+  Future<void> deleteNotification(String notificationId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .doc(notificationId)
+        .delete();
+  }
+
+  /// Clear all notifications (handles Firestore batch limit of 500)
+  Future<void> clearAllNotifications() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final collectionRef = _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications');
+
+    // Delete in chunks of 500 (Firestore batch limit)
+    QuerySnapshot snapshot;
+    do {
+      snapshot = await collectionRef.limit(500).get();
+      if (snapshot.docs.isEmpty) break;
+
+      final batch = _firestore.batch();
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    } while (snapshot.docs.length == 500);
+  }
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint('Background message received: ${message.messageId}');
+}

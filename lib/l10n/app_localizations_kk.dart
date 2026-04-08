@@ -1539,7 +1539,11 @@ class AppLocalizationsKk extends AppLocalizations {
   String get notifEmptyTitle => 'Хабарламалар жоқ';
 
   @override
-  String get notifEmptySubtitle => 'Маңызды нәрсе болғанда хабарлаймыз';
+  String get notifEmptySubtitle =>
+      'Маңызды бір нәрсе пайда болғанда хабарлаймыз';
+
+  @override
+  String get notifActionBtn => 'Өту';
 
   @override
   String get notifSettingsTitle => 'Хабарламалар';

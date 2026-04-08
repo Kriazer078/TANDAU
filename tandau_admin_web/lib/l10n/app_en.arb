@@ -1,0 +1,859 @@
+{
+    "appTitle": "TANDAU",
+    "homeSubtitle": "Find the right path to your future",
+    "ctaStart": "Start Choosing",
+    "statsUniversity": "Universities",
+    "statsStudent": "Students",
+    "statsGraduates": "Graduates",
+    "statsSpecialty": "Specialties",
+    "profileTitle": "Profile",
+    "settingsTitle": "Settings",
+    "settingsLanguage": "Language",
+    "settingsTheme": "Dark Mode",
+    "settingsThemeSubtitle": "Switch to dark mode",
+    "settingsNotifications": "Notifications",
+    "settingsAbout": "About App",
+    "settingsHelp": "Help",
+    "settingsPrivacy": "Privacy Policy",
+    "dialogLanguageTitle": "Choose Language",
+    "navHome": "Home",
+    "navSearch": "Search",
+    "navFavorites": "Favorites",
+    "navProfile": "Profile",
+    "navAgent": "AI Agent",
+    "authRegister": "Register",
+    "authLogin": "Login",
+    "authCreateAccount": "Create Account",
+    "authWelcome": "Welcome to TANDAU!",
+    "authSubtitle": "Join TANDAU and start your educational journey",
+    "authWelcomeBack": "Welcome Back!",
+    "authLoginToAccount": "Login to your account",
+    "authFullName": "Full Name",
+    "authPhone": "Phone Number",
+    "authEmail": "Email",
+    "authPassword": "Password",
+    "authAlreadyHaveAccount": "Already have an account? ",
+    "authDontHaveAccount": "Don't have an account? ",
+    "authRegisterNow": "Register",
+    "authLoginNow": "Login",
+    "authGuestLogin": "Continue as Guest",
+    "authGoogleLogin": "Login with Google",
+    "authForgotPassword": "Forgot Password?",
+    "authErrorRegister": "Registration error. Try again.",
+    "authErrorLogin": "Invalid email or password.",
+    "authLogout": "Logout from account",
+    "searchHint": "Search University...",
+    "searchNoResults": "Universities not found",
+    "searchTryOthers": "Try other filters",
+    "filterTitle": "Filters",
+    "filterNext": "Next",
+    "filterShowResults": "Show Results",
+    "filterCity": "Which City?",
+    "filterCitySubtitle": "Choose the city where you want to study",
+    "filterMajor": "Which Major?",
+    "filterMajorSubtitle": "Choose a major you are interested in",
+    "filterBudget": "What is your budget?",
+    "filterBudgetSubtitle": "Select annual tuition fee range",
+    "filterClear": "Clear",
+    "filterEducationType": "Education Type",
+    "filterGrant": "Grant",
+    "filterPaid": "Paid",
+    "filterMaxPrice": "Max Price (per year)",
+    "filterPricePerYear": "Price per year",
+    "aiAgentTitle": "AI Assistant",
+    "aiAgentWelcome": "Need help choosing a university?\nAsk me a question!",
+    "aiAgentSubtitle": "I analyze thousands of universities to find your perfect match.",
+    "aiAgentInputHint": "Write a question...",
+    "aiAgentSample1": "Which university is better?",
+    "aiAgentSample2": "Where are IT majors?",
+    "aiAgentSample3": "What is needed for a grant?",
+    "aiAgentZhekeZhosparTitle": "Personal Plan",
+    "aiAgentZhekeZhosparDesc": "📋 Create a Personal Plan for admission for me",
+    "aiAgentStatusOnline": "Online",
+    "aiClearChat": "Clear Chat",
+    "aiAbout": "About TANDAU AI",
+    "aiClearDialogTitle": "Clear History?",
+    "aiClearDialogContent": "All messages will be permanently deleted.",
+    "aiClearDialogConfirm": "Clear",
+    "aiAboutDialogContent": "I use advanced algorithms to analyze university data. My goal is to help you find the perfect place to study and assess your chances of admission.",
+    "aiAboutDialogButton": "Got it",
+    "aiTyping": "Thinking...",
+    "aiError": "Sorry, an error occurred. Please try again later.",
+    "commonOk": "OK",
+    "majorIT": "IT",
+    "majorMedicine": "Medicine",
+    "majorPedagogy": "Pedagogy",
+    "majorEconomics": "Economics",
+    "majorEngineering": "Engineering",
+    "majorArt": "Art",
+    "budgetOnlyGrants": "Only grants",
+    "budgetUpTo500k": "Up to 500k T",
+    "budget1To2m": "1-2m T",
+    "budgetAny": "Not important",
+    "validationEmail": "Email is required",
+    "validationPassword": "Password is required",
+    "validationName": "Name is required",
+    "validationPhone": "Phone is required",
+    "validationEmailInvalid": "Invalid email",
+    "validationPasswordTooShort": "Min 6 characters",
+    "validationNameLength": "Nickname must be 3-20 characters",
+    "validationNameChars": "Only letters, numbers and _ allowed",
+    "validationEmailFormat": "Invalid email format",
+    "validationTerms": "You must agree to the Terms and Conditions",
+    "settingsNotificationsSubtitle": "Configure notifications",
+    "settingsAboutSubtitle": "Information about TANDAU",
+    "settingsHelpSubtitle": "FAQ and support",
+    "settingsPrivacySubtitle": "Privacy policy",
+    "settingsInProgress": "This feature is in development",
+    "aboutContent": "TANDAU is an application to help students choose their university.\n\n© 2026 TANDAU Team",
+    "searchHistory": "Search History",
+    "searchPopularCities": "Popular Cities",
+    "searchDepartments": "Departments",
+    "navComparison": "Comparison",
+    "comparisonTitle": "University Comparison",
+    "comparisonEmpty": "Comparison list is empty",
+    "comparisonEmptySubtitle": "Add universities to compare their features",
+    "comparisonBrowseUniversities": "Browse Universities",
+    "comparisonClear": "Clear",
+    "comparisonClearTitle": "Clear comparison?",
+    "comparisonClearMessage": "All universities will be removed from comparison",
+    "comparisonClearConfirm": "Remove all universities from comparison?",
+    "comparisonEmptyHint": "Add universities from the list to start comparing",
+    "comparisonRemoved": "Removed from comparison",
+    "comparisonAdded": "Added to comparison",
+    "comparisonFull": "Maximum {max} universities for comparison",
+    "@comparisonFull": {
+        "placeholders": {
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "comparisonInfo": "Comparing {count} of {max} universities",
+    "@comparisonInfo": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            },
+            "max": {
+                "type": "int"
+            }
+        }
+    },
+    "comparisonParameters": "Parameters",
+    "comparisonParamName": "Name",
+    "comparisonParamCity": "City",
+    "comparisonParamTuition": "Tuition Cost",
+    "comparisonParamGrants": "Grants/Budget",
+    "comparisonParamRating": "Rating",
+    "comparisonParamSpecialties": "Specialties",
+    "comparisonParamDormitory": "Dormitory",
+    "comparisonParamStudents": "Students",
+    "comparisonParamPassingScore": "Passing Score",
+    "commonYes": "Yes",
+    "commonNo": "No",
+    "commonCancel": "Cancel",
+    "comparisonAddToCompare": "Add to Compare",
+    "comparisonComparing": "Comparing 2 Universities",
+    "comparisonAddMore": "Add one more university to compare",
+    "comparisonAddUniversity": "Add University",
+    "backToList": "Back to List",
+    "available": "Available",
+    "notAvailable": "Not Available",
+    "more": "more",
+    "city": "City",
+    "tuition": "Tuition",
+    "grants": "Grants",
+    "rating": "Rating",
+    "specialties": "Specialties",
+    "cancel": "Cancel",
+    "delete": "Remove",
+    "inDevelopment": "In Development",
+    "inDevelopmentMessage": "This feature is under development and will be available soon!",
+    
+    "tabOverview": "Overview",
+    "tabMajors": "Majors",
+    "tabAdmissions": "Admissions",
+    "tabContact": "Contact",
+    "tabReviews": "Reviews",
+
+    "detailAbout": "About University",
+    "detailTuition": "Tuition Fees",
+    "detailPassingScore": "Passing Score",
+    "detailDocuments": "Required Documents",
+    "detailDeadline": "Application Deadline",
+    "detailAddress": "Address",
+    "detailWebsite": "Website",
+    "detailLeaveReview": "Leave a Review",
+    "detailNoReviews": "No reviews yet",
+
+    "universityDormitory": "Dormitory",
+    "universityGrant": "Grant",
+    "universityMilitary": "Military Department",
+    "universityStudentCount": "{count} students",
+    "@universityStudentCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "authGuestMessage": "Log in to access all features",
+    "editProfileTitle": "Edit Profile",
+    "saveChanges": "Save Changes",
+    "profileUpdated": "Profile updated successfully",
+    "profileAge": "Age",
+    "profileEducation": "Education",
+    "profileCity": "City",
+    "profileSpecialExam": "Special exam passed",
+    "profileSpecialExamSubtitle": "Creative, medical, or psychometric",
+    "profileUntScore": "UNT Score",
+    "profileIeltsScore": "IELTS (optional)",
+    "profileErrorUpdate": "Profile update failed",
+    "profileErrorLoad": "Error loading profile. Please retry.",
+    "authPleaseLogin": "Please sign in",
+    "authEmailHint": "Enter your email",
+    "detailChances": "Estimate Chances",
+    "detailRequirementsHeader": "Admission Requirements",
+    "detailScorePoints": "points",
+    "detailScoreSubtitle": "Based on last year's data",
+    "detailPhoneLabel": "Phone",
+    "moderationSpam": "Too many messages. Please wait a moment.",
+    "moderationProfanity": "Please use respectful language. Profanity is not allowed.",
+    "homeTools": "Tools",
+    "homeMarketInsights": "Market Insights",
+    "homeAIPowered": "AI Powered",
+    "homeGreetingMorning": "Good Morning",
+    "homeGreetingAfternoon": "Good Afternoon",
+    "homeGreetingEvening": "Good Evening",
+    "homeChanceEstimation": "Chance Estimation",
+    "homeChanceAnalysis": "Grant Admission Analysis 2026",
+    "homeAdvancedFilter": "Advanced Filter",
+    "homeUniversitySearch": "University Search",
+    "homeUniversities": "Universities",
+    "homeNoUniversitiesFound": "No universities found",
+    "homeYourScore": "Your current score: {score}",
+    "@homeYourScore": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "homeAIAnalysisInProgress": "AI Analysis...",
+    "homeAIAnalyticsTitle": "TANDAU AI Analytics",
+    "detailBeFirstReview": "Be the first to leave a review!",
+    "reviewEdited": "edited",
+    "reviewAuthRequired": "Please authenticate to rate",
+    "reviewHelpful": "Helpful {count}",
+    "@reviewHelpful": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "reviewOfficialReply": "Official Reply",
+    "commonError": "Error: {error}",
+    "@commonError": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesAnalytics": "SVD Analytics",
+    "aiChancesDataYear": "Data for {year}",
+    "@aiChancesDataYear": {
+        "placeholders": {
+            "year": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesGrant": "chance for grant",
+    "aiChancesRisk": "Risk: {risk}",
+    "@aiChancesRisk": {
+        "placeholders": {
+            "risk": {
+                "type": "String"
+            }
+        }
+    },
+    "aiChancesEntThreshold": "UNT Threshold for this major: {score} points",
+    "@aiChancesEntThreshold": {
+        "placeholders": {
+            "score": {
+                "type": "int"
+            }
+        }
+    },
+    "aiChancesDetails": "Calculation Details",
+    "aiChancesDetailedStrategy": "Detailed AI Strategy",
+    "detailErrorFavorites": "Error updating favorites",
+    "aiStrategyTitle": "AI Strategy",
+    "aiStrategyGoal": "Goal: {university}",
+    "@aiStrategyGoal": {
+        "placeholders": {
+            "university": {
+                "type": "String"
+            }
+        }
+    },
+    "aiStrategyAlternatives": "Alternative Options",
+    "aiStrategyUniversity": "University",
+    "aiStrategySpecialty": "Specialty",
+    "aiStrategyLoading": "Collecting data and analyzing chances for {university}...\nFind out which topics to improve to guarantee a grant!",
+    "@aiStrategyLoading": {
+        "placeholders": {
+            "university": {
+                "type": "String"
+            }
+        }
+    },
+    "aiStrategyGetPlan": "Get Detailed Plan",
+    "aiStrategyFallbackTitle": "Admission Strategy",
+    "authLoginContinue": "Log in to continue your journey",
+    "authLoginButton": "LOGIN",
+    "authRegisterButton": "Register",
+    "authTermsIHaveRead": "I agree with ",
+    "authTermsLink": "Terms of Use",
+    "authTermsAnd": " and ",
+    "authPrivacyLink": "Privacy Policy",
+    "authGuestTitle": "Login as Guest",
+    "authGuestWarning": "In guest mode, access is limited. For full access to the AI consultant and other functions, registration is required.",
+    "authContinue": "Continue",
+    "authTermsRegister": "By registering, you agree to the ",
+    "authRequired": "Required",
+    "validationMinLength": "Minimum {count} characters",
+    "@validationMinLength": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "validationDigitRequired": "Password must contain at least one digit",
+    "detailEstimateChances": "Estimate Chances",
+    "detailRecommendations": "💡 Recommendations",
+    "detailAiThinking": "AI is generating strategy...",
+    "detailAiStrategySubtitle": "TANDAU AI Strategy",
+    "tabOverview": "Overview",
+    "tabMajors": "Majors",
+    "tabAdmissions": "Admissions",
+    "tabContact": "Contact",
+    "tabReviews": "Reviews",
+    "profileSavedSubtitle": "Your saved universities",
+    "adminPanelTitle": "Admin Panel",
+    "adminPanelSubtitle": "Manage push and data",
+    "authGuestMessage": "Log in to your account to access all features",
+    "authTermsSuffix": "",
+
+    "homeGreetingNight": "Good Night",
+    "homeEntScore": "Your UNT Score:",
+
+    "promoCodeTitle": "Enter Promo Code",
+    "promoCodeSubtitle": "Activate PRO or Premium subscription",
+    "promoCodeActivation": "Promo Code Activation",
+    "promoCodeHint": "Enter promo code to activate subscription:",
+    "promoCodeActivate": "Activate",
+    "promoCodeSuccess": "Promo code successfully activated!",
+
+    "supportTitle": "Support TANDAU Team ❤️",
+    "supportSubtitle": "Direct transfer via Kaspi",
+    "supportProject": "Support the project",
+    "supportDescription": "We appreciate any support! All funds go to AI server costs and TANDAU development.",
+    "supportOpenKaspi": "Open Kaspi app",
+    "supportNumberCopied": "Number copied to clipboard",
+
+    "aiTokensRemaining": "AI requests left: {count}",
+    "@aiTokensRemaining": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+
+    "detailAboutUniversity": "About University",
+    "detailPassingScoreTitle": "Passing Score",
+    "detailPoints": "points",
+    "detailBasedOnLastYear": "Based on last year's data",
+    "detailAdmissionRequirements": "Admission Requirements",
+    "detailApplicationDeadline": "Application Deadline",
+    "detailPhoneNotProvided": "Not provided",
+    "detailWebsiteNotProvided": "Website not provided",
+    "detailAddressLabel": "Address",
+    "detailWebsiteLabel": "Website",
+    "detailPhoneLabelFull": "Phone",
+    "detailLeaveReviewBtn": "Leave a Review",
+    "detailNoReviewsYet": "No reviews yet",
+    "detailBeFirstReviewer": "Be the first to leave a review!",
+    "detailReviewsCount": "{count} reviews",
+    "@detailReviewsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "detailJustNow": "just now",
+    "reviewEditedLabel": "edited",
+    "reviewAuthRequiredMsg": "Please authenticate to rate",
+    "reviewHelpfulLabel": "Helpful",
+    "reviewOfficialReplyLabel": "Official Reply",
+
+    "majorBusiness": "Business",
+    "majorLaw": "Law",
+
+    "commonOr": "Or",
+    "commonDone": "Done",
+    "commonClose": "Close",
+
+    "scoreInputTitle": "Enter UNT Score",
+    "scoreInputHint": "0 – 140",
+    "scoreInputError": "Enter a number from 0 to 140",
+    "scoreInputTapHint": "Tap the number for precise input",
+
+    "reviewTitle": "Leave a Review",
+    "reviewRateQuestion": "How do you rate it?",
+    "reviewSelectRating": "Select a rating",
+    "reviewWriteComment": "Write a comment",
+    "reviewCommentHint": "Tell us about your experience...",
+    "reviewSubmit": "Submit",
+    "reviewSuccess": "Review added successfully!",
+    "reviewModerationFail": "Could not submit. Check text for inappropriate language.",
+    "reviewAttachPhoto": "Attach photo ({current}/3)",
+    "@reviewAttachPhoto": {
+        "placeholders": {
+            "current": { "type": "int" }
+        }
+    },
+    "reviewRatingBad": "Terrible",
+    "reviewRatingPoor": "Bad",
+    "reviewRatingOk": "OK",
+    "reviewRatingGood": "Good",
+    "reviewRatingExcellent": "Excellent!",
+
+    "paywallTitle": "Unlock your\nfull potential",
+    "paywallSubtitle": "Choose the plan that suits you and get admitted on a grant with confidence.",
+    "paywallFree": "Free",
+    "paywallCurrentPlan": "Your current plan",
+    "paywallChoosePro": "Choose PRO",
+    "paywallChoosePremium": "Choose Premium",
+    "paywallProSubtitle": "Perfect for 11th graders",
+    "paywallFeatureAiRequests": "100 AI requests",
+    "paywallFeatureBasicChances": "Basic chance estimation",
+    "paywallFeatureUniversityDb": "Access to university database",
+    "paywallFeatureAiDaily": "100 AI requests per day",
+    "paywallFeatureStrategy": "Strategy generator (4-university algorithm) 🔥",
+    "paywallFeatureDetailedChances": "Detailed chance estimation",
+    "paywallFeaturePriority": "Priority access",
+    "paywallFeatureUnlimited": "Unlimited AI requests ♾️",
+    "paywallFeatureParents": "Analytics for parents",
+    "paywallFeaturePersonalSupport": "Personal support",
+    "paywallPerMonth": "{price} ₸ / month",
+    "@paywallPerMonth": {
+        "placeholders": {
+            "price": { "type": "String" }
+        }
+    },
+
+    "notificationTitle": "Notifications",
+    "notificationEmpty": "No notifications",
+
+    "deadlineTitle": "Admission Deadlines\n2026",
+    "deadlineImportantDates": "Important Dates",
+    "deadlineDays": "days",
+    "deadlineCompleted": "Completed",
+    "deadlineToday": "Today!",
+    "deadlineTomorrow": "Tomorrow!",
+    "deadlineWeeks": "wk",
+    "deadlineMonths": "mo",
+
+    "wizardStepOf": "Step {current} of {total}",
+    "@wizardStepOf": {
+        "placeholders": {
+            "current": { "type": "int" },
+            "total": { "type": "int" }
+        }
+    },
+    "wizardSkip": "Skip",
+    "wizardNext": "Next →",
+    "wizardFinish": "✨ Finish",
+    "wizardEntTitle": "What is your UNT score?",
+    "wizardEntSubtitle": "Trial or actual — enter an approximate score",
+    "wizardMajorTitle": "What major?",
+    "wizardMajorSubtitle": "Select one or more",
+    "wizardCityTitle": "Which city?",
+    "wizardCitySubtitle": "Where do you want to study",
+    "wizardFinanceTitle": "Financial situation?",
+    "wizardFinanceSubtitle": "This will help find suitable universities",
+    "wizardQuotaTitle": "Have any quotas?",
+    "wizardQuotaSubtitle": "Quotas give an advantage in admission",
+    "wizardAchievementTitle": "Achievements?",
+    "wizardAchievementSubtitle": "Altyn Belgi, olympiads, sports",
+    "wizardFinanceOnlyGrant": "Grant only",
+    "wizardFinanceOnlyGrantDesc": "Cannot afford tuition",
+    "wizardFinanceUpTo1m": "Up to 1,000,000 ₸",
+    "wizardFinanceUpTo1mDesc": "Can partially pay",
+    "wizardFinanceAny": "Any budget",
+    "wizardFinanceAnyDesc": "Finances don't limit my choice",
+    "wizardQuotaRural": "🏡 Rural quota",
+    "wizardQuotaRuralDesc": "Registered in a village",
+    "wizardQuotaOrphan": "👶 Orphan quota",
+    "wizardQuotaOrphanDesc": "Orphan child status",
+    "wizardQuotaDisability": "♿ Disability quota",
+    "wizardQuotaDisabilityDesc": "Disability group I, II or III",
+    "wizardQuotaHint": "No quota? No problem! AI will consider this and find the best options.",
+    "wizardProfileButton": "🚀 Complete profile in 2 min",
+    "wizardProfileUpdated": "My profile is updated! Show me suitable universities.",
+    "wizardSaveError": "Save error",
+    "wizardScoreExcellent": "Excellent! 🔥",
+    "wizardScoreGood": "Good! 💪",
+    "wizardScoreOk": "Not bad 👍",
+    "wizardScoreGrow": "Room to grow 📈",
+    "wizardScorePrep": "Prep needed 📚",
+
+    "successStoriesChip": "📖 Success Stories",
+
+    "wizardMajorIT": "IT / Programming",
+    "wizardMajorMedicine": "Medicine",
+    "wizardMajorEngineering": "Engineering",
+    "wizardMajorBusiness": "Business / Economics",
+    "wizardMajorPedagogy": "Pedagogy",
+    "wizardMajorLaw": "Law",
+    "wizardMajorArchitecture": "Architecture",
+    "wizardMajorOilGas": "Oil & Gas",
+    "wizardMajorArt": "Art / Design",
+    "wizardMajorUndecided": "Undecided",
+
+    "wizardAchAltynBelgi": "Altyn Belgi",
+    "wizardAchOlympiadRepublic": "Olympiad (national)",
+    "wizardAchOlympiadRegion": "Olympiad (regional)",
+    "wizardAchSport": "Sports achievements",
+    "wizardAchVolunteer": "Volunteering",
+    "wizardAchScience": "Research project",
+    "wizardAchNone": "No achievements",
+
+    "wizardCityAny": "Any city",
+
+    "svdAnalyticsTitle": "SVD Analytics",
+    "svdDataSource": "Data: MON RK, {year}",
+    "@svdDataSource": {
+        "placeholders": {
+            "year": { "type": "String" }
+        }
+    },
+    "svdHowWeCalculateTitle": "How do we calculate? 📝",
+    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.",
+    "svdUnderstood": "Got it",
+    "svdDisclaimer": "⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.",
+
+    "reviewDateJustNow": "just now",
+    "reviewDateMinAgo": "{min} min ago",
+    "@reviewDateMinAgo": {
+        "placeholders": { "min": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours} h ago",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days} d ago",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "Jan",
+    "reviewMonthFeb": "Feb",
+    "reviewMonthMar": "Mar",
+    "reviewMonthApr": "Apr",
+    "reviewMonthMay": "May",
+    "reviewMonthJun": "Jun",
+    "reviewMonthJul": "Jul",
+    "reviewMonthAug": "Aug",
+    "reviewMonthSep": "Sep",
+    "reviewMonthOct": "Oct",
+    "reviewMonthNov": "Nov",
+    "reviewMonthDec": "Dec",
+
+    "reviewLeaveTitle": "Leave a Review",
+    "reviewRateQuestion": "How do you rate it?",
+    "reviewCommentHint": "Tell us about your experience...",
+    "reviewAttachPhotoLabel": "Attach photo ({current}/3)",
+    "@reviewAttachPhotoLabel": {
+        "placeholders": { "current": { "type": "int" } }
+    },
+    "reviewCancelBtn": "Cancel",
+    "reviewSubmitBtn": "Submit",
+    "reviewSelectRatingError": "Select a rating",
+    "reviewWriteCommentError": "Write a comment",
+    "reviewSuccessMsg": "Review added successfully!",
+    "reviewModerationFailMsg": "Could not submit. Check text for inappropriate language.",
+    "reviewErrorGeneric": "An error occurred: {error}",
+    "@reviewErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "profileCompletionTitle": "Profile completion",
+    "profileCompletionLow": "Complete your profile for better recommendations",
+    "profileCompletionMedium": "Almost done! Add missing data",
+    "profileCompletionHigh": "Great job! Profile is complete",
+
+    "pickerChooseSource": "Choose source",
+    "pickerGallery": "Gallery",
+    "pickerCamera": "Camera",
+    "pickerErrorUpdateLink": "Error updating link in profile",
+    "pickerErrorUploadCloud": "Error uploading to cloud",
+    "pickerErrorGeneric": "Error: {error}",
+    "@pickerErrorGeneric": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "profileDeleteAccount": "Delete Account",
+    "profileDeleteAccountTitle": "Delete Account?",
+    "profileDeleteAccountContent": "Are you sure you want to delete your account? All your data will be permanently deleted.",
+    "profileDeleteAccountCancel": "Cancel",
+    "profileDeleteAccountConfirm": "Delete",
+    "profileDeleteAccountErrorLink": "Could not open link",
+    "errorTimeout": "Connection timed out. Check your internet connection.",
+    "errorCritical": "Critical error: {error}",
+    "@errorCritical": {
+        "placeholders": {
+            "error": { "type": "String" }
+        }
+    },
+
+    "profileFillAllData": "Please fill in all profile data (including name and academic scores).",
+    "profileNameProfanity": "Name contains inappropriate words.",
+    "profileUnsavedChanges": "Unsaved changes",
+    "profileUnsavedMessage": "You have unsaved changes. Are you sure you want to leave?",
+    "profileStay": "Stay",
+    "profileLeave": "Leave",
+    "profileSectionPersonal": "Personal info",
+    "profileSectionAcademic": "Academic scores",
+    "profilePhotoUpdated": "Photo updated successfully!",
+    "profileDeleteAccountSent": "Deletion request sent. Follow the instructions on the opened page.",
+    "profileChangePhoto": "Change photo",
+    "commonError": "Error:",
+    "profileCompletionLow": "Complete your profile for better recommendations",
+    "profileCompletionMedium": "Almost done! Add the remaining data",
+    "profileCityEnter": "Enter city name",
+    "validationCity": "Enter a city",
+    "profileSave": "Save changes",
+    "profileMathScore": "Math (prof.)",
+
+    "aiThinkingStep1": "Analyzing your request",
+    "aiThinkingStep2": "Searching university database",
+    "aiThinkingStep3": "Generating personalized response",
+    "aiThinkingStep4": "Preparing recommendation",
+    "aiThinkingZhStep1": "Analyzing applicant profile",
+    "aiThinkingZhStep2": "Selecting matching universities",
+    "aiThinkingZhStep3": "Calculating grant chances",
+    "aiThinkingZhStep4": "Creating admission plan",
+    "aiThinkingZhStep5": "Preparing your Personal Plan",
+
+    "aiNewChat": "New Chat",
+    "aiChatHistory": "Chat History",
+    "aiDeleteChat": "Delete Chat",
+    "aiDeleteChatConfirm": "Delete this chat?",
+    "aiNoChats": "No chats yet",
+    "aiToday": "Today",
+    "aiYesterday": "Yesterday",
+    "aiPrevious7Days": "Last 7 days",
+    "aiOlder": "Older",
+
+    "notifClearTitle": "Clear notifications?",
+    "notifClearContent": "All notifications will be permanently deleted.",
+    "notifClearBtn": "Clear",
+    "notifErrorPrefix": "Error: {error}",
+    "@notifErrorPrefix": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "notifEmptyTitle": "No notifications yet",
+    "notifEmptySubtitle": "We'll let you know when something important comes up",
+
+    "notifSettingsTitle": "Notifications",
+    "notifSectionStudy": "Study alerts",
+    "notifGrantUpdates": "Grant updates",
+    "notifGrantUpdatesDesc": "Be the first to know about score and seat changes",
+    "notifUniversityNews": "University news",
+    "notifUniversityNewsDesc": "Open days and important dates",
+    "notifSectionOther": "Other",
+    "notifMarketing": "Marketing & promotions",
+    "notifMarketingDesc": "Partner discounts and platform news",
+
+    "helpTitle": "Help & Support",
+    "helpSupportTeam": "Support team",
+    "helpSupportDesc": "We'll reply within 24 hours\ntandau.app.help@gmail.com",
+    "helpWriteUs": "Write to us",
+    "helpEmailFallback": "Write to us at: tandau.app.help@gmail.com",
+    "helpEmailSubject": "TANDAU Support: [Question]",
+    "helpFaqTitle": "Frequently Asked Questions",
+    "helpFaq1Q": "How are admission chances calculated?",
+    "helpFaq1A": "Our AI analyzes past years' data, competition difficulty, and your UNT, GPA, and IELTS scores.",
+    "helpFaq2Q": "Is the grant data up-to-date?",
+    "helpFaq2A": "Yes, we update the state grants database annually based on official data from the MES RK.",
+    "helpFaq3Q": "What does the PRO subscription offer?",
+    "helpFaq3A": "PRO users get access to alternative university lists and extended AI analytics.",
+    "helpFaq4Q": "How to change the app language?",
+    "helpFaq4A": "Go to Profile -> Settings -> Language and choose the one you need.",
+    "helpAppVersion": "App version: 1.2.10",
+
+    "privacyTitle": "Privacy",
+    "privacyHeading": "Privacy Policy & Terms of Use",
+    "privacyUpdated": "Updated: February 24, 2026",
+
+    "favoritesSavedTitle": "Saved",
+    "favoritesEmptyTitle": "No saved universities",
+    "favoritesEmptySubtitle": "Save universities you like",
+    "favoritesDormitory": "Dormitory",
+    "favoritesGrant": "Grant",
+
+    "savedToFavorites": "Saved to favorites ❤️",
+    "saveErrorText": "Save error: {error}",
+    "@saveErrorText": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+
+    "adminAccessDenied": "Access denied",
+    "adminNoRights": "❌ You don't have admin rights",
+    "adminMigrationTitle": "Data migration",
+    "adminUpdateData": "🔄 Update data",
+    "adminUpdate": "Update",
+    "adminWarning": "⚠️ Warning!",
+    "adminDeleteAll": "Delete all data",
+    "adminCheckData": "Check data",
+    "adminGenerateTest": "Generate Dummy Stats (Test)",
+    "adminUsers": "Users",
+    "adminByDate": "By date",
+    "adminByName": "By name",
+    "adminResetSearch": "Reset search",
+    "adminDetailedInfo": "Detailed information",
+    "adminDeleteUser": "Delete user?",
+    "adminDeleteAllBtn": "Delete all",
+    "adminLoadError": "Loading error: {error}",
+    "@adminLoadError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminRoleChangeDenied": "❌ Access denied",
+    "adminSelfRole": "❌ Cannot change own role",
+    "adminSelfDelete": "❌ Cannot delete own account via admin panel",
+    "adminUserDeleted": "✅ User {name} data deleted",
+    "@adminUserDeleted": {
+        "placeholders": { "name": { "type": "String" } }
+    },
+    "adminDeleteError": "❌ Delete error: {error}",
+    "@adminDeleteError": {
+        "placeholders": { "error": { "type": "String" } }
+    },
+    "adminSendNotification": "Send notification",
+    "adminSendToAll": "Send to ALL users",
+    "adminSendToAllDesc": "Creates in-app notification for everyone",
+    "adminSyncStarted": "Sync started...",
+    "adminReviewModeration": "Review moderation",
+    "adminDeleteReview": "Delete review?",
+    "adminDeleteBtn": "Delete",
+    "adminReply": "Reply",
+    "adminSave": "Save",
+    "adminAllReviews": "All reviews",
+    "adminAuditLogs": "Audit logs",
+
+    "errorOops": "Oops! An error occurred.",
+
+    "reviewEditedLabel": "edited",
+    "reviewAuthRequiredMsg": "Please sign in to rate",
+    "reviewHelpful": "Helpful {count}",
+    "@reviewHelpful": {
+        "placeholders": { "count": { "type": "String" } }
+    },
+    "reviewOfficialReply": "Official reply",
+    "reviewDateJustNow": "just now",
+    "reviewDateMinAgo": "{minutes} min ago",
+    "@reviewDateMinAgo": {
+        "placeholders": { "minutes": { "type": "int" } }
+    },
+    "reviewDateHoursAgo": "{hours}h ago",
+    "@reviewDateHoursAgo": {
+        "placeholders": { "hours": { "type": "int" } }
+    },
+    "reviewDateDaysAgo": "{days}d ago",
+    "@reviewDateDaysAgo": {
+        "placeholders": { "days": { "type": "int" } }
+    },
+    "reviewMonthJan": "Jan",
+    "reviewMonthFeb": "Feb",
+    "reviewMonthMar": "Mar",
+    "reviewMonthApr": "Apr",
+    "reviewMonthMay": "May",
+    "reviewMonthJun": "Jun",
+    "reviewMonthJul": "Jul",
+    "reviewMonthAug": "Aug",
+    "reviewMonthSep": "Sep",
+    "reviewMonthOct": "Oct",
+    "reviewMonthNov": "Nov",
+    "reviewMonthDec": "Dec",
+
+    "svdAnalyticsTitle": "SVD Analytics",
+    "svdDataSource": "Data: MES RK, {year}",
+    "@svdDataSource": {
+        "placeholders": { "year": { "type": "String" } }
+    },
+    "svdHowWeCalculateTitle": "How do we calculate? 📝",
+    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and MES RK threshold score statistics from previous years.\n\nWe account for competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows you to choose an optimal strategy for distributing 4 universities when submitting documents.",
+    "svdUnderstood": "Got it",
+    "svdDisclaimer": "⚠️ This calculation is advisory. The final decision on grant allocation always rests with the MES RK admissions committee.",
+
+    "aiChancesGrant": "grant chance",
+    "aiChancesRisk": "Risk: {level}",
+    "@aiChancesRisk": {
+        "placeholders": { "level": { "type": "String" } }
+    },
+    "aiChancesEntThreshold": "UNT threshold for this program: {threshold} points",
+    "@aiChancesEntThreshold": {
+        "placeholders": { "threshold": { "type": "int" } }
+    },
+    "aiChancesDetails": "Calculation details",
+    "aiChancesDetailedStrategy": "Detailed AI strategy",
+
+    "profileCompletionLow": "Complete your profile for better recommendations",
+    "profileCompletionMedium": "Almost done! Add remaining data",
+    "profileCompletionHigh": "Great job! Profile is complete",
+    "profileCompletionTitle": "Profile completion",
+
+    "detailPhoneNotProvided": "Not provided",
+    "detailWebsiteNotProvided": "Website not provided",
+    "detailAddressLabel": "Address",
+    "detailWebsiteLabel": "Website",
+    "detailPhoneLabelFull": "Phone",
+    "detailRecommendations": "💡 Recommendations",
+    "detailAiThinking": "AI is generating strategy...",
+    "detailAiStrategySubtitle": "AI Strategy TANDAU",
+
+    "pickerChooseSource": "Choose source",
+    "pickerGallery": "Gallery",
+    "pickerCamera": "Camera",
+    "pickerErrorUpdateLink": "Error updating profile link",
+    "pickerErrorUploadCloud": "Cloud upload error",
+
+    "profileCityEnter": "Enter city name",
+    "validationCity": "Enter city",
+
+    "updateAvailableTitle": "Update Available! 🚀",
+    "updateForceTitle": "Critical Update Required",
+    "updateForceBody": "To continue using TANDAU, please install the latest version of the app.",
+    "updateRecommendedBody": "We've prepared a new version of TANDAU with improvements and new features!",
+    "updateWhatsNew": "What's New",
+    "updateNowBtn": "Update Now",
+    "updateLaterBtn": "Later",
+    "updateVersion": "Version {version}",
+    "@updateVersion": {
+        "placeholders": {
+            "version": { "type": "String" }
+        }
+    },
+
+    "subjectTypeTitle": "UNT Direction",
+    "subjectTypePhysMath": "PhysMath 🔬",
+    "subjectTypeHumanities": "Humanities 📚",
+    "entSubjectsTitle": "Profile Subject",
+    "selectSpecialty": "Specialty (GOP)"
+}

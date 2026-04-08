@@ -73,7 +73,8 @@ void main() async {
         totalOk++;
         print('  ✅ $docId');
       } catch (e) {
-        if (e.toString().contains('ALREADY_EXISTS')) {
+        final errorStr = e.toString();
+        if (errorStr.contains('ALREADY_EXISTS') || errorStr.contains('409') || errorStr.contains('already exists')) {
           await firestoreApi.projects.databases.documents.patch(
             Document(name: '$parent/knowledge_base/$docId', fields: fields),
             '$parent/knowledge_base/$docId',

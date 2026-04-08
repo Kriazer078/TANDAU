@@ -19,6 +19,7 @@ import 'firebase_options.dart';
 import 'services/revenuecat_service.dart';
 
 import 'package:flutter/foundation.dart';
+import 'utils/data_migration_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -104,6 +105,11 @@ void main() async {
     debugPrint('⚠️ RevenueCat init failed: $e');
   }
   AIConsultantService().init(); // Fire-and-forget warm-up
+  
+  // 🔄 Auto-migrate local data to Firestore if empty
+  DataMigrationHelper().migrateUniversitiesToFirestore().then((success) {
+    if (success) DataMigrationHelper().syncMetadata();
+  });
 
   // ⚠️ FirestoreUploadScript removed from startup — was causing
   // Firestore contention on every launch, contributing to registration ANR.

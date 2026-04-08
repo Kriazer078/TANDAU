@@ -19,7 +19,10 @@ import 'comparison_screen.dart';
 import '../services/comparison_service.dart';
 
 class AIConsultantScreen extends StatefulWidget {
-  const AIConsultantScreen({super.key});
+  const AIConsultantScreen({super.key, this.initialQuery});
+
+  /// If provided, this query will be auto-sent when the screen opens.
+  final String? initialQuery;
 
   @override
   State<AIConsultantScreen> createState() => _AIConsultantScreenState();
@@ -56,11 +59,25 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     _initHistory();
   }
 
+  /// Auto-send the initial query after history is initialized
+  Future<void> _handleInitialQuery() async {
+    final query = widget.initialQuery;
+    if (query != null && query.isNotEmpty) {
+      // Small delay to let the UI render first
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (mounted) {
+        _sendMessage(text: query);
+      }
+    }
+  }
+
   Future<void> _initHistory() async {
     await _historyService.init();
     // ⚡ Always start with a fresh chat on app restart
     _historyService.createConversation();
     setState(() => _messages.clear());
+    // 🚀 Auto-send initial query if provided
+    _handleInitialQuery();
   }
 
   Future<void> _loadActiveConversation() async {
@@ -573,15 +590,24 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu_rounded,
-            color: isDark ? Colors.white : AppColors.textPrimary,
-          ),
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-          tooltip:
-              AppLocalizations.of(context)?.aiChatHistory ?? 'История чатов',
-        ),
+        leading: widget.initialQuery != null
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                ),
+                onPressed: () => Navigator.pop(context),
+                tooltip: 'Назад',
+              )
+            : IconButton(
+                icon: Icon(
+                  Icons.menu_rounded,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                ),
+                onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                tooltip:
+                    AppLocalizations.of(context)?.aiChatHistory ?? 'История чатов',
+              ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
