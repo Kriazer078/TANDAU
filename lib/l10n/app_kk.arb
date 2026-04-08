@@ -849,5 +849,12 @@
     "feedbackSubmit": "Пікір жіберу",
     "feedbackSuccess": "Пікіріңіз үшін рахмет! Қажет болса, біз сізбен хабарласамыз.",
     "feedbackError": "Жіберу кезіндегі қате. Қайталап көріңіз.",
-    "feedbackAuthRequired": "Кері байланыс жіберу үшін жүйеге кіру қажет."
+    "feedbackAuthRequired": "Кері байланыс жіберу үшін жүйеге кіру қажет.",
+    "myFeedbacksTitle": "Менің өтініштерім",
+    "myFeedbacksEmpty": "Сіз әлі өтініш жіберген жоқсыз.",
+    "feedbackStatusNew": "Жаңа",
+    "feedbackStatusPending": "Өңделуде",
+    "feedbackStatusResolved": "Шешілді",
+    "feedbackAdminReply": "Әкімшінің жауабы:",
+    "feedbackSentAt": "{date} күні жіберілді"
 }

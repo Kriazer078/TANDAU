@@ -1844,5 +1844,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get feedbackAuthRequired =>
-      'Необходимо войти в аккаунт для отправки обратной связи.';
+      'Необходимо войти в аккаунт, чтобы оставить отзыв.';
+
+  @override
+  String get myFeedbacksTitle => 'Мои обращения';
+
+  @override
+  String get myFeedbacksEmpty => 'Вы еще не отправляли обращений.';
+
+  @override
+  String get feedbackStatusNew => 'Новое';
+
+  @override
+  String get feedbackStatusPending => 'В работе';
+
+  @override
+  String get feedbackStatusResolved => 'Решено';
+
+  @override
+  String get feedbackAdminReply => 'Ответ администратора:';
+
+  @override
+  String feedbackSentAt(Object date) {
+    return 'Отправлено $date';
+  }
 }

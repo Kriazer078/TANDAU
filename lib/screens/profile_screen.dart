@@ -16,6 +16,7 @@ import 'help_support_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'favorites_screen.dart';
 import 'feedback_screen.dart';
+import 'my_feedbacks_screen.dart';
 import '../widgets/like_review_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -197,6 +198,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const FeedbackScreen(),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // My Feedbacks History
+            _buildSettingCard(
+              context,
+              icon: Icons.history_rounded,
+              title: AppLocalizations.of(context)?.myFeedbacksTitle ?? 'My Feedbacks',
+              subtitle: AppLocalizations.of(context)?.myFeedbacksEmpty ??
+                  'История ваших обращений',
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Theme.of(
+                  context,
+                ).iconTheme.color?.withValues(alpha: 0.5),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyFeedbacksScreen(),
                   ),
                 );
               },

@@ -340,6 +340,8 @@ void main(List<String> args) async {
     const allowedOrigins = {
       'https://tandau.kz',
       'https://www.tandau.kz',
+      'https://tandau-app.web.app',
+      'https://tandau-app.firebaseapp.com',
       'http://localhost',
     };
     return (Handler innerHandler) {

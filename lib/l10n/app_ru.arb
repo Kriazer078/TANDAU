@@ -847,5 +847,12 @@
     "feedbackSubmit": "Отправить отзыв",
     "feedbackSuccess": "Спасибо за отзыв! Мы свяжемся с вами, если потребуется.",
     "feedbackError": "Ошибка при отправке. Попробуйте еще раз.",
-    "feedbackAuthRequired": "Необходимо войти в аккаунт для отправки обратной связи."
+    "feedbackAuthRequired": "Необходимо войти в аккаунт, чтобы оставить отзыв.",
+    "myFeedbacksTitle": "Мои обращения",
+    "myFeedbacksEmpty": "Вы еще не отправляли обращений.",
+    "feedbackStatusNew": "Новое",
+    "feedbackStatusPending": "В работе",
+    "feedbackStatusResolved": "Решено",
+    "feedbackAdminReply": "Ответ администратора:",
+    "feedbackSentAt": "Отправлено {date}"
 }

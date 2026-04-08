@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../services/feedback_service.dart';
+import '../../services/admin_service.dart';
 import '../../models/app_feedback.dart';
+import '../../models/notification.dart';
 import '../../theme/app_colors.dart';
 import 'package:intl/intl.dart';
 
@@ -127,18 +129,42 @@ class _FeedbackManagementScreenState extends State<FeedbackManagementScreen> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                   onPressed: () async {
+                    final String? reply = replyController.text.trim().isEmpty ? null : replyController.text.trim();
+                    
                     Navigator.pop(ctx);
+                    
+                    // 1. Update feedback document
                     await _feedbackService.updateFeedbackStatus(
                       feedback.id,
                       currentStatus!,
-                      adminReply: replyController.text.trim().isEmpty ? null : replyController.text.trim(),
+                      adminReply: reply,
                     );
-                    if (!context.mounted) return;
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Статус обновлён'), backgroundColor: AppColors.success),
-                      );
+
+                    // 2. Send Push Notification if there is a reply
+                    if (reply != null && reply.isNotEmpty) {
+                      try {
+                        await AdminService().sendNotification(
+                          targetUserId: feedback.userId,
+                          title: 'Ответ на ваше обращение',
+                          message: reply,
+                          type: NotificationType.news,
+                          data: {
+                            'screen': 'my_feedbacks',
+                            'feedbackId': feedback.id,
+                          },
+                        );
+                      } catch (e) {
+                        debugPrint('Push notification failed: $e');
+                      }
                     }
+
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Статус обновлён и уведомление отправлено'), 
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
                   },
                   child: const Text('СОХРАНИТЬ', style: TextStyle(color: Colors.black)),
                 ),

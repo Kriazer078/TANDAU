@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../screens/university_detail_screen.dart';
+import '../screens/my_feedbacks_screen.dart';
 import 'university_service.dart';
 import '../models/notification.dart';
 
@@ -133,6 +134,12 @@ class NotificationService {
           ),
         );
       }
+    } else if (screen == 'my_feedbacks' && _navigatorKey?.currentState != null) {
+      _navigatorKey?.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => const MyFeedbacksScreen(),
+        ),
+      );
     }
   }
 

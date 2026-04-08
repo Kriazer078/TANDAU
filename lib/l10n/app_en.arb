@@ -866,5 +866,12 @@
     "feedbackSubmit": "Submit feedback",
     "feedbackSuccess": "Thanks for your feedback! We'll reach out if needed.",
     "feedbackError": "Error submitting feedback. Please try again.",
-    "feedbackAuthRequired": "You need to log in to submit feedback."
+    "feedbackAuthRequired": "You need to log in to submit feedback.",
+    "myFeedbacksTitle": "My Feedbacks",
+    "myFeedbacksEmpty": "You haven't sent any feedback yet.",
+    "feedbackStatusNew": "New",
+    "feedbackStatusPending": "In Progress",
+    "feedbackStatusResolved": "Resolved",
+    "feedbackAdminReply": "Admin Reply:",
+    "feedbackSentAt": "Sent on {date}"
 }

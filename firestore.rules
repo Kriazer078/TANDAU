@@ -142,6 +142,15 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════
+    // 💬 ОБРАЩЕНИЯ (FEEDBACKS)
+    // ═══════════════════════════════════════
+    match /feedbacks/{feedbackId} {
+      allow read: if isAdmin() || (isAuth() && resource.data.userId == request.auth.uid);
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // ═══════════════════════════════════════
     // 🛡️ АДМИН-ДОСТУП КО ВСЕМУ (CATCH-ALL)
     // ═══════════════════════════════════════
     match /{path=**} {

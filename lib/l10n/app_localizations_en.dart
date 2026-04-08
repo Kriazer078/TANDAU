@@ -1840,4 +1840,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackAuthRequired => 'You need to log in to submit feedback.';
+
+  @override
+  String get myFeedbacksTitle => 'My Feedbacks';
+
+  @override
+  String get myFeedbacksEmpty => 'You haven\'t sent any feedback yet.';
+
+  @override
+  String get feedbackStatusNew => 'New';
+
+  @override
+  String get feedbackStatusPending => 'In Progress';
+
+  @override
+  String get feedbackStatusResolved => 'Resolved';
+
+  @override
+  String get feedbackAdminReply => 'Admin Reply:';
+
+  @override
+  String feedbackSentAt(Object date) {
+    return 'Sent on $date';
+  }
 }

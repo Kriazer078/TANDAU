@@ -1844,4 +1844,27 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get feedbackAuthRequired =>
       'Кері байланыс жіберу үшін жүйеге кіру қажет.';
+
+  @override
+  String get myFeedbacksTitle => 'Менің өтініштерім';
+
+  @override
+  String get myFeedbacksEmpty => 'Сіз әлі өтініш жіберген жоқсыз.';
+
+  @override
+  String get feedbackStatusNew => 'Жаңа';
+
+  @override
+  String get feedbackStatusPending => 'Өңделуде';
+
+  @override
+  String get feedbackStatusResolved => 'Шешілді';
+
+  @override
+  String get feedbackAdminReply => 'Әкімшінің жауабы:';
+
+  @override
+  String feedbackSentAt(Object date) {
+    return '$date күні жіберілді';
+  }
 }

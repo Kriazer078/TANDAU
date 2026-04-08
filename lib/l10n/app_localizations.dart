@@ -3555,6 +3555,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You need to log in to submit feedback.'**
   String get feedbackAuthRequired;
+
+  /// No description provided for @myFeedbacksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Feedbacks'**
+  String get myFeedbacksTitle;
+
+  /// No description provided for @myFeedbacksEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t sent any feedback yet.'**
+  String get myFeedbacksEmpty;
+
+  /// No description provided for @feedbackStatusNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get feedbackStatusNew;
+
+  /// No description provided for @feedbackStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get feedbackStatusPending;
+
+  /// No description provided for @feedbackStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get feedbackStatusResolved;
+
+  /// No description provided for @feedbackAdminReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Reply:'**
+  String get feedbackAdminReply;
+
+  /// No description provided for @feedbackSentAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent on {date}'**
+  String feedbackSentAt(Object date);
 }
 
 class _AppLocalizationsDelegate
