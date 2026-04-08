@@ -1811,4 +1811,37 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get selectSpecialty => 'Мамандық (БББ)';
+
+  @override
+  String get feedbackTitle => 'Кері байланыс';
+
+  @override
+  String get feedbackType => 'Өтініш түрі';
+
+  @override
+  String get feedbackTypeBug => 'Қате (баг)';
+
+  @override
+  String get feedbackTypeSuggestion => 'Ұсыныс';
+
+  @override
+  String get feedbackTypeOther => 'Басқа';
+
+  @override
+  String get feedbackMessageHint =>
+      'Мәселеңізді немесе ұсынысыңызды сипаттаңыз...';
+
+  @override
+  String get feedbackSubmit => 'Пікір жіберу';
+
+  @override
+  String get feedbackSuccess =>
+      'Пікіріңіз үшін рахмет! Қажет болса, біз сізбен хабарласамыз.';
+
+  @override
+  String get feedbackError => 'Жіберу кезіндегі қате. Қайталап көріңіз.';
+
+  @override
+  String get feedbackAuthRequired =>
+      'Кері байланыс жіберу үшін жүйеге кіру қажет.';
 }

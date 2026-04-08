@@ -839,5 +839,15 @@
     "subjectTypePhysMath": "Физ-мат 🔬",
     "subjectTypeHumanities": "Гуманитарий 📚",
     "entSubjectsTitle": "Бейіндік пән",
-    "selectSpecialty": "Мамандық (БББ)"
+    "selectSpecialty": "Мамандық (БББ)",
+    "feedbackTitle": "Кері байланыс",
+    "feedbackType": "Өтініш түрі",
+    "feedbackTypeBug": "Қате (баг)",
+    "feedbackTypeSuggestion": "Ұсыныс",
+    "feedbackTypeOther": "Басқа",
+    "feedbackMessageHint": "Мәселеңізді немесе ұсынысыңызды сипаттаңыз...",
+    "feedbackSubmit": "Пікір жіберу",
+    "feedbackSuccess": "Пікіріңіз үшін рахмет! Қажет болса, біз сізбен хабарласамыз.",
+    "feedbackError": "Жіберу кезіндегі қате. Қайталап көріңіз.",
+    "feedbackAuthRequired": "Кері байланыс жіберу үшін жүйеге кіру қажет."
 }

@@ -837,5 +837,15 @@
     "subjectTypePhysMath": "Физ-мат 🔬",
     "subjectTypeHumanities": "Гуманитарий 📚",
     "entSubjectsTitle": "Профильный предмет",
-    "selectSpecialty": "Специальность (ГОП)"
+    "selectSpecialty": "Специальность (ГОП)",
+    "feedbackTitle": "Обратная связь",
+    "feedbackType": "Тип обращения",
+    "feedbackTypeBug": "Ошибка (баг)",
+    "feedbackTypeSuggestion": "Предложение",
+    "feedbackTypeOther": "Другое",
+    "feedbackMessageHint": "Опишите вашу проблему или предложение...",
+    "feedbackSubmit": "Отправить отзыв",
+    "feedbackSuccess": "Спасибо за отзыв! Мы свяжемся с вами, если потребуется.",
+    "feedbackError": "Ошибка при отправке. Попробуйте еще раз.",
+    "feedbackAuthRequired": "Необходимо войти в аккаунт для отправки обратной связи."
 }

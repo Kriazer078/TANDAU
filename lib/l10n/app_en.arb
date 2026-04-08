@@ -856,5 +856,15 @@
     "subjectTypePhysMath": "PhysMath 🔬",
     "subjectTypeHumanities": "Humanities 📚",
     "entSubjectsTitle": "Profile Subject",
-    "selectSpecialty": "Specialty (GOP)"
+    "selectSpecialty": "Specialty (GOP)",
+    "feedbackTitle": "Feedback",
+    "feedbackType": "Complaint/Suggestion Type",
+    "feedbackTypeBug": "Bug report",
+    "feedbackTypeSuggestion": "Suggestion",
+    "feedbackTypeOther": "Other",
+    "feedbackMessageHint": "Describe your issue or suggestion...",
+    "feedbackSubmit": "Submit feedback",
+    "feedbackSuccess": "Thanks for your feedback! We'll reach out if needed.",
+    "feedbackError": "Error submitting feedback. Please try again.",
+    "feedbackAuthRequired": "You need to log in to submit feedback."
 }

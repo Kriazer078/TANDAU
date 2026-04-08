@@ -1809,4 +1809,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectSpecialty => 'Specialty (GOP)';
+
+  @override
+  String get feedbackTitle => 'Feedback';
+
+  @override
+  String get feedbackType => 'Complaint/Suggestion Type';
+
+  @override
+  String get feedbackTypeBug => 'Bug report';
+
+  @override
+  String get feedbackTypeSuggestion => 'Suggestion';
+
+  @override
+  String get feedbackTypeOther => 'Other';
+
+  @override
+  String get feedbackMessageHint => 'Describe your issue or suggestion...';
+
+  @override
+  String get feedbackSubmit => 'Submit feedback';
+
+  @override
+  String get feedbackSuccess =>
+      'Thanks for your feedback! We\'ll reach out if needed.';
+
+  @override
+  String get feedbackError => 'Error submitting feedback. Please try again.';
+
+  @override
+  String get feedbackAuthRequired => 'You need to log in to submit feedback.';
 }

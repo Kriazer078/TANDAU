@@ -1813,4 +1813,36 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get selectSpecialty => 'Специальность (ГОП)';
+
+  @override
+  String get feedbackTitle => 'Обратная связь';
+
+  @override
+  String get feedbackType => 'Тип обращения';
+
+  @override
+  String get feedbackTypeBug => 'Ошибка (баг)';
+
+  @override
+  String get feedbackTypeSuggestion => 'Предложение';
+
+  @override
+  String get feedbackTypeOther => 'Другое';
+
+  @override
+  String get feedbackMessageHint => 'Опишите вашу проблему или предложение...';
+
+  @override
+  String get feedbackSubmit => 'Отправить отзыв';
+
+  @override
+  String get feedbackSuccess =>
+      'Спасибо за отзыв! Мы свяжемся с вами, если потребуется.';
+
+  @override
+  String get feedbackError => 'Ошибка при отправке. Попробуйте еще раз.';
+
+  @override
+  String get feedbackAuthRequired =>
+      'Необходимо войти в аккаунт для отправки обратной связи.';
 }

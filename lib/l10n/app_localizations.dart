@@ -3495,6 +3495,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Specialty (GOP)'**
   String get selectSpecialty;
+
+  /// No description provided for @feedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedbackTitle;
+
+  /// No description provided for @feedbackType.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint/Suggestion Type'**
+  String get feedbackType;
+
+  /// No description provided for @feedbackTypeBug.
+  ///
+  /// In en, this message translates to:
+  /// **'Bug report'**
+  String get feedbackTypeBug;
+
+  /// No description provided for @feedbackTypeSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion'**
+  String get feedbackTypeSuggestion;
+
+  /// No description provided for @feedbackTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get feedbackTypeOther;
+
+  /// No description provided for @feedbackMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue or suggestion...'**
+  String get feedbackMessageHint;
+
+  /// No description provided for @feedbackSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit feedback'**
+  String get feedbackSubmit;
+
+  /// No description provided for @feedbackSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for your feedback! We\'ll reach out if needed.'**
+  String get feedbackSuccess;
+
+  /// No description provided for @feedbackError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error submitting feedback. Please try again.'**
+  String get feedbackError;
+
+  /// No description provided for @feedbackAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to log in to submit feedback.'**
+  String get feedbackAuthRequired;
 }
 
 class _AppLocalizationsDelegate
