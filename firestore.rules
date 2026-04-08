@@ -86,13 +86,16 @@ service cloud.firestore {
                     && request.resource.data.rating >= 1
                     && request.resource.data.rating <= 5
                     && request.resource.data.comment.size() < 1500;
-      // Запрет на смену автора или университета при редактировании
-      allow update: if isAuth() 
-                    && resource.data.userId == request.auth.uid
-                    && !request.resource.data.diff(resource.data).affectedKeys()
-                        .hasAny(['userId', 'universityId', 'createdAt']);
+      // Пользователь редактирует свой отзыв ИЛИ админ/модератор добавляет ответ
+      allow update: if (
+        isAuth() 
+        && resource.data.userId == request.auth.uid
+        && !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['userId', 'universityId', 'createdAt'])
+      ) || isAdmin() || isModerator();
+      // 🛡️ Удалять отзывы может: владелец, админ, или модератор
       allow delete: if isAuth() 
-                    && (resource.data.userId == request.auth.uid || isAdmin());
+                    && (resource.data.userId == request.auth.uid || isAdmin() || isModerator());
     }
     
     // ═══════════════════════════════════════
@@ -116,9 +119,9 @@ service cloud.firestore {
 
       // 🔔 УВЕДОМЛЕНИЯ
       match /notifications/{notificationId} {
-        allow read, delete: if isOwner(userId) || isAdmin();
-        // Создавать уведомления может админ или сам пользователь (для системных/локальных синхронизаций)
-        allow create, update: if isAdmin() || (isAuth() && isOwner(userId));
+        allow read, delete: if isOwner(userId) || isAdmin() || isModerator();
+        // Создавать уведомления может админ, модератор или сам пользователь
+        allow create, update: if isAdmin() || isModerator() || (isAuth() && isOwner(userId));
       }
     }
     
@@ -145,9 +148,12 @@ service cloud.firestore {
     // 💬 ОБРАЩЕНИЯ (FEEDBACKS)
     // ═══════════════════════════════════════
     match /feedbacks/{feedbackId} {
-      allow read: if isAdmin() || (isAuth() && resource.data.userId == request.auth.uid);
+      // 🔐 Читать могут: админ, модератор, или владелец обращения
+      allow read: if isAdmin() || isModerator() || (isAuth() && resource.data.userId == request.auth.uid);
       allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isAdmin();
+      // 🛡️ Обновлять статус может и модератор, удалять — только админ
+      allow update: if isAdmin() || isModerator();
+      allow delete: if isAdmin();
     }
 
     // ═══════════════════════════════════════

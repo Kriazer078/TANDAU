@@ -579,7 +579,7 @@ class _ReviewModerationScreenState extends State<ReviewModerationScreen> {
           const SizedBox(width: 8),
 
           // Batch Delete
-          if (AuthService().isAdmin)
+          if (AuthService().hasAdminAccess)
             _batchButton(
               icon: Icons.delete_sweep_rounded,
               label: 'Удалить все',

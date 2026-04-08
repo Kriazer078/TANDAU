@@ -468,8 +468,8 @@ class _AdminLayoutState extends State<AdminLayout> {
               ),
             ),
             const Spacer(),
-            // Sync button — only for admin
-            if (isAdmin) ...[
+            // Sync button — allow for admin and moderator
+            if (AuthService().hasAdminAccess) ...[
               _isSyncing
                   ? Container(
                       width: 36,

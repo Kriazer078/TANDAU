@@ -205,13 +205,13 @@ class ReviewService {
 
       final review = Review.fromDocument(reviewDoc);
 
-      // SECURITY: Verify ownership or admin
+      // SECURITY: Verify ownership, admin, or moderator
       final currentUserId = _authService.currentUser.value?.uid;
-      final isAdmin = _authService.isAdmin;
+      final hasAccess = _authService.hasAdminAccess;
       if (currentUserId == null ||
-          (currentUserId != review.userId && !isAdmin)) {
+          (currentUserId != review.userId && !hasAccess)) {
         debugPrint(
-          '❌ Unauthorized: user does not own this review and is not admin',
+          '❌ Unauthorized: user does not own this review and is not admin/moderator',
         );
         return false;
       }
@@ -324,7 +324,8 @@ class ReviewService {
   }) async {
     try {
       final user = _authService.currentUser.value;
-      if (user == null || !_authService.isAdmin) {
+      // 🛡️ Allow both admins and moderators to reply
+      if (user == null || !_authService.hasAdminAccess) {
         debugPrint('❌ Not authorized to reply');
         return false;
       }

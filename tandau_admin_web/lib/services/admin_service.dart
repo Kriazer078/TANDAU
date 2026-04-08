@@ -21,6 +21,13 @@ class AdminService {
     }
   }
 
+  /// Verify caller is admin or moderator. Throws if not.
+  void _requireAdminAccess() {
+    if (!_authService.hasAdminAccess) {
+      throw Exception('Доступ запрещён: требуются права администратора или модератора');
+    }
+  }
+
   /// Fetch all users for selection (ADMIN ONLY)
   Future<List<UserModel>> getAllUsers() async {
     try {
@@ -77,7 +84,7 @@ class AdminService {
     }
   }
 
-  /// Send notification to a specific user (ADMIN ONLY)
+  /// Send notification to a specific user (ADMIN or MODERATOR)
   Future<bool> sendNotification({
     required String targetUserId,
     required String title,
@@ -86,7 +93,8 @@ class AdminService {
     Map<String, dynamic>? data,
   }) async {
     try {
-      _requireAdmin();
+      // 🛡️ Moderators can send notifications (e.g. feedback replies); admins always can
+      _requireAdminAccess();
 
       // Sanitize inputs
       final sanitizedTitle = title.trim();
