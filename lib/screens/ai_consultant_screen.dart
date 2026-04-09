@@ -11,6 +11,7 @@ import '../services/auth_service.dart';
 import '../services/chat_history_service.dart';
 import '../services/moderation_service.dart';
 import '../services/university_service.dart';
+import '../services/career_test_service.dart';
 import '../models/university.dart';
 import '../widgets/ai_logo_icon.dart';
 import 'onboarding_wizard_screen.dart';
@@ -257,9 +258,17 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     final recentHistory =
         history.length > 10 ? history.sublist(history.length - 10) : history;
 
+    // 🧠 Add career test context if available (only on first message to not spam token usage too much, or attach to prompt implicitly)
+    String promptText = messageText;
+    final testResult = CareerTestService().lastResult.value;
+    if (testResult != null && _messages.where((m) => m.isUser).length == 1) {
+      final testName = testResult.testType == 'klimov' ? 'ДДО Климова' : 'Голланд';
+      promptText = '$messageText\n\n[Контекст: Я прошел профориентационный тест ($testName). Мой код/профиль: ${testResult.topCode}. Рекомендуемые мне ГОП: ${testResult.recommendedGops.join(', ')}. Учитывай это при ответах о выборе профессии.]';
+    }
+
     try {
       final stream = _aiService.sendStreamMessage(
-        messageText,
+        promptText,
         history: recentHistory,
         financialSituation: user?.financialSituation,
         isRural: user?.isRural,
@@ -450,6 +459,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         isOrphan: user?.isOrphan,
         hasDisability: user?.hasDisability,
         preferredCities: user?.preferredCities,
+        careerTestInfo: _getCareerTestContext(),
       );
 
       if (mounted) {
@@ -557,6 +567,13 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
         _isSending = false; // 🛡️ BUG#1: Always release guard
       }
     }
+  }
+
+  String? _getCareerTestContext() {
+    final res = CareerTestService().lastResult.value;
+    if (res == null) return null;
+    final name = res.testType == 'klimov' ? 'ДДО Климова' : 'Голланд';
+    return 'Тест: $name, Код: ${res.topCode}, ГОП: ${res.recommendedGops.join(', ')}';
   }
 
   void _scrollToBottom() {

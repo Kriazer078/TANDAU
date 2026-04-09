@@ -11,6 +11,8 @@ import '../providers/grant_predictor_provider.dart';
 import 'grant_wizard_screen.dart';
 import 'university_list_screen.dart';
 import '../widgets/deadline_banner.dart';
+import 'roi_screen.dart';
+import 'career_test_hub_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -228,6 +230,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   MaterialPageRoute(
                     builder: (_) => const UniversityListScreen(),
                   ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: 16),
+          SizedBox(
+            width: 160,
+            child: _buildActionCard(
+              context,
+              title: 'Окупаемость',
+              subtitle: 'Анализ ROI',
+              icon: Icons.trending_up_rounded,
+              color: const Color(0xFF3B82F6),
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RoiScreen()),
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: 16),
+          SizedBox(
+            width: 160,
+            child: _buildActionCard(
+              context,
+              title: 'Профориентация',
+              subtitle: 'Тесты RIASEC',
+              icon: Icons.psychology_rounded,
+              color: const Color(0xFFE91E63),
+              isDark: isDark,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CareerTestHubScreen()),
                 );
               },
             ),

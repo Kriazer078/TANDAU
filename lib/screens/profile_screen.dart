@@ -18,6 +18,8 @@ import 'favorites_screen.dart';
 import 'feedback_screen.dart';
 import 'my_feedbacks_screen.dart';
 import '../widgets/like_review_widgets.dart';
+import 'roi_screen.dart';
+import 'career_test_hub_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -172,6 +174,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const FavoritesScreen(),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // ROI Calculator
+            _buildSettingCard(
+              context,
+              icon: Icons.calculate_rounded,
+              title: 'Окупаемость обучения',
+              subtitle: 'Расчет выгоды и стоимости',
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Theme.of(
+                  context,
+                ).iconTheme.color?.withValues(alpha: 0.5),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RoiScreen(),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // Career Test (Профориентация)
+            _buildSettingCard(
+              context,
+              icon: Icons.psychology_rounded,
+              title: 'Профориентация',
+              subtitle: 'Узнай свои склонности и подходящие ГОП',
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Theme.of(
+                  context,
+                ).iconTheme.color?.withValues(alpha: 0.5),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CareerTestHubScreen(),
                   ),
                 );
               },

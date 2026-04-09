@@ -45,6 +45,12 @@ class UserModel {
   // 🎓 Специальные экзамены (творческие, медицинские, психометрические)
   final bool? specialExamPassed;
 
+  // 🧭 Профориентация
+  final String? hollandCode;
+  final String? klimovType;
+  final List<String> recommendedGops;
+  final DateTime? lastCareerTestAt;
+
   UserModel({
     required this.uid,
     required this.name,
@@ -83,6 +89,11 @@ class UserModel {
     this.entSubject1,
     this.entSubject2,
     this.specialExamPassed,
+    // 🧭 Профориентация
+    this.hollandCode,
+    this.klimovType,
+    this.recommendedGops = const [],
+    this.lastCareerTestAt,
   });
 
   /// Алиас для совместимости с StudentProfile
@@ -155,6 +166,11 @@ class UserModel {
       'entSubject1': entSubject1,
       'entSubject2': entSubject2,
       'specialExamPassed': specialExamPassed,
+      // 🧭 Профориентация
+      'hollandCode': hollandCode,
+      'klimovType': klimovType,
+      'recommendedGops': recommendedGops,
+      'lastCareerTestAt': lastCareerTestAt != null ? Timestamp.fromDate(lastCareerTestAt!) : null,
     };
   }
 
@@ -211,6 +227,13 @@ class UserModel {
       entSubject1: map['entSubject1'],
       entSubject2: map['entSubject2'],
       specialExamPassed: map['specialExamPassed'],
+      // 🧭 Профориентация
+      hollandCode: map['hollandCode'],
+      klimovType: map['klimovType'],
+      recommendedGops: List<String>.from(map['recommendedGops'] ?? []),
+      lastCareerTestAt: map['lastCareerTestAt'] != null
+          ? (map['lastCareerTestAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -257,6 +280,11 @@ class UserModel {
     String? entSubject1,
     String? entSubject2,
     bool? specialExamPassed,
+    // 🧭 Профориентация
+    String? hollandCode,
+    String? klimovType,
+    List<String>? recommendedGops,
+    DateTime? lastCareerTestAt,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -296,6 +324,11 @@ class UserModel {
       entSubject1: entSubject1 ?? this.entSubject1,
       entSubject2: entSubject2 ?? this.entSubject2,
       specialExamPassed: specialExamPassed ?? this.specialExamPassed,
+      // 🧭 Профориентация
+      hollandCode: hollandCode ?? this.hollandCode,
+      klimovType: klimovType ?? this.klimovType,
+      recommendedGops: recommendedGops ?? this.recommendedGops,
+      lastCareerTestAt: lastCareerTestAt ?? this.lastCareerTestAt,
     );
   }
 }

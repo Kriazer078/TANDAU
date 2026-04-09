@@ -43,40 +43,38 @@ void main() async {
   // 🛡️ Fallback Error Screen (Replaces Red Screen of Death)
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Material(
-      child: Builder(
-        builder: (context) {
-          final l10n = AppLocalizations.of(context);
-          return Container(
-            color: Colors.red.shade400,
-            padding: const EdgeInsets.all(20),
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, color: Colors.white, size: 48),
-                const SizedBox(height: 16),
-                Text(
-                  l10n?.errorOops ?? 'Упс! Произошла ошибка.',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
+      child: Builder(builder: (context) {
+        final l10n = AppLocalizations.of(context);
+        return Container(
+          color: Colors.red.shade400,
+          padding: const EdgeInsets.all(20),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                l10n?.errorOops ?? 'Упс! Произошла ошибка.',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  details.exceptionAsString(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          );
-        }
-      ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                details.exceptionAsString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        );
+      }),
     );
   };
 
@@ -105,7 +103,7 @@ void main() async {
     debugPrint('⚠️ RevenueCat init failed: $e');
   }
   AIConsultantService().init(); // Fire-and-forget warm-up
-  
+
   // 🔄 Auto-migrate local data to Firestore if empty
   DataMigrationHelper().migrateUniversitiesToFirestore().then((success) {
     if (success) DataMigrationHelper().syncMetadata();
@@ -143,7 +141,7 @@ class _TandauAppState extends State<TandauApp> {
 
     // Listen for ban events globally — navigate to BannedScreen if banned
     AuthService().bannedReason.addListener(_onBanStateChanged);
-    
+
     // Listen for login state changes globally to fix session restoral glitches
     AuthService().isLoggedIn.addListener(_onLoginStateChanged);
   }
@@ -238,6 +236,81 @@ class _TandauAppState extends State<TandauApp> {
                   }
                 }
                 return supportedLocales.first;
+              },
+              builder: (context, child) {
+                if (kIsWeb && child != null) {
+                  final mediaQueryData = MediaQuery.of(context);
+                  final screenWidth = mediaQueryData.size.width;
+                  final screenHeight = mediaQueryData.size.height;
+
+                  const double maxWidth = 430.0;
+                  const double maxHeight = 932.0;
+
+                  final bool constrainWidth = screenWidth > maxWidth;
+
+                  final bool showBezel = constrainWidth;
+
+                  return Container(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : const Color(0xFFF5F5F7), // Apple-like light gray
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenHeight > maxHeight + 48 ? 24.0 : 0.0,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: maxWidth,
+                          maxHeight: maxHeight,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            borderRadius:
+                                BorderRadius.circular(showBezel ? 42.0 : 0.0),
+                            boxShadow: showBezel
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 30,
+                                      offset: const Offset(0, 10),
+                                    )
+                                  ]
+                                : null,
+                            border: showBezel
+                                ? Border.all(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? const Color(0xFF333333)
+                                        : const Color(0xFFE0E0E0),
+                                    width: 8,
+                                  )
+                                : null,
+                          ),
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(showBezel ? 34.0 : 0.0),
+                            child:
+                                LayoutBuilder(builder: (context, constraints) {
+                              return MediaQuery(
+                                data: mediaQueryData.copyWith(
+                                  size: Size(constraints.maxWidth,
+                                      constraints.maxHeight),
+                                  padding: showBezel
+                                      ? EdgeInsets.zero
+                                      : mediaQueryData.padding,
+                                ),
+                                child: child,
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return child ?? const SizedBox.shrink();
               },
               home: const SplashScreen(),
             );

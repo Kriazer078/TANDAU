@@ -397,6 +397,7 @@ class AIConsultantService {
     bool? isOrphan,
     bool? hasDisability,
     List<String>? preferredCities,
+    String? careerTestInfo,
   }) async* {
     final client = http.Client();
     try {
@@ -417,6 +418,7 @@ class AIConsultantService {
         bodyData['currentEducation'] = currentEducation;
       }
       if (achievements != null) bodyData['achievements'] = achievements;
+      if (careerTestInfo != null) bodyData['careerTestInfo'] = careerTestInfo;
 
       // 📋 Extended profile fields
       if (financialSituation != null) {
@@ -516,6 +518,7 @@ class AIConsultantService {
     String? preferredMajors,
     String? currentEducation,
     String? achievements,
+    String? careerTestInfo,
   }) async {
     try {
       final language = LocaleManager().locale.value?.languageCode ?? 'ru';
@@ -535,6 +538,7 @@ class AIConsultantService {
         bodyData['currentEducation'] = currentEducation;
       }
       if (achievements != null) bodyData['achievements'] = achievements;
+      if (careerTestInfo != null) bodyData['careerTestInfo'] = careerTestInfo;
 
       // Send uid for token tracking
       final currentUser = AuthService().currentUser.value;

@@ -8,7 +8,9 @@ import '../providers/grant_predictor_provider.dart';
 import '../data/ent_specialties_2026.dart';
 import '../services/auth_service.dart';
 import '../utils/constants.dart';
+import '../services/career_test_service.dart';
 import 'ai_consultant_screen.dart';
+import 'career_test_hub_screen.dart';
 
 class GrantWizardScreen extends ConsumerStatefulWidget {
   const GrantWizardScreen({super.key});
@@ -107,6 +109,63 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
                 const SizedBox(height: 32),
                 _buildStepHeader('3. Специальность (ГОП)', isDark),
                 const SizedBox(height: 16),
+                ValueListenableBuilder(
+                  valueListenable: CareerTestService().lastResult,
+                  builder: (context, result, _) {
+                    if (result == null) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const CareerTestHubScreen()));
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1E40AF).withValues(alpha: 0.3) : AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.psychology_outlined, color: AppColors.primary, size: 28),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  'Не знаете какую специальность выбрать? Пройдите тест на профориентацию!',
+                                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Icon(Icons.arrow_forward_ios, color: AppColors.primary, size: 16),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF10B981).withValues(alpha: 0.15) : const Color(0xFF10B981).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle_outline, color: Color(0xFF10B981), size: 28),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'По результатам теста (${result.testType == 'klimov' ? 'ДДО Климова' : 'Голланд'}), вам рекомендованы ГОП: ${result.recommendedGops.join(', ')}',
+                                style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
                 _buildSpecialtyDropdown(selectedType, selectedSubjectPair, selectedSpecialty, isDark, l10n),
               ],
 
@@ -148,6 +207,13 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
                   if (_isRural) parts.add('У меня сельская квота.');
                   if (_isOrphan) parts.add('Я сирота (квота).');
                   if (_hasDisability) parts.add('У меня инвалидность (квота).');
+
+                  final testResult = CareerTestService().lastResult.value;
+                  if (testResult != null) {
+                    final testName = testResult.testType == 'klimov' ? 'ДДО Климова' : 'Голланд';
+                    parts.add('Я прошел профориентационный тест ($testName), и мой профиль (код): ${testResult.topCode}. Рекомендуемые ГОП: ${testResult.recommendedGops.join(', ')}.');
+                  }
+
                   parts.add(
                     'Оцени мои шансы на государственный грант. '
                     'Дай подробный анализ.',
