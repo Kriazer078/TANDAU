@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/app_localizations.dart';
 import '../services/deadline_service.dart';
@@ -284,12 +285,12 @@ class _DeadlinesBottomSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B),
+                    color: isDark ? const Color(0xFF1E293B) : AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.calendar_month_rounded,
-                    color: Color(0xFF38BDF8),
+                    color: isDark ? const Color(0xFF38BDF8) : AppColors.primary,
                     size: 24,
                   ),
                 ),
@@ -332,7 +333,7 @@ class _DeadlinesBottomSheet extends StatelessWidget {
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  return _buildDeadlineCard(deadlines[index]);
+                  return _buildDeadlineCard(context, deadlines[index]);
                 },
               ),
             ),
@@ -343,7 +344,7 @@ class _DeadlinesBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildDeadlineCard(AdmissionDeadline deadline) {
+  Widget _buildDeadlineCard(BuildContext context, AdmissionDeadline deadline) {
     final Color statusColor;
     final Color badgeBgColor;
     if (deadline.isPast) {
@@ -362,86 +363,98 @@ class _DeadlinesBottomSheet extends StatelessWidget {
     final iconBgColor =
         isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardBgColor,
+    return Material(
+      color: cardBgColor,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
         borderRadius: BorderRadius.circular(24),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Row(
-        children: [
-          // Styled leading icon
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Center(
-              child: ShaderMask(
-                shaderCallback: (bounds) => LinearGradient(
-                  colors: deadline.iconGradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(bounds),
-                child: Icon(deadline.icon, size: 26, color: Colors.white),
+        onTap: deadline.actionUrl != null
+            ? () async {
+                final uri = Uri.parse(deadline.actionUrl!);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Row(
+            children: [
+              // Styled leading icon
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: iconBgColor,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: deadline.iconGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds),
+                    child: Icon(deadline.icon, size: 26, color: Colors.white),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Texts
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  deadline.title,
+              const SizedBox(width: 16),
+              // Texts
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      deadline.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                        letterSpacing: -0.3,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      deadline.formattedDate,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.6)
+                            : AppColors.textHint,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Smart Status Pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: badgeBgColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: statusColor.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  deadline.countdownText,
                   style: TextStyle(
+                    color: statusColor,
                     fontWeight: FontWeight.w700,
-                    fontSize: 17,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
-                    letterSpacing: -0.3,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  deadline.formattedDate,
-                  style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.6)
-                        : AppColors.textHint,
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Smart Status Pill
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: badgeBgColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: statusColor.withValues(alpha: 0.2),
-                width: 1,
               ),
-            ),
-            child: Text(
-              deadline.countdownText,
-              style: TextStyle(
-                color: statusColor,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
+

@@ -253,7 +253,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     // Prepare history — limit to last 10 for performance
     final history = _messages
         .where((m) => m != _messages.last)
-        .map((m) => {'text': m.text, 'isUser': m.isUser})
+        .map((m) => {'text': m.text, 'role': m.isUser ? 'user' : 'model'})
         .toList();
     final recentHistory =
         history.length > 10 ? history.sublist(history.length - 10) : history;

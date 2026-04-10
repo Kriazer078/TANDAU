@@ -352,7 +352,13 @@ class AIConsultantService {
         // Stream parsing
         await for (final line in response.stream
             .transform(utf8.decoder)
-            .transform(const LineSplitter())) {
+            .transform(const LineSplitter())
+            .timeout(
+          const Duration(seconds: 15),
+          onTimeout: (sink) => sink.addError(
+            Exception('Превышено время ожидания ответа. Пожалуйста, попробуйте снова.'),
+          ),
+        )) {
           if (line.startsWith('data: ')) {
             final dataStr = line.substring(6);
             if (dataStr.trim() == '[DONE]') break;
@@ -483,7 +489,13 @@ class AIConsultantService {
         // Stream parsing
         await for (final line in response.stream
             .transform(utf8.decoder)
-            .transform(const LineSplitter())) {
+            .transform(const LineSplitter())
+            .timeout(
+          const Duration(seconds: 15),
+          onTimeout: (sink) => sink.addError(
+            Exception('Превышено время ожидания ответа. Пожалуйста, попробуйте снова.'),
+          ),
+        )) {
           if (line.startsWith('data: ')) {
             final dataStr = line.substring(6);
             if (dataStr.trim() == '[DONE]') break;

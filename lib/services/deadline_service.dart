@@ -12,53 +12,63 @@ class DeadlineService {
     AdmissionDeadline(
       id: 'ent_start',
       title: 'Начало ЕНТ',
-      description: 'Основной период ЕНТ 2026 начинается',
+      description: 'Основной период ЕНТ 2026 начинается. Не забудьте взять с собой удостоверение личности и пропуск.',
       date: DateTime(2026, 5, 16),
       category: DeadlineCategory.ent,
       icon: Icons.edit_note_rounded,
       iconGradient: [Color(0xFF6366F1), Color(0xFF818CF8)],
+      actionUrl: 'https://app.testcenter.kz',
+      actionLabel: 'Сайт тестирования',
     ),
     AdmissionDeadline(
       id: 'ent_end',
       title: 'Последний день ЕНТ',
-      description: 'Завершение основного периода ЕНТ',
+      description: 'Завершение основного периода ЕНТ. Результаты будут доступны в личном кабинете.',
       date: DateTime(2026, 7, 7),
       category: DeadlineCategory.ent,
       icon: Icons.timer_outlined,
       iconGradient: [Color(0xFFEF4444), Color(0xFFF87171)],
+      actionUrl: 'https://app.testcenter.kz',
+      actionLabel: 'Узнать результаты',
     ),
     AdmissionDeadline(
       id: 'grant_application_start',
       title: 'Начало подачи на грант',
-      description: 'Открытие приёма заявлений на образовательные гранты',
+      description: 'Открытие приёма заявлений на образовательные гранты. Подготовьте электронную цифровую подпись (ЭЦП).',
       date: DateTime(2026, 7, 13),
       category: DeadlineCategory.grant,
       icon: Icons.school_rounded,
       iconGradient: [Color(0xFF8B5CF6), Color(0xFFA78BFA)],
+      actionUrl: 'https://egov.kz',
+      actionLabel: 'Сайт eGov.kz',
     ),
     AdmissionDeadline(
       id: 'grant_application_end',
       title: 'Дедлайн подачи на грант',
-      description: 'Последний день подачи заявлений через e-edu.kz',
+      description: 'Последний день подачи заявлений! Убедитесь, что ваше заявление имеет статус «Принято».',
       date: DateTime(2026, 7, 20),
       category: DeadlineCategory.grant,
       icon: Icons.warning_amber_rounded,
       iconGradient: [Color(0xFFDC2626), Color(0xFFEF4444)],
       isUrgent: true,
+      actionUrl: 'https://egov.kz',
+      actionLabel: 'Проверить статус',
     ),
     AdmissionDeadline(
       id: 'grant_results',
       title: 'Результаты грантов',
-      description: 'Объявление результатов конкурса на гранты',
+      description: 'Объявление долгожданных результатов конкурса на государственные образовательные гранты.',
       date: DateTime(2026, 8, 10),
       category: DeadlineCategory.grant,
       icon: Icons.emoji_events_rounded,
       iconGradient: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+      actionUrl: 'https://testcenter.kz',
+      actionLabel: 'Списки обладателей',
     ),
     AdmissionDeadline(
       id: 'enrollment_start',
       title: 'Начало зачисления',
-      description: 'Зачисление студентов в вузы',
+      description: 'Необходимо подать документы в выбранный вуз для окончательного зачисления.',
       date: DateTime(2026, 8, 15),
       category: DeadlineCategory.enrollment,
       icon: Icons.assignment_turned_in_rounded,
@@ -67,7 +77,7 @@ class DeadlineService {
     AdmissionDeadline(
       id: 'semester_start',
       title: 'Начало учебного года',
-      description: 'Первый день занятий',
+      description: 'Первый день студенческой жизни! Поздравляем с началом учебы.',
       date: DateTime(2026, 9, 1),
       category: DeadlineCategory.enrollment,
       icon: Icons.auto_stories_rounded,
@@ -122,6 +132,8 @@ class AdmissionDeadline {
   final IconData icon;
   final List<Color> iconGradient;
   final bool isUrgent;
+  final String? actionUrl;
+  final String? actionLabel;
 
   const AdmissionDeadline({
     required this.id,
@@ -132,6 +144,8 @@ class AdmissionDeadline {
     this.icon = Icons.calendar_today_rounded,
     this.iconGradient = const [Color(0xFF6366F1), Color(0xFF818CF8)],
     this.isUrgent = false,
+    this.actionUrl,
+    this.actionLabel,
   });
 
   /// Дней до дедлайна
