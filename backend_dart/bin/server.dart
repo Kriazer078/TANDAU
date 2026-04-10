@@ -84,8 +84,12 @@ void main(List<String> args) async {
   router.mount('/api/v1', universityController.router.call);
   router.mount('/api/v1/notifications', notificationController.router.call);
 
-  // Health check
+  // Health check (both paths)
   router.get('/health', (Request req) => Response.ok('OK'));
+  router.get('/api/v1/health', (Request req) => Response.ok(
+    '{"status":"ok"}',
+    headers: {'content-type': 'application/json'},
+  ));
 
   // 📊 Admin: Cache stats
   router.get('/admin/cache-stats', (Request req) {
@@ -337,24 +341,15 @@ void main(List<String> args) async {
 
   // ── CORS middleware ──────────────────────────────────
   Middleware corsMiddleware() {
-    const allowedOrigins = {
-      'https://tandau.kz',
-      'https://www.tandau.kz',
-      'https://tandau-app.web.app',
-      'https://tandau-app.firebaseapp.com',
-      'http://localhost',
-    };
     return (Handler innerHandler) {
       return (Request request) async {
-        final origin = request.requestedUri.origin;
+        final origin = request.headers['origin'] ?? '*';
         final corsHeaders = <String, String>{
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, Authorization, Accept, X-Requested-With',
           'Access-Control-Max-Age': '86400',
+          'Access-Control-Allow-Origin': origin,
         };
-        if (allowedOrigins.contains(origin)) {
-          corsHeaders['Access-Control-Allow-Origin'] = origin;
-        }
         // Pre-flight
         if (request.method == 'OPTIONS') {
           return Response.ok('', headers: corsHeaders);
