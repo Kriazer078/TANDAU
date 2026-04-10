@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -1303,7 +1304,21 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
             decoration: BoxDecoration(
               color: isUser
                   ? null
-                  : (isDark ? AppColors.cardDark : AppColors.background),
+                  : (isDark ? AppColors.cardDark : Colors.white),
+              boxShadow: isUser || isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+              border: isUser || isDark
+                  ? null
+                  : Border.all(
+                      color: AppColors.border.withValues(alpha: 0.5),
+                    ),
               gradient: isUser
                   ? const LinearGradient(
                       colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
@@ -1345,7 +1360,10 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                         fontSize: 15,
                         height: 1.5,
                       ),
-                      strong: const TextStyle(fontWeight: FontWeight.bold),
+                      strong: TextStyle(
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
                       h1: TextStyle(
                         color: isDark ? Colors.white : AppColors.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -1356,7 +1374,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                       ),
                       listBullet: TextStyle(
                         color:
-                            isDark ? Colors.white70 : AppColors.textSecondary,
+                            isDark ? Colors.white70 : AppColors.textPrimary,
                       ),
                       horizontalRuleDecoration: BoxDecoration(
                         border: Border(
@@ -1397,13 +1415,6 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 10,
-                    color: isDark
-                        ? const Color(0xFF818CF8)
-                        : const Color(0xFF6366F1),
-                  ),
                   const SizedBox(width: 4),
                   Text(
                     'TANDAU AI \u2022 \u0411\u0430\u0437\u0430 \u0437\u043d\u0430\u043d\u0438\u0439 + Google Search',
@@ -2055,37 +2066,42 @@ class _AIThinkingStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final steps = _getSteps(context);
+    final String currentText = (currentStep < steps.length) ? steps[currentStep] : 'Готовлю ответ...';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12, left: 4, top: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.cardDark : AppColors.background,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(18),
-                  topRight: Radius.circular(18),
-                  bottomRight: Radius.circular(18),
-                  bottomLeft: Radius.circular(4),
+          // Премиальный сканер-индикатор (строгий, минималистичный)
+          PremiumScannerIndicator(
+            isDark: isDark,
+          ),
+          const SizedBox(width: 12),
+          // Плавная смена текстов слева направо
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              switchInCurve: Curves.easeIn,
+              switchOutCurve: Curves.easeOut,
+              layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+                return Stack(
+                  alignment: Alignment.centerLeft,
+                  children: <Widget>[
+                    ...previousChildren,
+                    if (currentChild != null) currentChild,
+                  ],
+                );
+              },
+              child: Text(
+                currentText,
+                key: ValueKey(currentText),
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : AppColors.textPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
                 ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (int i = 0; i <= currentStep && i < steps.length; i++)
-                    _ThinkingStepRow(
-                      key: ValueKey('step_$i'),
-                      text: steps[i],
-                      isCompleted: i < currentStep,
-                      isActive: i == currentStep,
-                      isDark: isDark,
-                    ),
-                ],
               ),
             ),
           ),
@@ -2095,103 +2111,8 @@ class _AIThinkingStream extends StatelessWidget {
   }
 }
 
-/// Individual row in the AI thinking stream (без эмодзи, как ChatGPT).
-class _ThinkingStepRow extends StatefulWidget {
-  final String text;
-  final bool isCompleted;
-  final bool isActive;
-  final bool isDark;
 
-  const _ThinkingStepRow({
-    super.key,
-    required this.text,
-    required this.isCompleted,
-    required this.isActive,
-    required this.isDark,
-  });
 
-  @override
-  State<_ThinkingStepRow> createState() => _ThinkingStepRowState();
-}
-
-class _ThinkingStepRowState extends State<_ThinkingStepRow>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _fadeAnim;
-  late Animation<Offset> _slideAnim;
-
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 350),
-    );
-    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
-    _animController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SlideTransition(
-      position: _slideAnim,
-      child: FadeTransition(
-        opacity: _fadeAnim,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.isCompleted)
-                const Icon(
-                  Icons.check_circle_rounded,
-                  size: 14,
-                  color: Color(0xFF10B981),
-                )
-              else if (widget.isActive)
-                SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 1.5,
-                    color: const Color(0xFF6366F1),
-                  ),
-                )
-              else
-                const SizedBox(width: 14),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  widget.isActive ? '${widget.text}...' : widget.text,
-                  style: TextStyle(
-                    color: widget.isCompleted
-                        ? (widget.isDark ? Colors.white38 : AppColors.textHint)
-                        : (widget.isDark
-                            ? Colors.white70
-                            : AppColors.textSecondary),
-                    fontSize: 13,
-                    fontStyle: FontStyle.italic,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ═══════════════════════════════════════════
 //  ACTION CHIP (Rich Action buttons in chat)
@@ -2364,3 +2285,128 @@ class _FeedbackButtonsState extends State<_FeedbackButtons> {
     );
   }
 }
+
+// ═══════════════════════════════════════════
+//  TYPING INDICATOR (Premium Scanner / Compiler)
+// ═══════════════════════════════════════════
+
+class PremiumScannerIndicator extends StatefulWidget {
+  final bool isDark;
+
+  const PremiumScannerIndicator({
+    super.key,
+    required this.isDark,
+  });
+
+  @override
+  State<PremiumScannerIndicator> createState() => _PremiumScannerIndicatorState();
+}
+
+class _PremiumScannerIndicatorState extends State<PremiumScannerIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          size: const Size(20, 20),
+          painter: _PremiumScannerPainter(_controller.value, widget.isDark),
+        );
+      },
+    );
+  }
+}
+
+class _PremiumScannerPainter extends CustomPainter {
+  final double progress;
+  final bool isDark;
+
+  _PremiumScannerPainter(this.progress, this.isDark);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final baseColor = isDark ? Colors.white : const Color(0xFF6366F1); // Только премиальный строгий цвет
+    
+    // 1. Внешнее пунктирное кольцо (Сбор данных / Сеть)
+    final outerRadius = size.width / 2.0;
+    final outerPaint = Paint()
+      ..color = baseColor.withValues(alpha: 0.25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+
+    final dashCount = 8;
+    final sweepAngle = (2 * math.pi) / (dashCount * 2.5);
+    final curvedProgress = Curves.easeInOutSine.transform(progress);
+    
+    for (int i = 0; i < dashCount; i++) {
+      // Плавное вращение по часовой стрелке
+      final startAngle = (curvedProgress * 2 * math.pi) + (i * (2 * math.pi) / dashCount);
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: outerRadius),
+        startAngle,
+        sweepAngle,
+        false,
+        outerPaint,
+      );
+    }
+
+    // 2. Внутреннее полукольцо-сканер (Анализ)
+    final innerRadius = size.width / 3.2;
+    final innerPaint = Paint()
+      ..color = baseColor.withValues(alpha: 0.85)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round;
+
+    // Вращается в обратную сторону быстрее
+    final innerStartAngle = -progress * 4 * math.pi; 
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: innerRadius),
+      innerStartAngle,
+      math.pi * 0.8, // 40% от круга
+      false,
+      innerPaint,
+    );
+
+    // 3. Пульсирующее "Ядро" (Скомпилированный результат)
+    final corePulse = (math.sin(progress * 6 * math.pi) + 1) / 2; // Пульсация 0..1
+    final dotPaint = Paint()
+      ..color = baseColor.withValues(alpha: 0.6 + 0.4 * corePulse)
+      ..style = PaintingStyle.fill;
+      
+    // Нежный glow для центральной точки
+    if (corePulse > 0.5) {
+      final glowPaint = Paint()
+        ..color = baseColor.withValues(alpha: (corePulse - 0.5) * 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+      canvas.drawCircle(center, 2.5 + corePulse * 1.5, glowPaint);
+    }
+    
+    canvas.drawCircle(center, 2.0 + corePulse * 0.5, dotPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PremiumScannerPainter oldDelegate) => true;
+}
+
+

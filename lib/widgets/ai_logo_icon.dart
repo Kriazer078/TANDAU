@@ -15,7 +15,7 @@ class AILogoIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final icon = color != null
-        ? Icon(Icons.hub_rounded, size: size, color: color)
+        ? Icon(Icons.bolt_rounded, size: size, color: color)
         : ShaderMask(
             blendMode: BlendMode.srcIn,
             shaderCallback: (Rect bounds) => const LinearGradient(
@@ -27,7 +27,7 @@ class AILogoIcon extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ).createShader(bounds),
-            child: Icon(Icons.hub_rounded, size: size),
+            child: Icon(Icons.bolt_rounded, size: size),
           );
 
     if (!withGlow || color != null) {
