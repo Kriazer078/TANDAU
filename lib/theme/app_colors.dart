@@ -7,13 +7,14 @@ class AppColors {
   static const Color gold = Color(0xFFF59E0B); // Amber 500
   static const Color accent = gold;
 
-  // Design Tokens (Light)
-  static const Color background = Color(0xFFF8FAFC);
-  static const Color surface = Colors.white;
-  static const Color textPrimary = Color(0xFF1E293B);
-  static const Color textSecondary = Color(0xFF64748B);
-  static const Color textHint = Color(0xFF94A3B8); // ⭐ Re-added
-  static const Color border = Color(0xFFE2E8F0);
+  // Design Tokens (Light) — улучшенный контраст
+  static const Color background = Color(0xFFEFF3F8); // чуть серее фон
+  static const Color surface = Color(0xFFFFFFFF);    // белые карточки
+  static const Color surfaceElevated = Color(0xFFF8FAFC); // для вложенных поверхностей
+  static const Color textPrimary = Color(0xFF0F172A); // почти чёрный
+  static const Color textSecondary = Color(0xFF475569);
+  static const Color textHint = Color(0xFF94A3B8);
+  static const Color border = Color(0xFFCDD5E0); // заметная граница
 
   // Design Tokens (Dark Premium - Deep Blue-Black)
   static const Color backgroundDark = Color(0xFF020617); // Slate 950

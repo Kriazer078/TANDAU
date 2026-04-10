@@ -39,10 +39,19 @@ class AppLocalizationsKk extends AppLocalizations {
   String get settingsLanguage => 'Тіл / Language / Язык';
 
   @override
-  String get settingsTheme => 'Күңгірт режим';
+  String get settingsTheme => 'Безендіру';
 
   @override
-  String get settingsThemeSubtitle => 'Күңгірт режимге ауысу';
+  String get themeSystem => 'Жүйелік';
+
+  @override
+  String get themeLight => 'Ашық';
+
+  @override
+  String get themeDark => 'Күңгірт';
+
+  @override
+  String get dialogThemeTitle => 'Тақырыптар';
 
   @override
   String get settingsNotifications => 'Хабарламалар';

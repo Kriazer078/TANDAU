@@ -207,10 +207,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: const Color(0xFFF59E0B),
               isDark: isDark,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const FilterScreen()),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FilterScreen()),
+                  );
+                }
               },
             ),
           ),
@@ -245,10 +247,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: const Color(0xFF3B82F6),
               isDark: isDark,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RoiScreen()),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RoiScreen()),
+                  );
+                }
               },
             ),
           ),
@@ -263,10 +267,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: const Color(0xFFE91E63),
               isDark: isDark,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CareerTestHubScreen()),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CareerTestHubScreen()),
+                  );
+                }
               },
             ),
           ),
@@ -396,10 +402,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const GrantWizardScreen()),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const GrantWizardScreen()),
+                  );
+                }
               },
               borderRadius: BorderRadius.circular(16),
               child: Container(

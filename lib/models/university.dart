@@ -89,33 +89,46 @@ class University {
     };
   }
 
+  static List<String> _parseStringList(dynamic rawList) {
+    if (rawList == null) return [];
+    if (rawList is List) {
+      return rawList.map((e) {
+        if (e is Map) {
+          return (e['name'] ?? e['title'] ?? e['id'] ?? e.toString()).toString();
+        }
+        return e.toString();
+      }).toList();
+    }
+    return [rawList.toString()];
+  }
+
   // Create University from Firestore document
   factory University.fromMap(Map<String, dynamic> map) {
     return University(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      city: map['city'] ?? '',
-      logoUrl: map['logoUrl'] ?? '',
-      imageUrls: List<String>.from(map['imageUrls'] ?? []),
-      majors: List<String>.from(map['majors'] ?? []),
-      passingScore: map['passingScore'] ?? 0,
-      tuitionRange: map['tuitionRange'] ?? '',
-      hasDormitory: map['hasDormitory'] ?? false,
-      hasGrants: map['hasGrants'] ?? false,
-      hasMilitaryDepartment: map['hasMilitaryDepartment'] ?? false,
-      description: map['description'] ?? '',
-      requirements: List<String>.from(map['requirements'] ?? []),
-      applicationDeadline: map['applicationDeadline'] ?? '',
-      address: map['address'] ?? '',
-      website: map['website'] ?? '',
+      id: map['id']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      city: map['city']?.toString() ?? '',
+      logoUrl: map['logoUrl']?.toString() ?? '',
+      imageUrls: _parseStringList(map['imageUrls']),
+      majors: _parseStringList(map['majors']),
+      passingScore: (map['passingScore'] is int) ? map['passingScore'] : (int.tryParse(map['passingScore']?.toString() ?? '0') ?? 0),
+      tuitionRange: map['tuitionRange']?.toString() ?? '',
+      hasDormitory: map['hasDormitory'] == true,
+      hasGrants: map['hasGrants'] == true,
+      hasMilitaryDepartment: map['hasMilitaryDepartment'] == true,
+      description: map['description']?.toString() ?? '',
+      requirements: _parseStringList(map['requirements']),
+      applicationDeadline: map['applicationDeadline']?.toString() ?? '',
+      address: map['address']?.toString() ?? '',
+      website: map['website']?.toString() ?? '',
       // rating читается как fallback для averageRating (миграция)
-      studentCount: map['studentCount'] ?? 0,
-      likesCount: map['likesCount'] ?? 0,
-      reviewsCount: map['reviewsCount'] ?? 0,
-      averageRating: (map['averageRating'] ?? map['rating'] ?? 0.0).toDouble(),
-      contactPhone: map['contactPhone'] ?? '',
-      email: map['email'] ?? '',
-      specialtyCodes: List<String>.from(map['specialtyCodes'] ?? []),
+      studentCount: (map['studentCount'] is int) ? map['studentCount'] : (int.tryParse(map['studentCount']?.toString() ?? '0') ?? 0),
+      likesCount: (map['likesCount'] is int) ? map['likesCount'] : (int.tryParse(map['likesCount']?.toString() ?? '0') ?? 0),
+      reviewsCount: (map['reviewsCount'] is int) ? map['reviewsCount'] : (int.tryParse(map['reviewsCount']?.toString() ?? '0') ?? 0),
+      averageRating: ((map['averageRating'] ?? map['rating'] ?? 0.0) as num).toDouble(),
+      contactPhone: map['contactPhone']?.toString() ?? '',
+      email: map['email']?.toString() ?? '',
+      specialtyCodes: _parseStringList(map['specialtyCodes']),
     );
   }
 

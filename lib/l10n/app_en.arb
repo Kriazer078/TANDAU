@@ -9,8 +9,11 @@
     "profileTitle": "Profile",
     "settingsTitle": "Settings",
     "settingsLanguage": "Language",
-    "settingsTheme": "Dark Mode",
-    "settingsThemeSubtitle": "Switch to dark mode",
+    "settingsTheme": "Appearance",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "dialogThemeTitle": "Choose Theme",
     "settingsNotifications": "Notifications",
     "settingsAbout": "About App",
     "settingsHelp": "Help",
@@ -170,13 +173,11 @@
     "delete": "Remove",
     "inDevelopment": "In Development",
     "inDevelopmentMessage": "This feature is under development and will be available soon!",
-    
     "tabOverview": "Overview",
     "tabMajors": "Majors",
     "tabAdmissions": "Admissions",
     "tabContact": "Contact",
     "tabReviews": "Reviews",
-
     "detailAbout": "About University",
     "detailTuition": "Tuition Fees",
     "detailPassingScore": "Passing Score",
@@ -186,7 +187,6 @@
     "detailWebsite": "Website",
     "detailLeaveReview": "Leave a Review",
     "detailNoReviews": "No reviews yet",
-
     "universityDormitory": "Dormitory",
     "universityGrant": "Grant",
     "universityMilitary": "Military Department",
@@ -198,7 +198,7 @@
             }
         }
     },
-    "authGuestMessage": "Log in to access all features",
+    "authGuestMessage": "Log in to your account to access all features",
     "editProfileTitle": "Edit Profile",
     "saveChanges": "Save Changes",
     "profileUpdated": "Profile updated successfully",
@@ -253,8 +253,8 @@
             }
         }
     },
-    "reviewOfficialReply": "Official Reply",
-    "commonError": "Error: {error}",
+    "reviewOfficialReply": "Official reply",
+    "commonError": "Error:",
     "@commonError": {
         "placeholders": {
             "error": {
@@ -271,25 +271,25 @@
             }
         }
     },
-    "aiChancesGrant": "chance for grant",
-    "aiChancesRisk": "Risk: {risk}",
+    "aiChancesGrant": "grant chance",
+    "aiChancesRisk": "Risk: {level}",
     "@aiChancesRisk": {
         "placeholders": {
-            "risk": {
+            "level": {
                 "type": "String"
             }
         }
     },
-    "aiChancesEntThreshold": "UNT Threshold for this major: {score} points",
+    "aiChancesEntThreshold": "UNT threshold for this program: {threshold} points",
     "@aiChancesEntThreshold": {
         "placeholders": {
-            "score": {
+            "threshold": {
                 "type": "int"
             }
         }
     },
-    "aiChancesDetails": "Calculation Details",
-    "aiChancesDetailedStrategy": "Detailed AI Strategy",
+    "aiChancesDetails": "Calculation details",
+    "aiChancesDetailedStrategy": "Detailed AI strategy",
     "detailErrorFavorites": "Error updating favorites",
     "aiStrategyTitle": "AI Strategy",
     "aiStrategyGoal": "Goal: {university}",
@@ -337,35 +337,25 @@
     "detailEstimateChances": "Estimate Chances",
     "detailRecommendations": "💡 Recommendations",
     "detailAiThinking": "AI is generating strategy...",
-    "detailAiStrategySubtitle": "TANDAU AI Strategy",
-    "tabOverview": "Overview",
-    "tabMajors": "Majors",
-    "tabAdmissions": "Admissions",
-    "tabContact": "Contact",
-    "tabReviews": "Reviews",
+    "detailAiStrategySubtitle": "AI Strategy TANDAU",
     "profileSavedSubtitle": "Your saved universities",
     "adminPanelTitle": "Admin Panel",
     "adminPanelSubtitle": "Manage push and data",
-    "authGuestMessage": "Log in to your account to access all features",
     "authTermsSuffix": "",
-
     "homeGreetingNight": "Good Night",
     "homeEntScore": "Your UNT Score:",
-
     "promoCodeTitle": "Enter Promo Code",
     "promoCodeSubtitle": "Activate PRO or Premium subscription",
     "promoCodeActivation": "Promo Code Activation",
     "promoCodeHint": "Enter promo code to activate subscription:",
     "promoCodeActivate": "Activate",
     "promoCodeSuccess": "Promo code successfully activated!",
-
     "supportTitle": "Support TANDAU Team ❤️",
     "supportSubtitle": "Direct transfer via Kaspi",
     "supportProject": "Support the project",
     "supportDescription": "We appreciate any support! All funds go to AI server costs and TANDAU development.",
     "supportOpenKaspi": "Open Kaspi app",
     "supportNumberCopied": "Number copied to clipboard",
-
     "aiTokensRemaining": "AI requests left: {count}",
     "@aiTokensRemaining": {
         "placeholders": {
@@ -374,7 +364,6 @@
             }
         }
     },
-
     "detailAboutUniversity": "About University",
     "detailPassingScoreTitle": "Passing Score",
     "detailPoints": "points",
@@ -399,22 +388,18 @@
     },
     "detailJustNow": "just now",
     "reviewEditedLabel": "edited",
-    "reviewAuthRequiredMsg": "Please authenticate to rate",
+    "reviewAuthRequiredMsg": "Please sign in to rate",
     "reviewHelpfulLabel": "Helpful",
     "reviewOfficialReplyLabel": "Official Reply",
-
     "majorBusiness": "Business",
     "majorLaw": "Law",
-
     "commonOr": "Or",
     "commonDone": "Done",
     "commonClose": "Close",
-
     "scoreInputTitle": "Enter UNT Score",
     "scoreInputHint": "0 – 140",
     "scoreInputError": "Enter a number from 0 to 140",
     "scoreInputTapHint": "Tap the number for precise input",
-
     "reviewTitle": "Leave a Review",
     "reviewRateQuestion": "How do you rate it?",
     "reviewSelectRating": "Select a rating",
@@ -426,7 +411,9 @@
     "reviewAttachPhoto": "Attach photo ({current}/3)",
     "@reviewAttachPhoto": {
         "placeholders": {
-            "current": { "type": "int" }
+            "current": {
+                "type": "int"
+            }
         }
     },
     "reviewRatingBad": "Terrible",
@@ -434,7 +421,6 @@
     "reviewRatingOk": "OK",
     "reviewRatingGood": "Good",
     "reviewRatingExcellent": "Excellent!",
-
     "paywallTitle": "Unlock your\nfull potential",
     "paywallSubtitle": "Choose the plan that suits you and get admitted on a grant with confidence.",
     "paywallFree": "Free",
@@ -455,13 +441,13 @@
     "paywallPerMonth": "{price} ₸ / month",
     "@paywallPerMonth": {
         "placeholders": {
-            "price": { "type": "String" }
+            "price": {
+                "type": "String"
+            }
         }
     },
-
     "notificationTitle": "Notifications",
     "notificationEmpty": "No notifications",
-
     "deadlineTitle": "Admission Deadlines\n2026",
     "deadlineImportantDates": "Important Dates",
     "deadlineDays": "days",
@@ -470,12 +456,15 @@
     "deadlineTomorrow": "Tomorrow!",
     "deadlineWeeks": "wk",
     "deadlineMonths": "mo",
-
     "wizardStepOf": "Step {current} of {total}",
     "@wizardStepOf": {
         "placeholders": {
-            "current": { "type": "int" },
-            "total": { "type": "int" }
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
         }
     },
     "wizardSkip": "Skip",
@@ -514,9 +503,7 @@
     "wizardScoreOk": "Not bad 👍",
     "wizardScoreGrow": "Room to grow 📈",
     "wizardScorePrep": "Prep needed 📚",
-
     "successStoriesChip": "📖 Success Stories",
-
     "wizardMajorIT": "IT / Programming",
     "wizardMajorMedicine": "Medicine",
     "wizardMajorEngineering": "Engineering",
@@ -527,7 +514,6 @@
     "wizardMajorOilGas": "Oil & Gas",
     "wizardMajorArt": "Art / Design",
     "wizardMajorUndecided": "Undecided",
-
     "wizardAchAltynBelgi": "Altyn Belgi",
     "wizardAchOlympiadRepublic": "Olympiad (national)",
     "wizardAchOlympiadRegion": "Olympiad (regional)",
@@ -535,33 +521,44 @@
     "wizardAchVolunteer": "Volunteering",
     "wizardAchScience": "Research project",
     "wizardAchNone": "No achievements",
-
     "wizardCityAny": "Any city",
-
     "svdAnalyticsTitle": "SVD Analytics",
-    "svdDataSource": "Data: MON RK, {year}",
+    "svdDataSource": "Data: MES RK, {year}",
     "@svdDataSource": {
         "placeholders": {
-            "year": { "type": "String" }
+            "year": {
+                "type": "String"
+            }
         }
     },
     "svdHowWeCalculateTitle": "How do we calculate? 📝",
-    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and threshold score statistics from MON RK for previous years.\n\nWe consider competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows selecting the optimal strategy for distributing 4 universities when submitting documents.",
+    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and MES RK threshold score statistics from previous years.\n\nWe account for competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows you to choose an optimal strategy for distributing 4 universities when submitting documents.",
     "svdUnderstood": "Got it",
-    "svdDisclaimer": "⚠️ The calculation is advisory. The final decision on awarding a grant always rests with the MON RK admissions committee.",
-
+    "svdDisclaimer": "⚠️ This calculation is advisory. The final decision on grant allocation always rests with the MES RK admissions committee.",
     "reviewDateJustNow": "just now",
-    "reviewDateMinAgo": "{min} min ago",
+    "reviewDateMinAgo": "{minutes} min ago",
     "@reviewDateMinAgo": {
-        "placeholders": { "min": { "type": "int" } }
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
     },
-    "reviewDateHoursAgo": "{hours} h ago",
+    "reviewDateHoursAgo": "{hours}h ago",
     "@reviewDateHoursAgo": {
-        "placeholders": { "hours": { "type": "int" } }
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            }
+        }
     },
-    "reviewDateDaysAgo": "{days} d ago",
+    "reviewDateDaysAgo": "{days}d ago",
     "@reviewDateDaysAgo": {
-        "placeholders": { "days": { "type": "int" } }
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
     },
     "reviewMonthJan": "Jan",
     "reviewMonthFeb": "Feb",
@@ -575,13 +572,14 @@
     "reviewMonthOct": "Oct",
     "reviewMonthNov": "Nov",
     "reviewMonthDec": "Dec",
-
     "reviewLeaveTitle": "Leave a Review",
-    "reviewRateQuestion": "How do you rate it?",
-    "reviewCommentHint": "Tell us about your experience...",
     "reviewAttachPhotoLabel": "Attach photo ({current}/3)",
     "@reviewAttachPhotoLabel": {
-        "placeholders": { "current": { "type": "int" } }
+        "placeholders": {
+            "current": {
+                "type": "int"
+            }
+        }
     },
     "reviewCancelBtn": "Cancel",
     "reviewSubmitBtn": "Submit",
@@ -591,22 +589,28 @@
     "reviewModerationFailMsg": "Could not submit. Check text for inappropriate language.",
     "reviewErrorGeneric": "An error occurred: {error}",
     "@reviewErrorGeneric": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
-
     "profileCompletionTitle": "Profile completion",
     "profileCompletionLow": "Complete your profile for better recommendations",
-    "profileCompletionMedium": "Almost done! Add missing data",
+    "profileCompletionMedium": "Almost done! Add remaining data",
     "profileCompletionHigh": "Great job! Profile is complete",
-
     "pickerChooseSource": "Choose source",
     "pickerGallery": "Gallery",
     "pickerCamera": "Camera",
-    "pickerErrorUpdateLink": "Error updating link in profile",
-    "pickerErrorUploadCloud": "Error uploading to cloud",
+    "pickerErrorUpdateLink": "Error updating profile link",
+    "pickerErrorUploadCloud": "Cloud upload error",
     "pickerErrorGeneric": "Error: {error}",
     "@pickerErrorGeneric": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "profileDeleteAccount": "Delete Account",
     "profileDeleteAccountTitle": "Delete Account?",
@@ -618,10 +622,11 @@
     "errorCritical": "Critical error: {error}",
     "@errorCritical": {
         "placeholders": {
-            "error": { "type": "String" }
+            "error": {
+                "type": "String"
+            }
         }
     },
-
     "profileFillAllData": "Please fill in all profile data (including name and academic scores).",
     "profileNameProfanity": "Name contains inappropriate words.",
     "profileUnsavedChanges": "Unsaved changes",
@@ -633,14 +638,10 @@
     "profilePhotoUpdated": "Photo updated successfully!",
     "profileDeleteAccountSent": "Deletion request sent. Follow the instructions on the opened page.",
     "profileChangePhoto": "Change photo",
-    "commonError": "Error:",
-    "profileCompletionLow": "Complete your profile for better recommendations",
-    "profileCompletionMedium": "Almost done! Add the remaining data",
     "profileCityEnter": "Enter city name",
-    "validationCity": "Enter a city",
+    "validationCity": "Enter city",
     "profileSave": "Save changes",
     "profileMathScore": "Math (prof.)",
-
     "aiThinkingStep1": "Analyzing your request",
     "aiThinkingStep2": "Searching university database",
     "aiThinkingStep3": "Generating personalized response",
@@ -650,7 +651,6 @@
     "aiThinkingZhStep3": "Calculating grant chances",
     "aiThinkingZhStep4": "Creating admission plan",
     "aiThinkingZhStep5": "Preparing your Personal Plan",
-
     "aiNewChat": "New Chat",
     "aiChatHistory": "Chat History",
     "aiDeleteChat": "Delete Chat",
@@ -660,18 +660,20 @@
     "aiYesterday": "Yesterday",
     "aiPrevious7Days": "Last 7 days",
     "aiOlder": "Older",
-
     "notifClearTitle": "Clear notifications?",
     "notifClearContent": "All notifications will be permanently deleted.",
     "notifClearBtn": "Clear",
     "notifErrorPrefix": "Error: {error}",
     "@notifErrorPrefix": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "notifEmptyTitle": "No notifications yet",
     "notifEmptySubtitle": "We'll let you know when something important comes up",
     "notifActionBtn": "Open",
-
     "notifSettingsTitle": "Notifications",
     "notifSectionStudy": "Study alerts",
     "notifGrantUpdates": "Grant updates",
@@ -681,7 +683,6 @@
     "notifSectionOther": "Other",
     "notifMarketing": "Marketing & promotions",
     "notifMarketingDesc": "Partner discounts and platform news",
-
     "helpTitle": "Help & Support",
     "helpSupportTeam": "Support team",
     "helpSupportDesc": "We'll reply within 24 hours\ntandau.app.help@gmail.com",
@@ -698,23 +699,23 @@
     "helpFaq4Q": "How to change the app language?",
     "helpFaq4A": "Go to Profile -> Settings -> Language and choose the one you need.",
     "helpAppVersion": "App version: 1.2.10",
-
     "privacyTitle": "Privacy",
     "privacyHeading": "Privacy Policy & Terms of Use",
     "privacyUpdated": "Updated: February 24, 2026",
-
     "favoritesSavedTitle": "Saved",
     "favoritesEmptyTitle": "No saved universities",
     "favoritesEmptySubtitle": "Save universities you like",
     "favoritesDormitory": "Dormitory",
     "favoritesGrant": "Grant",
-
     "savedToFavorites": "Saved to favorites ❤️",
     "saveErrorText": "Save error: {error}",
     "@saveErrorText": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
-
     "adminAccessDenied": "Access denied",
     "adminNoRights": "❌ You don't have admin rights",
     "adminMigrationTitle": "Data migration",
@@ -733,18 +734,30 @@
     "adminDeleteAllBtn": "Delete all",
     "adminLoadError": "Loading error: {error}",
     "@adminLoadError": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "adminRoleChangeDenied": "❌ Access denied",
     "adminSelfRole": "❌ Cannot change own role",
     "adminSelfDelete": "❌ Cannot delete own account via admin panel",
     "adminUserDeleted": "✅ User {name} data deleted",
     "@adminUserDeleted": {
-        "placeholders": { "name": { "type": "String" } }
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
     },
     "adminDeleteError": "❌ Delete error: {error}",
     "@adminDeleteError": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "adminSendNotification": "Send notification",
     "adminSendToAll": "Send to ALL users",
@@ -757,87 +770,7 @@
     "adminSave": "Save",
     "adminAllReviews": "All reviews",
     "adminAuditLogs": "Audit logs",
-
     "errorOops": "Oops! An error occurred.",
-
-    "reviewEditedLabel": "edited",
-    "reviewAuthRequiredMsg": "Please sign in to rate",
-    "reviewHelpful": "Helpful {count}",
-    "@reviewHelpful": {
-        "placeholders": { "count": { "type": "String" } }
-    },
-    "reviewOfficialReply": "Official reply",
-    "reviewDateJustNow": "just now",
-    "reviewDateMinAgo": "{minutes} min ago",
-    "@reviewDateMinAgo": {
-        "placeholders": { "minutes": { "type": "int" } }
-    },
-    "reviewDateHoursAgo": "{hours}h ago",
-    "@reviewDateHoursAgo": {
-        "placeholders": { "hours": { "type": "int" } }
-    },
-    "reviewDateDaysAgo": "{days}d ago",
-    "@reviewDateDaysAgo": {
-        "placeholders": { "days": { "type": "int" } }
-    },
-    "reviewMonthJan": "Jan",
-    "reviewMonthFeb": "Feb",
-    "reviewMonthMar": "Mar",
-    "reviewMonthApr": "Apr",
-    "reviewMonthMay": "May",
-    "reviewMonthJun": "Jun",
-    "reviewMonthJul": "Jul",
-    "reviewMonthAug": "Aug",
-    "reviewMonthSep": "Sep",
-    "reviewMonthOct": "Oct",
-    "reviewMonthNov": "Nov",
-    "reviewMonthDec": "Dec",
-
-    "svdAnalyticsTitle": "SVD Analytics",
-    "svdDataSource": "Data: MES RK, {year}",
-    "@svdDataSource": {
-        "placeholders": { "year": { "type": "String" } }
-    },
-    "svdHowWeCalculateTitle": "How do we calculate? 📝",
-    "svdHowWeCalculateBody": "The 4-university algorithm analyzes your UNT score, chosen profile subjects, and MES RK threshold score statistics from previous years.\n\nWe account for competition in your specialty and distribute chances across risk zones (from \"High\" to \"Low\").\n\nThis allows you to choose an optimal strategy for distributing 4 universities when submitting documents.",
-    "svdUnderstood": "Got it",
-    "svdDisclaimer": "⚠️ This calculation is advisory. The final decision on grant allocation always rests with the MES RK admissions committee.",
-
-    "aiChancesGrant": "grant chance",
-    "aiChancesRisk": "Risk: {level}",
-    "@aiChancesRisk": {
-        "placeholders": { "level": { "type": "String" } }
-    },
-    "aiChancesEntThreshold": "UNT threshold for this program: {threshold} points",
-    "@aiChancesEntThreshold": {
-        "placeholders": { "threshold": { "type": "int" } }
-    },
-    "aiChancesDetails": "Calculation details",
-    "aiChancesDetailedStrategy": "Detailed AI strategy",
-
-    "profileCompletionLow": "Complete your profile for better recommendations",
-    "profileCompletionMedium": "Almost done! Add remaining data",
-    "profileCompletionHigh": "Great job! Profile is complete",
-    "profileCompletionTitle": "Profile completion",
-
-    "detailPhoneNotProvided": "Not provided",
-    "detailWebsiteNotProvided": "Website not provided",
-    "detailAddressLabel": "Address",
-    "detailWebsiteLabel": "Website",
-    "detailPhoneLabelFull": "Phone",
-    "detailRecommendations": "💡 Recommendations",
-    "detailAiThinking": "AI is generating strategy...",
-    "detailAiStrategySubtitle": "AI Strategy TANDAU",
-
-    "pickerChooseSource": "Choose source",
-    "pickerGallery": "Gallery",
-    "pickerCamera": "Camera",
-    "pickerErrorUpdateLink": "Error updating profile link",
-    "pickerErrorUploadCloud": "Cloud upload error",
-
-    "profileCityEnter": "Enter city name",
-    "validationCity": "Enter city",
-
     "updateAvailableTitle": "Update Available! 🚀",
     "updateForceTitle": "Critical Update Required",
     "updateForceBody": "To continue using TANDAU, please install the latest version of the app.",
@@ -848,10 +781,11 @@
     "updateVersion": "Version {version}",
     "@updateVersion": {
         "placeholders": {
-            "version": { "type": "String" }
+            "version": {
+                "type": "String"
+            }
         }
     },
-
     "subjectTypeTitle": "UNT Direction",
     "subjectTypePhysMath": "PhysMath 🔬",
     "subjectTypeHumanities": "Humanities 📚",

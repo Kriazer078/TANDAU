@@ -20,6 +20,8 @@ import 'my_feedbacks_screen.dart';
 import '../widgets/like_review_widgets.dart';
 import 'roi_screen.dart';
 import 'career_test_hub_screen.dart';
+import '../utils/guest_guard.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -41,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -86,19 +88,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Dark Mode Toggle
-            _buildSettingCard(
-              context,
-              icon: Icons.dark_mode,
-              title: AppLocalizations.of(context)?.settingsTheme ?? 'Dark Mode',
-              subtitle: AppLocalizations.of(context)?.settingsThemeSubtitle ??
-                  'Switch to dark mode',
-              trailing: Switch(
-                value: isDarkMode,
-                onChanged: (value) {
-                  ThemeManager().toggleTheme(value);
-                },
-              ),
+            // Theme Selection
+            ValueListenableBuilder<ThemeMode>(
+              valueListenable: ThemeManager().themeMode,
+              builder: (context, themeMode, _) {
+                String subtitle = AppLocalizations.of(context)?.themeSystem ?? 'Системная';
+                if (themeMode == ThemeMode.light) subtitle = AppLocalizations.of(context)?.themeLight ?? 'Светлая';
+                if (themeMode == ThemeMode.dark) subtitle = AppLocalizations.of(context)?.themeDark ?? 'Темная';
+
+                return _buildSettingCard(
+                  context,
+                  icon: Icons.palette_outlined,
+                  title: AppLocalizations.of(context)?.settingsTheme ?? 'Оформление',
+                  subtitle: subtitle,
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.5),
+                  ),
+                  onTap: () => _showThemeDialog(),
+                );
+              },
             ),
             const SizedBox(height: 12),
 
@@ -145,12 +155,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsSettingsScreen(),
-                  ),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationsSettingsScreen(),
+                    ),
+                  );
+                }
               },
             ),
             const SizedBox(height: 12),
@@ -170,12 +182,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FavoritesScreen(),
-                  ),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FavoritesScreen(),
+                    ),
+                  );
+                }
               },
             ),
 
@@ -195,12 +209,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RoiScreen(),
-                  ),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RoiScreen(),
+                    ),
+                  );
+                }
               },
             ),
 
@@ -220,12 +236,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CareerTestHubScreen(),
-                  ),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CareerTestHubScreen(),
+                    ),
+                  );
+                }
               },
             ),
 
@@ -246,12 +264,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FeedbackScreen(),
-                  ),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FeedbackScreen(),
+                    ),
+                  );
+                }
               },
             ),
 
@@ -272,12 +292,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).iconTheme.color?.withValues(alpha: 0.5),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyFeedbacksScreen(),
-                  ),
-                );
+                if (GuestGuard.check(context)) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MyFeedbacksScreen(),
+                    ),
+                  );
+                }
               },
             ),
 
@@ -633,6 +655,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             );
           }).toList(),
+        ),
+      ),
+    );
+  }
+
+  void _showThemeDialog() {
+    final currentMode = ThemeManager().themeMode.value;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)?.dialogThemeTitle ?? 'Оформление',
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(AppLocalizations.of(context)?.themeSystem ?? 'Системная'),
+              leading: Icon(
+                currentMode == ThemeMode.system
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_off,
+                color: currentMode == ThemeMode.system
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
+              onTap: () {
+                ThemeManager().setSystemTheme();
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)?.themeLight ?? 'Светлая'),
+              leading: Icon(
+                currentMode == ThemeMode.light
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_off,
+                color: currentMode == ThemeMode.light
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
+              onTap: () {
+                ThemeManager().toggleTheme(false);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)?.themeDark ?? 'Темная'),
+              leading: Icon(
+                currentMode == ThemeMode.dark
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_off,
+                color: currentMode == ThemeMode.dark
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey,
+              ),
+              onTap: () {
+                ThemeManager().toggleTheme(true);
+                Navigator.pop(context);
+              },
+            ),
+          ],
         ),
       ),
     );

@@ -9,8 +9,11 @@
     "profileTitle": "Профиль",
     "settingsTitle": "Баптаулар",
     "settingsLanguage": "Тіл / Language / Язык",
-    "settingsTheme": "Күңгірт режим",
-    "settingsThemeSubtitle": "Күңгірт режимге ауысу",
+    "settingsTheme": "Безендіру",
+    "themeSystem": "Жүйелік",
+    "themeLight": "Ашық",
+    "themeDark": "Күңгірт",
+    "dialogThemeTitle": "Тақырыптар",
     "settingsNotifications": "Хабарламалар",
     "settingsAbout": "Қосымша туралы",
     "settingsHelp": "Көмек",
@@ -79,7 +82,7 @@
     "aiAboutDialogButton": "Түсінікті",
     "aiTyping": "Ойлануда...",
     "aiError": "Кешіріңіз, қате шықты. Кейінірек қайталап көріңіз.",
-    "commonOk": "OK",
+    "commonOk": "Жарайды",
     "majorIT": "IT",
     "majorMedicine": "Медицина",
     "majorPedagogy": "Педагогика",
@@ -170,15 +173,12 @@
     "delete": "Жою",
     "inDevelopment": "Әзірленуде",
     "inDevelopmentMessage": "Бұл функция әзірлену үстінде",
-    "commonOk": "Жарайды",
     "commonOr": "Немесе",
-
     "tabOverview": "Шолу",
     "tabMajors": "Мамандықтар",
-    "tabAdmissions": "Түсу",
-    "tabContact": "Байланыс",
+    "tabAdmissions": "Оқуға түсу",
+    "tabContact": "Контактілер",
     "tabReviews": "Пікірлер",
-
     "detailAbout": "Университет туралы",
     "detailTuition": "Оқу ақысы",
     "detailPassingScore": "Өту балы",
@@ -188,7 +188,6 @@
     "detailWebsite": "Веб-сайт",
     "detailLeaveReview": "Пікір қалдыру",
     "detailNoReviews": "Әзірге пікірлер жоқ",
-
     "universityDormitory": "Жатақхана",
     "universityGrant": "Грант",
     "universityMilitary": "Әскери кафедра",
@@ -200,7 +199,7 @@
             }
         }
     },
-    "authGuestMessage": "Барлық мүмкіндіктерді пайдалану үшін кіріңіз",
+    "authGuestMessage": "Барлық функцияларға қол жеткізу үшін есептік жазбаңызға кіріңіз",
     "editProfileTitle": "Профильді өңдеу",
     "saveChanges": "Өзгерістерді сақтау",
     "profileUpdated": "Профиль сәтті жаңартылды",
@@ -256,7 +255,7 @@
         }
     },
     "reviewOfficialReply": "Ресми жауап",
-    "commonError": "Қате: {error}",
+    "commonError": "Қате:",
     "@commonError": {
         "placeholders": {
             "error": {
@@ -273,25 +272,25 @@
             }
         }
     },
-    "aiChancesGrant": "грантқа түсу мүмкіндігі",
-    "aiChancesRisk": "Тәуекел: {risk}",
+    "aiChancesGrant": "грантқа мүмкіндік",
+    "aiChancesRisk": "Тәуекел: {level}",
     "@aiChancesRisk": {
         "placeholders": {
-            "risk": {
+            "level": {
                 "type": "String"
             }
         }
     },
-    "aiChancesEntThreshold": "Осы бағыт үшін ҰБТ шегі: {score} балл",
+    "aiChancesEntThreshold": "Осы бағдарлама бойынша ҰБТ шегі: {threshold} балл",
     "@aiChancesEntThreshold": {
         "placeholders": {
-            "score": {
+            "threshold": {
                 "type": "int"
             }
         }
     },
-    "aiChancesDetails": "Есептеу бөлшектері",
-    "aiChancesDetailedStrategy": "Толық AI стратегиясы",
+    "aiChancesDetails": "Есептеу мәліметтері",
+    "aiChancesDetailedStrategy": "Толық AI стратегия",
     "detailErrorFavorites": "Таңдаулыларды жаңарту қатесі",
     "aiStrategyTitle": "AI Стратегиясы",
     "aiStrategyGoal": "Мақсат: {university}",
@@ -318,36 +317,25 @@
     "validationDigitRequired": "Құпия сөзде кемінде бір сан болуы керек",
     "detailEstimateChances": "Шанстарды бағалау",
     "detailRecommendations": "💡 Ұсыныстар",
-    "detailAiThinking": "AI стратегияны жасауда...",
-    "detailAiStrategySubtitle": "TANDAU AI Стратегиясы",
-    "tabOverview": "Шолу",
-    "tabMajors": "Мамандықтар",
-    "tabAdmissions": "Оқуға түсу",
-    "tabContact": "Контактілер",
-    "tabReviews": "Пікірлер",
+    "detailAiThinking": "AI стратегия жасауда...",
+    "detailAiStrategySubtitle": "AI Стратегия TANDAU",
     "profileSavedSubtitle": "Сіздің сақталған университеттеріңіз",
     "adminPanelTitle": "Админ панелі",
     "adminPanelSubtitle": "Пуш пен деректерді басқару",
-    "authGuestMessage": "Барлық функцияларға қол жеткізу үшін есептік жазбаңызға кіріңіз",
-    "authTermsSuffix": " келісемін",
-
     "homeGreetingNight": "Қайырлы түн",
     "homeEntScore": "Сіздің ҰБТ балыңыз:",
-
     "promoCodeTitle": "Промокод енгізу",
     "promoCodeSubtitle": "PRO немесе Premium жазылымды белсендіру",
     "promoCodeActivation": "Промокод белсендіру",
     "promoCodeHint": "Жазылымды белсендіру үшін промокодты енгізіңіз:",
     "promoCodeActivate": "Белсендіру",
     "promoCodeSuccess": "Промокод сәтті белсендірілді!",
-
     "supportTitle": "TANDAU командасын қолдау ❤️",
     "supportSubtitle": "Kaspi арқылы тікелей аударым",
     "supportProject": "Жобаны қолдау",
     "supportDescription": "Кез келген қолдауға ризамыз! Барлық қаржы AI серверлерін төлеуге және TANDAU-ды дамытуға жұмсалады.",
     "supportOpenKaspi": "Kaspi қосымшасын ашу",
     "supportNumberCopied": "Нөмір буферге көшірілді",
-
     "aiTokensRemaining": "Қалған AI-сұраулар: {count}",
     "@aiTokensRemaining": {
         "placeholders": {
@@ -356,7 +344,6 @@
             }
         }
     },
-
     "detailAboutUniversity": "Университет туралы",
     "detailPassingScoreTitle": "Өту балы",
     "detailPoints": "балл",
@@ -366,7 +353,7 @@
     "detailPhoneNotProvided": "Көрсетілмеген",
     "detailWebsiteNotProvided": "Сайт көрсетілмеген",
     "detailAddressLabel": "Мекенжай",
-    "detailWebsiteLabel": "Веб-сайт",
+    "detailWebsiteLabel": "Сайт",
     "detailPhoneLabelFull": "Телефон",
     "detailLeaveReviewBtn": "Пікір қалдыру",
     "detailNoReviewsYet": "Әзірге пікірлер жоқ",
@@ -380,35 +367,32 @@
         }
     },
     "detailJustNow": "жаңа ғана",
-    "reviewEditedLabel": "өзгертілген",
-    "reviewAuthRequiredMsg": "Бағалау үшін жүйеге кіріңіз",
+    "reviewEditedLabel": "өзгертілді",
+    "reviewAuthRequiredMsg": "Бағалау үшін кіріңіз",
     "reviewHelpfulLabel": "Пайдалы",
     "reviewOfficialReplyLabel": "Ресми жауап",
-
     "majorBusiness": "Бизнес",
     "majorLaw": "Заң",
-
-    "commonOr": "Немесе",
     "commonDone": "Дайын",
     "commonClose": "Жабу",
-
     "scoreInputTitle": "ҰБТ балын енгізіңіз",
     "scoreInputHint": "0 – 140",
     "scoreInputError": "0-ден 140-қа дейін сан енгізіңіз",
     "scoreInputTapHint": "Нақты енгізу үшін санды басыңыз",
-
     "reviewTitle": "Пікір қалдыру",
     "reviewRateQuestion": "Қалай бағалайсыз?",
     "reviewSelectRating": "Бағаңызды таңдаңыз",
     "reviewWriteComment": "Пікіріңізді жазыңыз",
-    "reviewCommentHint": "Тәжірибеңіз туралы айтып беріңіз...",
+    "reviewCommentHint": "Тәжірибеңіз туралы айтыңыз...",
     "reviewSubmit": "Жіберу",
     "reviewSuccess": "Пікір сәтті қосылды!",
     "reviewModerationFail": "Жіберу мүмкін болмады. Мәтінді сөгіс сөздерге тексеріңіз.",
     "reviewAttachPhoto": "Фото қосу ({current}/3)",
     "@reviewAttachPhoto": {
         "placeholders": {
-            "current": { "type": "int" }
+            "current": {
+                "type": "int"
+            }
         }
     },
     "reviewRatingBad": "Нашар",
@@ -416,7 +400,6 @@
     "reviewRatingOk": "Қалыпты",
     "reviewRatingGood": "Жақсы",
     "reviewRatingExcellent": "Тамаша!",
-
     "paywallTitle": "Мүмкіндіктеріңізді\nтолық ашыңыз",
     "paywallSubtitle": "Сізге сәйкес жоспарды таңдап, грантқа сенімді түсіңіз.",
     "paywallFree": "Тегін",
@@ -437,13 +420,13 @@
     "paywallPerMonth": "{price} ₸ / ай",
     "@paywallPerMonth": {
         "placeholders": {
-            "price": { "type": "String" }
+            "price": {
+                "type": "String"
+            }
         }
     },
-
     "notificationTitle": "Хабарламалар",
     "notificationEmpty": "Хабарламалар жоқ",
-
     "deadlineTitle": "Түсу мерзімдері\n2026",
     "deadlineImportantDates": "Маңызды күндер",
     "deadlineDays": "күн",
@@ -452,12 +435,15 @@
     "deadlineTomorrow": "Ертең!",
     "deadlineWeeks": "апта",
     "deadlineMonths": "ай",
-
     "wizardStepOf": "{total} ішінен {current}-қадам",
     "@wizardStepOf": {
         "placeholders": {
-            "current": { "type": "int" },
-            "total": { "type": "int" }
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
         }
     },
     "wizardSkip": "Өткізіп жіберу",
@@ -496,9 +482,7 @@
     "wizardScoreOk": "Жаман емес 👍",
     "wizardScoreGrow": "Өсу үшін орын бар 📈",
     "wizardScorePrep": "Дайындық қажет 📚",
-
     "successStoriesChip": "📖 Табыс тарихтары",
-
     "wizardMajorIT": "IT / Бағдарламалау",
     "wizardMajorMedicine": "Медицина",
     "wizardMajorEngineering": "Инженерия",
@@ -509,7 +493,6 @@
     "wizardMajorOilGas": "Мұнай-газ",
     "wizardMajorArt": "Өнер / Дизайн",
     "wizardMajorUndecided": "Әлі білмеймін",
-
     "wizardAchAltynBelgi": "Алтын белгі",
     "wizardAchOlympiadRepublic": "Олимпиада (республикалық)",
     "wizardAchOlympiadRegion": "Олимпиада (облыстық)",
@@ -517,33 +500,44 @@
     "wizardAchVolunteer": "Волонтёрлік",
     "wizardAchScience": "Ғылыми жоба",
     "wizardAchNone": "Жетістік жоқ",
-
     "wizardCityAny": "Кез келген қала",
-
-    "svdAnalyticsTitle": "СБЖ Аналитика",
+    "svdAnalyticsTitle": "СВД Аналитика",
     "svdDataSource": "Деректер: БҒМ РҚ, {year}",
     "@svdDataSource": {
         "placeholders": {
-            "year": { "type": "String" }
+            "year": {
+                "type": "String"
+            }
         }
     },
-    "svdHowWeCalculateTitle": "Қалай есептейміз? 📝",
-    "svdHowWeCalculateBody": "4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейіндік пәндерді және ҚР БҒМ-нің өткен жылдардағы шекті балл статистикасын талдайды.\n\nБіз сіздің мамандығыңыздағы бәсекені ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжаттарды тапсыру кезінде 4 ЖОО-ны бөлудің оңтайлы стратегиясын таңдауға мүмкіндік береді.",
+    "svdHowWeCalculateTitle": "Біз қалай есептейміз? 📝",
+    "svdHowWeCalculateBody": "4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейін пәндерін және БҒМ РҚ өткен жылдардағы шекті баллдар статистикасын талдайды.\n\nБіз мамандығыңыздағы бәсекелестікті ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжат тапсыру кезінде 4 ЖОО-ды бөлудің тиімді стратегиясын таңдауға мүмкіндік береді.",
     "svdUnderstood": "Түсінікті",
-    "svdDisclaimer": "⚠️ Есептеу ұсыныс сипатында. Грант беру туралы түпкілікті шешім әрқашан ҚР БҒМ қабылдау комиссиясында қалады.",
-
+    "svdDisclaimer": "⚠️ Есептеу кеңес беру сипатында, грант тағайындау туралы түпкілікті шешім әрқашан БҒМ РҚ қабылдау комиссиясында.",
     "reviewDateJustNow": "жаңа ғана",
-    "reviewDateMinAgo": "{min} мин бұрын",
+    "reviewDateMinAgo": "{minutes} мин бұрын",
     "@reviewDateMinAgo": {
-        "placeholders": { "min": { "type": "int" } }
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
     },
     "reviewDateHoursAgo": "{hours} сағ бұрын",
     "@reviewDateHoursAgo": {
-        "placeholders": { "hours": { "type": "int" } }
+        "placeholders": {
+            "hours": {
+                "type": "int"
+            }
+        }
     },
     "reviewDateDaysAgo": "{days} күн бұрын",
     "@reviewDateDaysAgo": {
-        "placeholders": { "days": { "type": "int" } }
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
     },
     "reviewMonthJan": "қаң",
     "reviewMonthFeb": "ақп",
@@ -557,13 +551,14 @@
     "reviewMonthOct": "қаз",
     "reviewMonthNov": "қар",
     "reviewMonthDec": "жел",
-
     "reviewLeaveTitle": "Пікір қалдыру",
-    "reviewRateQuestion": "Қалай бағалайсыз?",
-    "reviewCommentHint": "Тәжірибеңіз туралы айтыңыз...",
     "reviewAttachPhotoLabel": "Фото қосу ({current}/3)",
     "@reviewAttachPhotoLabel": {
-        "placeholders": { "current": { "type": "int" } }
+        "placeholders": {
+            "current": {
+                "type": "int"
+            }
+        }
     },
     "reviewCancelBtn": "Болдырмау",
     "reviewSubmitBtn": "Жіберу",
@@ -573,24 +568,29 @@
     "reviewModerationFailMsg": "Жіберу мүмкін болмады. Мәтінді сөгіс сөздерге тексеріңіз.",
     "reviewErrorGeneric": "Қате пайда болды: {error}",
     "@reviewErrorGeneric": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
-
     "profileCompletionTitle": "Профильді толтыру",
-    "profileCompletionLow": "Жақсырақ ұсыныстар үшін профильді толтырыңыз",
-    "profileCompletionMedium": "Аз қалды! Қалған деректерді қосыңыз",
+    "profileCompletionLow": "Жақсы ұсыныстар үшін профильді толтырыңыз",
+    "profileCompletionMedium": "Аздап қалды! Қалған деректерді қосыңыз",
     "profileCompletionHigh": "Тамаша жұмыс! Профиль толтырылды",
-
     "pickerChooseSource": "Көзді таңдаңыз",
     "pickerGallery": "Галерея",
     "pickerCamera": "Камера",
-    "pickerErrorUpdateLink": "Профильдегі сілтемені жаңарту қатесі",
+    "pickerErrorUpdateLink": "Профиль сілтемесін жаңарту қатесі",
     "pickerErrorUploadCloud": "Бұлтқа жүктеу қатесі",
     "pickerErrorGeneric": "Қате: {error}",
     "@pickerErrorGeneric": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
-
     "profileDeleteAccount": "Тіркелгіні жою",
     "profileDeleteAccountTitle": "Тіркелгіні жою керек пе?",
     "profileDeleteAccountContent": "Тіркелгіні жойғыңыз келетініне сенімдісіз бе? Барлық деректеріңіз қайтарылмайтындай жойылады.",
@@ -601,10 +601,11 @@
     "errorCritical": "Маңызды қате: {error}",
     "@errorCritical": {
         "placeholders": {
-            "error": { "type": "String" }
+            "error": {
+                "type": "String"
+            }
         }
     },
-
     "profileFillAllData": "Профильдің барлық деректерін толтырыңыз (аты мен академиялық балдарды қоса).",
     "profileNameProfanity": "Атында тыйым салынған сөздер бар.",
     "profileUnsavedChanges": "Сақталмаған өзгерістер",
@@ -616,14 +617,10 @@
     "profilePhotoUpdated": "Фото сәтті жаңартылды!",
     "profileDeleteAccountSent": "Жою сұрауы жіберілді. Ашылған беттегі нұсқауларды орындаңыз.",
     "profileChangePhoto": "Суретті өзгерту",
-    "commonError": "Қате:",
-    "profileCompletionLow": "Жақсырақ ұсыныстар алу үшін профильді толтырыңыз",
-    "profileCompletionMedium": "Аяқталуға жақын! Қалған деректерді қосыңыз",
-    "profileCityEnter": "Қала атын енгізіңіз",
+    "profileCityEnter": "Қала атауын енгізіңіз",
     "validationCity": "Қаланы енгізіңіз",
     "profileSave": "Өзгерістерді сақтау",
     "profileMathScore": "Мат. (бейіндік)",
-
     "aiThinkingStep1": "Сұрауыңызды талдауда",
     "aiThinkingStep2": "ЖОО базасынан деректер іздеуде",
     "aiThinkingStep3": "Жеке жауап дайындауда",
@@ -633,7 +630,6 @@
     "aiThinkingZhStep3": "Грант мүмкіндігін есептеуде",
     "aiThinkingZhStep4": "Түсу жоспарын жасауда",
     "aiThinkingZhStep5": "Жеке Жоспарыңызды рәсімдеуде",
-
     "aiNewChat": "Жаңа чат",
     "aiChatHistory": "Чат тарихы",
     "aiDeleteChat": "Чатты жою",
@@ -643,18 +639,20 @@
     "aiYesterday": "Кеше",
     "aiPrevious7Days": "Соңғы 7 күн",
     "aiOlder": "Бұрынғы",
-
     "notifClearTitle": "Хабарламаларды тазалау?",
     "notifClearContent": "Барлық хабарламалар біржола жойылады.",
     "notifClearBtn": "Тазалау",
     "notifErrorPrefix": "Қате: {error}",
     "@notifErrorPrefix": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "notifEmptyTitle": "Хабарламалар жоқ",
     "notifEmptySubtitle": "Маңызды бір нәрсе пайда болғанда хабарлаймыз",
     "notifActionBtn": "Өту",
-
     "notifSettingsTitle": "Хабарламалар",
     "notifSectionStudy": "Оқу ескертулері",
     "notifGrantUpdates": "Грант жаңартулары",
@@ -664,7 +662,6 @@
     "notifSectionOther": "Басқа",
     "notifMarketing": "Маркетинг және акциялар",
     "notifMarketingDesc": "Серіктестер жеңілдіктері мен платформа жаңалықтары",
-
     "helpTitle": "Көмек және қолдау",
     "helpSupportTeam": "Қолдау қызметі",
     "helpSupportDesc": "24 сағат ішінде жауап береміз\ntandau.app.help@gmail.com",
@@ -681,23 +678,23 @@
     "helpFaq4Q": "Қосымша тілін қалай өзгертуге болады?",
     "helpFaq4A": "Профиль -> Баптаулар -> Тіл бөліміне өтіп, қажеттісін таңдаңыз.",
     "helpAppVersion": "Қосымша нұсқасы: 1.2.10",
-
     "privacyTitle": "Құпиялылық",
     "privacyHeading": "Құпиялылық саясаты және Пайдалану шарттары",
     "privacyUpdated": "Жаңартылған: 2026 жылғы 24 ақпан",
-
     "favoritesSavedTitle": "Сақталғандар",
     "favoritesEmptyTitle": "Сақталған университеттер жоқ",
     "favoritesEmptySubtitle": "Ұнаған университеттеріңізді сақтаңыз",
     "favoritesDormitory": "Жатақхана",
     "favoritesGrant": "Грант",
-
     "savedToFavorites": "Таңдаулыға сақталды ❤️",
     "saveErrorText": "Сақтау қатесі: {error}",
     "@saveErrorText": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
-
     "adminAccessDenied": "Қолжетімділік шектелген",
     "adminNoRights": "❌ Сізде әкімші құқығы жоқ",
     "adminMigrationTitle": "Деректер миграциясы",
@@ -716,18 +713,30 @@
     "adminDeleteAllBtn": "Барлығын жою",
     "adminLoadError": "Жүктеу қатесі: {error}",
     "@adminLoadError": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "adminRoleChangeDenied": "❌ Қолжетімділік шектелген",
     "adminSelfRole": "❌ Өз рөліңізді өзгерту мүмкін емес",
     "adminSelfDelete": "❌ Әкімші панелі арқылы өз тіркелгіңізді жою мүмкін емес",
     "adminUserDeleted": "✅ {name} пайдаланушысының деректері жойылды",
     "@adminUserDeleted": {
-        "placeholders": { "name": { "type": "String" } }
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
     },
     "adminDeleteError": "❌ Жою қатесі: {error}",
     "@adminDeleteError": {
-        "placeholders": { "error": { "type": "String" } }
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
     },
     "adminSendNotification": "Хабарлама жіберу",
     "adminSendToAll": "БАРЛЫҚ пайдаланушыларға жіберу",
@@ -740,87 +749,7 @@
     "adminSave": "Сақтау",
     "adminAllReviews": "Барлық пікірлер",
     "adminAuditLogs": "Аудит-логтар",
-
     "errorOops": "Қап! Қате шықты.",
-
-    "reviewEditedLabel": "өзгертілді",
-    "reviewAuthRequiredMsg": "Бағалау үшін кіріңіз",
-    "reviewHelpful": "Пайдалы {count}",
-    "@reviewHelpful": {
-        "placeholders": { "count": { "type": "String" } }
-    },
-    "reviewOfficialReply": "Ресми жауап",
-    "reviewDateJustNow": "жаңа ғана",
-    "reviewDateMinAgo": "{minutes} мин бұрын",
-    "@reviewDateMinAgo": {
-        "placeholders": { "minutes": { "type": "int" } }
-    },
-    "reviewDateHoursAgo": "{hours} сағ бұрын",
-    "@reviewDateHoursAgo": {
-        "placeholders": { "hours": { "type": "int" } }
-    },
-    "reviewDateDaysAgo": "{days} күн бұрын",
-    "@reviewDateDaysAgo": {
-        "placeholders": { "days": { "type": "int" } }
-    },
-    "reviewMonthJan": "қаң",
-    "reviewMonthFeb": "ақп",
-    "reviewMonthMar": "нау",
-    "reviewMonthApr": "сәу",
-    "reviewMonthMay": "мам",
-    "reviewMonthJun": "мау",
-    "reviewMonthJul": "шіл",
-    "reviewMonthAug": "там",
-    "reviewMonthSep": "қыр",
-    "reviewMonthOct": "қаз",
-    "reviewMonthNov": "қар",
-    "reviewMonthDec": "жел",
-
-    "svdAnalyticsTitle": "СВД Аналитика",
-    "svdDataSource": "Деректер: БҒМ РҚ, {year}",
-    "@svdDataSource": {
-        "placeholders": { "year": { "type": "String" } }
-    },
-    "svdHowWeCalculateTitle": "Біз қалай есептейміз? 📝",
-    "svdHowWeCalculateBody": "4 ЖОО алгоритмі сіздің ҰБТ балыңызды, таңдалған бейін пәндерін және БҒМ РҚ өткен жылдардағы шекті баллдар статистикасын талдайды.\n\nБіз мамандығыңыздағы бәсекелестікті ескеріп, мүмкіндіктерді тәуекел аймақтарына бөлеміз (\"Жоғарыдан\" \"Төменге\" дейін).\n\nБұл құжат тапсыру кезінде 4 ЖОО-ды бөлудің тиімді стратегиясын таңдауға мүмкіндік береді.",
-    "svdUnderstood": "Түсінікті",
-    "svdDisclaimer": "⚠️ Есептеу кеңес беру сипатында, грант тағайындау туралы түпкілікті шешім әрқашан БҒМ РҚ қабылдау комиссиясында.",
-
-    "aiChancesGrant": "грантқа мүмкіндік",
-    "aiChancesRisk": "Тәуекел: {level}",
-    "@aiChancesRisk": {
-        "placeholders": { "level": { "type": "String" } }
-    },
-    "aiChancesEntThreshold": "Осы бағдарлама бойынша ҰБТ шегі: {threshold} балл",
-    "@aiChancesEntThreshold": {
-        "placeholders": { "threshold": { "type": "int" } }
-    },
-    "aiChancesDetails": "Есептеу мәліметтері",
-    "aiChancesDetailedStrategy": "Толық AI стратегия",
-
-    "profileCompletionLow": "Жақсы ұсыныстар үшін профильді толтырыңыз",
-    "profileCompletionMedium": "Аздап қалды! Қалған деректерді қосыңыз",
-    "profileCompletionHigh": "Тамаша жұмыс! Профиль толтырылды",
-    "profileCompletionTitle": "Профильді толтыру",
-
-    "detailPhoneNotProvided": "Көрсетілмеген",
-    "detailWebsiteNotProvided": "Сайт көрсетілмеген",
-    "detailAddressLabel": "Мекенжай",
-    "detailWebsiteLabel": "Сайт",
-    "detailPhoneLabelFull": "Телефон",
-    "detailRecommendations": "💡 Ұсыныстар",
-    "detailAiThinking": "AI стратегия жасауда...",
-    "detailAiStrategySubtitle": "AI Стратегия TANDAU",
-
-    "pickerChooseSource": "Көзді таңдаңыз",
-    "pickerGallery": "Галерея",
-    "pickerCamera": "Камера",
-    "pickerErrorUpdateLink": "Профиль сілтемесін жаңарту қатесі",
-    "pickerErrorUploadCloud": "Бұлтқа жүктеу қатесі",
-
-    "profileCityEnter": "Қала атауын енгізіңіз",
-    "validationCity": "Қаланы енгізіңіз",
-
     "updateAvailableTitle": "Жаңарту қол жетімді! 🚀",
     "updateForceTitle": "Міндетті жаңарту",
     "updateForceBody": "TANDAU-ды пайдалануды жалғастыру үшін қосымшаның соңғы нұсқасын орнатыңыз.",
@@ -831,10 +760,11 @@
     "updateVersion": "{version} нұсқасы",
     "@updateVersion": {
         "placeholders": {
-            "version": { "type": "String" }
+            "version": {
+                "type": "String"
+            }
         }
     },
-
     "subjectTypeTitle": "ҰБТ бағыты",
     "subjectTypePhysMath": "Физ-мат 🔬",
     "subjectTypeHumanities": "Гуманитарий 📚",

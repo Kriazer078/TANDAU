@@ -31,8 +31,46 @@
 
   <title>tandau</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      background-color: #FFFFFF;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .loader-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #E5E7EB; /* gray-200 */
+      border-top-color: #3B82F6; /* blue-500 */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    .loading-text {
+      color: #6B7280; /* gray-500 */
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+  <div class="loader-container">
+    <div class="spinner"></div>
+    <div class="loading-text">TANDAU загружается...</div>
+  </div>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

@@ -102,9 +102,10 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.surface,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
+        elevation: 2,
+        shadowColor: const Color(0x1A0F172A),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: AppColors.border, width: 1),
         ),
       ),
@@ -171,7 +172,8 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
+        elevation: 4,
+        shadowColor: const Color(0x140F172A),
         indicatorColor: AppColors.primary.withValues(alpha: 0.12),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
