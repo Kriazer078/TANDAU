@@ -16,6 +16,7 @@ class GeminiService {
 
   // ✅ 2026 Verified stable Gemini models, ordered by priority (best first)
   static const List<String> _endpoints = [
+    'https://generativelanguage.googleapis.com/v1/models/gemini-3-flash-preview:generateContent',
     'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent',
     'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent',
@@ -94,7 +95,7 @@ class GeminiService {
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['systemInstruction'] = {
+          requestBody['system_instruction'] = {
             'parts': [
               {'text': systemInstruction}
             ]
@@ -180,7 +181,7 @@ class GeminiService {
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['systemInstruction'] = {
+          requestBody['system_instruction'] = {
             'parts': [
               {'text': systemInstruction}
             ]
