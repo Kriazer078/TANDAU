@@ -17,10 +17,11 @@ class GeminiService {
   // ✅ Verified stable Gemini models, ordered by priority (best first)
   static const List<String> _endpoints = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent',
   ];
+
 
   /// Keywords that require fresh data via Google Search Grounding.
   static const List<String> _groundingTriggers = [

@@ -13,10 +13,12 @@ class CostTrackerService {
   // ── Per-model pricing overrides ──
   static const Map<String, List<double>> _modelPricing = {
     'gemini-2.0-flash':     [0.075, 0.30],
-    'gemini-1.5-flash-002': [0.075, 0.30],
     'gemini-1.5-flash':     [0.075, 0.30],
-    'gemini-1.5-flash-8b':  [0.0375, 0.15],
+    'gemini-1.5-pro':       [3.50, 10.50],
+    'gemini-1.0-pro':       [0.50, 1.50],
   };
+
+
 
   // ── Aggregate counters ──
   int _totalInputTokens = 0;
