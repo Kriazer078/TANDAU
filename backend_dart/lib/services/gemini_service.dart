@@ -94,7 +94,7 @@ class GeminiService {
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['system_instruction'] = {
+          requestBody['systemInstruction'] = {
             'parts': [
               {'text': systemInstruction}
             ]
@@ -180,7 +180,7 @@ class GeminiService {
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['system_instruction'] = {
+          requestBody['systemInstruction'] = {
             'parts': [
               {'text': systemInstruction}
             ]
