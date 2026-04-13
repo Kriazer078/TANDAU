@@ -10,6 +10,9 @@ class University {
   final bool hasDormitory;
   final bool hasGrants;
   final bool hasMilitaryDepartment;
+  final int? dormitoryPrice; // Price for dormitory per month
+  final double? latitude;
+  final double? longitude;
   final String description;
   final List<String> requirements;
   final String applicationDeadline;
@@ -42,8 +45,11 @@ class University {
     required this.passingScore,
     required this.tuitionRange,
     required this.hasDormitory,
+    this.dormitoryPrice,
     required this.hasGrants,
     this.hasMilitaryDepartment = false,
+    this.latitude,
+    this.longitude,
     required this.description,
     required this.requirements,
     required this.applicationDeadline,
@@ -71,8 +77,11 @@ class University {
       'passingScore': passingScore,
       'tuitionRange': tuitionRange,
       'hasDormitory': hasDormitory,
+      'dormitoryPrice': dormitoryPrice,
       'hasGrants': hasGrants,
       'hasMilitaryDepartment': hasMilitaryDepartment,
+      'latitude': latitude,
+      'longitude': longitude,
       'description': description,
       'requirements': requirements,
       'applicationDeadline': applicationDeadline,
@@ -101,8 +110,11 @@ class University {
       passingScore: map['passingScore'] ?? 0,
       tuitionRange: map['tuitionRange'] ?? '',
       hasDormitory: map['hasDormitory'] ?? false,
+      dormitoryPrice: map['dormitoryPrice'],
       hasGrants: map['hasGrants'] ?? false,
       hasMilitaryDepartment: map['hasMilitaryDepartment'] ?? false,
+      latitude: (map['latitude'] as num?)?.toDouble(),
+      longitude: (map['longitude'] as num?)?.toDouble(),
       description: map['description'] ?? '',
       requirements: List<String>.from(map['requirements'] ?? []),
       applicationDeadline: map['applicationDeadline'] ?? '',

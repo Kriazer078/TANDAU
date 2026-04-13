@@ -1870,6 +1870,211 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackSentAt(Object date) {
-    return 'Sent on $date';
+    return 'Sent at $date';
   }
+
+  @override
+  String get roiTitle => 'ROI Analysis';
+
+  @override
+  String get roiProfessionIT => 'IT Specialist';
+
+  @override
+  String get roiProfessionMedicine => 'Doctor';
+
+  @override
+  String get roiProfessionAgriculture => 'Agronomist / Farmer';
+
+  @override
+  String get roiProfessionManagement => 'Manager / Marketer';
+
+  @override
+  String get roiProfessionPedagogy => 'Teacher / Educator';
+
+  @override
+  String get roiProfessionEngineering => 'Engineer / Builder';
+
+  @override
+  String get roiHonorStudent => 'Honors Student';
+
+  @override
+  String get roiWorkWhileStudying => 'Working while studying';
+
+  @override
+  String get roiTotalScholarship => 'Total Scholarship';
+
+  @override
+  String get roiPrestigeBonus => 'Prestige Bonus';
+
+  @override
+  String get roiFinTechAnalysis => 'FinTech Analysis';
+
+  @override
+  String get roiInvestment => 'Investment';
+
+  @override
+  String get roiProfit => 'Profit';
+
+  @override
+  String get roiPayback => 'Payback';
+
+  @override
+  String get roiYears => 'years';
+
+  @override
+  String get roiMonths => 'months';
+
+  @override
+  String get roiCurrentCapital => 'Current Capital (in 10 years)';
+
+  @override
+  String get roiOpportunityCost => 'Opportunity Cost';
+
+  @override
+  String get roiNpv => 'Net Present Value (NPV)';
+
+  @override
+  String get roiDashboardSubtitle => 'Capital & Risk Analysis';
+
+  @override
+  String get roiCalculate => 'Calculate';
+
+  @override
+  String get roiResults => 'Results';
+
+  @override
+  String get roiCalculatorTitle => 'ROI Калькулятор';
+
+  @override
+  String get roiInfoTitle => 'Об анализе ROI';
+
+  @override
+  String get roiInfoContent =>
+      'Этот калькулятор поможет оценить, за какое время окупятся ваши инвестиции в образование, исходя из стоимости обучения и средней зарплаты.';
+
+  @override
+  String get roiScreenPremiumLabel => 'PREMIUM';
+
+  @override
+  String get roiScreenHeadline => 'Инвестиции в образование';
+
+  @override
+  String get roiScreenSubheadline => 'Рассчитайте окупаемость';
+
+  @override
+  String get roiInitialData => 'Исходные данные';
+
+  @override
+  String get roiLabelProfession => 'Профессия';
+
+  @override
+  String get roiChooseProfession => 'Выбрать профессию';
+
+  @override
+  String get roiLabelUniversity => 'Университет';
+
+  @override
+  String get roiChooseUniversity => 'Выбрать университет';
+
+  @override
+  String get roiOptionsTitle => 'Опции';
+
+  @override
+  String get roiFundingType => 'Форма обучения';
+
+  @override
+  String get roiPaid => 'Платное';
+
+  @override
+  String get roiGrant => 'Грант';
+
+  @override
+  String get roiYearsLabel => 'Горизонт планирования';
+
+  @override
+  String get roiYearsSuffix => 'лет';
+
+  @override
+  String get roiLivingCosts => 'Учитывать расходы на жизнь';
+
+  @override
+  String get roiEmptyStateTitle => 'Один шаг до аналитики';
+
+  @override
+  String get roiEmptyStateSubtitle => 'Выберите профессию и вуз';
+
+  @override
+  String get roiFinTechDashboard => 'FinTech Аналитика';
+
+  @override
+  String get roiPaybackPeriod => 'Окупаемость';
+
+  @override
+  String get roiTotalProfit => 'Чистая прибыль';
+
+  @override
+  String get roiInvestmentEfficiency => 'Эффективность инвестиций';
+
+  @override
+  String get roiMonthlyBalance => 'Среднемесячный доход';
+
+  @override
+  String get roiCashFlowChartTitle => 'Прогноз капитала';
+
+  @override
+  String get roiRatingExcellent => 'Отлично';
+
+  @override
+  String get roiRatingGood => 'Хорошо';
+
+  @override
+  String get roiRatingPoor => 'Плохо';
+
+  @override
+  String get roiAverageSalary => 'Средняя зарплата';
+
+  @override
+  String get roiAnnualTuition => 'Стоимость года';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get moderatorTitle => 'Manage Universities';
+
+  @override
+  String get moderatorAddUni => 'Add University';
+
+  @override
+  String get moderatorEditUni => 'Edit University';
+
+  @override
+  String get moderatorDeleteConfirm => 'Delete this university?';
+
+  @override
+  String get moderatorDeleteSuccess => 'University deleted';
+
+  @override
+  String get moderatorSectionBasic => 'Basic Information';
+
+  @override
+  String get moderatorSectionFinance => 'Finance & Admission';
+
+  @override
+  String get moderatorSectionInfra => 'Infrastructure';
+
+  @override
+  String get dormitory => 'Dormitory';
+
+  @override
+  String get dormitoryPrice => 'Dormitory price';
+
+  @override
+  String get militaryDepartment => 'Military Department';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get detailAvailable => 'Available';
 }

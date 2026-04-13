@@ -5,10 +5,18 @@ import 'dart:io';
 /// Tracks input/output tokens per request and calculates
 /// estimated cost based on Gemini pricing.
 class CostTrackerService {
-  // ── Pricing: Gemini 2.0 Flash (as of March 2026) ──
-  // These can be updated when pricing changes.
-  static const double inputPricePer1M = 0.10; // $0.10 per 1M input tokens
-  static const double outputPricePer1M = 0.40; // $0.40 per 1M output tokens
+  // ── Pricing: Gemini 2.0 Flash (April 2026) ──
+  // https://ai.google.dev/pricing
+  static const double inputPricePer1M = 0.075;  // $0.075 per 1M input tokens
+  static const double outputPricePer1M = 0.30;  // $0.30  per 1M output tokens
+
+  // ── Per-model pricing overrides ──
+  static const Map<String, List<double>> _modelPricing = {
+    'gemini-2.0-flash':     [0.075, 0.30],
+    'gemini-1.5-flash-002': [0.075, 0.30],
+    'gemini-1.5-flash':     [0.075, 0.30],
+    'gemini-1.5-flash-8b':  [0.0375, 0.15],
+  };
 
   // ── Aggregate counters ──
   int _totalInputTokens = 0;
@@ -56,10 +64,13 @@ class CostTrackerService {
         '\$${cost.toStringAsFixed(6)} ($endpoint)');
   }
 
-  /// Calculate cost in USD for given token counts.
-  double _calculateCost(int inputTokens, int outputTokens) {
-    return (inputTokens / 1000000.0) * inputPricePer1M +
-        (outputTokens / 1000000.0) * outputPricePer1M;
+  /// Calculate cost in USD for given token counts + model override.
+  double _calculateCost(int inputTokens, int outputTokens, [String? model]) {
+    final pricing = (model != null ? _modelPricing[model] : null);
+    final inRate  = pricing?[0] ?? inputPricePer1M;
+    final outRate = pricing?[1] ?? outputPricePer1M;
+    return (inputTokens / 1000000.0) * inRate +
+        (outputTokens / 1000000.0) * outRate;
   }
 
   /// Get the estimated cost for a specific request (without tracking).

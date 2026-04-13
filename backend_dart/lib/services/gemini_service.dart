@@ -14,13 +14,26 @@ class GeminiService {
     _costTracker = tracker;
   }
 
-  // List of models available to current key (Prioritizing stable models)
+  // ✅ Verified stable Gemini models, ordered by priority (best first)
   static const List<String> _endpoints = [
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
   ];
+
+  /// Keywords that require fresh data via Google Search Grounding.
+  static const List<String> _groundingTriggers = [
+    'стоим', 'цена', 'грант', 'quota', 'квот', 'порог', 'проходной',
+    'новост', 'сейчас', 'актуальн', 'конкурс', 'current', 'latest',
+    'рейтинг', 'ranking', 'бюджет', 'дедлайн', 'deadline',
+  ];
+
+  /// Returns true if the question likely needs live Google Search data.
+  static bool _needsGrounding(String question) {
+    final q = question.toLowerCase();
+    return _groundingTriggers.any((kw) => q.contains(kw));
+  }
 
   // ═══════════════════════════════════════════════════════════════
   // PROMPT HELPERS — delegates to SystemPrompts class
@@ -243,6 +256,8 @@ class GeminiService {
     String? userContext,
     String? intentInstruction,
   }) async {
+    // 🔍 Only use grounding when question needs live data
+    final shouldGround = _needsGrounding(question);
     return _generateAdvanced(
       systemInstruction: SystemPrompts.buildChatPrompt(
         userContext: userContext,
@@ -253,7 +268,7 @@ class GeminiService {
         history: history,
         ragContext: ragContext,
       ),
-      useGrounding: true,
+      useGrounding: shouldGround,
     );
   }
 
@@ -264,6 +279,8 @@ class GeminiService {
     String? userContext,
     String? intentInstruction,
   }) async {
+    // 🔍 Only use grounding when question needs live data
+    final shouldGround = _needsGrounding(question);
     return _generateStreamAdvanced(
       systemInstruction: SystemPrompts.buildChatPrompt(
         userContext: userContext,
@@ -274,7 +291,7 @@ class GeminiService {
         history: history,
         ragContext: ragContext,
       ),
-      useGrounding: true,
+      useGrounding: shouldGround,
     );
   }
 

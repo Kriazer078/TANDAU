@@ -102,6 +102,20 @@ class UniversityHeader extends StatelessWidget {
                     AppLocalizations.of(context)?.universityGrant ?? 'Гранты',
                     AppColors.gold,
                   ),
+                if (university.hasMilitaryDepartment) ...[
+                  const SizedBox(width: 12),
+                  _buildModernChip(
+                    context,
+                    const Icon(
+                      Icons.shield_rounded,
+                      size: 14,
+                      color: Color(0xFF6366F1),
+                    ),
+                    AppLocalizations.of(context)?.militaryDepartment ??
+                        'Военная кафедра',
+                    const Color(0xFF6366F1), // Indigo
+                  ),
+                ],
               ],
             ),
           ),

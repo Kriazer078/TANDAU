@@ -1877,4 +1877,211 @@ class AppLocalizationsRu extends AppLocalizations {
   String feedbackSentAt(Object date) {
     return 'Отправлено $date';
   }
+
+  @override
+  String get roiTitle => 'Анализ окупаемости';
+
+  @override
+  String get roiProfessionIT => 'IT-специалист';
+
+  @override
+  String get roiProfessionMedicine => 'Врач';
+
+  @override
+  String get roiProfessionAgriculture => 'Агроном / Фермер';
+
+  @override
+  String get roiProfessionManagement => 'Менеджер / Маркетолог';
+
+  @override
+  String get roiProfessionPedagogy => 'Учитель / Педагог';
+
+  @override
+  String get roiProfessionEngineering => 'Инженер / Строитель';
+
+  @override
+  String get roiHonorStudent => 'Учусь на отлично';
+
+  @override
+  String get roiWorkWhileStudying => 'Работаю во время учебы';
+
+  @override
+  String get roiTotalScholarship => 'Всего стипендии';
+
+  @override
+  String get roiPrestigeBonus => 'Бонус за престиж';
+
+  @override
+  String get roiFinTechAnalysis => 'FinTech анализ';
+
+  @override
+  String get roiInvestment => 'Инвестиция';
+
+  @override
+  String get roiProfit => 'Прибыль';
+
+  @override
+  String get roiPayback => 'Окупаемость';
+
+  @override
+  String get roiYears => 'лет';
+
+  @override
+  String get roiMonths => 'мес.';
+
+  @override
+  String get roiCurrentCapital => 'Капитал через 10 лет';
+
+  @override
+  String get roiOpportunityCost => 'Упущенная выгода';
+
+  @override
+  String get roiNpv => 'Чистая стоимость (NPV)';
+
+  @override
+  String get roiDashboardSubtitle => 'Анализ капитала и рисков';
+
+  @override
+  String get roiCalculate => 'Рассчитать';
+
+  @override
+  String get roiResults => 'Результаты';
+
+  @override
+  String get roiCalculatorTitle => 'Инвестиционный AI-Анализ';
+
+  @override
+  String get roiInfoTitle => 'Как работает ROI-анализ?';
+
+  @override
+  String get roiInfoContent =>
+      'Мы рассчитываем ваш финансовый путь на 10 лет вперед: стоимость обучения, расходы на жизнь и потенциальный рост зарплаты. Это помогает выбрать вуз, который окупится быстрее всего.';
+
+  @override
+  String get roiScreenPremiumLabel => 'PREMIUM АНАЛИТИКА';
+
+  @override
+  String get roiScreenHeadline => 'Ваше будущее в цифрах';
+
+  @override
+  String get roiScreenSubheadline =>
+      'Рассчитайте окупаемость образования и выберите выгодный путь';
+
+  @override
+  String get roiInitialData => 'Исходные данные';
+
+  @override
+  String get roiLabelProfession => 'Желаемая профессия';
+
+  @override
+  String get roiChooseProfession => 'Выберите профессию';
+
+  @override
+  String get roiLabelUniversity => 'Целевой университет';
+
+  @override
+  String get roiChooseUniversity => 'Выберите университет';
+
+  @override
+  String get roiOptionsTitle => 'Дополнительные опции';
+
+  @override
+  String get roiFundingType => 'Тип финансирования';
+
+  @override
+  String get roiPaid => 'Платное';
+
+  @override
+  String get roiGrant => 'Грант';
+
+  @override
+  String get roiYearsLabel => 'Срок обучения';
+
+  @override
+  String get roiYearsSuffix => 'лет';
+
+  @override
+  String get roiLivingCosts => 'Расходы на жизнь (в месяц)';
+
+  @override
+  String get roiEmptyStateTitle => 'Готовы увидеть прогноз?';
+
+  @override
+  String get roiEmptyStateSubtitle =>
+      'Заполните данные слева, чтобы наш AI рассчитал ваш финансовый успех';
+
+  @override
+  String get roiFinTechDashboard => 'Финансовый Дашборд';
+
+  @override
+  String get roiPaybackPeriod => 'Срок окупаемости';
+
+  @override
+  String get roiTotalProfit => 'Чистая прибыль (10 лет)';
+
+  @override
+  String get roiInvestmentEfficiency => 'Эффективность инвестиций';
+
+  @override
+  String get roiMonthlyBalance => 'Месячный баланс';
+
+  @override
+  String get roiCashFlowChartTitle => 'Прогноз денежного потока';
+
+  @override
+  String get roiRatingExcellent => 'Высшая категория';
+
+  @override
+  String get roiRatingGood => 'Хороший выбор';
+
+  @override
+  String get roiRatingPoor => 'Низкая окупаемость';
+
+  @override
+  String get roiAverageSalary => 'Средняя зарплата';
+
+  @override
+  String get roiAnnualTuition => 'Стоимость обучения (год)';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get moderatorTitle => 'Управление ВУЗами';
+
+  @override
+  String get moderatorAddUni => 'Добавить ВУЗ';
+
+  @override
+  String get moderatorEditUni => 'Редактировать ВУЗ';
+
+  @override
+  String get moderatorDeleteConfirm => 'Удалить этот ВУЗ?';
+
+  @override
+  String get moderatorDeleteSuccess => 'ВУЗ удалён';
+
+  @override
+  String get moderatorSectionBasic => 'Основная информация';
+
+  @override
+  String get moderatorSectionFinance => 'Финансы и Поступление';
+
+  @override
+  String get moderatorSectionInfra => 'Инфраструктура';
+
+  @override
+  String get dormitory => 'Общежитие';
+
+  @override
+  String get dormitoryPrice => 'Цена общежития';
+
+  @override
+  String get militaryDepartment => 'Военная кафедра';
+
+  @override
+  String get location => 'Местоположение';
+
+  @override
+  String get detailAvailable => 'Есть';
 }

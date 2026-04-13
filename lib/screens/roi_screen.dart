@@ -1,1450 +1,860 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../data/professions_data.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../l10n/app_localizations.dart';
+import '../services/roi_calculator_service.dart';
+import '../theme/app_colors.dart';
 import '../models/profession.dart';
 import '../models/university.dart';
-import '../services/roi_calculator_service.dart';
-import '../services/university_service.dart';
+import '../models/roi_models.dart';
 
-// ─── Адаптивная палитра (светлая/тёмная) ───────────────────────────────────
-class _Palette {
-  final Color bg;
-  final Color cardBg;
-  final Color cardBgAlt;
-  final Color border;
-  final Color textMain;
-  final Color textSub;
-  final Color thumbBg;
-  final Color progressTrack;
-
-  const _Palette({
-    required this.bg,
-    required this.cardBg,
-    required this.cardBgAlt,
-    required this.border,
-    required this.textMain,
-    required this.textSub,
-    required this.thumbBg,
-    required this.progressTrack,
-  });
-
-  static _Palette dark() => const _Palette(
-        bg: Color(0xFF09090B),
-        cardBg: Color(0xFF18181B),
-        cardBgAlt: Color(0xFF27272A),
-        border: Color(0xFF3F3F46),
-        textMain: Color(0xFFFAFAFA),
-        textSub: Color(0xFFA1A1AA),
-        thumbBg: Color(0xFF3F3F46),
-        progressTrack: Color(0xFF27272A),
-      );
-
-  static _Palette light() => const _Palette(
-        bg: Color(0xFFF4F6FA),
-        cardBg: Color(0xFFFFFFFF),
-        cardBgAlt: Color(0xFFF1F5F9),
-        border: Color(0xFFDDE3EF),
-        textMain: Color(0xFF0F172A),
-        textSub: Color(0xFF64748B),
-        thumbBg: Color(0xFFE2E8F0),
-        progressTrack: Color(0xFFE2E8F0),
-      );
-}
-
-// ─── Семантические цвета (не меняются в зависимости от темы) ───────────────
-class _SC {
-  static const Color accent = Color(0xFF3B82F6);
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color danger = Color(0xFFEF4444);
-}
-
-class RoiScreen extends StatefulWidget {
+class RoiScreen extends ConsumerStatefulWidget {
   const RoiScreen({super.key});
 
   @override
-  State<RoiScreen> createState() => _RoiScreenState();
+  ConsumerState<RoiScreen> createState() => _RoiScreenState();
 }
 
-class _RoiScreenState extends State<RoiScreen> {
+class _RoiScreenState extends ConsumerState<RoiScreen> {
   final RoiCalculatorService _service = RoiCalculatorService();
-  final UniversityService _uniService = UniversityService();
 
   Profession? _selectedProfession;
   University? _selectedUniversity;
   bool _isGrant = false;
-  bool _willWorkOffGrant = true;
-  bool _isRuralQuota = false;
-  bool _isPedagogicalOrMedical = false;
-  bool _includeLivingCosts = false;
   int _yearsToCalculate = 10;
-
-  List<University> _universities = [];
-  bool _isLoadingUniversities = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUniversities();
-  }
-
-  Future<void> _loadUniversities() async {
-    final list = await _uniService.getAllUniversities();
-    if (mounted) {
-      setState(() {
-        _universities = list;
-        _isLoadingUniversities = false;
-      });
-    }
-  }
-
-  void _showProfessionPicker() {
-    HapticFeedback.lightImpact();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final p = isDark ? _Palette.dark() : _Palette.light();
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) {
-        return Container(
-          height: MediaQuery.of(ctx).size.height * 0.72,
-          decoration: BoxDecoration(
-            color: p.cardBg,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border(top: BorderSide(color: p.border)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
-                blurRadius: 32,
-                offset: const Offset(0, -8),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 14),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: p.thumbBg,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Выберите профессию',
-                    style: TextStyle(
-                      color: p.textMain,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
-                  itemCount: kProfessionsData.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    final prof = kProfessionsData[index];
-                    final isSelected = _selectedProfession?.id == prof.id;
-                    return Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            _selectedProfession = prof;
-                            final lower = prof.name.toLowerCase();
-                            _isPedagogicalOrMedical =
-                                lower.contains('учитель') ||
-                                lower.contains('педагог') ||
-                                lower.contains('врач') ||
-                                lower.contains('медиц') ||
-                                lower.contains('медсестра') ||
-                                lower.contains('преподават');
-                          });
-                          Navigator.pop(ctx);
-                        },
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? _SC.accent.withValues(alpha: 0.08)
-                                : p.cardBg,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isSelected
-                                  ? _SC.accent.withValues(alpha: 0.5)
-                                  : p.border,
-                              width: isSelected ? 1.5 : 1.0,
-                            ),
-                            boxShadow: isDark
-                                ? null
-                                : [
-                                    BoxShadow(
-                                      color: Colors.black
-                                          .withValues(alpha: 0.03),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                prof.emoji,
-                                style: const TextStyle(fontSize: 24),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  prof.name,
-                                  style: TextStyle(
-                                    color: p.textMain,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              if (isSelected)
-                                Icon(
-                                  Icons.check_circle_rounded,
-                                  color: _SC.accent,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showUniversityPicker() {
-    HapticFeedback.lightImpact();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final p = isDark ? _Palette.dark() : _Palette.light();
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) {
-        return Container(
-          height: MediaQuery.of(ctx).size.height * 0.72,
-          decoration: BoxDecoration(
-            color: p.cardBg,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border(top: BorderSide(color: p.border)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
-                blurRadius: 32,
-                offset: const Offset(0, -8),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 14),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: p.thumbBg,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Выберите университет',
-                        style: TextStyle(
-                          color: p.textMain,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (_selectedUniversity != null)
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedUniversity = null;
-                          });
-                          Navigator.pop(ctx);
-                        },
-                        child: Text(
-                          'Сбросить',
-                          style: TextStyle(color: _SC.danger),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (_isLoadingUniversities)
-                Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(color: _SC.accent),
-                  ),
-                )
-              else
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 8,
-                    ),
-                    itemCount: _universities.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final u = _universities[index];
-                      final isSelected = _selectedUniversity?.id == u.id;
-                      return Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedUniversity = u;
-                            });
-                            Navigator.pop(ctx);
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? _SC.accent.withValues(alpha: 0.08)
-                                  : p.cardBg,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: isSelected
-                                    ? _SC.accent.withValues(alpha: 0.5)
-                                    : p.border,
-                                width: isSelected ? 1.5 : 1.0,
-                              ),
-                              boxShadow: isDark
-                                  ? null
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.black
-                                            .withValues(alpha: 0.03),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: u.logoUrl.isNotEmpty
-                                        ? DecorationImage(
-                                            image: NetworkImage(u.logoUrl),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
-                                    color: p.cardBgAlt,
-                                    border: Border.all(color: p.border),
-                                  ),
-                                  child: u.logoUrl.isEmpty
-                                      ? Icon(
-                                          Icons.school,
-                                          color: p.textSub,
-                                          size: 20,
-                                        )
-                                      : null,
-                                ),
-                                const SizedBox(width: 14),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        u.name,
-                                        style: TextStyle(
-                                          color: p.textMain,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      if (u.maxTuitionValue > 0) ...[
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Платно: ${RoiCalculatorService.formatMoney(u.maxTuitionValue.toInt())}/год',
-                                          style: TextStyle(
-                                            color: p.textSub,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                                if (isSelected)
-                                  Icon(
-                                    Icons.check_circle_rounded,
-                                    color: _SC.accent,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  bool _includeLivingCosts = true;
+  bool _isHonorStudent = false;
+  bool _worksWhileStudying = false;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final p = isDark ? _Palette.dark() : _Palette.light();
-
-    RoiResult? result;
-    if (_selectedProfession != null) {
-      result = _service.calculate(
-        profession: _selectedProfession!,
-        isGrant: _isGrant,
-        university: _selectedUniversity,
-        yearsToCalculate: _yearsToCalculate,
-        willWorkOffGrant: _willWorkOffGrant,
-        isRuralQuota: _isRuralQuota,
-        isPedagogicalOrMedical: _isPedagogicalOrMedical,
-        includeLivingCosts: _includeLivingCosts,
-      );
-    }
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final fintech = _calculateAnalysis();
 
     return Scaffold(
-      backgroundColor: p.bg,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: p.cardBg,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: p.textMain,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(
-          'Финансовый анализ',
-          style: TextStyle(
-            color: p.textMain,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          l10n.roiCalculatorTitle,
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
         ),
         centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: p.border),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: () => _showInfoDialog(l10n),
+          ),
+        ],
+      ),
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(l10n, theme),
+                  const SizedBox(height: 32),
+                  _buildPickerSection(l10n),
+                  const SizedBox(height: 32),
+                  _buildOptionsCard(l10n),
+                  const SizedBox(height: 40),
+                  if (fintech != null) ...[
+                    _buildFinTechDashboard(l10n, fintech),
+                    const SizedBox(height: 32),
+                    _buildCashFlowChart(l10n, fintech),
+                    const SizedBox(height: 60),
+                  ] else
+                    _buildEmptyState(l10n, theme),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  FinTechResult? _calculateAnalysis() {
+    if (_selectedProfession == null || _selectedUniversity == null) return null;
+    return _service.calculateFinTech(
+      profession: _selectedProfession!,
+      university: _selectedUniversity!,
+      isGrant: _isGrant,
+      yearsToCalculate: _yearsToCalculate,
+      includeLivingCosts: _includeLivingCosts,
+      isHonorStudent: _isHonorStudent,
+      worksWhileStudying: _worksWhileStudying,
+    );
+  }
+
+  void _showInfoDialog(AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.roiInfoTitle),
+        content: Text(l10n.roiInfoContent),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── UI Builders ─────────────────────────────────────────────────────────
+
+  Widget _buildHeader(AppLocalizations l10n, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            l10n.roiScreenPremiumLabel.toUpperCase(),
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          l10n.roiScreenHeadline,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.roiScreenSubheadline,
+          style: TextStyle(
+            fontSize: 15,
+            color: theme.hintColor,
+            height: 1.4,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPickerSection(AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(l10n.roiInitialData, theme),
+        const SizedBox(height: 16),
+        _buildMainPickerCard(
+          label: l10n.roiLabelProfession,
+          value: _selectedProfession?.name ?? l10n.roiChooseProfession,
+          icon: Icons.work_outline_rounded,
+          onTap: _showProfessionPicker,
+          isSelected: _selectedProfession != null,
+        ),
+        const SizedBox(height: 16),
+        _buildMainPickerCard(
+          label: l10n.roiLabelUniversity,
+          value: _selectedUniversity?.name ?? l10n.roiChooseUniversity,
+          icon: Icons.account_balance_rounded,
+          onTap: _showUniversityPicker,
+          isSelected: _selectedUniversity != null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMainPickerCard({
+    required String label,
+    required String value,
+    required IconData icon,
+    required VoidCallback onTap,
+    required bool isSelected,
+  }) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : theme.dividerColor.withValues(alpha: 0.1),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : theme.dividerColor.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: isSelected ? AppColors.primary : theme.hintColor,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(fontSize: 12, color: theme.hintColor, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: theme.hintColor, size: 20),
+          ],
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+    );
+  }
+
+  Widget _buildOptionsCard(AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(l10n.roiOptionsTitle, theme),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+          ),
+          child: Column(
+            children: [
+              _buildSegmentedControl<bool>(
+                label: l10n.roiFundingType,
+                options: {false: l10n.roiPaid, true: l10n.roiGrant},
+                currentValue: _isGrant,
+                onChanged: (v) => setState(() => _isGrant = v),
+              ),
+              const SizedBox(height: 20),
+              _buildSegmentedControl<int>(
+                label: l10n.roiYearsLabel,
+                options: {5: '5', 10: '10', 15: '15', 20: '20'},
+                currentValue: _yearsToCalculate,
+                onChanged: (v) => setState(() => _yearsToCalculate = v),
+                suffix: ' ${l10n.roiYearsSuffix}',
+              ),
+              const SizedBox(height: 20),
+              _buildSwitchRow(
+                label: l10n.roiLivingCosts,
+                value: _includeLivingCosts,
+                onChanged: (v) => setState(() => _includeLivingCosts = v),
+              ),
+              const SizedBox(height: 12),
+              _buildSwitchRow(
+                label: l10n.roiHonorStudent,
+                value: _isHonorStudent,
+                onChanged: (v) => setState(() => _isHonorStudent = v),
+                icon: Icons.auto_awesome_rounded,
+                iconColor: Colors.amber,
+              ),
+              const SizedBox(height: 12),
+              _buildSwitchRow(
+                label: l10n.roiWorkWhileStudying,
+                value: _worksWhileStudying,
+                onChanged: (v) => setState(() => _worksWhileStudying = v),
+                icon: Icons.work_outline_rounded,
+                iconColor: AppColors.primary,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations l10n, ThemeData theme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 60),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.analytics_outlined,
+                size: 48,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              l10n.roiEmptyStateTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.roiEmptyStateSubtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: theme.hintColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, ThemeData theme) {
+    return Text(
+      title.toUpperCase(),
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
+        color: theme.hintColor,
+        letterSpacing: 1.5,
+      ),
+    );
+  }
+
+  Widget _buildSegmentedControl<T>({
+    required String label,
+    required Map<T, String> options,
+    required T currentValue,
+    required ValueChanged<T> onChanged,
+    String suffix = '',
+  }) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: options.entries.map((e) {
+              final isSelected = e.key == currentValue;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    onChanged(e.key);
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: isSelected ? theme.cardColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${e.value}$suffix',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        color: isSelected ? theme.textTheme.bodyLarge?.color : theme.hintColor,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSwitchRow({
+    required String label,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    IconData? icon,
+    Color? iconColor,
+  }) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        if (icon != null) ...[
+          Icon(icon, size: 20, color: iconColor ?? theme.hintColor),
+          const SizedBox(width: 12),
+        ],
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Switch.adaptive(
+          value: value,
+          onChanged: onChanged,
+          activeTrackColor: AppColors.primary,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFinTechDashboard(AppLocalizations l10n, FinTechResult fintech) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionTitle(l10n.roiFinTechDashboard, theme),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: _getRatingColor(fintech.score).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                _getRatingText(fintech.score, l10n),
+                style: TextStyle(
+                  color: _getRatingColor(fintech.score),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 1.5,
+          children: [
+            _buildMetricTile(
+              l10n.roiPaybackPeriod,
+              fintech.paybackLabel,
+              Icons.timer_outlined,
+              Colors.orange,
+            ),
+            _buildMetricTile(
+              l10n.roiTotalProfit,
+              RoiCalculatorService.formatMoney(fintech.netProfit.toInt()),
+              Icons.trending_up_rounded,
+              AppColors.success,
+            ),
+            _buildMetricTile(
+              l10n.roiInvestmentEfficiency,
+              '${fintech.roi.toStringAsFixed(0)}%',
+              Icons.bolt_rounded,
+              Colors.purple,
+            ),
+            _buildMetricTile(
+              l10n.roiMonthlyBalance,
+              RoiCalculatorService.formatMoney(fintech.monthlyFreeCash.toInt()),
+              Icons.account_balance_wallet_outlined,
+              Colors.blue,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetricTile(String label, String value, IconData icon, Color color) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: color),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(fontSize: 11, color: theme.hintColor, fontWeight: FontWeight.w500),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCashFlowChart(AppLocalizations l10n, FinTechResult fintech) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(l10n.roiCashFlowChartTitle, theme),
+        const SizedBox(height: 16),
+        Container(
+          height: 240,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(24),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ─── Заголовок ───────────────────────────────────────────────
-              Text(
-                'Окупаемость\nобразования',
-                style: TextStyle(
-                  color: p.textMain,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  height: 1.15,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Выберите специальность и формат обучения, чтобы увидеть срок возврата инвестиций.',
-                style: TextStyle(
-                  color: p.textSub,
-                  fontSize: 14,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 28),
-
-              // ─── Профессия ───────────────────────────────────────────────
-              _SectionLabel(text: 'СПЕЦИАЛЬНОСТЬ', palette: p),
-              const SizedBox(height: 8),
-              _PickerCard(
-                isDark: isDark,
-                palette: p,
-                onTap: _showProfessionPicker,
-                icon: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: p.cardBgAlt,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: p.border),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    _selectedProfession?.emoji ?? '💼',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
-                title: _selectedProfession?.name ?? 'Выбрать профессию',
-                titleColor: _selectedProfession == null
-                    ? p.textSub
-                    : p.textMain,
-                subtitle: _selectedProfession != null
-                    ? 'Стартовая з/п: ${RoiCalculatorService.formatMoney(_selectedProfession!.startSalary)}/мес'
-                    : null,
-                subtitleColor: p.textSub,
-              ),
-              const SizedBox(height: 20),
-
-              // ─── Университет ─────────────────────────────────────────────
-              _SectionLabel(
-                text: 'УНИВЕРСИТЕТ (Необязательный)',
-                palette: p,
-              ),
-              const SizedBox(height: 8),
-              _PickerCard(
-                isDark: isDark,
-                palette: p,
-                onTap: _showUniversityPicker,
-                icon: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: p.border),
-                    color: _selectedUniversity != null &&
-                            _selectedUniversity!.logoUrl.isNotEmpty
-                        ? Colors.transparent
-                        : p.cardBgAlt,
-                    image: _selectedUniversity != null &&
-                            _selectedUniversity!.logoUrl.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(_selectedUniversity!.logoUrl),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  alignment: Alignment.center,
-                  child: _selectedUniversity == null ||
-                          _selectedUniversity!.logoUrl.isEmpty
-                      ? const Text('🎓', style: TextStyle(fontSize: 20))
-                      : null,
-                ),
-                title: _selectedUniversity?.name ??
-                    'По умолчанию (средние цены по РК)',
-                titleColor: _selectedUniversity == null
-                    ? p.textSub
-                    : p.textMain,
-                subtitle: _selectedUniversity != null &&
-                        _selectedUniversity!.maxTuitionValue > 0
-                    ? 'Стоимость: ${RoiCalculatorService.formatMoney(_selectedUniversity!.maxTuitionValue.toInt())}/год'
-                    : null,
-                subtitleColor: p.textSub,
-              ),
-              const SizedBox(height: 20),
-
-              // ─── Тип финансирования ──────────────────────────────────────
-              _SectionLabel(text: 'ТИП ФИНАНСИРОВАНИЯ', palette: p),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: p.cardBgAlt,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: p.border),
-                ),
+              Expanded(
                 child: Row(
-                  children: [
-                    _SegmentBtn(
-                      label: 'Платное',
-                      isActive: !_isGrant,
-                      activeColor: p.textMain,
-                      activeBg: p.cardBg,
-                      inactiveColor: p.textSub,
-                      borderColor: p.border,
-                      isDark: isDark,
-                      onTap: () {
-                        HapticFeedback.selectionClick();
-                        setState(() => _isGrant = false);
-                      },
-                    ),
-                    _SegmentBtn(
-                      label: 'Грант',
-                      isActive: _isGrant,
-                      activeColor: _SC.success,
-                      activeBg: _SC.success.withValues(alpha: 0.1),
-                      inactiveColor: p.textSub,
-                      borderColor: _isGrant
-                          ? _SC.success.withValues(alpha: 0.4)
-                          : Colors.transparent,
-                      isDark: isDark,
-                      onTap: () {
-                        HapticFeedback.selectionClick();
-                        setState(() => _isGrant = true);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // ─── Грантовые опции ─────────────────────────────────────────
-              if (_isGrant) ...[
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: _SC.accent.withValues(alpha: isDark ? 0.06 : 0.05),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _SC.accent.withValues(alpha: 0.25),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      _SwitchRow(
-                        label: 'Готов отработать грант 3 года',
-                        value: _willWorkOffGrant,
-                        activeColor: _SC.success,
-                        textColor: p.textMain,
-                        onChanged: (v) =>
-                            setState(() => _willWorkOffGrant = v),
-                      ),
-                      if (!_willWorkOffGrant)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            'Если не отработать грант, вы обязаны вернуть государству полную стоимость обучения',
-                            style: TextStyle(
-                              color: _SC.danger.withValues(alpha: 0.9),
-                              fontSize: 12,
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 12),
-                      Container(
-                        height: 1,
-                        color: p.border.withValues(alpha: 0.5),
-                      ),
-                      const SizedBox(height: 12),
-                      _SwitchRow(
-                        label: 'Поступаю по Сельской квоте',
-                        value: _isRuralQuota,
-                        activeColor: _SC.accent,
-                        textColor: p.textMain,
-                        onChanged: (v) => setState(() => _isRuralQuota = v),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        height: 1,
-                        color: p.border.withValues(alpha: 0.5),
-                      ),
-                      const SizedBox(height: 12),
-                      _SwitchRow(
-                        label: 'Педагог / Медик (Гос. зарплата)',
-                        value: _isPedagogicalOrMedical,
-                        activeColor: _SC.accent,
-                        textColor: p.textMain,
-                        onChanged: (v) =>
-                            setState(() => _isPedagogicalOrMedical = v),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-
-              // ─── Расходы на жизнь (платное) ──────────────────────────────
-              if (!_isGrant) ...[
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: _SC.warning.withValues(alpha: isDark ? 0.06 : 0.05),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: _SC.warning.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: _SwitchRow(
-                    label:
-                        'Учитывать расходы на жизнь\n(жилье, питание и т.д. ~100к/мес)',
-                    value: _includeLivingCosts,
-                    activeColor: _SC.warning,
-                    textColor: p.textMain,
-                    onChanged: (v) => setState(() => _includeLivingCosts = v),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-
-              // ─── Горизонт планирования ───────────────────────────────────
-              _SectionLabel(text: 'ГОРИЗОНТ ПЛАНИРОВАНИЯ', palette: p),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: p.cardBgAlt,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: p.border),
-                ),
-                child: Row(
-                  children: [5, 10, 15, 20].map((y) {
-                    final isActive = _yearsToCalculate == y;
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: fintech.yearlyBalance.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final value = entry.value;
+                    final maxVal = fintech.yearlyBalance.isEmpty ? 1 : fintech.yearlyBalance.reduce((a, b) => a > b ? a : b);
+                    final heightFactor = (value / (maxVal > 0 ? maxVal : 1)).clamp(0.1, 1.0);
+                    
                     return Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          HapticFeedback.selectionClick();
-                          setState(() => _yearsToCalculate = y);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          margin: const EdgeInsets.all(2),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: isActive ? p.cardBg : Colors.transparent,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isActive ? p.border : Colors.transparent,
-                            ),
-                            boxShadow: isActive && !isDark
-                                ? [
-                                    BoxShadow(
-                                      color: Colors.black
-                                          .withValues(alpha: 0.06),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            '$y лет',
-                            style: TextStyle(
-                              color: isActive ? p.textMain : p.textSub,
-                              fontWeight: isActive
-                                  ? FontWeight.w700
-                                  : FontWeight.w400,
-                              fontSize: 14,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            height: 140 * heightFactor,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.primary,
+                                  AppColors.primary.withValues(alpha: 0.3),
+                                ],
+                              ),
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 8),
+                          Text(
+                            index == 0 ? 'Now' : '${index + 1}y',
+                            style: TextStyle(fontSize: 10, color: theme.hintColor),
+                          ),
+                        ],
                       ),
                     );
                   }).toList(),
                 ),
               ),
-              const SizedBox(height: 28),
-
-              // ─── Результат ───────────────────────────────────────────────
-              if (result != null)
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: _buildResultsSection(result, p, isDark),
-                )
-              else
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.calculate_outlined,
-                          size: 48,
-                          color: p.textSub.withValues(alpha: 0.4),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Выберите профессию для расчёта',
-                          style: TextStyle(
-                            color: p.textSub.withValues(alpha: 0.6),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 20),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildResultsSection(RoiResult res, _Palette p, bool isDark) {
-    if (res.isGrant && res.willWorkOff) {
-      return Column(
-        key: const ValueKey('grant'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: _SC.success.withValues(alpha: isDark ? 0.1 : 0.07),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: _SC.success.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Column(
-              children: [
-                const Icon(Icons.school_rounded, color: _SC.success, size: 40),
-                const SizedBox(height: 16),
-                const Text(
-                  'Вы учитесь бесплатно',
-                  style: TextStyle(
-                    color: _SC.success,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Грант полностью покрывает ваше обучение.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: _SC.success.withValues(alpha: 0.8),
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          _MetricCard(
-            isDark: isDark,
-            palette: p,
-            title: 'Экономия на обучении',
-            value: RoiCalculatorService.formatMoney(res.grantSavings),
-            icon: Icons.savings_rounded,
-            color: _SC.accent,
-          ),
-          const SizedBox(height: 10),
-          _MetricCard(
-            isDark: isDark,
-            palette: p,
-            title: 'Прибыль за ${res.calculatedYears} лет',
-            value: RoiCalculatorService.formatMoney(res.calculatedProfit),
-            icon: Icons.trending_up_rounded,
-            color: _SC.success,
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        key: const ValueKey('paid'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: p.cardBg,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: p.border),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (res.isDebt)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: _SC.danger.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _SC.danger.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      'Внимание: При отказе от отработки грант нужно вернуть государству. Это равносильно платному обучению.',
-                      style: TextStyle(
-                        color: _SC.danger,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                Text(
-                  'Итоговая окупаемость',
-                  style: TextStyle(
-                    color: p.textSub,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      _formatPaybackShort(res),
-                      style: TextStyle(
-                        color: p.textMain,
-                        fontSize: 34,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _ratingColor(res.rating)
-                            .withValues(alpha: isDark ? 0.15 : 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: _ratingColor(res.rating)
-                              .withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: Text(
-                        _ratingString(res.rating),
-                        style: TextStyle(
-                          color: _ratingColor(res.rating),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double ratio =
-                        (res.paybackMonths / 48).clamp(0.0, 1.0);
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: 8,
-                                color: p.progressTrack,
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 600),
-                                curve: Curves.easeOut,
-                                height: 8,
-                                width: constraints.maxWidth * ratio,
-                                decoration: BoxDecoration(
-                                  color: _ratingColor(res.rating),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Сейчас',
-                              style: TextStyle(
-                                color: p.textSub,
-                                fontSize: 11,
-                              ),
-                            ),
-                            Text(
-                              '4 года',
-                              style: TextStyle(
-                                color: p.textSub.withValues(
-                                  alpha: ratio > 0.85 ? 1.0 : 0.45,
-                                ),
-                                fontSize: 11,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _CompactMetric(
-                  isDark: isDark,
-                  palette: p,
-                  title: 'Стоим. + Жизнь',
-                  value: RoiCalculatorService.formatMoney(res.totalTuition),
-                  valueColor: p.textSub,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _CompactMetric(
-                  isDark: isDark,
-                  palette: p,
-                  title: 'Сбереж./мес (35%)',
-                  value: RoiCalculatorService.formatMoney(
-                    (res.monthlySalary * 0.35).round(),
-                  ),
-                  valueColor: p.textMain,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          _MetricCard(
-            isDark: isDark,
-            palette: p,
-            title: 'Прибыль (${res.calculatedYears} лет)',
-            value: RoiCalculatorService.formatMoney(res.calculatedProfit),
-            icon: Icons.account_balance_wallet_rounded,
-            color: res.calculatedProfit >= 0 ? _SC.success : _SC.danger,
-          ),
-        ],
-      );
-    }
-  }
-
-  String _formatPaybackShort(RoiResult r) {
-    if (r.paybackMonths == 0) return '0 мес';
-    if (r.paybackYears == 0) return '${r.paybackMonths} мес';
-    if (r.remainingMonths == 0) return '${r.paybackYears} лет';
-    return '${r.paybackYears} г ${r.remainingMonths} м';
-  }
-
-  String _ratingString(RoiRating r) {
-    switch (r) {
-      case RoiRating.excellent:
-        return 'ОТЛИЧНО';
-      case RoiRating.good:
-        return 'ХОРОШО';
-      case RoiRating.average:
-        return 'СРЕДНЕ';
-      case RoiRating.poor:
-        return 'ДОЛГО';
-    }
-  }
-
-  Color _ratingColor(RoiRating rating) {
-    switch (rating) {
-      case RoiRating.excellent:
-        return _SC.success;
-      case RoiRating.good:
-        return _SC.accent;
-      case RoiRating.average:
-        return _SC.warning;
-      case RoiRating.poor:
-        return _SC.danger;
-    }
-  }
-}
-
-// ─── Вспомогательные виджеты ────────────────────────────────────────────────
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  final _Palette palette;
-
-  const _SectionLabel({required this.text, required this.palette});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: palette.textSub,
-        fontSize: 11,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 1.2,
-      ),
-    );
-  }
-}
-
-class _PickerCard extends StatelessWidget {
-  final bool isDark;
-  final _Palette palette;
-  final VoidCallback onTap;
-  final Widget icon;
-  final String title;
-  final Color titleColor;
-  final String? subtitle;
-  final Color? subtitleColor;
-
-  const _PickerCard({
-    required this.isDark,
-    required this.palette,
-    required this.onTap,
-    required this.icon,
-    required this.title,
-    required this.titleColor,
-    this.subtitle,
-    this.subtitleColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: palette.cardBg,
-            border: Border.all(color: palette.border, width: 1.5),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: isDark
-                ? null
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 12,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-          ),
-          child: Row(
-            children: [
-              icon,
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: titleColor,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        subtitle!,
-                        style: TextStyle(
-                          color: subtitleColor ?? palette.textSub,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Icon(Icons.unfold_more_rounded, color: palette.textSub, size: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SegmentBtn extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final Color activeColor;
-  final Color activeBg;
-  final Color inactiveColor;
-  final Color borderColor;
-  final bool isDark;
-  final VoidCallback onTap;
-
-  const _SegmentBtn({
-    required this.label,
-    required this.isActive,
-    required this.activeColor,
-    required this.activeBg,
-    required this.inactiveColor,
-    required this.borderColor,
-    required this.isDark,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.all(3),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isActive ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: isActive ? borderColor : Colors.transparent,
-              width: 1.5,
-            ),
-            boxShadow: isActive && !isDark
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isActive ? activeColor : inactiveColor,
-              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SwitchRow extends StatelessWidget {
-  final String label;
-  final bool value;
-  final Color activeColor;
-  final Color textColor;
-  final ValueChanged<bool> onChanged;
-
-  const _SwitchRow({
-    required this.label,
-    required this.value,
-    required this.activeColor,
-    required this.textColor,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(color: textColor, fontSize: 13, height: 1.5),
-          ),
-        ),
-        const SizedBox(width: 12),
-        CupertinoSwitch(
-          value: value,
-          activeTrackColor: activeColor,
-          onChanged: onChanged,
         ),
       ],
     );
   }
-}
 
-class _MetricCard extends StatelessWidget {
-  final bool isDark;
-  final _Palette palette;
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
+  Color _getRatingColor(double score) {
+    if (score >= 0.8) return AppColors.success;
+    if (score >= 0.5) return Colors.orange;
+    return AppColors.error;
+  }
 
-  const _MetricCard({
-    required this.isDark,
-    required this.palette,
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
+  String _getRatingText(double score, AppLocalizations l10n) {
+    if (score >= 0.8) return l10n.roiRatingExcellent;
+    if (score >= 0.5) return l10n.roiRatingGood;
+    return l10n.roiRatingPoor;
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: palette.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: palette.border, width: 1.5),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+  void _showProfessionPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _ModernProfessionPicker(
+        professions: _service.getProfessions(),
+        onSelect: (prof) {
+          setState(() => _selectedProfession = prof);
+          Navigator.pop(context);
+        },
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: isDark ? 0.12 : 0.08),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 26),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: palette.textSub,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: palette.textMain,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    );
+  }
+
+  void _showUniversityPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _ModernUniversityPicker(
+        universities: _service.getUniversities(),
+        onSelect: (uni) {
+          setState(() => _selectedUniversity = uni);
+          Navigator.pop(context);
+        },
       ),
     );
   }
 }
 
-class _CompactMetric extends StatelessWidget {
-  final bool isDark;
-  final _Palette palette;
-  final String title;
-  final String value;
-  final Color valueColor;
+class _ModernProfessionPicker extends StatelessWidget {
+  final List<Profession> professions;
+  final ValueChanged<Profession> onSelect;
 
-  const _CompactMetric({
-    required this.isDark,
-    required this.palette,
-    required this.title,
-    required this.value,
-    required this.valueColor,
+  const _ModernProfessionPicker({
+    required this.professions,
+    required this.onSelect,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: palette.cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.border, width: 1.5),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: palette.textSub,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: TextStyle(
-                color: valueColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      maxChildSize: 0.95,
+      minChildSize: 0.5,
+      builder: (_, controller) => Container(
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.dividerColor,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Text(
+              l10n.roiLabelProfession,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                controller: controller,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: professions.length,
+                itemBuilder: (context, index) {
+                  final prof = professions[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () => onSelect(prof),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: theme.cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.rocket_launch_rounded, color: AppColors.primary, size: 20),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    prof.name,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${l10n.roiAverageSalary}: ${RoiCalculatorService.formatMoney(prof.startSalary)}',
+                                    style: TextStyle(color: theme.hintColor, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.add_circle_outline_rounded, color: AppColors.primary),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ModernUniversityPicker extends StatelessWidget {
+  final List<University> universities;
+  final ValueChanged<University> onSelect;
+
+  const _ModernUniversityPicker({
+    required this.universities,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      maxChildSize: 0.95,
+      minChildSize: 0.5,
+      builder: (_, controller) => Container(
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.dividerColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              l10n.roiLabelUniversity,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                controller: controller,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: universities.length,
+                itemBuilder: (context, index) {
+                  final uni = universities[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () => onSelect(uni),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: theme.cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.school_rounded, color: Colors.purple, size: 20),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    uni.name,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${l10n.roiAnnualTuition}: ${RoiCalculatorService.formatMoney(uni.maxTuitionValue.toInt())}',
+                                    style: TextStyle(color: theme.hintColor, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.add_circle_outline_rounded, color: Colors.purple),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

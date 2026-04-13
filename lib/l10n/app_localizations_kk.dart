@@ -1876,4 +1876,211 @@ class AppLocalizationsKk extends AppLocalizations {
   String feedbackSentAt(Object date) {
     return '$date күні жіберілді';
   }
+
+  @override
+  String get roiTitle => 'Өтелу мерзімін талдау';
+
+  @override
+  String get roiProfessionIT => 'IT-маманы';
+
+  @override
+  String get roiProfessionMedicine => 'Дәрігер';
+
+  @override
+  String get roiProfessionAgriculture => 'Агроном / Фермер';
+
+  @override
+  String get roiProfessionManagement => 'Менеджер / Маркетолог';
+
+  @override
+  String get roiProfessionPedagogy => 'Мұғалім / Педагог';
+
+  @override
+  String get roiProfessionEngineering => 'Инженер / Құрылысшы';
+
+  @override
+  String get roiHonorStudent => 'Үздік оқимын';
+
+  @override
+  String get roiWorkWhileStudying => 'Оқу кезінде жұмыс істеймін';
+
+  @override
+  String get roiTotalScholarship => 'Барлық шәкіртақы';
+
+  @override
+  String get roiPrestigeBonus => 'Престиж бонусы';
+
+  @override
+  String get roiFinTechAnalysis => 'FinTech талдауы';
+
+  @override
+  String get roiInvestment => 'Инвестиция';
+
+  @override
+  String get roiProfit => 'Пайда';
+
+  @override
+  String get roiPayback => 'Өтелу мерзімі';
+
+  @override
+  String get roiYears => 'жыл';
+
+  @override
+  String get roiMonths => 'ай';
+
+  @override
+  String get roiCurrentCapital => 'Ағымдағы капитал (10 жылдан кейін)';
+
+  @override
+  String get roiOpportunityCost => 'Жіберіп алған пайда';
+
+  @override
+  String get roiNpv => 'Таза құн (NPV)';
+
+  @override
+  String get roiDashboardSubtitle => 'Капитал мен тәуекелдерді талдау';
+
+  @override
+  String get roiCalculate => 'Есептеу';
+
+  @override
+  String get roiResults => 'Нәтижелер';
+
+  @override
+  String get roiCalculatorTitle => 'Инвестициялық AI-Талдау';
+
+  @override
+  String get roiInfoTitle => 'ROI-талдау қалай жұмыс істейді?';
+
+  @override
+  String get roiInfoContent =>
+      'Біз сіздің 10 жылдық қаржылық жолыңызды есептейміз: оқу құны, өмір сүру шығындары және жалақының өсу пайызы. Бұл ең тез өтелетін университетті таңдауға көмектеседі.';
+
+  @override
+  String get roiScreenPremiumLabel => 'PREMIUM АНАЛИТИКА';
+
+  @override
+  String get roiScreenHeadline => 'Сіздің болашағыңыз сандарда';
+
+  @override
+  String get roiScreenSubheadline =>
+      'Білімнің өтелімділігін есептеп, тиімді жолды таңдаңыз';
+
+  @override
+  String get roiInitialData => 'Бастапқы деректер';
+
+  @override
+  String get roiLabelProfession => 'Қалаған мамандық';
+
+  @override
+  String get roiChooseProfession => 'Мамандықты таңдаңыз';
+
+  @override
+  String get roiLabelUniversity => 'Мақсатты университет';
+
+  @override
+  String get roiChooseUniversity => 'Университетті таңдаңыз';
+
+  @override
+  String get roiOptionsTitle => 'Қосымша опциялар';
+
+  @override
+  String get roiFundingType => 'Қаржыландыру түрі';
+
+  @override
+  String get roiPaid => 'Ақылы';
+
+  @override
+  String get roiGrant => 'Грант';
+
+  @override
+  String get roiYearsLabel => 'Оқу мерзімі';
+
+  @override
+  String get roiYearsSuffix => 'жыл';
+
+  @override
+  String get roiLivingCosts => 'Өмір сүру шығындары (айына)';
+
+  @override
+  String get roiEmptyStateTitle => 'Болжамды көруге дайынсыз ба?';
+
+  @override
+  String get roiEmptyStateSubtitle =>
+      'Сол жақтағы деректерді толтырыңыз, біздің AI сіздің қаржылық жетістігіңізді есептейді';
+
+  @override
+  String get roiFinTechDashboard => 'Қаржылық Дашборд';
+
+  @override
+  String get roiPaybackPeriod => 'Өтелімділік мерзімі';
+
+  @override
+  String get roiTotalProfit => 'Таза пайда (10 жыл)';
+
+  @override
+  String get roiInvestmentEfficiency => 'Инвестиция тиімділігі';
+
+  @override
+  String get roiMonthlyBalance => 'Айлық баланс';
+
+  @override
+  String get roiCashFlowChartTitle => 'Ақша ағынының болжамы';
+
+  @override
+  String get roiRatingExcellent => 'Жоғары санат';
+
+  @override
+  String get roiRatingGood => 'Жақсы таңдау';
+
+  @override
+  String get roiRatingPoor => 'Төмен өтелімділік';
+
+  @override
+  String get roiAverageSalary => 'Орташа жалақы';
+
+  @override
+  String get roiAnnualTuition => 'Оқу құны (жыл)';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get moderatorTitle => 'ЖОО-ларды басқару';
+
+  @override
+  String get moderatorAddUni => 'ЖОО қосу';
+
+  @override
+  String get moderatorEditUni => 'ЖОО өңдеу';
+
+  @override
+  String get moderatorDeleteConfirm => 'Осы ЖОО-ны жою керек пе?';
+
+  @override
+  String get moderatorDeleteSuccess => 'ЖОО жойылды';
+
+  @override
+  String get moderatorSectionBasic => 'Негізгі ақпарат';
+
+  @override
+  String get moderatorSectionFinance => 'Қаржы және Түсу';
+
+  @override
+  String get moderatorSectionInfra => 'Инфрақұрылым';
+
+  @override
+  String get dormitory => 'Жатақхана';
+
+  @override
+  String get dormitoryPrice => 'Жатақхана бағасы';
+
+  @override
+  String get militaryDepartment => 'Әскери кафедра';
+
+  @override
+  String get location => 'Орналасқан жері';
+
+  @override
+  String get detailAvailable => 'Бар';
 }

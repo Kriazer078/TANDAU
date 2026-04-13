@@ -125,6 +125,9 @@ class _UniversityManagementScreenState extends State<UniversityManagementScreen>
           address: '',
           website: '',
           studentCount: 0,
+          dormitoryPrice: row.length > 10 ? int.tryParse(row[10].toString()) : null,
+          latitude: row.length > 11 ? double.tryParse(row[11].toString().replaceAll(',', '.')) : null,
+          longitude: row.length > 12 ? double.tryParse(row[12].toString().replaceAll(',', '.')) : null,
         ));
       }
 

@@ -8,8 +8,11 @@ class University {
   final int passingScore;
   final String tuitionRange; // e.g., "500,000 - 1,200,000 ₸"
   final bool hasDormitory;
+  final int? dormitoryPrice; // Цена общежития (тенге/месяц)
   final bool hasGrants;
   final bool hasMilitaryDepartment;
+  final double? latitude; // GPS-координаты
+  final double? longitude;
   final String description;
   final List<String> requirements;
   final String applicationDeadline;
@@ -42,8 +45,11 @@ class University {
     required this.passingScore,
     required this.tuitionRange,
     required this.hasDormitory,
+    this.dormitoryPrice,
     required this.hasGrants,
     this.hasMilitaryDepartment = false,
+    this.latitude,
+    this.longitude,
     required this.description,
     required this.requirements,
     required this.applicationDeadline,
@@ -71,8 +77,11 @@ class University {
       'passingScore': passingScore,
       'tuitionRange': tuitionRange,
       'hasDormitory': hasDormitory,
+      'dormitoryPrice': dormitoryPrice,
       'hasGrants': hasGrants,
       'hasMilitaryDepartment': hasMilitaryDepartment,
+      'latitude': latitude,
+      'longitude': longitude,
       'description': description,
       'requirements': requirements,
       'applicationDeadline': applicationDeadline,
@@ -114,8 +123,11 @@ class University {
       passingScore: (map['passingScore'] is int) ? map['passingScore'] : (int.tryParse(map['passingScore']?.toString() ?? '0') ?? 0),
       tuitionRange: map['tuitionRange']?.toString() ?? '',
       hasDormitory: map['hasDormitory'] == true,
+      dormitoryPrice: (map['dormitoryPrice'] is int) ? map['dormitoryPrice'] : (int.tryParse(map['dormitoryPrice']?.toString() ?? '')),
       hasGrants: map['hasGrants'] == true,
       hasMilitaryDepartment: map['hasMilitaryDepartment'] == true,
+      latitude: (map['latitude'] as num?)?.toDouble(),
+      longitude: (map['longitude'] as num?)?.toDouble(),
       description: map['description']?.toString() ?? '',
       requirements: _parseStringList(map['requirements']),
       applicationDeadline: map['applicationDeadline']?.toString() ?? '',

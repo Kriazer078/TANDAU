@@ -762,6 +762,16 @@ class AuthService {
     return isHardcodedAdmin || currentUser.value?.role == 'admin';
   }
 
+  /// Check if current user is moderator.
+  bool get isModerator {
+    return currentUser.value?.role == 'moderator';
+  }
+
+  /// Check if current user can manage universities (admin or moderator).
+  bool get canManageUniversities {
+    return isAdmin || isModerator;
+  }
+
   /// Track new user on backend
   Future<void> _trackNewUser() async {
     try {

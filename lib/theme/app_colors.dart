@@ -24,6 +24,7 @@ class AppColors {
   static const Color textSecondaryDark = Color(0xFF94A3B8);
 
   static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF10B981);
 
   // Premium Gradients
   static const LinearGradient primaryGradient = LinearGradient(

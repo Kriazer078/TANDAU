@@ -32,6 +32,9 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
   late TextEditingController _emailCtrl;
   late TextEditingController _deadlineCtrl;
   late TextEditingController _studentCountCtrl;
+  late TextEditingController _dormitoryPriceCtrl; // New
+  late TextEditingController _latCtrl; // New
+  late TextEditingController _lngCtrl; // New
   
   late TextEditingController _imageUrlsCtrl;
   late TextEditingController _majorsCtrl;
@@ -61,6 +64,9 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
     _emailCtrl = TextEditingController(text: uni?.email ?? '');
     _deadlineCtrl = TextEditingController(text: uni?.applicationDeadline ?? '');
     _studentCountCtrl = TextEditingController(text: uni != null ? uni.studentCount.toString() : '');
+    _dormitoryPriceCtrl = TextEditingController(text: uni?.dormitoryPrice?.toString() ?? '');
+    _latCtrl = TextEditingController(text: uni?.latitude?.toString() ?? '');
+    _lngCtrl = TextEditingController(text: uni?.longitude?.toString() ?? '');
     
     _imageUrlsCtrl = TextEditingController(text: uni?.imageUrls.join('\n') ?? '');
     _majorsCtrl = TextEditingController(text: uni?.majors.join('\n') ?? '');
@@ -90,6 +96,9 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
     _emailCtrl.dispose();
     _deadlineCtrl.dispose();
     _studentCountCtrl.dispose();
+    _dormitoryPriceCtrl.dispose();
+    _latCtrl.dispose();
+    _lngCtrl.dispose();
     
     _imageUrlsCtrl.dispose();
     _majorsCtrl.dispose();
@@ -126,8 +135,11 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
         specialtyCodes: _specialtyCodesCtrl.text.split('\n').map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
 
         hasDormitory: _hasDorm,
+        dormitoryPrice: int.tryParse(_dormitoryPriceCtrl.text),
         hasGrants: _hasGrants,
         hasMilitaryDepartment: _hasMilitary,
+        latitude: double.tryParse(_latCtrl.text.replaceAll(',', '.')),
+        longitude: double.tryParse(_lngCtrl.text.replaceAll(',', '.')),
         
         likesCount: widget.university?.likesCount ?? 0,
         reviewsCount: widget.university?.reviewsCount ?? 0,
@@ -305,7 +317,13 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
                           activeThumbColor: AppColors.primary,
                           tileColor: Colors.transparent,
                         ),
-                        Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+                        if (_hasDorm) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('Стоимость общежития (в месяц)', _dormitoryPriceCtrl, isNumber: true),
+                          ),
+                          Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+                        ],
                         SwitchListTile(
                           title: const Text('Есть военная кафедра', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
                           value: _hasMilitary,
@@ -316,6 +334,17 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  Text('Геолокация (Координаты)', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primary.withValues(alpha: 0.8))),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(child: _buildField('Широта (Latitude)', _latCtrl, isNumber: true)),
+                      const SizedBox(width: 16),
+                      Expanded(child: _buildField('Долгота (Longitude)', _lngCtrl, isNumber: true)),
+                    ],
                   ),
                   const SizedBox(height: 48),
                   
@@ -414,8 +443,11 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
     compare('applicationDeadline', old.applicationDeadline, newUni.applicationDeadline);
     compare('studentCount', old.studentCount, newUni.studentCount);
     compare('hasDormitory', old.hasDormitory, newUni.hasDormitory);
+    compare('dormitoryPrice', old.dormitoryPrice, newUni.dormitoryPrice);
     compare('hasGrants', old.hasGrants, newUni.hasGrants);
     compare('hasMilitaryDepartment', old.hasMilitaryDepartment, newUni.hasMilitaryDepartment);
+    compare('latitude', old.latitude, newUni.latitude);
+    compare('longitude', old.longitude, newUni.longitude);
     return diff;
   }
 }

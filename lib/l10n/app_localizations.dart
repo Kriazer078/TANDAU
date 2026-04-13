@@ -3613,8 +3613,416 @@ abstract class AppLocalizations {
   /// No description provided for @feedbackSentAt.
   ///
   /// In en, this message translates to:
-  /// **'Sent on {date}'**
+  /// **'Sent at {date}'**
   String feedbackSentAt(Object date);
+
+  /// No description provided for @roiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ROI Analysis'**
+  String get roiTitle;
+
+  /// No description provided for @roiProfessionIT.
+  ///
+  /// In en, this message translates to:
+  /// **'IT Specialist'**
+  String get roiProfessionIT;
+
+  /// No description provided for @roiProfessionMedicine.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get roiProfessionMedicine;
+
+  /// No description provided for @roiProfessionAgriculture.
+  ///
+  /// In en, this message translates to:
+  /// **'Agronomist / Farmer'**
+  String get roiProfessionAgriculture;
+
+  /// No description provided for @roiProfessionManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager / Marketer'**
+  String get roiProfessionManagement;
+
+  /// No description provided for @roiProfessionPedagogy.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher / Educator'**
+  String get roiProfessionPedagogy;
+
+  /// No description provided for @roiProfessionEngineering.
+  ///
+  /// In en, this message translates to:
+  /// **'Engineer / Builder'**
+  String get roiProfessionEngineering;
+
+  /// No description provided for @roiHonorStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Honors Student'**
+  String get roiHonorStudent;
+
+  /// No description provided for @roiWorkWhileStudying.
+  ///
+  /// In en, this message translates to:
+  /// **'Working while studying'**
+  String get roiWorkWhileStudying;
+
+  /// No description provided for @roiTotalScholarship.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Scholarship'**
+  String get roiTotalScholarship;
+
+  /// No description provided for @roiPrestigeBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Prestige Bonus'**
+  String get roiPrestigeBonus;
+
+  /// No description provided for @roiFinTechAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'FinTech Analysis'**
+  String get roiFinTechAnalysis;
+
+  /// No description provided for @roiInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get roiInvestment;
+
+  /// No description provided for @roiProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit'**
+  String get roiProfit;
+
+  /// No description provided for @roiPayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Payback'**
+  String get roiPayback;
+
+  /// No description provided for @roiYears.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get roiYears;
+
+  /// No description provided for @roiMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get roiMonths;
+
+  /// No description provided for @roiCurrentCapital.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Capital (in 10 years)'**
+  String get roiCurrentCapital;
+
+  /// No description provided for @roiOpportunityCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Opportunity Cost'**
+  String get roiOpportunityCost;
+
+  /// No description provided for @roiNpv.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Present Value (NPV)'**
+  String get roiNpv;
+
+  /// No description provided for @roiDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Capital & Risk Analysis'**
+  String get roiDashboardSubtitle;
+
+  /// No description provided for @roiCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate'**
+  String get roiCalculate;
+
+  /// No description provided for @roiResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get roiResults;
+
+  /// No description provided for @roiCalculatorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ROI Калькулятор'**
+  String get roiCalculatorTitle;
+
+  /// No description provided for @roiInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Об анализе ROI'**
+  String get roiInfoTitle;
+
+  /// No description provided for @roiInfoContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Этот калькулятор поможет оценить, за какое время окупятся ваши инвестиции в образование, исходя из стоимости обучения и средней зарплаты.'**
+  String get roiInfoContent;
+
+  /// No description provided for @roiScreenPremiumLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PREMIUM'**
+  String get roiScreenPremiumLabel;
+
+  /// No description provided for @roiScreenHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Инвестиции в образование'**
+  String get roiScreenHeadline;
+
+  /// No description provided for @roiScreenSubheadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Рассчитайте окупаемость'**
+  String get roiScreenSubheadline;
+
+  /// No description provided for @roiInitialData.
+  ///
+  /// In en, this message translates to:
+  /// **'Исходные данные'**
+  String get roiInitialData;
+
+  /// No description provided for @roiLabelProfession.
+  ///
+  /// In en, this message translates to:
+  /// **'Профессия'**
+  String get roiLabelProfession;
+
+  /// No description provided for @roiChooseProfession.
+  ///
+  /// In en, this message translates to:
+  /// **'Выбрать профессию'**
+  String get roiChooseProfession;
+
+  /// No description provided for @roiLabelUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'Университет'**
+  String get roiLabelUniversity;
+
+  /// No description provided for @roiChooseUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'Выбрать университет'**
+  String get roiChooseUniversity;
+
+  /// No description provided for @roiOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Опции'**
+  String get roiOptionsTitle;
+
+  /// No description provided for @roiFundingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Форма обучения'**
+  String get roiFundingType;
+
+  /// No description provided for @roiPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Платное'**
+  String get roiPaid;
+
+  /// No description provided for @roiGrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Грант'**
+  String get roiGrant;
+
+  /// No description provided for @roiYearsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Горизонт планирования'**
+  String get roiYearsLabel;
+
+  /// No description provided for @roiYearsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'лет'**
+  String get roiYearsSuffix;
+
+  /// No description provided for @roiLivingCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Учитывать расходы на жизнь'**
+  String get roiLivingCosts;
+
+  /// No description provided for @roiEmptyStateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Один шаг до аналитики'**
+  String get roiEmptyStateTitle;
+
+  /// No description provided for @roiEmptyStateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Выберите профессию и вуз'**
+  String get roiEmptyStateSubtitle;
+
+  /// No description provided for @roiFinTechDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'FinTech Аналитика'**
+  String get roiFinTechDashboard;
+
+  /// No description provided for @roiPaybackPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Окупаемость'**
+  String get roiPaybackPeriod;
+
+  /// No description provided for @roiTotalProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Чистая прибыль'**
+  String get roiTotalProfit;
+
+  /// No description provided for @roiInvestmentEfficiency.
+  ///
+  /// In en, this message translates to:
+  /// **'Эффективность инвестиций'**
+  String get roiInvestmentEfficiency;
+
+  /// No description provided for @roiMonthlyBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Среднемесячный доход'**
+  String get roiMonthlyBalance;
+
+  /// No description provided for @roiCashFlowChartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Прогноз капитала'**
+  String get roiCashFlowChartTitle;
+
+  /// No description provided for @roiRatingExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Отлично'**
+  String get roiRatingExcellent;
+
+  /// No description provided for @roiRatingGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Хорошо'**
+  String get roiRatingGood;
+
+  /// No description provided for @roiRatingPoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Плохо'**
+  String get roiRatingPoor;
+
+  /// No description provided for @roiAverageSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Средняя зарплата'**
+  String get roiAverageSalary;
+
+  /// No description provided for @roiAnnualTuition.
+  ///
+  /// In en, this message translates to:
+  /// **'Стоимость года'**
+  String get roiAnnualTuition;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @moderatorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Universities'**
+  String get moderatorTitle;
+
+  /// No description provided for @moderatorAddUni.
+  ///
+  /// In en, this message translates to:
+  /// **'Add University'**
+  String get moderatorAddUni;
+
+  /// No description provided for @moderatorEditUni.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit University'**
+  String get moderatorEditUni;
+
+  /// No description provided for @moderatorDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this university?'**
+  String get moderatorDeleteConfirm;
+
+  /// No description provided for @moderatorDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'University deleted'**
+  String get moderatorDeleteSuccess;
+
+  /// No description provided for @moderatorSectionBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get moderatorSectionBasic;
+
+  /// No description provided for @moderatorSectionFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance & Admission'**
+  String get moderatorSectionFinance;
+
+  /// No description provided for @moderatorSectionInfra.
+  ///
+  /// In en, this message translates to:
+  /// **'Infrastructure'**
+  String get moderatorSectionInfra;
+
+  /// No description provided for @dormitory.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory'**
+  String get dormitory;
+
+  /// No description provided for @dormitoryPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory price'**
+  String get dormitoryPrice;
+
+  /// No description provided for @militaryDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Military Department'**
+  String get militaryDepartment;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @detailAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get detailAvailable;
 }
 
 class _AppLocalizationsDelegate
