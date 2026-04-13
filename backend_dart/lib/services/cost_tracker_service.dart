@@ -12,11 +12,12 @@ class CostTrackerService {
 
   // ── Per-model pricing overrides ──
   static const Map<String, List<double>> _modelPricing = {
-    'gemini-2.0-flash':     [0.075, 0.30],
-    'gemini-1.5-flash':     [0.075, 0.30],
-    'gemini-1.5-pro':       [3.50, 10.50],
-    'gemini-1.0-pro':       [0.50, 1.50],
+    'gemini-2.5-flash':      [0.075, 0.30],
+    'gemini-2.5-pro':        [3.50, 10.50],
+    'gemini-2.5-flash-lite': [0.035, 0.15],
+    'gemini-2.0-flash':      [0.075, 0.30],
   };
+
 
 
 
