@@ -478,13 +478,17 @@ class UniversityController {
                 id: 'unknown',
                 name: 'Университет',
                 city: '',
+                logoUrl: '',
+                imageUrls: [],
                 subjects: [],
                 minScore: 0,
                 price: '',
                 hasGrants: false,
+                hasDormitory: false,
                 description: '',
                 website: '',
                 rating: 0,
+                studentCount: 0,
               ));
 
       // 💡 NEW: AI CONTEXT INJECTION (Threshold scores and alternatives)
