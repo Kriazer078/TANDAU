@@ -95,7 +95,7 @@ class GeminiService {
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['system_instruction'] = {
+          requestBody['systemInstruction'] = {
             'parts': [
               {'text': systemInstruction}
             ]
@@ -105,9 +105,12 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'google_search_retrieval': {}}
+            {'googleSearch': {}}
           ];
         }
+
+        stderr.writeln('Endpoint: $endpoint');
+        stderr.writeln('Payload: ${jsonEncode(requestBody)}');
 
         final response = await http.post(
           Uri.parse('$endpoint?key=$_apiKey'),
@@ -181,7 +184,7 @@ class GeminiService {
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['system_instruction'] = {
+          requestBody['systemInstruction'] = {
             'parts': [
               {'text': systemInstruction}
             ]
@@ -191,7 +194,7 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'google_search_retrieval': {}}
+            {'googleSearch': {}}
           ];
         }
 
