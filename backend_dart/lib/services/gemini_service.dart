@@ -105,7 +105,7 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'googleSearch': {}}
+            {'google_search_retrieval': {}}
           ];
         }
 
@@ -191,7 +191,7 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'googleSearch': {}}
+            {'google_search_retrieval': {}}
           ];
         }
 
