@@ -21,7 +21,7 @@ import '../widgets/like_review_widgets.dart';
 import 'roi_screen.dart';
 import 'career_test_hub_screen.dart';
 import '../utils/guest_guard.dart';
-import 'moderator_universities_screen.dart';
+
 
 
 class ProfileScreen extends StatefulWidget {
@@ -306,33 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 12),
 
-            // 🔧 Moderator Panel (admin/moderator only)
-            if (AuthService().canManageUniversities)
-              _buildSettingCard(
-                context,
-                icon: Icons.school_rounded,
-                title: l10n?.moderatorTitle ?? 'Управление ВУЗами',
-                subtitle: 'Добавить, редактировать, удалить ВУЗы',
-                trailing: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Theme.of(
-                    context,
-                  ).iconTheme.color?.withValues(alpha: 0.5),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const ModeratorUniversitiesScreen(),
-                    ),
-                  );
-                },
-              ),
 
-            if (AuthService().canManageUniversities)
-              const SizedBox(height: 12),
 
             const SizedBox(height: 32),
 
