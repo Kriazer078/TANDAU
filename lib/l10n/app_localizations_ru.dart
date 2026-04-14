@@ -1636,7 +1636,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Перейдите в Профиль -> Настройки -> Язык и выберите нужный.';
 
   @override
-  String get helpAppVersion => 'Версия приложения: 1.2.10';
+  String get helpAppVersion => 'Версия приложения: 1.2.11';
 
   @override
   String get privacyTitle => 'Конфиденциальность';

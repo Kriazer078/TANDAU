@@ -3169,7 +3169,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAppVersion.
   ///
   /// In en, this message translates to:
-  /// **'App version: 1.2.10'**
+  /// **'App version: 1.2.11'**
   String get helpAppVersion;
 
   /// No description provided for @privacyTitle.

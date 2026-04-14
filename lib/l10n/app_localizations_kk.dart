@@ -1634,7 +1634,7 @@ class AppLocalizationsKk extends AppLocalizations {
       'Профиль -> Баптаулар -> Тіл бөліміне өтіп, қажеттісін таңдаңыз.';
 
   @override
-  String get helpAppVersion => 'Қосымша нұсқасы: 1.2.10';
+  String get helpAppVersion => 'Қосымша нұсқасы: 1.2.11';
 
   @override
   String get privacyTitle => 'Құпиялылық';

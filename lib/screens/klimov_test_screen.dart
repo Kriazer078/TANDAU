@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/klimov_test_data.dart';
+import '../data/test_translations.dart';
 import '../services/career_test_service.dart';
 import '../theme/app_colors.dart';
 import 'career_test_result_screen.dart';
@@ -214,7 +215,7 @@ class _KlimovTestScreenState extends State<KlimovTestScreen>
                         // Вариант А
                         Expanded(
                           child: _buildOptionCard(
-                            text: question.optionA.text,
+                            text: trTest(context, question.optionA.text),
                             type: question.optionA.type,
                             label: 'А',
                             gradient: const LinearGradient(
@@ -266,7 +267,7 @@ class _KlimovTestScreenState extends State<KlimovTestScreen>
                         // Вариант Б
                         Expanded(
                           child: _buildOptionCard(
-                            text: question.optionB.text,
+                            text: trTest(context, question.optionB.text),
                             type: question.optionB.type,
                             label: 'Б',
                             gradient: const LinearGradient(
