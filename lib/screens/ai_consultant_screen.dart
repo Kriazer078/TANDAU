@@ -412,7 +412,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       }
     } finally {
       if (mounted) {
-        _isSending = false; // 🛡️ BUG#1: Always release guard
+        setState(() {
+          _isSending = false; // 🛡️ BUG#1: Always release guard
+        });
       }
     }
   }
@@ -565,7 +567,9 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       }
     } finally {
       if (mounted) {
-        _isSending = false; // 🛡️ BUG#1: Always release guard
+        setState(() {
+          _isSending = false; // 🛡️ BUG#1: Always release guard
+        });
       }
     }
   }

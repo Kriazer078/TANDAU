@@ -2084,4 +2084,92 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get detailAvailable => 'Есть';
+
+  @override
+  String get deadlineEntStartTitle => 'Начало ЕНТ';
+
+  @override
+  String get deadlineEntStartDesc =>
+      'Основной период ЕНТ 2026 начинается. Не забудьте взять с собой удостоверение личности и пропуск.';
+
+  @override
+  String get deadlineEntStartAction => 'Сайт тестирования';
+
+  @override
+  String get deadlineEntEndTitle => 'Последний день ЕНТ';
+
+  @override
+  String get deadlineEntEndDesc =>
+      'Завершение основного периода ЕНТ. Результаты будут доступны в личном кабинете.';
+
+  @override
+  String get deadlineEntEndAction => 'Узнать результаты';
+
+  @override
+  String get deadlineGrantStartTitle => 'Начало подачи на грант';
+
+  @override
+  String get deadlineGrantStartDesc =>
+      'Открытие приёма заявлений на образовательные гранты. Подготовьте электронную цифровую подпись (ЭЦП).';
+
+  @override
+  String get deadlineGrantStartAction => 'Сайт eGov.kz';
+
+  @override
+  String get deadlineGrantEndTitle => 'Дедлайн подачи на грант';
+
+  @override
+  String get deadlineGrantEndDesc =>
+      'Последний день подачи заявлений! Убедитесь, что ваше заявление имеет статус «Принято».';
+
+  @override
+  String get deadlineGrantEndAction => 'Проверить статус';
+
+  @override
+  String get deadlineGrantResultsTitle => 'Результаты грантов';
+
+  @override
+  String get deadlineGrantResultsDesc =>
+      'Объявление долгожданных результатов конкурса на государственные образовательные гранты.';
+
+  @override
+  String get deadlineGrantResultsAction => 'Списки обладателей';
+
+  @override
+  String get deadlineEnrollmentStartTitle => 'Начало зачисления';
+
+  @override
+  String get deadlineEnrollmentStartDesc =>
+      'Необходимо подать документы в выбранный вуз для окончательного зачисления.';
+
+  @override
+  String get deadlineSemesterStartTitle => 'Начало учебного года';
+
+  @override
+  String get deadlineSemesterStartDesc =>
+      'Первый день студенческой жизни! Поздравляем с началом учебы.';
+
+  @override
+  String get deadlineStatusCompleted => 'Завершено';
+
+  @override
+  String get deadlineStatusToday => 'Сегодня!';
+
+  @override
+  String get deadlineStatusTomorrow => 'Завтра!';
+
+  @override
+  String deadlineStatusDays(int days) {
+    return '$days дней';
+  }
+
+  @override
+  String deadlineStatusWeeks(int weeks) {
+    return '$weeks нед.';
+  }
+
+  @override
+  String deadlineStatusMonths(int months) {
+    return '$months мес.';
+  }
 }

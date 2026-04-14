@@ -4023,6 +4023,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Available'**
   String get detailAvailable;
+
+  /// No description provided for @deadlineEntStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'UNT Starts'**
+  String get deadlineEntStartTitle;
+
+  /// No description provided for @deadlineEntStartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The main UNT 2026 period begins. Don\'t forget your ID and pass.'**
+  String get deadlineEntStartDesc;
+
+  /// No description provided for @deadlineEntStartAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Testing Website'**
+  String get deadlineEntStartAction;
+
+  /// No description provided for @deadlineEntEndTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last UNT Day'**
+  String get deadlineEntEndTitle;
+
+  /// No description provided for @deadlineEntEndDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The main UNT period ends. Results will be available in your personal account.'**
+  String get deadlineEntEndDesc;
+
+  /// No description provided for @deadlineEntEndAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Results'**
+  String get deadlineEntEndAction;
+
+  /// No description provided for @deadlineGrantStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant Application Starts'**
+  String get deadlineGrantStartTitle;
+
+  /// No description provided for @deadlineGrantStartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The start of accepting applications for educational grants. Prepare your digital signature.'**
+  String get deadlineGrantStartDesc;
+
+  /// No description provided for @deadlineGrantStartAction.
+  ///
+  /// In en, this message translates to:
+  /// **'eGov.kz Website'**
+  String get deadlineGrantStartAction;
+
+  /// No description provided for @deadlineGrantEndTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant Application Deadline'**
+  String get deadlineGrantEndTitle;
+
+  /// No description provided for @deadlineGrantEndDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Last day to apply! Make sure your application is marked as \'Accepted\'.'**
+  String get deadlineGrantEndDesc;
+
+  /// No description provided for @deadlineGrantEndAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Status'**
+  String get deadlineGrantEndAction;
+
+  /// No description provided for @deadlineGrantResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant Results'**
+  String get deadlineGrantResultsTitle;
+
+  /// No description provided for @deadlineGrantResultsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement of the highly anticipated results for state educational grants.'**
+  String get deadlineGrantResultsDesc;
+
+  /// No description provided for @deadlineGrantResultsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Winners List'**
+  String get deadlineGrantResultsAction;
+
+  /// No description provided for @deadlineEnrollmentStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrollment Starts'**
+  String get deadlineEnrollmentStartTitle;
+
+  /// No description provided for @deadlineEnrollmentStartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You must submit documents to your chosen university for final enrollment.'**
+  String get deadlineEnrollmentStartDesc;
+
+  /// No description provided for @deadlineSemesterStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Year Starts'**
+  String get deadlineSemesterStartTitle;
+
+  /// No description provided for @deadlineSemesterStartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The first day of student life! Congratulations on starting your studies.'**
+  String get deadlineSemesterStartDesc;
+
+  /// No description provided for @deadlineStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get deadlineStatusCompleted;
+
+  /// No description provided for @deadlineStatusToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today!'**
+  String get deadlineStatusToday;
+
+  /// No description provided for @deadlineStatusTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow!'**
+  String get deadlineStatusTomorrow;
+
+  /// No description provided for @deadlineStatusDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String deadlineStatusDays(int days);
+
+  /// No description provided for @deadlineStatusWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks} wks'**
+  String deadlineStatusWeeks(int weeks);
+
+  /// No description provided for @deadlineStatusMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} mo'**
+  String deadlineStatusMonths(int months);
 }
 
 class _AppLocalizationsDelegate

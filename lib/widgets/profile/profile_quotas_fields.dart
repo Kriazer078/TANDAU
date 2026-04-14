@@ -236,6 +236,7 @@ class ProfileQuotasFields extends StatelessWidget {
             value: value,
             onChanged: onChanged,
             activeTrackColor: const Color(0xFF6366F1),
+            activeThumbColor: Colors.white,
           ),
         ],
       ),

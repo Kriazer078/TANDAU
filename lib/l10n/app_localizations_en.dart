@@ -2077,4 +2077,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailAvailable => 'Available';
+
+  @override
+  String get deadlineEntStartTitle => 'UNT Starts';
+
+  @override
+  String get deadlineEntStartDesc =>
+      'The main UNT 2026 period begins. Don\'t forget your ID and pass.';
+
+  @override
+  String get deadlineEntStartAction => 'Testing Website';
+
+  @override
+  String get deadlineEntEndTitle => 'Last UNT Day';
+
+  @override
+  String get deadlineEntEndDesc =>
+      'The main UNT period ends. Results will be available in your personal account.';
+
+  @override
+  String get deadlineEntEndAction => 'Check Results';
+
+  @override
+  String get deadlineGrantStartTitle => 'Grant Application Starts';
+
+  @override
+  String get deadlineGrantStartDesc =>
+      'The start of accepting applications for educational grants. Prepare your digital signature.';
+
+  @override
+  String get deadlineGrantStartAction => 'eGov.kz Website';
+
+  @override
+  String get deadlineGrantEndTitle => 'Grant Application Deadline';
+
+  @override
+  String get deadlineGrantEndDesc =>
+      'Last day to apply! Make sure your application is marked as \'Accepted\'.';
+
+  @override
+  String get deadlineGrantEndAction => 'Check Status';
+
+  @override
+  String get deadlineGrantResultsTitle => 'Grant Results';
+
+  @override
+  String get deadlineGrantResultsDesc =>
+      'Announcement of the highly anticipated results for state educational grants.';
+
+  @override
+  String get deadlineGrantResultsAction => 'Winners List';
+
+  @override
+  String get deadlineEnrollmentStartTitle => 'Enrollment Starts';
+
+  @override
+  String get deadlineEnrollmentStartDesc =>
+      'You must submit documents to your chosen university for final enrollment.';
+
+  @override
+  String get deadlineSemesterStartTitle => 'Academic Year Starts';
+
+  @override
+  String get deadlineSemesterStartDesc =>
+      'The first day of student life! Congratulations on starting your studies.';
+
+  @override
+  String get deadlineStatusCompleted => 'Completed';
+
+  @override
+  String get deadlineStatusToday => 'Today!';
+
+  @override
+  String get deadlineStatusTomorrow => 'Tomorrow!';
+
+  @override
+  String deadlineStatusDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String deadlineStatusWeeks(int weeks) {
+    return '$weeks wks';
+  }
+
+  @override
+  String deadlineStatusMonths(int months) {
+    return '$months mo';
+  }
 }

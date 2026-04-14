@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../l10n/app_localizations.dart';
 
 /// Дедлайны поступления 2026
 /// Локальный сервис — не требует бэкенда
@@ -158,34 +161,65 @@ class AdmissionDeadline {
   bool get isSoon => !isPast && daysLeft <= 7;
 
   /// Формат даты
-  String get formattedDate {
-    final months = [
-      '',
-      'января',
-      'февраля',
-      'марта',
-      'апреля',
-      'мая',
-      'июня',
-      'июля',
-      'августа',
-      'сентября',
-      'октября',
-      'ноября',
-      'декабря',
-    ];
-    return '${date.day} ${months[date.month]} ${date.year}';
+  String getFormattedDate(AppLocalizations? l10n) {
+    final locale = l10n?.localeName ?? 'ru';
+    return DateFormat.yMMMMd(locale).format(date);
   }
 
   /// Строка обратного отсчёта
-  String get countdownText {
-    if (isPast) return 'Завершено';
+  String getCountdownText(AppLocalizations? l10n) {
+    if (isPast) return l10n?.deadlineStatusCompleted ?? 'Завершено';
     final days = daysLeft;
-    if (days == 0) return 'Сегодня!';
-    if (days == 1) return 'Завтра!';
-    if (days < 7) return '$days дней';
-    if (days < 30) return '${(days / 7).floor()} нед.';
-    return '${(days / 30).floor()} мес.';
+    if (days == 0) return l10n?.deadlineStatusToday ?? 'Сегодня!';
+    if (days == 1) return l10n?.deadlineStatusTomorrow ?? 'Завтра!';
+    if (days < 7) return l10n?.deadlineStatusDays(days) ?? '$days дней';
+    if (days < 30) {
+      final w = (days / 7).floor();
+      return l10n?.deadlineStatusWeeks(w) ?? '$w нед.';
+    }
+    final m = (days / 30).floor();
+    return l10n?.deadlineStatusMonths(m) ?? '$m мес.';
+  }
+  
+  String getLocalizedTitle(AppLocalizations? l10n) {
+    if (l10n == null) return title;
+    switch (id) {
+      case 'ent_start': return l10n.deadlineEntStartTitle;
+      case 'ent_end': return l10n.deadlineEntEndTitle;
+      case 'grant_application_start': return l10n.deadlineGrantStartTitle;
+      case 'grant_application_end': return l10n.deadlineGrantEndTitle;
+      case 'grant_results': return l10n.deadlineGrantResultsTitle;
+      case 'enrollment_start': return l10n.deadlineEnrollmentStartTitle;
+      case 'semester_start': return l10n.deadlineSemesterStartTitle;
+      default: return title;
+    }
+  }
+
+  String getLocalizedDescription(AppLocalizations? l10n) {
+    if (l10n == null) return description;
+    switch (id) {
+      case 'ent_start': return l10n.deadlineEntStartDesc;
+      case 'ent_end': return l10n.deadlineEntEndDesc;
+      case 'grant_application_start': return l10n.deadlineGrantStartDesc;
+      case 'grant_application_end': return l10n.deadlineGrantEndDesc;
+      case 'grant_results': return l10n.deadlineGrantResultsDesc;
+      case 'enrollment_start': return l10n.deadlineEnrollmentStartDesc;
+      case 'semester_start': return l10n.deadlineSemesterStartDesc;
+      default: return description;
+    }
+  }
+
+  String? getLocalizedActionLabel(AppLocalizations? l10n) {
+    if (actionLabel == null) return null;
+    if (l10n == null) return actionLabel;
+    switch (id) {
+      case 'ent_start': return l10n.deadlineEntStartAction;
+      case 'ent_end': return l10n.deadlineEntEndAction;
+      case 'grant_application_start': return l10n.deadlineGrantStartAction;
+      case 'grant_application_end': return l10n.deadlineGrantEndAction;
+      case 'grant_results': return l10n.deadlineGrantResultsAction;
+      default: return actionLabel;
+    }
   }
 }
 

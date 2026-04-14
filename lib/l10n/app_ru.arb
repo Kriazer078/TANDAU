@@ -871,5 +871,51 @@
     "dormitoryPrice": "Цена общежития",
     "militaryDepartment": "Военная кафедра",
     "location": "Местоположение",
-    "detailAvailable": "Есть"
+    "detailAvailable": "Есть",
+    "deadlineEntStartTitle": "Начало ЕНТ",
+    "deadlineEntStartDesc": "Основной период ЕНТ 2026 начинается. Не забудьте взять с собой удостоверение личности и пропуск.",
+    "deadlineEntStartAction": "Сайт тестирования",
+    "deadlineEntEndTitle": "Последний день ЕНТ",
+    "deadlineEntEndDesc": "Завершение основного периода ЕНТ. Результаты будут доступны в личном кабинете.",
+    "deadlineEntEndAction": "Узнать результаты",
+    "deadlineGrantStartTitle": "Начало подачи на грант",
+    "deadlineGrantStartDesc": "Открытие приёма заявлений на образовательные гранты. Подготовьте электронную цифровую подпись (ЭЦП).",
+    "deadlineGrantStartAction": "Сайт eGov.kz",
+    "deadlineGrantEndTitle": "Дедлайн подачи на грант",
+    "deadlineGrantEndDesc": "Последний день подачи заявлений! Убедитесь, что ваше заявление имеет статус «Принято».",
+    "deadlineGrantEndAction": "Проверить статус",
+    "deadlineGrantResultsTitle": "Результаты грантов",
+    "deadlineGrantResultsDesc": "Объявление долгожданных результатов конкурса на государственные образовательные гранты.",
+    "deadlineGrantResultsAction": "Списки обладателей",
+    "deadlineEnrollmentStartTitle": "Начало зачисления",
+    "deadlineEnrollmentStartDesc": "Необходимо подать документы в выбранный вуз для окончательного зачисления.",
+    "deadlineSemesterStartTitle": "Начало учебного года",
+    "deadlineSemesterStartDesc": "Первый день студенческой жизни! Поздравляем с началом учебы.",
+    "deadlineStatusCompleted": "Завершено",
+    "deadlineStatusToday": "Сегодня!",
+    "deadlineStatusTomorrow": "Завтра!",
+    "deadlineStatusDays": "{days} дней",
+    "@deadlineStatusDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "deadlineStatusWeeks": "{weeks} нед.",
+    "@deadlineStatusWeeks": {
+        "placeholders": {
+            "weeks": {
+                "type": "int"
+            }
+        }
+    },
+    "deadlineStatusMonths": "{months} мес.",
+    "@deadlineStatusMonths": {
+        "placeholders": {
+            "months": {
+                "type": "int"
+            }
+        }
+    }
 }

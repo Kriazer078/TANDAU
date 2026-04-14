@@ -875,5 +875,51 @@
     "dormitoryPrice": "Dormitory price",
     "militaryDepartment": "Military Department",
     "location": "Location",
-    "detailAvailable": "Available"
+    "detailAvailable": "Available",
+    "deadlineEntStartTitle": "UNT Starts",
+    "deadlineEntStartDesc": "The main UNT 2026 period begins. Don't forget your ID and pass.",
+    "deadlineEntStartAction": "Testing Website",
+    "deadlineEntEndTitle": "Last UNT Day",
+    "deadlineEntEndDesc": "The main UNT period ends. Results will be available in your personal account.",
+    "deadlineEntEndAction": "Check Results",
+    "deadlineGrantStartTitle": "Grant Application Starts",
+    "deadlineGrantStartDesc": "The start of accepting applications for educational grants. Prepare your digital signature.",
+    "deadlineGrantStartAction": "eGov.kz Website",
+    "deadlineGrantEndTitle": "Grant Application Deadline",
+    "deadlineGrantEndDesc": "Last day to apply! Make sure your application is marked as 'Accepted'.",
+    "deadlineGrantEndAction": "Check Status",
+    "deadlineGrantResultsTitle": "Grant Results",
+    "deadlineGrantResultsDesc": "Announcement of the highly anticipated results for state educational grants.",
+    "deadlineGrantResultsAction": "Winners List",
+    "deadlineEnrollmentStartTitle": "Enrollment Starts",
+    "deadlineEnrollmentStartDesc": "You must submit documents to your chosen university for final enrollment.",
+    "deadlineSemesterStartTitle": "Academic Year Starts",
+    "deadlineSemesterStartDesc": "The first day of student life! Congratulations on starting your studies.",
+    "deadlineStatusCompleted": "Completed",
+    "deadlineStatusToday": "Today!",
+    "deadlineStatusTomorrow": "Tomorrow!",
+    "deadlineStatusDays": "{days} days",
+    "@deadlineStatusDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "deadlineStatusWeeks": "{weeks} wks",
+    "@deadlineStatusWeeks": {
+        "placeholders": {
+            "weeks": {
+                "type": "int"
+            }
+        }
+    },
+    "deadlineStatusMonths": "{months} mo",
+    "@deadlineStatusMonths": {
+        "placeholders": {
+            "months": {
+                "type": "int"
+            }
+        }
+    }
 }

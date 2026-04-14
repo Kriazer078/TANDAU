@@ -133,7 +133,7 @@ class DeadlineBanner extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              next.title,
+                              next.getLocalizedTitle(l10n),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
@@ -145,8 +145,9 @@ class DeadlineBanner extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              next.formattedDate,
+                              next.getFormattedDate(l10n),
                               style: TextStyle(
+
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
@@ -406,7 +407,7 @@ class _DeadlinesBottomSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      deadline.title,
+                      deadline.getLocalizedTitle(l10n),
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 17,
@@ -417,8 +418,9 @@ class _DeadlinesBottomSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      deadline.formattedDate,
+                      deadline.getFormattedDate(l10n),
                       style: TextStyle(
+
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: isDark
@@ -442,8 +444,9 @@ class _DeadlinesBottomSheet extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  deadline.countdownText,
+                  deadline.getCountdownText(l10n),
                   style: TextStyle(
+
                     color: statusColor,
                     fontWeight: FontWeight.w700,
                     fontSize: 14,

@@ -854,5 +854,51 @@
     "dormitoryPrice": "Жатақхана бағасы",
     "militaryDepartment": "Әскери кафедра",
     "location": "Орналасқан жері",
-    "detailAvailable": "Бар"
+    "detailAvailable": "Бар",
+    "deadlineEntStartTitle": "ҰБТ басталуы",
+    "deadlineEntStartDesc": "ҰБТ 2026 негізгі кезеңі басталады. Жеке куәлік пен рұқсатнаманы ұмытпаңыз.",
+    "deadlineEntStartAction": "Тестілеу сайты",
+    "deadlineEntEndTitle": "ҰБТ-ның соңғы күні",
+    "deadlineEntEndDesc": "ҰБТ негізгі кезеңі аяқталады. Нәтижелер жеке кабинетте қолжетімді болады.",
+    "deadlineEntEndAction": "Нәтижелерді білу",
+    "deadlineGrantStartTitle": "Грантқа құжат қабылдау басталуы",
+    "deadlineGrantStartDesc": "Білім беру гранттарына өтініш қабылдау ашылуы. Электрондық цифрлық қолтаңбаны (ЭЦҚ) дайындаңыз.",
+    "deadlineGrantStartAction": "eGov.kz сайты",
+    "deadlineGrantEndTitle": "Грантқа құжат қабылдау дедлайны",
+    "deadlineGrantEndDesc": "Өтініш берудің соңғы күні! Өтінішіңіздің мақамы «Қабылданды» екеніне көз жеткізіңіз.",
+    "deadlineGrantEndAction": "Статусты тексеру",
+    "deadlineGrantResultsTitle": "Грант нәтижелері",
+    "deadlineGrantResultsDesc": "Мемлекеттік білім беру гранттары байқауының көптен күткен нәтижелерін жариялау.",
+    "deadlineGrantResultsAction": "Иегерлер тізімі",
+    "deadlineEnrollmentStartTitle": "Қабылдаудың басталуы",
+    "deadlineEnrollmentStartDesc": "Құжаттарды таңдалған ЖОО-ға түпкілікті қабылдау үшін тапсыру қажет.",
+    "deadlineSemesterStartTitle": "Оқу жылының басталуы",
+    "deadlineSemesterStartDesc": "Студенттік өмірдің алғашқы күні! Оқудың басталуымен құттықтаймыз.",
+    "deadlineStatusCompleted": "Аяқталды",
+    "deadlineStatusToday": "Бүгін!",
+    "deadlineStatusTomorrow": "Ертең!",
+    "deadlineStatusDays": "{days} күн",
+    "@deadlineStatusDays": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "deadlineStatusWeeks": "{weeks} апта",
+    "@deadlineStatusWeeks": {
+        "placeholders": {
+            "weeks": {
+                "type": "int"
+            }
+        }
+    },
+    "deadlineStatusMonths": "{months} ай",
+    "@deadlineStatusMonths": {
+        "placeholders": {
+            "months": {
+                "type": "int"
+            }
+        }
+    }
 }

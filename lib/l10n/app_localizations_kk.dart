@@ -2083,4 +2083,92 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get detailAvailable => 'Бар';
+
+  @override
+  String get deadlineEntStartTitle => 'ҰБТ басталуы';
+
+  @override
+  String get deadlineEntStartDesc =>
+      'ҰБТ 2026 негізгі кезеңі басталады. Жеке куәлік пен рұқсатнаманы ұмытпаңыз.';
+
+  @override
+  String get deadlineEntStartAction => 'Тестілеу сайты';
+
+  @override
+  String get deadlineEntEndTitle => 'ҰБТ-ның соңғы күні';
+
+  @override
+  String get deadlineEntEndDesc =>
+      'ҰБТ негізгі кезеңі аяқталады. Нәтижелер жеке кабинетте қолжетімді болады.';
+
+  @override
+  String get deadlineEntEndAction => 'Нәтижелерді білу';
+
+  @override
+  String get deadlineGrantStartTitle => 'Грантқа құжат қабылдау басталуы';
+
+  @override
+  String get deadlineGrantStartDesc =>
+      'Білім беру гранттарына өтініш қабылдау ашылуы. Электрондық цифрлық қолтаңбаны (ЭЦҚ) дайындаңыз.';
+
+  @override
+  String get deadlineGrantStartAction => 'eGov.kz сайты';
+
+  @override
+  String get deadlineGrantEndTitle => 'Грантқа құжат қабылдау дедлайны';
+
+  @override
+  String get deadlineGrantEndDesc =>
+      'Өтініш берудің соңғы күні! Өтінішіңіздің мақамы «Қабылданды» екеніне көз жеткізіңіз.';
+
+  @override
+  String get deadlineGrantEndAction => 'Статусты тексеру';
+
+  @override
+  String get deadlineGrantResultsTitle => 'Грант нәтижелері';
+
+  @override
+  String get deadlineGrantResultsDesc =>
+      'Мемлекеттік білім беру гранттары байқауының көптен күткен нәтижелерін жариялау.';
+
+  @override
+  String get deadlineGrantResultsAction => 'Иегерлер тізімі';
+
+  @override
+  String get deadlineEnrollmentStartTitle => 'Қабылдаудың басталуы';
+
+  @override
+  String get deadlineEnrollmentStartDesc =>
+      'Құжаттарды таңдалған ЖОО-ға түпкілікті қабылдау үшін тапсыру қажет.';
+
+  @override
+  String get deadlineSemesterStartTitle => 'Оқу жылының басталуы';
+
+  @override
+  String get deadlineSemesterStartDesc =>
+      'Студенттік өмірдің алғашқы күні! Оқудың басталуымен құттықтаймыз.';
+
+  @override
+  String get deadlineStatusCompleted => 'Аяқталды';
+
+  @override
+  String get deadlineStatusToday => 'Бүгін!';
+
+  @override
+  String get deadlineStatusTomorrow => 'Ертең!';
+
+  @override
+  String deadlineStatusDays(int days) {
+    return '$days күн';
+  }
+
+  @override
+  String deadlineStatusWeeks(int weeks) {
+    return '$weeks апта';
+  }
+
+  @override
+  String deadlineStatusMonths(int months) {
+    return '$months ай';
+  }
 }
