@@ -21,6 +21,7 @@ import '../widgets/like_review_widgets.dart';
 import 'roi_screen.dart';
 import 'career_test_hub_screen.dart';
 import '../utils/guest_guard.dart';
+import '../services/revenuecat_service.dart';
 
 
 
@@ -412,87 +413,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-
-                    const SizedBox(height: 16),
-
-                    // Delete Account Button
+                    // 🔄 Restore Purchases (Required by App Store for IAP)
                     SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: Text(
-                                l10n?.profileDeleteAccountTitle ??
-                                    'Удалить аккаунт?',
-                              ),
-                              content: Text(
-                                l10n?.profileDeleteAccountContent ??
-                                    'Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: Text(
-                                    l10n?.profileDeleteAccountCancel ??
-                                        'Отмена',
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(ctx);
-                                    final Uri url = Uri.parse(
-                                      'https://tandau-backend.onrender.com/delete-account',
-                                    );
-                                    if (await canLaunchUrl(url)) {
-                                      await launchUrl(
-                                        url,
-                                        mode: LaunchMode.externalApplication,
-                                      );
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              l10n?.profileDeleteAccountSent ??
-                                                  'Запрос на удаление отправлен. Следуйте инструкциям на открывшейся странице.',
-                                            ),
-                                            backgroundColor:
-                                                Colors.orange.shade700,
-                                            duration: const Duration(
-                                              seconds: 5,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              l10n?.profileDeleteAccountErrorLink ??
-                                                  'Не удалось открыть ссылку',
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  },
-                                  child: Text(
-                                    l10n?.profileDeleteAccountConfirm ??
-                                        'Удалить',
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
+                        onPressed: () async {
+                          // Show loading
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Восстановление покупок...'),
+                              duration: Duration(seconds: 2),
                             ),
                           );
+
+                          final isPro = await RevenueCatService().restorePurchases();
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  isPro
+                                      ? 'Подписка TANDAU Pro восстановлена! ✅'
+                                      : 'Активных подписок не найдено',
+                                ),
+                                backgroundColor: isPro ? Colors.green : Colors.orange,
+                              ),
+                            );
+                          }
                         },
+                        icon: const Icon(Icons.restore, color: Colors.blue),
+                        label: Text(
+                          'Восстановить покупки',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: Colors.blue,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🗑️ Delete Account IN-APP (App Store Guideline 5.1.1)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showDeleteAccountDialog(context),
                         icon: const Icon(
                           Icons.person_remove,
                           color: Colors.grey,
@@ -626,6 +603,157 @@ class _ProfileScreenState extends State<ProfileScreen> {
             trailing ?? const SizedBox.shrink(),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 🗑️ In-app account deletion dialog (App Store Guideline 5.1.1)
+  void _showDeleteAccountDialog(BuildContext ctx) {
+    final l10n = AppLocalizations.of(ctx);
+    showDialog(
+      context: ctx,
+      builder: (dialogCtx) => AlertDialog(
+        title: Text(
+          l10n?.profileDeleteAccountTitle ?? 'Удалить аккаунт?',
+        ),
+        content: Text(
+          l10n?.profileDeleteAccountContent ??
+              'Вы уверены, что хотите удалить аккаунт? Все ваши данные будут удалены безвозвратно.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: Text(
+              l10n?.profileDeleteAccountCancel ?? 'Отмена',
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(dialogCtx);
+              // Show loading indicator
+              if (ctx.mounted) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(
+                    content: Text('Удаление аккаунта...'),
+                    duration: Duration(seconds: 10),
+                  ),
+                );
+              }
+
+              final result = await AuthService().deleteAccount();
+
+              if (!ctx.mounted) return;
+              ScaffoldMessenger.of(ctx).hideCurrentSnackBar();
+
+              if (result == null) {
+                // Success — navigate to login
+                LikeButton.clearCache();
+                Navigator.of(ctx).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                  (route) => false,
+                );
+              } else if (result == 'requires-recent-login') {
+                // Need re-auth
+                _showReauthDialog(ctx);
+              } else {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(result),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: Text(
+              l10n?.profileDeleteAccountConfirm ?? 'Удалить',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🔄 Re-authentication dialog for sensitive operations
+  void _showReauthDialog(BuildContext ctx) {
+    final passwordController = TextEditingController();
+    showDialog(
+      context: ctx,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Подтвердите пароль'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Для удаления аккаунта необходимо повторно ввести пароль.',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Пароль',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final password = passwordController.text.trim();
+              if (password.isEmpty) return;
+
+              Navigator.pop(dialogCtx);
+
+              final reauthResult =
+                  await AuthService().reauthenticateUser(password);
+
+              if (!ctx.mounted) return;
+
+              if (reauthResult == null) {
+                // Re-auth success, now delete
+                final deleteResult = await AuthService().deleteAccount();
+
+                if (!ctx.mounted) return;
+
+                if (deleteResult == null) {
+                  LikeButton.clearCache();
+                  Navigator.of(ctx).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                } else {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    SnackBar(
+                      content: Text(deleteResult),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(reauthResult),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text(
+              'Подтвердить и удалить',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

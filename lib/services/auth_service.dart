@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; // Import async for TimeoutException
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart'; // Import Google Sign In
+import 'package:sign_in_with_apple/sign_in_with_apple.dart'; // 🍎 Apple Sign-In
+import 'package:crypto/crypto.dart'; // 🔐 SHA256 for Apple nonce
 import 'package:shared_preferences/shared_preferences.dart'; // Import for persistent attempts
 import 'dart:io'; // ⭐ Import File
 import 'dart:convert';
@@ -345,6 +348,129 @@ class AuthService {
     }
   }
 
+  /// 🍎 Generate a cryptographic nonce for Apple Sign-In
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  /// 🍎 SHA256 hash of the nonce
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  /// 🍎 Sign In with Apple (Required by App Store Guideline 4.8)
+  /// Returns null on success, error message on failure
+  Future<String?> signInWithApple() async {
+    try {
+      debugPrint('🍎 Starting Apple Sign-In...');
+
+      // 1. Generate nonce for security
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      // 2. Request Apple credentials
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      debugPrint('✅ Apple credential obtained');
+
+      // 3. Create OAuthCredential for Firebase
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+
+      // 4. Sign in to Firebase
+      final userCredential = await _auth.signInWithCredential(
+        oauthCredential,
+      );
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        debugPrint('✅ Firebase Auth success via Apple: \${user.uid}');
+
+        // 5. Build display name from Apple data (Apple only provides name on first sign-in)
+        String displayName = user.displayName ?? '';
+        if (displayName.isEmpty) {
+          displayName = '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'.trim();
+        }
+        if (displayName.isEmpty) {
+          displayName = 'Apple User';
+        }
+
+        // 6. Check / create Firestore document
+        try {
+          final doc = await _firestore
+              .collection('users')
+              .doc(user.uid)
+              .get()
+              .timeout(const Duration(seconds: 10));
+
+          if (!doc.exists) {
+            debugPrint('📝 Creating new user document from Apple Sign-In');
+            final userModel = UserModel(
+              uid: user.uid,
+              name: displayName,
+              email: user.email ?? appleCredential.email ?? 'apple@private.relay',
+              createdAt: DateTime.now(),
+            );
+            await _firestore
+                .collection('users')
+                .doc(user.uid)
+                .set(userModel.toMap());
+
+            // Update Firebase Auth display name
+            if (user.displayName == null || user.displayName!.isEmpty) {
+              await user.updateDisplayName(displayName);
+            }
+
+            _trackNewUser();
+          }
+        } catch (e) {
+          debugPrint('Error checking/creating Apple user in Firestore: \$e');
+        }
+
+        // SECURITY: await ban check
+        await _loadUserData(user.uid);
+        if (bannedReason.value != null) {
+          return bannedErrorCode;
+        }
+
+        // Save FCM Token
+        NotificationService().getToken().then((token) {
+          if (token != null) NotificationService().saveTokenToFirestore(token);
+        });
+
+        debugPrint('🎉 Apple Sign-In complete!');
+        return null; // Success
+      }
+      return 'Ошибка авторизации Apple';
+    } on SignInWithAppleAuthorizationException catch (e) {
+      debugPrint('🍎 Apple Sign-In cancelled or error: \${e.code}');
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return 'Вход через Apple отменен';
+      }
+      return 'Ошибка Apple Sign-In: \${e.message}';
+    } on FirebaseAuthException catch (e) {
+      debugPrint('❌ Apple Sign-In Firebase Error: ${e.code} - ${e.message}');
+      return 'Ошибка Firebase: ${e.message}';
+    } catch (e) {
+      debugPrint('❌ Apple Sign-In Unexpected Error: \$e');
+      return 'Ошибка входа через Apple. Попробуйте позже.';
+    }
+  }
+
   /// Check if username is unique
   /// Returns true if unique, false if taken.
   /// Throws on network/permission errors to prevent duplicate registrations.
@@ -679,6 +805,92 @@ class AuthService {
       isLoggedIn.value = false;
     } catch (e) {
       debugPrint('Logout error: $e');
+    }
+  }
+
+  /// 🗑️ Delete account IN-APP (Required by App Store Guideline 5.1.1)
+  /// Deletes Firestore data + Firebase Auth user.
+  /// Returns null on success, error message on failure.
+  Future<String?> deleteAccount() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return 'Пользователь не авторизован';
+
+      final String uid = user.uid;
+      debugPrint('🗑️ Starting account deletion for UID: $uid');
+
+      // 1. Delete user Firestore document
+      try {
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .delete()
+            .timeout(const Duration(seconds: 10));
+        debugPrint('✅ Firestore user document deleted');
+      } catch (e) {
+        debugPrint('⚠️ Firestore deletion failed (continuing): $e');
+        // Continue even if Firestore fails — Firebase Auth deletion is critical
+      }
+
+      // 2. Delete user's related data (feedbacks, likes, etc.)
+      try {
+        final feedbackDocs = await _firestore
+            .collection('feedbacks')
+            .where('userId', isEqualTo: uid)
+            .get()
+            .timeout(const Duration(seconds: 10));
+        for (final doc in feedbackDocs.docs) {
+          await doc.reference.delete();
+        }
+        debugPrint('✅ User feedbacks deleted (${feedbackDocs.docs.length})');
+      } catch (e) {
+        debugPrint('⚠️ Feedback cleanup failed (non-critical): $e');
+      }
+
+      // 3. Delete Firebase Auth user (requires recent auth - may throw)
+      try {
+        await user.delete();
+        debugPrint('✅ Firebase Auth user deleted');
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login') {
+          debugPrint('⚠️ Requires re-authentication for deletion');
+          return 'requires-recent-login';
+        }
+        return 'Ошибка удаления: ${e.message}';
+      }
+
+      // 4. Clear local state
+      await _googleSignIn.signOut();
+      currentUser.value = null;
+      isLoggedIn.value = false;
+
+      debugPrint('🎉 Account deletion complete');
+      return null; // Success
+    } catch (e) {
+      debugPrint('❌ Account deletion error: $e');
+      return 'Ошибка удаления аккаунта. Попробуйте позже.';
+    }
+  }
+
+  /// 🔄 Re-authenticate user for sensitive operations (like deletion)
+  /// Returns null on success, error message on failure.
+  Future<String?> reauthenticateUser(String password) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null || user.email == null) {
+        return 'Пользователь не авторизован';
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: password,
+      );
+      await user.reauthenticateWithCredential(credential);
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return _getErrorMessage(e.code);
+    } catch (e) {
+      return 'Ошибка аутентификации: $e';
     }
   }
 

@@ -51,5 +51,9 @@
 	<string>Нам нужен доступ к галерее для выбора фото профиля.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Нам нужен доступ к микрофону для записи видео (опционально).</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>TANDAU не отслеживает вашу активность. Данные используются только для улучшения работы приложения.</string>
 </dict>
 </plist>

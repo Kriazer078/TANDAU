@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import '../theme/app_colors.dart';
@@ -391,6 +392,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // Google Login Button
                     _buildGoogleRegisterButton(),
 
+                    // Apple Sign-In Button (iOS only)
+                    if (Platform.isIOS) ...[
+                      const SizedBox(height: 12),
+                      _buildAppleRegisterButton(),
+                    ],
+
                     const SizedBox(height: 24),
 
                     Row(
@@ -544,6 +551,88 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ? Colors.grey
                     : Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 🍎 Apple Sign-In button (iOS only)
+  Widget _buildAppleRegisterButton() {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white
+            : Colors.black,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: (_isLoading || !_termsAccepted)
+            ? null
+            : () async {
+                setState(() => _isLoading = true);
+                final error = await AuthService().signInWithApple();
+                if (mounted) {
+                  setState(() => _isLoading = false);
+                  if (error == AuthService.bannedErrorCode) return;
+                  if (error == null) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const MainNavigationScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
+                }
+              },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          disabledBackgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.apple,
+              size: 28,
+              color: (!_termsAccepted)
+                  ? Colors.grey
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.white),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Sign in with Apple',
+              style: TextStyle(
+                color: (!_termsAccepted)
+                    ? Colors.grey
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
           ],

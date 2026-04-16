@@ -97,4 +97,25 @@ class RevenueCatService {
       return false;
     }
   }
+
+  /// 🔄 Restore Purchases (Required by App Store for IAP apps)
+  /// Returns true if user has active Pro entitlement after restore
+  Future<bool> restorePurchases() async {
+    try {
+      if (kIsWeb) return false;
+
+      final customerInfo = await Purchases.restorePurchases();
+      final isPro =
+          customerInfo.entitlements.all['TANDAU Pro']?.isActive ?? false;
+
+      debugPrint('🔄 Restore complete. Pro active: $isPro');
+      return isPro;
+    } on PlatformException catch (e) {
+      debugPrint('⚠️ Restore purchases error: $e');
+      return false;
+    } catch (e) {
+      debugPrint('⚠️ Restore purchases error: $e');
+      return false;
+    }
+  }
 }
