@@ -900,5 +900,11 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "profileRoiTitle": "Оқудың өтелімі",
+    "profileRoiSubtitle": "Пайда мен құнды есептеу",
+    "profileCareerTitle": "Кәсіби бағдар",
+    "profileCareerSubtitle": "Өз бейімділіктеріңді және сәйкес МАБ-ты біл",
+    "homeChancesDescription": "Мүмкіндіктерді дәл есептеу",
+    "homeStartCalculation": "Есептеуді бастау"
 }

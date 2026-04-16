@@ -15,22 +15,79 @@ class DashboardRepository {
     required DateTime end,
   }) async {
     try {
-      // Format dates to match document definition (YYYY-MM-DD or similar)
-      // Assuming document IDs are YYYY-MM-DD based on previous AdminService code.
-      final startStr = start.toIso8601String().split('T')[0];
-      final endStr = end.toIso8601String().split('T')[0];
+      final startOfDay = DateTime(start.year, start.month, start.day);
+      final endOfDay = DateTime(end.year, end.month, end.day, 23, 59, 59, 999);
 
-      final snapshot = await _firestore
-          .collection('statistics')
-          .where(FieldPath.documentId, isGreaterThanOrEqualTo: startStr)
-          .where(FieldPath.documentId, isLessThanOrEqualTo: endStr)
+      // Fetch users and reviews within the date range
+      final usersSnapshot = await _firestore
+          .collection('users')
+          .where('createdAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('createdAt', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
           .get();
 
-      return snapshot.docs.map((doc) {
+      final reviewsSnapshot = await _firestore
+          .collection('reviews')
+          .where('createdAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('createdAt', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+          .get();
+
+      // We don't query activeUsers per day historically since that requires complex tracking.
+      // We will leave activeUsers as 0 in the history but newUsers and newReviews will be accurate.
+
+      // Map to hold daily stats
+      final Map<String, DashboardStats> dailyStats = {};
+
+      // Initialize all days in the range to 0
+      for (int i = 0; i <= endOfDay.difference(startOfDay).inDays; i++) {
+        final currentDay = startOfDay.add(Duration(days: i));
+        final dateStr = currentDay.toIso8601String().split('T')[0];
+        dailyStats[dateStr] = DashboardStats(
+          date: currentDay,
+          newUsers: 0,
+          newReviews: 0,
+          activeUsers: 0,
+        );
+      }
+
+      // Aggregate new users
+      for (var doc in usersSnapshot.docs) {
         final data = doc.data();
-        data['date'] = doc.id; // Include document ID as date
-        return DashboardStats.fromJson(data);
-      }).toList();
+        if (data['createdAt'] != null) {
+          final createdAt = (data['createdAt'] as Timestamp).toDate();
+          final dateStr = createdAt.toIso8601String().split('T')[0];
+          if (dailyStats.containsKey(dateStr)) {
+            final stat = dailyStats[dateStr]!;
+            dailyStats[dateStr] = DashboardStats(
+              date: stat.date,
+              newUsers: stat.newUsers + 1,
+              newReviews: stat.newReviews,
+              activeUsers: stat.activeUsers,
+            );
+          }
+        }
+      }
+
+      // Aggregate new reviews
+      for (var doc in reviewsSnapshot.docs) {
+        final data = doc.data();
+        if (data['createdAt'] != null) {
+          final createdAt = (data['createdAt'] as Timestamp).toDate();
+          final dateStr = createdAt.toIso8601String().split('T')[0];
+          if (dailyStats.containsKey(dateStr)) {
+            final stat = dailyStats[dateStr]!;
+            dailyStats[dateStr] = DashboardStats(
+              date: stat.date,
+              newUsers: stat.newUsers,
+              newReviews: stat.newReviews + 1,
+              activeUsers: stat.activeUsers,
+            );
+          }
+        }
+      }
+
+      var statsList = dailyStats.values.toList();
+      statsList.sort((a, b) => a.date.compareTo(b.date));
+      return statsList;
     } catch (e) {
       throw Exception('Failed to fetch statistics: $e');
     }

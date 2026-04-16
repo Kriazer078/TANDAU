@@ -917,5 +917,11 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "profileRoiTitle": "Окупаемость обучения",
+    "profileRoiSubtitle": "Расчет выгоды и стоимости",
+    "profileCareerTitle": "Профориентация",
+    "profileCareerSubtitle": "Узнай свои склонности и подходящие ГОП",
+    "homeChancesDescription": "Точный расчет шансов",
+    "homeStartCalculation": "Начать расчет"
 }

@@ -2171,4 +2171,23 @@ class AppLocalizationsKk extends AppLocalizations {
   String deadlineStatusMonths(int months) {
     return '$months ай';
   }
+
+  @override
+  String get profileRoiTitle => 'Оқудың өтелімі';
+
+  @override
+  String get profileRoiSubtitle => 'Пайда мен құнды есептеу';
+
+  @override
+  String get profileCareerTitle => 'Кәсіби бағдар';
+
+  @override
+  String get profileCareerSubtitle =>
+      'Өз бейімділіктеріңді және сәйкес МАБ-ты біл';
+
+  @override
+  String get homeChancesDescription => 'Мүмкіндіктерді дәл есептеу';
+
+  @override
+  String get homeStartCalculation => 'Есептеуді бастау';
 }

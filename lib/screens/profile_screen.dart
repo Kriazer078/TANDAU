@@ -200,8 +200,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.calculate_rounded,
-              title: 'Окупаемость обучения',
-              subtitle: 'Расчет выгоды и стоимости',
+              title: AppLocalizations.of(context)?.profileRoiTitle ?? 'Окупаемость обучения',
+              subtitle: AppLocalizations.of(context)?.profileRoiSubtitle ?? 'Расчет выгоды и стоимости',
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
@@ -227,8 +227,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildSettingCard(
               context,
               icon: Icons.psychology_rounded,
-              title: 'Профориентация',
-              subtitle: 'Узнай свои склонности и подходящие ГОП',
+              title: AppLocalizations.of(context)?.profileCareerTitle ?? 'Профориентация',
+              subtitle: AppLocalizations.of(context)?.profileCareerSubtitle ?? 'Узнай свои склонности и подходящие ГОП',
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16,

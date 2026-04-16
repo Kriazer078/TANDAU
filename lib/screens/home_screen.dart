@@ -385,7 +385,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Точный расчет шансов', // Compact description
+                      l10n?.homeChancesDescription ?? 'Точный расчет шансов',
                       style: TextStyle(
                         color: isDark ? Colors.white60 : AppColors.textSecondary,
                         fontSize: 13,
@@ -427,9 +427,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Text(
-                      'Начать расчет',
+                      l10n?.homeStartCalculation ?? 'Начать расчет',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

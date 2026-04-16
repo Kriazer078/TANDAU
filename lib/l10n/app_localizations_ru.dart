@@ -2172,4 +2172,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String deadlineStatusMonths(int months) {
     return '$months мес.';
   }
+
+  @override
+  String get profileRoiTitle => 'Окупаемость обучения';
+
+  @override
+  String get profileRoiSubtitle => 'Расчет выгоды и стоимости';
+
+  @override
+  String get profileCareerTitle => 'Профориентация';
+
+  @override
+  String get profileCareerSubtitle => 'Узнай свои склонности и подходящие ГОП';
+
+  @override
+  String get homeChancesDescription => 'Точный расчет шансов';
+
+  @override
+  String get homeStartCalculation => 'Начать расчет';
 }

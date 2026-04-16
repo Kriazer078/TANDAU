@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,7 +39,8 @@ class UpdateService {
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(minutes: 1),
-          minimumFetchInterval: const Duration(minutes: 1), // Reduced for faster updates & testing
+          minimumFetchInterval: const Duration(
+              minutes: 1), // Reduced for faster updates & testing
         ),
       );
 
@@ -48,7 +50,8 @@ class UpdateService {
         'store_url_android':
             'https://play.google.com/store/apps/details?id=kz.tandau.kz',
         'store_url_ios': 'https://apps.apple.com/app/id123456789',
-        'whats_new_ru': 'Изменения в новой версии: добавлена функция обновления.',
+        'whats_new_ru':
+            'Изменения в новой версии: добавлена функция обновления.',
         'whats_new_kk': 'Жаңа нұсқада: жаңарту мүмкіндігі қосылды.',
         'whats_new_en': 'What\'s new: Update feature added.',
       });
@@ -120,9 +123,14 @@ class UpdateService {
     required bool forceUpdate,
     required String newVersion,
   }) {
-    final String storeUrl = Platform.isAndroid
-        ? _remoteConfig.getString('store_url_android')
-        : _remoteConfig.getString('store_url_ios');
+    String storeUrl = '';
+    if (kIsWeb) {
+      // No store URL for web
+    } else if (Platform.isAndroid) {
+      storeUrl = _remoteConfig.getString('store_url_android');
+    } else if (Platform.isIOS) {
+      storeUrl = _remoteConfig.getString('store_url_ios');
+    }
 
     if (storeUrl.isEmpty) {
       debugPrint('UpdateService: Store URL is empty, skipping.');
@@ -133,7 +141,8 @@ class UpdateService {
     final String whatsNew = _getWhatsNew(context);
 
     // ⚡ Show on the root navigator so tab switching or screen replacements don't destroy the dialog
-    final BuildContext globalContext = Navigator.of(context, rootNavigator: true).context;
+    final BuildContext globalContext =
+        Navigator.of(context, rootNavigator: true).context;
 
     showModalBottomSheet(
       context: globalContext,
@@ -157,8 +166,7 @@ class UpdateService {
 
   /// Get changelog text for the current locale.
   String _getWhatsNew(BuildContext context) {
-    final Locale locale =
-        Localizations.localeOf(context);
+    final Locale locale = Localizations.localeOf(context);
     final String langCode = locale.languageCode;
 
     // Try locale-specific first, then fallback to Russian

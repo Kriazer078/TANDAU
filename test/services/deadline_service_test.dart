@@ -30,7 +30,7 @@ void main() {
       );
 
       expect(deadline.isPast, isTrue);
-      expect(deadline.countdownText, 'Завершено');
+      expect(deadline.getCountdownText(null), 'Завершено');
     });
 
     test('countdownText formats correctly based on time left', () {
@@ -44,7 +44,7 @@ void main() {
         category: DeadlineCategory.grant,
       );
 
-      expect(deadline.countdownText, 'Завтра!');
+      expect(deadline.getCountdownText(null), 'Завтра!');
       expect(deadline.isSoon, isTrue);
     });
   });

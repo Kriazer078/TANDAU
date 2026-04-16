@@ -921,5 +921,11 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "profileRoiTitle": "Education ROI",
+    "profileRoiSubtitle": "Calculate benefit and cost",
+    "profileCareerTitle": "Career Guidance",
+    "profileCareerSubtitle": "Find your aptitudes and suitable majors",
+    "homeChancesDescription": "Precise chance calculation",
+    "homeStartCalculation": "Start Calculation"
 }

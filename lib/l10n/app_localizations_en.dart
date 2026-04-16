@@ -2165,4 +2165,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String deadlineStatusMonths(int months) {
     return '$months mo';
   }
+
+  @override
+  String get profileRoiTitle => 'Education ROI';
+
+  @override
+  String get profileRoiSubtitle => 'Calculate benefit and cost';
+
+  @override
+  String get profileCareerTitle => 'Career Guidance';
+
+  @override
+  String get profileCareerSubtitle => 'Find your aptitudes and suitable majors';
+
+  @override
+  String get homeChancesDescription => 'Precise chance calculation';
+
+  @override
+  String get homeStartCalculation => 'Start Calculation';
 }

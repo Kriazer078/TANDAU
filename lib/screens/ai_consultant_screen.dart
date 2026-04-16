@@ -58,6 +58,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
       duration: const Duration(milliseconds: 500),
     );
     _fadeController.forward();
+    _messageController.addListener(() => setState(() {}));
     _initHistory();
   }
 
@@ -630,56 +631,35 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
                 tooltip:
                     AppLocalizations.of(context)?.aiChatHistory ?? 'История чатов',
               ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
+        title: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.25),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+            Text(
+              AppLocalizations.of(context)?.aiAgentTitle ?? 'AI Консультант',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
-              child: const AILogoIcon(size: 18, color: Colors.white),
             ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(height: 2),
+            Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  AppLocalizations.of(context)?.aiAgentTitle ?? 'AI Consultant',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF10B981),
+                    shape: BoxShape.circle,
                   ),
                 ),
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF10B981),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      AppLocalizations.of(context)?.aiAgentStatusOnline ??
-                          'Online',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 10,
-                        color: isDark ? Colors.white54 : AppColors.textHint,
-                      ),
-                    ),
-                  ],
+                const SizedBox(width: 5),
+                Text(
+                  AppLocalizations.of(context)?.aiAgentStatusOnline ?? 'В сети',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 11,
+                    color: isDark ? Colors.white54 : AppColors.textHint,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -786,16 +766,7 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
               padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const AILogoIcon(size: 16, color: Colors.white),
-                  ),
+                  _buildAIAvatar(isDark, 32),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -1041,170 +1012,176 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
 
     return FadeTransition(
       opacity: _fadeController,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            // AI Icon
-            Container(
-              width: 100,
-              height: 100,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.smart_toy_rounded,
-                size: 48,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 28),
-
-            // Title
-            Text(
-              l10n?.aiAgentWelcome ?? 'Чем могу помочь?',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-
-            // Subtitle
-            Text(
-              l10n?.aiAgentSubtitle ??
-                  'Анализирую данные вузов, чтобы найти лучший вариант для вас.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.white60 : AppColors.textSecondary,
-                    height: 1.5,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-
-            // 🚀 Onboarding Wizard button
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton(
-                onPressed: () async {
-                  final result = await Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const OnboardingWizardScreen(),
-                    ),
-                  );
-                  if (result == true && mounted) {
-                    // 🔧 BUG A FIX: refreshUserData() is already called inside
-                    // OnboardingWizardScreen._saveProfile(), no need to call again.
-                    // Removed duplicate network call that added 10+ sec delay.
-                    _sendMessage(
-                      text: l10n?.wizardProfileUpdated ??
-                          'Мой профиль обновлён! Покажи мне подходящие вузы.',
-                    );
-                  }
-                },
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: Text(
-                  l10n?.wizardProfileButton ?? '🚀 Заполни профиль за 2 мин',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Suggestion chips
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              alignment: WrapAlignment.center,
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 768),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildSuggestionChip(
-                  l10n?.aiAgentSample1 ?? 'Лучшие для IT?',
-                  Icons.computer_rounded,
-                  isDark,
+                const SizedBox(height: 40),
+                
+                _buildAIAvatar(isDark, 72),
+                const SizedBox(height: 32),
+
+                // Title
+                Text(
+                  l10n?.aiAgentWelcome ?? 'Чем могу помочь?',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 28,
+                        letterSpacing: -0.5,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                  textAlign: TextAlign.center,
                 ),
-                _buildSuggestionChip(
-                  l10n?.aiAgentSample2 ?? 'Требования для поступления',
-                  Icons.school_rounded,
-                  isDark,
+                const SizedBox(height: 48),
+
+                // ChatGPT-style compact cards 2x2 grid
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildSuggestionCard(
+                              l10n?.aiAgentSample1 ?? 'Какой университет лучше?',
+                              Icons.computer_rounded,
+                              isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildSuggestionCard(
+                              l10n?.aiAgentSample2 ?? 'Где есть IT специальности?',
+                              Icons.school_rounded,
+                              isDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildSuggestionCard(
+                              l10n?.aiAgentSample3 ?? 'Что нужно для гранта?',
+                              Icons.emoji_events_rounded,
+                              isDark,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildZhekeZhosparCard(isDark),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                _buildSuggestionChip(
-                  l10n?.aiAgentSample3 ?? 'Гранты 2026',
-                  Icons.emoji_events_rounded,
-                  isDark,
+                
+                const SizedBox(height: 56),
+
+                // 🚀 Onboarding Wizard button (cleaner style)
+                InkWell(
+                  onTap: () async {
+                    final result = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const OnboardingWizardScreen(),
+                      ),
+                    );
+                    if (result == true && mounted) {
+                      _sendMessage(
+                        text: l10n?.wizardProfileUpdated ??
+                            'Мой профиль обновлён! Покажи мне подходящие вузы.',
+                      );
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.person_pin_rounded,
+                            color: isDark ? Colors.white70 : AppColors.textSecondary, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n?.wizardProfileButton ?? 'Настроить профиль',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: isDark ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                _buildSuggestionChip(
-                  l10n?.successStoriesChip ?? 'Истории успеха',
-                  Icons.auto_stories_rounded,
-                  isDark,
-                ),
-                _buildZhekeZhosparChip(isDark),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSuggestionChip(String label, IconData icon, bool isDark) {
+  Widget _buildSuggestionCard(String label, IconData icon, bool isDark) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: (_isSending || _isTyping) ? null : () => _sendMessage(text: label),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : AppColors.background,
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.transparent, // ChatGPT clear background
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : AppColors.border,
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.1),
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, // Wrap vertically tight
             children: [
               Icon(
                 icon,
-                size: 16,
-                color: isDark ? Colors.white60 : AppColors.textSecondary,
+                size: 20,
+                color: isDark ? Colors.white54 : Colors.black54,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(height: 10),
               Text(
                 label,
                 style: TextStyle(
-                  color: isDark ? Colors.white : AppColors.textPrimary,
+                  color: isDark ? Colors.white.withValues(alpha: 0.85) : Colors.black87,
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
+                  height: 1.3,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -1213,39 +1190,45 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     );
   }
 
-  Widget _buildZhekeZhosparChip(bool isDark) {
+  Widget _buildZhekeZhosparCard(bool isDark) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: (_isSending || _isTyping) ? null : _requestZhekeZhospar,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [const Color(0xFF6366F1), const Color(0xFF8B5CF6)]
-                  : [const Color(0xFF818CF8), const Color(0xFFA78BFA)],
+            color: isDark ? Colors.transparent : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFF8B5CF6).withValues(alpha: 0.4)
+                  : const Color(0xFF6366F1).withValues(alpha: 0.4),
             ),
-            borderRadius: BorderRadius.circular(16),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.assignment_rounded,
-                size: 16,
-                color: Colors.white,
+                size: 20,
+                color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF6366F1),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(height: 10),
               Text(
                 AppLocalizations.of(context)?.aiAgentZhekeZhosparTitle ??
-                    'Жеке Жоспар',
-                style: const TextStyle(
-                  color: Colors.white,
+                    'Индивидуальный план',
+                style: TextStyle(
+                  color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF6366F1),
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
+                  height: 1.3,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -1284,373 +1267,293 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     );
   }
 
-  /// Extract university IDs from app:// links in message text
-  List<String> _extractUniversityLinks(String text) {
-    final regex = RegExp(r'app://university/([a-zA-Z0-9_-]+)');
-    return regex.allMatches(text).map((m) => m.group(1)!).toList();
-  }
-
   Widget _buildMessageBubble(ChatMessage msg, bool isDark) {
     final isUser = msg.isUser;
-    final uniLinks = isUser ? <String>[] : _extractUniversityLinks(msg.text);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment:
-            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.8,
-            ),
+    // ── User message bubble ──
+    if (isUser) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 24, left: 40, right: 16),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: BoxDecoration(
-              color: isUser
-                  ? null
-                  : (isDark ? AppColors.cardDark : Colors.white),
-              boxShadow: isUser || isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-              border: isUser || isDark
-                  ? null
-                  : Border.all(
-                      color: AppColors.border.withValues(alpha: 0.5),
-                    ),
-              gradient: isUser
-                  ? const LinearGradient(
-                      colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(18),
-                topRight: const Radius.circular(18),
-                bottomLeft: Radius.circular(isUser ? 18 : 4),
-                bottomRight: Radius.circular(isUser ? 4 : 18),
+              color: isDark ? const Color(0xFF273145) : const Color(0xFFF4F4F5),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              msg.text,
+              style: TextStyle(
+                color: isDark ? Colors.white : AppColors.textPrimary,
+                fontSize: 15,
+                height: 1.4,
+                letterSpacing: -0.1,
               ),
             ),
-            child: isUser
-                ? Text(
-                    msg.text,
-                    style: const TextStyle(
-                      color: Colors.white,
+          ),
+        ),
+      );
+    }
+
+    // ── AI message bubble ──
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 32, right: 16, left: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // AI Avatar
+          _buildAIAvatar(isDark, 32),
+          const SizedBox(width: 16),
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MarkdownBody(
+                  data: msg.text,
+                  onTapLink: (text, href, title) {
+                    if (href != null && href.startsWith('app://university/')) {
+                      final uniId = href.replaceAll('app://university/', '');
+                      _openUniversity(uniId, fallbackName: text);
+                    } else {
+                      _openUniversity(text);
+                    }
+                  },
+                  styleSheet: MarkdownStyleSheet(
+                    p: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
                       fontSize: 15,
+                      height: 1.6,
+                      letterSpacing: -0.1,
+                    ),
+                    h1: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                      height: 1.3,
+                    ),
+                    h2: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.4,
                       height: 1.4,
                     ),
-                  )
-                : MarkdownBody(
-                    data: msg.text,
-                    onTapLink: (text, href, title) {
-                      if (href != null &&
-                          href.startsWith('app://university/')) {
-                        final uniId = href.replaceAll('app://university/', '');
-                        // Try ID first, fall back to visible name
-                        _openUniversity(uniId, fallbackName: text);
-                      } else {
-                        _openUniversity(text);
-                      }
-                    },
-                    styleSheet: MarkdownStyleSheet(
-                      p: TextStyle(
-                        color: isDark ? Colors.white : AppColors.textPrimary,
-                        fontSize: 15,
-                        height: 1.5,
+                    h3: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.3,
+                      height: 1.4,
+                    ),
+                    listBullet: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 15,
+                      height: 1.6,
+                    ),
+                    a: TextStyle(
+                      color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    code: TextStyle(
+                      backgroundColor: isDark
+                          ? const Color(0xFF2C2C2E)
+                          : const Color(0xFFF3F4F6),
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 14,
+                      fontFamily: 'monospace',
+                    ),
+                    codeblockDecoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.black12,
                       ),
-                      strong: TextStyle(
-                        color: isDark ? Colors.white : AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      h1: TextStyle(
-                        color: isDark ? Colors.white : AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      h2: TextStyle(
-                        color: isDark ? Colors.white : AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      listBullet: TextStyle(
-                        color:
-                            isDark ? Colors.white70 : AppColors.textPrimary,
-                      ),
-                      horizontalRuleDecoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: isDark ? Colors.white24 : Colors.black12,
-                            width: 1.0,
-                          ),
+                    ),
+                    blockquoteDecoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : const Color(0xFFF8F9FA),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border(
+                        left: BorderSide(
+                          color: isDark
+                              ? Colors.white24
+                              : const Color(0xFF6366F1).withValues(alpha: 0.4),
+                          width: 4,
                         ),
                       ),
                     ),
-                  ),
-          ),
-
-          // 🆕 Rich Action Buttons (university quick-open chips)
-          if (!isUser && uniLinks.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 6, left: 4),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: uniLinks.take(3).map((uniId) {
-                  return _ActionChip(
-                    label: uniId.toUpperCase(),
-                    icon: Icons.school_rounded,
-                    onTap: () => _openUniversity(uniId),
-                    isDark: isDark,
-                  );
-                }).toList(),
-              ),
-            ),
-
-          const SizedBox(height: 4),
-
-          // 🆕 Citation indicator for AI messages
-          if (!isUser && msg.text.length > 50)
-            Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 2),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(width: 4),
-                  Text(
-                    'TANDAU AI \u2022 \u0411\u0430\u0437\u0430 \u0437\u043d\u0430\u043d\u0438\u0439 + Google Search',
-                    style: TextStyle(
-                      color: isDark ? Colors.white30 : AppColors.textHint,
-                      fontSize: 9,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-          Padding(
-            padding: EdgeInsets.only(
-              left: isUser ? 0 : 4,
-              right: isUser ? 4 : 0,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _formatTime(msg.time),
-                  style: TextStyle(
-                    color: isDark ? Colors.white24 : AppColors.textHint,
-                    fontSize: 10,
                   ),
                 ),
-                if (!isUser) ...[
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () {
-                      Clipboard.setData(ClipboardData(text: msg.text));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                              '\u0420\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u044f \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u0430'),
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 2,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.copy_rounded,
-                            size: 12,
-                            color: isDark
-                                ? Colors.white54
-                                : AppColors.textSecondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c',
-                            style: TextStyle(
-                              color: isDark
-                                  ? Colors.white54
-                                  : AppColors.textSecondary,
-                              fontSize: 10,
+                const SizedBox(height: 16),
+
+                // Copy button, feedback, retry
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: msg.text));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Скопировано в буфер обмена'),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: isDark ? const Color(0xFF2C2C2E) : Colors.black87,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            duration: const Duration(seconds: 2),
                           ),
-                        ],
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 4,
+                        ),
+                        child: Icon(
+                          Icons.content_copy_rounded,
+                          size: 16,
+                          color: isDark
+                              ? Colors.white54
+                              : AppColors.textHint,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  _FeedbackButtons(isDark: isDark, messageText: msg.text),
-                ],
+                    const SizedBox(width: 16),
+                    _FeedbackButtons(isDark: isDark, messageText: msg.text),
+                    
+                    if (_lastFailedMessage != null &&
+                        _messages.isNotEmpty &&
+                        _messages.last == msg &&
+                        !_isSending) ...[
+                      const SizedBox(width: 16),
+                      InkWell(
+                        onTap: _retryLastMessage,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 4,
+                          ),
+                          child: Icon(
+                            Icons.refresh_rounded,
+                            size: 16,
+                            color: Colors.red[400],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ],
             ),
           ),
-
-          // 🔄 BUG#6: Retry button for error messages
-          if (!isUser &&
-              _lastFailedMessage != null &&
-              _messages.isNotEmpty &&
-              _messages.last == msg &&
-              !_isSending)
-            Padding(
-              padding: const EdgeInsets.only(top: 6, left: 4),
-              child: InkWell(
-                onTap: _retryLastMessage,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.refresh_rounded,
-                        size: 14,
-                        color: Color(0xFF6366F1),
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        'Повторить',
-                        style: TextStyle(
-                          color: Color(0xFF6366F1),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
-  }
-
-  String _formatTime(DateTime time) {
-    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
   // ═══════════════════════════════════════════
   //  INPUT AREA
   // ═══════════════════════════════════════════
   Widget _buildInputArea(BuildContext context, bool isDark) {
+    final bool canSend = !_isSending &&
+        !_isTyping &&
+        _messageController.text.trim().isNotEmpty;
+
     return Container(
+      color: isDark ? AppColors.surfaceDark : Colors.white,
       padding: EdgeInsets.fromLTRB(
         16,
         12,
         16,
         MediaQuery.of(context).padding.bottom + 12,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : AppColors.border,
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              style: TextStyle(
-                color: isDark ? Colors.white : AppColors.textPrimary,
-                fontSize: 15,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.cardDark : const Color(0xFFF4F4F5),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.05),
               ),
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)?.aiAgentInputHint ??
-                    'Задайте вопрос...',
-                hintStyle: TextStyle(
-                  color: isDark ? Colors.white38 : AppColors.textHint,
-                ),
-                filled: true,
-                fillColor: isDark ? AppColors.cardDark : AppColors.background,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1.5,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Text field
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                      fontSize: 16,
+                      letterSpacing: -0.1,
+                      height: 1.4,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)?.aiAgentInputHint ??
+                          'Задайте вопрос TANDAU AI...',
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.white38 : AppColors.textHint,
+                        fontSize: 16,
+                      ),
+                      filled: false,
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.fromLTRB(20, 14, 8, 14),
+                      isDense: true,
+                    ),
+                    onSubmitted: canSend ? (_) => _sendMessage() : null,
+                    textCapitalization: TextCapitalization.sentences,
+                    maxLines: 6,
+                    minLines: 1,
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                isDense: true,
-              ),
-              onSubmitted: (_isSending || _isTyping) ? null : (_) => _sendMessage(),
-              textCapitalization: TextCapitalization.sentences,
-              maxLines: 4,
-              minLines: 1,
-            ),
-          ),
-          const SizedBox(width: 10),
-          // Send button
-          Container(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
+                // Send button
+                Padding(
+                  padding: const EdgeInsets.only(right: 8, bottom: 8),
+                  child: Container(
+                    height: 32,
+                    width: 32,
+                    decoration: BoxDecoration(
+                      color: canSend
+                          ? (isDark ? Colors.white : Colors.black)
+                          : (isDark
+                              ? const Color(0xFF3C3C3E)
+                              : const Color(0xFFE5E5EA)),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: canSend ? () => _sendMessage() : null,
+                        borderRadius: BorderRadius.circular(16),
+                        child: Center(
+                          child: Icon(
+                            Icons.arrow_upward_rounded,
+                            color: canSend
+                                ? (isDark ? Colors.black : Colors.white)
+                                : (isDark ? Colors.white38 : Colors.black26),
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: (_isSending || _isTyping) ? null : () => _sendMessage(),
-                borderRadius: BorderRadius.circular(24),
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Icon(
-                    Icons.send_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1859,6 +1762,48 @@ class _AIConsultantScreenState extends State<AIConsultantScreen>
     } catch (e) {
       debugPrint('Error handling AI Action: $e');
     }
+  }
+
+  // ═══════════════════════════════════════════
+  //  CUSTOM AI AVATAR
+  // ═══════════════════════════════════════════
+  Widget _buildAIAvatar(bool isDark, double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isDark 
+            ? const Color(0xFF273145) // Match dark mode card color
+            : const Color(0xFFE0F2FE), // Soft light blue for light mode
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? const Color(0xFF3B82F6) : const Color(0xFF3B82F6)).withValues(alpha: 0.15),
+            blurRadius: size * 0.3,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Center(
+        child: ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF3B82F6), // Blue
+                Color(0xFF8B5CF6), // Purple
+              ],
+            ).createShader(bounds);
+          },
+          child: Icon(
+            Icons.bolt_rounded,
+            color: Colors.white,
+            size: size * 0.6,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -2118,79 +2063,6 @@ class _AIThinkingStream extends StatelessWidget {
 
 
 
-// ═══════════════════════════════════════════
-//  ACTION CHIP (Rich Action buttons in chat)
-// ═══════════════════════════════════════════
-class _ActionChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool isDark;
-
-  const _ActionChip({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-    required this.isDark,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [const Color(0xFF312E81), const Color(0xFF4338CA)]
-                  : [const Color(0xFFEEF2FF), const Color(0xFFE0E7FF)],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isDark
-                  ? const Color(0xFF6366F1).withValues(alpha: 0.4)
-                  : const Color(0xFF6366F1).withValues(alpha: 0.2),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 13,
-                color:
-                    isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF818CF8)
-                      : const Color(0xFF4F46E5),
-                ),
-              ),
-              const SizedBox(width: 2),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 9,
-                color: isDark
-                    ? const Color(0xFF818CF8).withValues(alpha: 0.6)
-                    : const Color(0xFF4F46E5).withValues(alpha: 0.5),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ═══════════════════════════════════════════
 //  FEEDBACK BUTTONS (👍👎)

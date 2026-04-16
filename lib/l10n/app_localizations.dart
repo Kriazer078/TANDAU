@@ -4173,6 +4173,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{months} mo'**
   String deadlineStatusMonths(int months);
+
+  /// No description provided for @profileRoiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education ROI'**
+  String get profileRoiTitle;
+
+  /// No description provided for @profileRoiSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate benefit and cost'**
+  String get profileRoiSubtitle;
+
+  /// No description provided for @profileCareerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Guidance'**
+  String get profileCareerTitle;
+
+  /// No description provided for @profileCareerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find your aptitudes and suitable majors'**
+  String get profileCareerSubtitle;
+
+  /// No description provided for @homeChancesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Precise chance calculation'**
+  String get homeChancesDescription;
+
+  /// No description provided for @homeStartCalculation.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Calculation'**
+  String get homeStartCalculation;
 }
 
 class _AppLocalizationsDelegate
