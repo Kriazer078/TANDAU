@@ -2080,6 +2080,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get militaryDepartment => 'Военная кафедра';
 
   @override
+  String militaryStartCourse(int course) {
+    return 'Начало обучения с $course курса';
+  }
+
+  @override
+  String militaryCompetition(String info) {
+    return 'Конкурс: $info';
+  }
+
+  @override
+  String get filterMilitary => 'Военная кафедра';
+
+  @override
   String get location => 'Местоположение';
 
   @override
@@ -2190,4 +2203,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeStartCalculation => 'Начать расчет';
+
+  @override
+  String get tabDormitory => 'Инфраструктура';
+
+  @override
+  String get dormitoryForFreshmen => '100% первокурсникам';
+
+  @override
+  String get dormitoryPriceYear => 'Стоимость за год';
+
+  @override
+  String get dormitoryDistance => 'Расстояние до корпусов';
+
+  @override
+  String get dormitoryPhotos => 'Фото комнат';
+
+  @override
+  String get dormitoryConditions => 'Условия проживания';
+
+  @override
+  String get dormitoryAvailable => 'Общежитие есть';
+
+  @override
+  String get dormitoryNotAvailable => 'Общежития нет';
 }

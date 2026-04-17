@@ -30,6 +30,7 @@ class _SearchScreenState extends State<SearchScreen>
   List<Map<String, dynamic>>? _featuredMajors;
 
   bool _onlyGrants = false;
+  bool _onlyMilitary = false;
   final List<String> _selectedCities = [];
   final List<String> _selectedMajors = [];
   double? _maxPrice;
@@ -43,6 +44,7 @@ class _SearchScreenState extends State<SearchScreen>
     count += _selectedCities.length;
     count += _selectedMajors.length;
     if (_onlyGrants) count++;
+    if (_onlyMilitary) count++;
     if (_maxPrice != null) count++;
     return count;
   }
@@ -145,6 +147,7 @@ class _SearchScreenState extends State<SearchScreen>
           majorFilter: _selectedMajors,
           onlyGrants: _onlyGrants,
           maxPrice: _maxPrice,
+          onlyMilitary: _onlyMilitary,
         ),
       ),
     );
@@ -165,7 +168,8 @@ class _SearchScreenState extends State<SearchScreen>
         selectedMajor: _selectedMajors,
         initialOnlyGrants: _onlyGrants,
         initialMaxPrice: _maxPrice,
-        onApply: (cities, majors, onlyGrants, maxPrice) {
+        initialOnlyMilitary: _onlyMilitary,
+        onApply: (cities, majors, onlyGrants, maxPrice, onlyMilitary) {
           setState(() {
             _selectedCities.clear();
             _selectedCities.addAll(cities);
@@ -173,6 +177,7 @@ class _SearchScreenState extends State<SearchScreen>
             _selectedMajors.addAll(majors);
             _onlyGrants = onlyGrants;
             _maxPrice = maxPrice;
+            _onlyMilitary = onlyMilitary;
           });
           _performSearch(_searchController.text);
         },
@@ -185,6 +190,7 @@ class _SearchScreenState extends State<SearchScreen>
       _selectedCities.clear();
       _selectedMajors.clear();
       _onlyGrants = false;
+      _onlyMilitary = false;
       _maxPrice = null;
     });
   }
@@ -421,6 +427,10 @@ class _SearchScreenState extends State<SearchScreen>
       final label = l10n?.filterGrant ?? 'Грант';
       filters.add(_ActiveFilter(label: label, type: 'grant'));
     }
+    if (_onlyMilitary) {
+      final label = l10n?.filterMilitary ?? 'Военная кафедра';
+      filters.add(_ActiveFilter(label: label, type: 'military'));
+    }
     if (_maxPrice != null) {
       filters.add(
         _ActiveFilter(
@@ -519,6 +529,9 @@ class _SearchScreenState extends State<SearchScreen>
                                 break;
                               case 'grant':
                                 _onlyGrants = false;
+                                break;
+                              case 'military':
+                                _onlyMilitary = false;
                                 break;
                               case 'price':
                                 _maxPrice = null;

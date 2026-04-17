@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import '../theme/app_colors.dart';
@@ -236,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
 
                     // 🍎 Apple Login Button (iOS only — App Store Guideline 4.8)
-                    if (Platform.isIOS) _buildAppleLoginButton(),
+                    if (!kIsWeb && Platform.isIOS) _buildAppleLoginButton(),
 
                     const SizedBox(height: 24),
 

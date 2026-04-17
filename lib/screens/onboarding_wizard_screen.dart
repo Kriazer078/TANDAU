@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../services/auth_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/icon_3d.dart';
 
 /// 6-шаговый AI Onboarding Wizard
 /// Быстро заполняет профиль за 2 минуты через красивый UI
@@ -687,7 +688,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
             ),
             child: Row(
               children: [
-                const Text('💡', style: TextStyle(fontSize: 18)),
+                const Icon3D(emoji: '💡', size: 24),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -813,7 +814,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 24),
-          Text(emoji, style: const TextStyle(fontSize: 40)),
+          Icon3D(emoji: emoji, size: 52),
           const SizedBox(height: 12),
           Text(
             title,

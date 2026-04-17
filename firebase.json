@@ -12,49 +12,31 @@
             "runtime": "python311"
         }
     ],
-    "hosting": [
-        {
-            "target": "app",
-            "public": "public",
-            "ignore": [
-                "firebase.json",
-                "**/.*",
-                "**/node_modules/**"
-            ],
-            "rewrites": [
-                {
-                    "source": "**",
-                    "destination": "/index.html"
-                }
-            ],
-            "headers": [
-                {
-                    "source": "**",
-                    "headers": [
-                        {
-                            "key": "Cache-Control",
-                            "value": "max-age=3600"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "target": "admin",
-            "public": "tandau_admin_web/build/web",
-            "ignore": [
-                "firebase.json",
-                "**/.*",
-                "**/node_modules/**"
-            ],
-            "rewrites": [
-                {
-                    "source": "**",
-                    "destination": "/index.html"
-                }
-            ]
-        }
-    ],
+    "hosting": {
+        "public": "public",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ],
+        "headers": [
+            {
+                "source": "**",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "max-age=3600"
+                    }
+                ]
+            }
+        ]
+    },
     "firestore": {
         "rules": "firestore.rules",
         "indexes": "firestore.indexes.json"

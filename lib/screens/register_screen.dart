@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import '../theme/app_colors.dart';
@@ -393,7 +394,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _buildGoogleRegisterButton(),
 
                     // Apple Sign-In Button (iOS only)
-                    if (Platform.isIOS) ...[
+                    if (!kIsWeb && Platform.isIOS) ...[
                       const SizedBox(height: 12),
                       _buildAppleRegisterButton(),
                     ],

@@ -11,11 +11,13 @@ class FilterBottomSheet extends StatefulWidget {
   final List<String> selectedMajor;
   final bool initialOnlyGrants;
   final double? initialMaxPrice;
+  final bool initialOnlyMilitary;
   final Function(
     List<String> cities,
     List<String> majors,
     bool onlyGrants,
     double? maxPrice,
+    bool onlyMilitary,
   ) onApply;
 
   const FilterBottomSheet({
@@ -26,6 +28,7 @@ class FilterBottomSheet extends StatefulWidget {
     required this.selectedMajor,
     required this.initialOnlyGrants,
     this.initialMaxPrice,
+    this.initialOnlyMilitary = false,
     required this.onApply,
   });
 
@@ -40,6 +43,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   bool _onlyGrants = false;
   bool _showPaid = false;
   double _maxPrice = 1500000;
+  bool _onlyMilitary = false;
 
   String _citySearch = '';
   String _majorSearch = '';
@@ -47,6 +51,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   bool _cityExpanded = true;
   bool _majorExpanded = false;
   bool _typeExpanded = false;
+  bool _infraExpanded = false;
 
   late final DraggableScrollableController _sheetController;
 
@@ -57,6 +62,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
     _city.addAll(widget.selectedCity);
     _major.addAll(widget.selectedMajor);
     _onlyGrants = widget.initialOnlyGrants;
+    _onlyMilitary = widget.initialOnlyMilitary;
     if (widget.initialMaxPrice != null) {
       _showPaid = true;
       _maxPrice = widget.initialMaxPrice!;
@@ -80,6 +86,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
     count += _major.length;
     if (_onlyGrants) count++;
     if (_showPaid) count++;
+    if (_onlyMilitary) count++;
     return count;
   }
 
@@ -90,6 +97,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
       _onlyGrants = false;
       _showPaid = false;
       _maxPrice = 1500000;
+      _onlyMilitary = false;
       _citySearch = '';
       _majorSearch = '';
     });
@@ -204,6 +212,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                               isDark,
                               theme,
                             ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // ═══ Section: Infrastructure ═══
+                          _buildExpandableSection(
+                            title: l10n?.moderatorSectionInfra ?? 'Инфраструктура',
+                            icon: Icons.shield_outlined,
+                            isExpanded: _infraExpanded,
+                            selectedCount: _onlyMilitary ? 1 : 0,
+                            onToggle: () =>
+                                setState(() => _infraExpanded = !_infraExpanded),
+                            isDark: isDark,
+                            theme: theme,
+                            child: _buildInfraSection(l10n, isDark, theme),
                           ),
 
                           SizedBox(height: 24 + bottomPadding),
@@ -647,6 +670,28 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   }
 
   // ═════════════════════════════════════════
+  // INFRASTRUCTURE SECTION (Military)
+  // ═════════════════════════════════════════
+  Widget _buildInfraSection(
+    AppLocalizations? l10n,
+    bool isDark,
+    ThemeData theme,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFilterChip(
+          label: l10n?.filterMilitary ?? 'Военная кафедра',
+          isSelected: _onlyMilitary,
+          onTap: () => setState(() => _onlyMilitary = !_onlyMilitary),
+          isDark: isDark,
+          icon: Icons.shield_rounded,
+        ),
+      ],
+    );
+  }
+
+  // ═════════════════════════════════════════
   // BOTTOM BAR (Apply Button)
   // ═════════════════════════════════════════
   Widget _buildBottomBar(
@@ -676,6 +721,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
               _major,
               _onlyGrants,
               _showPaid ? _maxPrice : null,
+              _onlyMilitary,
             );
           },
           style: ElevatedButton.styleFrom(

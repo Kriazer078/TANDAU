@@ -870,6 +870,23 @@
     "dormitory": "Общежитие",
     "dormitoryPrice": "Цена общежития",
     "militaryDepartment": "Военная кафедра",
+    "militaryStartCourse": "Начало обучения с {course} курса",
+    "@militaryStartCourse": {
+        "placeholders": {
+            "course": {
+                "type": "int"
+            }
+        }
+    },
+    "militaryCompetition": "Конкурс: {info}",
+    "@militaryCompetition": {
+        "placeholders": {
+            "info": {
+                "type": "String"
+            }
+        }
+    },
+    "filterMilitary": "Военная кафедра",
     "location": "Местоположение",
     "detailAvailable": "Есть",
     "deadlineEntStartTitle": "Начало ЕНТ",
@@ -923,5 +940,13 @@
     "profileCareerTitle": "Профориентация",
     "profileCareerSubtitle": "Узнай свои склонности и подходящие ГОП",
     "homeChancesDescription": "Точный расчет шансов",
-    "homeStartCalculation": "Начать расчет"
+    "homeStartCalculation": "Начать расчет",
+    "tabDormitory": "Инфраструктура",
+    "dormitoryForFreshmen": "100% первокурсникам",
+    "dormitoryPriceYear": "Стоимость за год",
+    "dormitoryDistance": "Расстояние до корпусов",
+    "dormitoryPhotos": "Фото комнат",
+    "dormitoryConditions": "Условия проживания",
+    "dormitoryAvailable": "Общежитие есть",
+    "dormitoryNotAvailable": "Общежития нет"
 }

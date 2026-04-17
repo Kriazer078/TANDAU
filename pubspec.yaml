@@ -101,6 +101,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/icons/3d/
 
 flutter_launcher_icons:
   android: "ic_launcher"

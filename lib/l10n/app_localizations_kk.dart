@@ -2079,6 +2079,19 @@ class AppLocalizationsKk extends AppLocalizations {
   String get militaryDepartment => 'Әскери кафедра';
 
   @override
+  String militaryStartCourse(int course) {
+    return '$course-курстан бастап оқу';
+  }
+
+  @override
+  String militaryCompetition(String info) {
+    return 'Конкурс: $info';
+  }
+
+  @override
+  String get filterMilitary => 'Әскери кафедра';
+
+  @override
   String get location => 'Орналасқан жері';
 
   @override
@@ -2190,4 +2203,28 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get homeStartCalculation => 'Есептеуді бастау';
+
+  @override
+  String get tabDormitory => 'Инфрақұрылым';
+
+  @override
+  String get dormitoryForFreshmen => '1-курс студенттерге 100%';
+
+  @override
+  String get dormitoryPriceYear => 'Жылдық құны';
+
+  @override
+  String get dormitoryDistance => 'Корпустарға дейінгі қашықтық';
+
+  @override
+  String get dormitoryPhotos => 'Бөлме фотолары';
+
+  @override
+  String get dormitoryConditions => 'Тұру жағдайлары';
+
+  @override
+  String get dormitoryAvailable => 'Жатақхана бар';
+
+  @override
+  String get dormitoryNotAvailable => 'Жатақхана жоқ';
 }

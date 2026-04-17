@@ -874,6 +874,23 @@
     "dormitory": "Dormitory",
     "dormitoryPrice": "Dormitory price",
     "militaryDepartment": "Military Department",
+    "militaryStartCourse": "Starts from year {course}",
+    "@militaryStartCourse": {
+        "placeholders": {
+            "course": {
+                "type": "int"
+            }
+        }
+    },
+    "militaryCompetition": "Competition: {info}",
+    "@militaryCompetition": {
+        "placeholders": {
+            "info": {
+                "type": "String"
+            }
+        }
+    },
+    "filterMilitary": "Military Department",
     "location": "Location",
     "detailAvailable": "Available",
     "deadlineEntStartTitle": "UNT Starts",
@@ -927,5 +944,13 @@
     "profileCareerTitle": "Career Guidance",
     "profileCareerSubtitle": "Find your aptitudes and suitable majors",
     "homeChancesDescription": "Precise chance calculation",
-    "homeStartCalculation": "Start Calculation"
+    "homeStartCalculation": "Start Calculation",
+    "tabDormitory": "Infrastructure",
+    "dormitoryForFreshmen": "100% for freshmen",
+    "dormitoryPriceYear": "Annual cost",
+    "dormitoryDistance": "Distance to campus",
+    "dormitoryPhotos": "Room photos",
+    "dormitoryConditions": "Living conditions",
+    "dormitoryAvailable": "Dormitory available",
+    "dormitoryNotAvailable": "No dormitory"
 }

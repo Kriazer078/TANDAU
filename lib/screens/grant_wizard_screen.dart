@@ -9,8 +9,10 @@ import '../data/ent_specialties_2026.dart';
 import '../services/auth_service.dart';
 import '../utils/constants.dart';
 import '../services/career_test_service.dart';
+import '../widgets/specialty_info_card.dart';
 import 'ai_consultant_screen.dart';
 import 'career_test_hub_screen.dart';
+import 'specialty_detail_screen.dart';
 
 class GrantWizardScreen extends ConsumerStatefulWidget {
   const GrantWizardScreen({super.key});
@@ -643,6 +645,22 @@ class _GrantWizardScreenState extends ConsumerState<GrantWizardScreen> {
               ),
             ),
           ],
+          // 💬 Человеческое описание специальности
+          const SizedBox(height: 12),
+          SpecialtyInfoCard(
+            specialty: currentSpecialty,
+            compact: false,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SpecialtyDetailScreen(
+                    specialty: currentSpecialty,
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ],
     );

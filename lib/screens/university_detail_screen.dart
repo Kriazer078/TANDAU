@@ -12,6 +12,7 @@ import '../widgets/university_majors_tab.dart';
 import '../widgets/university_admission_tab.dart';
 import '../widgets/university_contact_tab.dart';
 import '../widgets/university_reviews_tab.dart';
+import '../widgets/university_infrastructure_tab.dart';
 import '../widgets/svd_result_sheet.dart'; // GridPainter
 import 'ai_consultant_screen.dart';
 
@@ -35,7 +36,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
   }
 
   Future<void> _toggleFavorite() async {
@@ -267,6 +268,7 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                         Tab(text: l10n?.tabOverview ?? 'Обзор'),
                         Tab(text: l10n?.tabMajors ?? 'Специальности'),
                         Tab(text: l10n?.tabAdmissions ?? 'Поступление'),
+                        Tab(text: l10n?.tabDormitory ?? 'Общежитие'),
                         Tab(text: l10n?.tabContact ?? 'Контакты'),
                         Tab(text: l10n?.tabReviews ?? 'Отзывы'),
                       ],
@@ -296,6 +298,12 @@ class _UniversityDetailScreenState extends State<UniversityDetailScreen>
                       ),
                       RepaintBoundary(
                         child: UniversityAdmissionTab(
+                          university: widget.university,
+                          isDark: isDark,
+                        ),
+                      ),
+                      RepaintBoundary(
+                        child: UniversityInfrastructureTab(
                           university: widget.university,
                           isDark: isDark,
                         ),

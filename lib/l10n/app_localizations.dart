@@ -4012,6 +4012,24 @@ abstract class AppLocalizations {
   /// **'Military Department'**
   String get militaryDepartment;
 
+  /// No description provided for @militaryStartCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts from year {course}'**
+  String militaryStartCourse(int course);
+
+  /// No description provided for @militaryCompetition.
+  ///
+  /// In en, this message translates to:
+  /// **'Competition: {info}'**
+  String militaryCompetition(String info);
+
+  /// No description provided for @filterMilitary.
+  ///
+  /// In en, this message translates to:
+  /// **'Military Department'**
+  String get filterMilitary;
+
   /// No description provided for @location.
   ///
   /// In en, this message translates to:
@@ -4209,6 +4227,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start Calculation'**
   String get homeStartCalculation;
+
+  /// No description provided for @tabDormitory.
+  ///
+  /// In en, this message translates to:
+  /// **'Infrastructure'**
+  String get tabDormitory;
+
+  /// No description provided for @dormitoryForFreshmen.
+  ///
+  /// In en, this message translates to:
+  /// **'100% for freshmen'**
+  String get dormitoryForFreshmen;
+
+  /// No description provided for @dormitoryPriceYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual cost'**
+  String get dormitoryPriceYear;
+
+  /// No description provided for @dormitoryDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance to campus'**
+  String get dormitoryDistance;
+
+  /// No description provided for @dormitoryPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Room photos'**
+  String get dormitoryPhotos;
+
+  /// No description provided for @dormitoryConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Living conditions'**
+  String get dormitoryConditions;
+
+  /// No description provided for @dormitoryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory available'**
+  String get dormitoryAvailable;
+
+  /// No description provided for @dormitoryNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No dormitory'**
+  String get dormitoryNotAvailable;
 }
 
 class _AppLocalizationsDelegate

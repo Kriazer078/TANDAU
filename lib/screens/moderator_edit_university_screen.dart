@@ -11,6 +11,7 @@ class ModeratorEditUniversityScreen extends StatefulWidget {
   final University? university;
 
   const ModeratorEditUniversityScreen({super.key, this.university});
+  
 
   @override
   State<ModeratorEditUniversityScreen> createState() =>
@@ -41,6 +42,13 @@ class _ModeratorEditUniversityScreenState
   bool _hasDormitory = false;
   late final TextEditingController _dormitoryPriceCtl;
   bool _hasMilitaryDepartment = false;
+  late final TextEditingController _militaryStartCourseCtl;
+  late final TextEditingController _militaryCompetitionCtl;
+  bool _dormitoryForFreshmen = false;
+  late final TextEditingController _dormitoryPriceYearCtl;
+  late final TextEditingController _dormitoryDistanceCtl;
+  late final TextEditingController _dormitoryDescriptionCtl;
+  late final TextEditingController _dormitoryPhotosCtl;
 
   // Секция 4: Местоположение
   late final TextEditingController _addressCtl;
@@ -78,6 +86,19 @@ class _ModeratorEditUniversityScreenState
     _dormitoryPriceCtl =
         TextEditingController(text: u?.dormitoryPrice?.toString() ?? '');
     _hasMilitaryDepartment = u?.hasMilitaryDepartment ?? false;
+    _militaryStartCourseCtl = TextEditingController(
+        text: u?.militaryStartCourse?.toString() ?? '');
+    _militaryCompetitionCtl =
+        TextEditingController(text: u?.militaryCompetition ?? '');
+    _dormitoryForFreshmen = u?.dormitoryForFreshmen ?? false;
+    _dormitoryPriceYearCtl =
+        TextEditingController(text: u?.dormitoryPriceYear?.toString() ?? '');
+    _dormitoryDistanceCtl =
+        TextEditingController(text: u?.dormitoryDistanceInfo ?? '');
+    _dormitoryDescriptionCtl =
+        TextEditingController(text: u?.dormitoryDescription ?? '');
+    _dormitoryPhotosCtl =
+        TextEditingController(text: u?.dormitoryPhotoUrls.join(', ') ?? '');
 
     _addressCtl = TextEditingController(text: u?.address ?? '');
     _latitudeCtl =
@@ -112,6 +133,12 @@ class _ModeratorEditUniversityScreenState
     _websiteCtl.dispose();
     _logoUrlCtl.dispose();
     _majorsCtl.dispose();
+    _dormitoryPriceYearCtl.dispose();
+    _dormitoryDistanceCtl.dispose();
+    _dormitoryDescriptionCtl.dispose();
+    _dormitoryPhotosCtl.dispose();
+    _militaryStartCourseCtl.dispose();
+    _militaryCompetitionCtl.dispose();
     super.dispose();
   }
 
@@ -141,8 +168,31 @@ class _ModeratorEditUniversityScreenState
         dormitoryPrice: _hasDormitory
             ? int.tryParse(_dormitoryPriceCtl.text)
             : null,
+        dormitoryForFreshmen: _hasDormitory && _dormitoryForFreshmen,
+        dormitoryPriceYear: _hasDormitory
+            ? int.tryParse(_dormitoryPriceYearCtl.text)
+            : null,
+        dormitoryPhotoUrls: _hasDormitory
+            ? _dormitoryPhotosCtl.text
+                .split(',')
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList()
+            : [],
+        dormitoryDistanceInfo: _hasDormitory
+            ? _dormitoryDistanceCtl.text.trim()
+            : null,
+        dormitoryDescription: _hasDormitory
+            ? _dormitoryDescriptionCtl.text.trim()
+            : null,
         hasGrants: _hasGrants,
         hasMilitaryDepartment: _hasMilitaryDepartment,
+        militaryStartCourse: _hasMilitaryDepartment
+            ? int.tryParse(_militaryStartCourseCtl.text)
+            : null,
+        militaryCompetition: _hasMilitaryDepartment
+            ? _militaryCompetitionCtl.text.trim()
+            : null,
         latitude: double.tryParse(_latitudeCtl.text),
         longitude: double.tryParse(_longitudeCtl.text),
         description: _descriptionCtl.text.trim(),
@@ -356,6 +406,42 @@ class _ModeratorEditUniversityScreenState
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
+              const SizedBox(height: 8),
+              _buildSwitchTile(
+                l10n?.dormitoryForFreshmen ?? '100% первокурсникам',
+                Icons.verified_rounded,
+                _dormitoryForFreshmen,
+                (v) => setState(() => _dormitoryForFreshmen = v),
+                isDark,
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _dormitoryPriceYearCtl,
+                label: '${l10n?.dormitoryPriceYear ?? 'Стоимость за год'} (₸)',
+                icon: Icons.calendar_month_rounded,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _dormitoryDistanceCtl,
+                label: l10n?.dormitoryDistance ?? 'Расстояние до корпусов',
+                icon: Icons.directions_walk_rounded,
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _dormitoryDescriptionCtl,
+                label: l10n?.dormitoryConditions ?? 'Условия проживания',
+                icon: Icons.info_outline_rounded,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _dormitoryPhotosCtl,
+                label: '${l10n?.dormitoryPhotos ?? 'Фото комнат'} (URL через запятую)',
+                icon: Icons.photo_library_rounded,
+                maxLines: 2,
+              ),
             ],
             const SizedBox(height: 8),
             _buildSwitchTile(
@@ -365,6 +451,22 @@ class _ModeratorEditUniversityScreenState
               (v) => setState(() => _hasMilitaryDepartment = v),
               isDark,
             ),
+            if (_hasMilitaryDepartment) ...[
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _militaryStartCourseCtl,
+                label: 'С какого курса (1-4)',
+                icon: Icons.school_rounded,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(
+                controller: _militaryCompetitionCtl,
+                label: 'Конкурс (напр. 3 чел/место)',
+                icon: Icons.people_rounded,
+              ),
+            ],
 
             const SizedBox(height: 24),
 

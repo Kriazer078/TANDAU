@@ -20,6 +20,7 @@ class UniversityListScreen extends StatefulWidget {
   final bool? onlyGrants;
   final double? maxPrice;
   final String? searchQuery;
+  final bool? onlyMilitary;
 
   const UniversityListScreen({
     super.key,
@@ -28,6 +29,7 @@ class UniversityListScreen extends StatefulWidget {
     this.onlyGrants,
     this.maxPrice,
     this.searchQuery,
+    this.onlyMilitary,
   });
 
   @override
@@ -51,6 +53,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
   List<String> _selectedMajors = [];
   bool _onlyGrants = false;
   double? _maxPrice;
+  bool _onlyMilitary = false;
 
   bool _isLoading = true;
 
@@ -68,6 +71,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
     _selectedMajors = List.from(widget.majorFilter ?? []);
     _onlyGrants = widget.onlyGrants ?? false;
     _maxPrice = widget.maxPrice;
+    _onlyMilitary = widget.onlyMilitary ?? false;
     _loadInitialData();
 
     // ⚡ Listen to comparison stream at state level, not inside build
@@ -143,6 +147,7 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
         onlyGrants: _onlyGrants,
         maxPrice: _maxPrice,
         searchQuery: _searchQuery,
+        onlyMilitary: _onlyMilitary,
       );
       if (mounted) {
         setState(() {
@@ -177,12 +182,14 @@ class _UniversityListScreenState extends State<UniversityListScreen> {
         selectedMajor: _selectedMajors,
         initialOnlyGrants: _onlyGrants,
         initialMaxPrice: _maxPrice,
-        onApply: (cities, majors, onlyGrants, maxPrice) {
+        initialOnlyMilitary: _onlyMilitary,
+        onApply: (cities, majors, onlyGrants, maxPrice, onlyMilitary) {
           setState(() {
             _selectedCities = cities;
             _selectedMajors = majors;
             _onlyGrants = onlyGrants;
             _maxPrice = maxPrice;
+            _onlyMilitary = onlyMilitary;
           });
           _updateUniversityList();
         },

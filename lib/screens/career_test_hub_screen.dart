@@ -6,6 +6,7 @@ import '../theme/app_colors.dart';
 import 'holland_test_screen.dart';
 import 'klimov_test_screen.dart';
 import 'career_test_result_screen.dart';
+import '../widgets/icon_3d.dart';
 
 /// 📋 Хаб профориентации — выбор теста
 ///
@@ -310,7 +311,7 @@ class _CareerTestHubScreenState extends State<CareerTestHubScreen>
                 color: color.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
-              child: Text(emoji, style: const TextStyle(fontSize: 28)),
+              child: Icon3D(emoji: emoji, size: 36),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -599,7 +600,7 @@ class _CareerTestHubScreenState extends State<CareerTestHubScreen>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(emoji, style: const TextStyle(fontSize: 16)),
+        Icon3D(emoji: emoji, size: 24),
         const SizedBox(width: 10),
         Expanded(
           child: Text(

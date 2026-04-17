@@ -23,6 +23,7 @@ class _FilterScreenState extends State<FilterScreen> {
   bool _onlyGrants = false;
   double _maxPrice = 1500000;
   bool _showPaid = false;
+  bool _onlyMilitary = false;
 
   List<String> _cities = [];
   List<String> _majors = [];
@@ -73,6 +74,7 @@ class _FilterScreenState extends State<FilterScreen> {
           majorFilter: _selectedMajors,
           onlyGrants: _onlyGrants,
           maxPrice: _showPaid ? _maxPrice : null,
+          onlyMilitary: _onlyMilitary,
         ),
       ),
     );
@@ -312,6 +314,13 @@ class _FilterScreenState extends State<FilterScreen> {
             onChanged: (val) => setState(() => _maxPrice = val),
           ),
         ],
+        const SizedBox(height: 24),
+        FilterChipWidget(
+          label: l10n?.filterMilitary ?? 'Военная кафедра',
+          isSelected: _onlyMilitary,
+          onTap: () => setState(() => _onlyMilitary = !_onlyMilitary),
+          icon: Icons.shield_rounded,
+        ),
       ],
     );
   }

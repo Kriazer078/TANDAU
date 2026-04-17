@@ -1,18 +1,5 @@
 {
   "projects": {
     "default": "tandau-app"
-  },
-  "targets": {
-    "tandau-app": {
-      "hosting": {
-        "app": [
-          "tandau-app"
-        ],
-        "admin": [
-          "tandau-app-admin"
-        ]
-      }
-    }
-  },
-  "etags": {}
+  }
 }

@@ -32,9 +32,15 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
   late TextEditingController _emailCtrl;
   late TextEditingController _deadlineCtrl;
   late TextEditingController _studentCountCtrl;
-  late TextEditingController _dormitoryPriceCtrl; // New
-  late TextEditingController _latCtrl; // New
-  late TextEditingController _lngCtrl; // New
+  late TextEditingController _dormitoryPriceCtrl;
+  late TextEditingController _dormitoryPriceYearCtrl;
+  late TextEditingController _dormitoryDistanceCtrl;
+  late TextEditingController _dormitoryDescriptionCtrl;
+  late TextEditingController _dormitoryPhotosCtrl;
+  late TextEditingController _militaryStartCourseCtrl;
+  late TextEditingController _militaryCompetitionCtrl;
+  late TextEditingController _latCtrl;
+  late TextEditingController _lngCtrl;
   
   late TextEditingController _imageUrlsCtrl;
   late TextEditingController _majorsCtrl;
@@ -44,6 +50,7 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
   bool _hasDorm = false;
   bool _hasGrants = true;
   bool _hasMilitary = false;
+  bool _dormitoryForFreshmen = false;
   bool _isLoading = false;
   late bool _isAdmin;
 
@@ -65,6 +72,12 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
     _deadlineCtrl = TextEditingController(text: uni?.applicationDeadline ?? '');
     _studentCountCtrl = TextEditingController(text: uni != null ? uni.studentCount.toString() : '');
     _dormitoryPriceCtrl = TextEditingController(text: uni?.dormitoryPrice?.toString() ?? '');
+    _dormitoryPriceYearCtrl = TextEditingController(text: uni?.dormitoryPriceYear?.toString() ?? '');
+    _dormitoryDistanceCtrl = TextEditingController(text: uni?.dormitoryDistanceInfo ?? '');
+    _dormitoryDescriptionCtrl = TextEditingController(text: uni?.dormitoryDescription ?? '');
+    _dormitoryPhotosCtrl = TextEditingController(text: uni?.dormitoryPhotoUrls.join('\n') ?? '');
+    _militaryStartCourseCtrl = TextEditingController(text: uni?.militaryStartCourse?.toString() ?? '');
+    _militaryCompetitionCtrl = TextEditingController(text: uni?.militaryCompetition ?? '');
     _latCtrl = TextEditingController(text: uni?.latitude?.toString() ?? '');
     _lngCtrl = TextEditingController(text: uni?.longitude?.toString() ?? '');
     
@@ -77,6 +90,7 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
       _hasDorm = uni.hasDormitory;
       _hasGrants = uni.hasGrants;
       _hasMilitary = uni.hasMilitaryDepartment;
+      _dormitoryForFreshmen = uni.dormitoryForFreshmen;
     }
     _isAdmin = AuthService().isAdmin;
   }
@@ -97,6 +111,12 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
     _deadlineCtrl.dispose();
     _studentCountCtrl.dispose();
     _dormitoryPriceCtrl.dispose();
+    _dormitoryPriceYearCtrl.dispose();
+    _dormitoryDistanceCtrl.dispose();
+    _dormitoryDescriptionCtrl.dispose();
+    _dormitoryPhotosCtrl.dispose();
+    _militaryStartCourseCtrl.dispose();
+    _militaryCompetitionCtrl.dispose();
     _latCtrl.dispose();
     _lngCtrl.dispose();
     
@@ -135,9 +155,18 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
         specialtyCodes: _specialtyCodesCtrl.text.split('\n').map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
 
         hasDormitory: _hasDorm,
-        dormitoryPrice: int.tryParse(_dormitoryPriceCtrl.text),
+        dormitoryPrice: _hasDorm ? int.tryParse(_dormitoryPriceCtrl.text) : null,
+        dormitoryForFreshmen: _hasDorm && _dormitoryForFreshmen,
+        dormitoryPriceYear: _hasDorm ? int.tryParse(_dormitoryPriceYearCtrl.text) : null,
+        dormitoryPhotoUrls: _hasDorm
+            ? _dormitoryPhotosCtrl.text.split('\n').map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+            : [],
+        dormitoryDistanceInfo: _hasDorm ? _dormitoryDistanceCtrl.text.trim() : null,
+        dormitoryDescription: _hasDorm ? _dormitoryDescriptionCtrl.text.trim() : null,
         hasGrants: _hasGrants,
         hasMilitaryDepartment: _hasMilitary,
+        militaryStartCourse: _hasMilitary ? int.tryParse(_militaryStartCourseCtrl.text) : null,
+        militaryCompetition: _hasMilitary ? _militaryCompetitionCtrl.text.trim() : null,
         latitude: double.tryParse(_latCtrl.text.replaceAll(',', '.')),
         longitude: double.tryParse(_lngCtrl.text.replaceAll(',', '.')),
         
@@ -318,12 +347,41 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
                           tileColor: Colors.transparent,
                         ),
                         if (_hasDorm) ...[
+                          Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             child: _buildField('Стоимость общежития (в месяц)', _dormitoryPriceCtrl, isNumber: true),
                           ),
-                          Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: SwitchListTile(
+                              title: const Text('100% первокурсникам', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14)),
+                              value: _dormitoryForFreshmen,
+                              onChanged: _isAdmin ? (val) => setState(() => _dormitoryForFreshmen = val) : null,
+                              activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
+                              activeThumbColor: AppColors.primary,
+                              tileColor: Colors.transparent,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('Стоимость за год (₸)', _dormitoryPriceYearCtrl, isNumber: true),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('Расстояние до корпусов', _dormitoryDistanceCtrl),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('Условия проживания', _dormitoryDescriptionCtrl, maxLines: 3),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('Фото комнат (URL, каждый с новой строки)', _dormitoryPhotosCtrl, maxLines: 3),
+                          ),
                         ],
+                        Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
                         SwitchListTile(
                           title: const Text('Есть военная кафедра', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
                           value: _hasMilitary,
@@ -332,6 +390,17 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
                           activeThumbColor: AppColors.primary,
                           tileColor: Colors.transparent,
                         ),
+                        if (_hasMilitary) ...[
+                          Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('С какого курса (1-4)', _militaryStartCourseCtrl, isNumber: true),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: _buildField('Конкурс (напр. 3 чел/место)', _militaryCompetitionCtrl),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -444,8 +513,14 @@ class _UniversityEditorScreenState extends State<UniversityEditorScreen> {
     compare('studentCount', old.studentCount, newUni.studentCount);
     compare('hasDormitory', old.hasDormitory, newUni.hasDormitory);
     compare('dormitoryPrice', old.dormitoryPrice, newUni.dormitoryPrice);
+    compare('dormitoryForFreshmen', old.dormitoryForFreshmen, newUni.dormitoryForFreshmen);
+    compare('dormitoryPriceYear', old.dormitoryPriceYear, newUni.dormitoryPriceYear);
+    compare('dormitoryDistanceInfo', old.dormitoryDistanceInfo, newUni.dormitoryDistanceInfo);
+    compare('dormitoryDescription', old.dormitoryDescription, newUni.dormitoryDescription);
     compare('hasGrants', old.hasGrants, newUni.hasGrants);
     compare('hasMilitaryDepartment', old.hasMilitaryDepartment, newUni.hasMilitaryDepartment);
+    compare('militaryStartCourse', old.militaryStartCourse, newUni.militaryStartCourse);
+    compare('militaryCompetition', old.militaryCompetition, newUni.militaryCompetition);
     compare('latitude', old.latitude, newUni.latitude);
     compare('longitude', old.longitude, newUni.longitude);
     return diff;

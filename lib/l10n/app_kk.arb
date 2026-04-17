@@ -853,6 +853,23 @@
     "dormitory": "Жатақхана",
     "dormitoryPrice": "Жатақхана бағасы",
     "militaryDepartment": "Әскери кафедра",
+    "militaryStartCourse": "{course}-курстан бастап оқу",
+    "@militaryStartCourse": {
+        "placeholders": {
+            "course": {
+                "type": "int"
+            }
+        }
+    },
+    "militaryCompetition": "Конкурс: {info}",
+    "@militaryCompetition": {
+        "placeholders": {
+            "info": {
+                "type": "String"
+            }
+        }
+    },
+    "filterMilitary": "Әскери кафедра",
     "location": "Орналасқан жері",
     "detailAvailable": "Бар",
     "deadlineEntStartTitle": "ҰБТ басталуы",
@@ -906,5 +923,13 @@
     "profileCareerTitle": "Кәсіби бағдар",
     "profileCareerSubtitle": "Өз бейімділіктеріңді және сәйкес МАБ-ты біл",
     "homeChancesDescription": "Мүмкіндіктерді дәл есептеу",
-    "homeStartCalculation": "Есептеуді бастау"
+    "homeStartCalculation": "Есептеуді бастау",
+    "tabDormitory": "Инфрақұрылым",
+    "dormitoryForFreshmen": "1-курс студенттерге 100%",
+    "dormitoryPriceYear": "Жылдық құны",
+    "dormitoryDistance": "Корпустарға дейінгі қашықтық",
+    "dormitoryPhotos": "Бөлме фотолары",
+    "dormitoryConditions": "Тұру жағдайлары",
+    "dormitoryAvailable": "Жатақхана бар",
+    "dormitoryNotAvailable": "Жатақхана жоқ"
 }

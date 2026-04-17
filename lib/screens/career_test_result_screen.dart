@@ -5,7 +5,11 @@ import '../data/klimov_test_data.dart';
 import '../models/career_test_result.dart';
 import '../services/career_test_service.dart';
 import '../theme/app_colors.dart';
+import '../data/ent_specialties_2026.dart';
+import '../widgets/specialty_info_card.dart';
+import '../widgets/icon_3d.dart';
 import 'grant_wizard_screen.dart';
+import 'specialty_detail_screen.dart';
 
 /// 📊 Экран результатов карьерного теста
 ///
@@ -78,10 +82,7 @@ class CareerTestResultScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Emoji + код
-                        Text(
-                          emoji,
-                          style: const TextStyle(fontSize: 48),
-                        ),
+                        Icon3D(emoji: emoji, size: 60),
                         const SizedBox(height: 12),
                         Text(
                           'Твой тип: ${isHolland ? result.topCode : typeName}',
@@ -129,7 +130,7 @@ class CareerTestResultScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // 🎓 Рекомендуемые специальности ЕНТ
-                  _buildRecommendedSpecialties(isDark, topColor),
+                  _buildRecommendedSpecialties(context, isDark, topColor),
                   const SizedBox(height: 24),
 
                   // 🚀 CTA кнопки
@@ -208,10 +209,10 @@ class CareerTestResultScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 14),
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 28,
-                    child: Text(emoji, style: const TextStyle(fontSize: 18)),
-                  ),
+                    SizedBox(
+                      width: 32,
+                      child: Icon3D(emoji: emoji, size: 24),
+                    ),
                   const SizedBox(width: 8),
                   if (prefixStr.isNotEmpty) ...[
                     SizedBox(
@@ -406,7 +407,7 @@ class CareerTestResultScreen extends StatelessWidget {
   }
 
   /// 🎓 Рекомендуемые специальности ЕНТ
-  Widget _buildRecommendedSpecialties(bool isDark, Color topColor) {
+  Widget _buildRecommendedSpecialties(BuildContext context, bool isDark, Color topColor) {
     final service = CareerTestService();
     final specialties =
         service.getSpecialtiesByGopCodes(result.recommendedGops);
@@ -467,7 +468,11 @@ class CareerTestResultScreen extends StatelessWidget {
           ...displayList.map((s) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Container(
+              child: GestureDetector(
+                onTap: () {
+                  _showSpecialtyModal(context, s, isDark);
+                },
+                child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: isDark
@@ -552,6 +557,7 @@ class CareerTestResultScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
               ),
             );
           }),
@@ -678,6 +684,102 @@ class CareerTestResultScreen extends StatelessWidget {
                 Icons.arrow_forward_rounded,
                 color: Colors.white70,
                 size: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSpecialtyModal(
+    BuildContext context,
+    EntSpecialty specialty,
+    bool isDarkMode,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: isDarkMode
+                ? AppColors.backgroundDark
+                : AppColors.background,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDarkMode ? Colors.white24 : Colors.black12,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: controller,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      SpecialtyInfoCard(
+                        specialty: specialty,
+                        compact: false,
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SpecialtyDetailScreen(
+                                specialty: specialty,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      // CTA: подробнее
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(ctx);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => SpecialtyDetailScreen(
+                                  specialty: specialty,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                          label: const Text('Подробнее о специальности'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: isDarkMode
+                                ? const Color(0xFFA78BFA)
+                                : const Color(0xFF6366F1),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

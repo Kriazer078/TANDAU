@@ -136,6 +136,7 @@ class UniversityService {
     bool? onlyGrants,
     double? maxPrice,
     String? searchQuery,
+    bool? onlyMilitary,
   }) async {
     final allUniversities = await getAllUniversities();
 
@@ -145,6 +146,7 @@ class UniversityService {
         majorFilter: major,
         onlyGrants: onlyGrants,
         maxPrice: maxPrice,
+        onlyMilitary: onlyMilitary,
       );
     }).toList();
 

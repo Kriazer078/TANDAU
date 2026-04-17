@@ -2073,6 +2073,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get militaryDepartment => 'Military Department';
 
   @override
+  String militaryStartCourse(int course) {
+    return 'Starts from year $course';
+  }
+
+  @override
+  String militaryCompetition(String info) {
+    return 'Competition: $info';
+  }
+
+  @override
+  String get filterMilitary => 'Military Department';
+
+  @override
   String get location => 'Location';
 
   @override
@@ -2183,4 +2196,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeStartCalculation => 'Start Calculation';
+
+  @override
+  String get tabDormitory => 'Infrastructure';
+
+  @override
+  String get dormitoryForFreshmen => '100% for freshmen';
+
+  @override
+  String get dormitoryPriceYear => 'Annual cost';
+
+  @override
+  String get dormitoryDistance => 'Distance to campus';
+
+  @override
+  String get dormitoryPhotos => 'Room photos';
+
+  @override
+  String get dormitoryConditions => 'Living conditions';
+
+  @override
+  String get dormitoryAvailable => 'Dormitory available';
+
+  @override
+  String get dormitoryNotAvailable => 'No dormitory';
 }

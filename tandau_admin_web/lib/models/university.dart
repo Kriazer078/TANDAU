@@ -11,6 +11,13 @@ class University {
   final bool hasGrants;
   final bool hasMilitaryDepartment;
   final int? dormitoryPrice; // Price for dormitory per month
+  final bool dormitoryForFreshmen;
+  final int? dormitoryPriceYear;
+  final List<String> dormitoryPhotoUrls;
+  final String? dormitoryDistanceInfo;
+  final String? dormitoryDescription;
+  final int? militaryStartCourse;
+  final String? militaryCompetition;
   final double? latitude;
   final double? longitude;
   final String description;
@@ -46,8 +53,15 @@ class University {
     required this.tuitionRange,
     required this.hasDormitory,
     this.dormitoryPrice,
+    this.dormitoryForFreshmen = false,
+    this.dormitoryPriceYear,
+    this.dormitoryPhotoUrls = const [],
+    this.dormitoryDistanceInfo,
+    this.dormitoryDescription,
     required this.hasGrants,
     this.hasMilitaryDepartment = false,
+    this.militaryStartCourse,
+    this.militaryCompetition,
     this.latitude,
     this.longitude,
     required this.description,
@@ -78,8 +92,15 @@ class University {
       'tuitionRange': tuitionRange,
       'hasDormitory': hasDormitory,
       'dormitoryPrice': dormitoryPrice,
+      'dormitoryForFreshmen': dormitoryForFreshmen,
+      'dormitoryPriceYear': dormitoryPriceYear,
+      'dormitoryPhotoUrls': dormitoryPhotoUrls,
+      'dormitoryDistanceInfo': dormitoryDistanceInfo,
+      'dormitoryDescription': dormitoryDescription,
       'hasGrants': hasGrants,
       'hasMilitaryDepartment': hasMilitaryDepartment,
+      'militaryStartCourse': militaryStartCourse,
+      'militaryCompetition': militaryCompetition,
       'latitude': latitude,
       'longitude': longitude,
       'description': description,
@@ -111,8 +132,15 @@ class University {
       tuitionRange: map['tuitionRange'] ?? '',
       hasDormitory: map['hasDormitory'] ?? false,
       dormitoryPrice: map['dormitoryPrice'],
+      dormitoryForFreshmen: map['dormitoryForFreshmen'] ?? false,
+      dormitoryPriceYear: map['dormitoryPriceYear'],
+      dormitoryPhotoUrls: List<String>.from(map['dormitoryPhotoUrls'] ?? []),
+      dormitoryDistanceInfo: map['dormitoryDistanceInfo'],
+      dormitoryDescription: map['dormitoryDescription'],
       hasGrants: map['hasGrants'] ?? false,
       hasMilitaryDepartment: map['hasMilitaryDepartment'] ?? false,
+      militaryStartCourse: map['militaryStartCourse'],
+      militaryCompetition: map['militaryCompetition'],
       latitude: (map['latitude'] as num?)?.toDouble(),
       longitude: (map['longitude'] as num?)?.toDouble(),
       description: map['description'] ?? '',

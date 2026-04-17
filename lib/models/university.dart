@@ -9,8 +9,15 @@ class University {
   final String tuitionRange; // e.g., "500,000 - 1,200,000 ₸"
   final bool hasDormitory;
   final int? dormitoryPrice; // Цена общежития (тенге/месяц)
+  final bool dormitoryForFreshmen; // 100% общежитие первокурсникам?
+  final int? dormitoryPriceYear; // Стоимость за ГОД (₸)
+  final List<String> dormitoryPhotoUrls; // Фото комнат
+  final String? dormitoryDistanceInfo; // "500м от главного корпуса"
+  final String? dormitoryDescription; // Описание условий
   final bool hasGrants;
   final bool hasMilitaryDepartment;
+  final int? militaryStartCourse; // С какого курса военная кафедра
+  final String? militaryCompetition; // Конкурс на военную кафедру
   final double? latitude; // GPS-координаты
   final double? longitude;
   final String description;
@@ -46,8 +53,15 @@ class University {
     required this.tuitionRange,
     required this.hasDormitory,
     this.dormitoryPrice,
+    this.dormitoryForFreshmen = false,
+    this.dormitoryPriceYear,
+    this.dormitoryPhotoUrls = const [],
+    this.dormitoryDistanceInfo,
+    this.dormitoryDescription,
     required this.hasGrants,
     this.hasMilitaryDepartment = false,
+    this.militaryStartCourse,
+    this.militaryCompetition,
     this.latitude,
     this.longitude,
     required this.description,
@@ -78,8 +92,15 @@ class University {
       'tuitionRange': tuitionRange,
       'hasDormitory': hasDormitory,
       'dormitoryPrice': dormitoryPrice,
+      'dormitoryForFreshmen': dormitoryForFreshmen,
+      'dormitoryPriceYear': dormitoryPriceYear,
+      'dormitoryPhotoUrls': dormitoryPhotoUrls,
+      'dormitoryDistanceInfo': dormitoryDistanceInfo,
+      'dormitoryDescription': dormitoryDescription,
       'hasGrants': hasGrants,
       'hasMilitaryDepartment': hasMilitaryDepartment,
+      'militaryStartCourse': militaryStartCourse,
+      'militaryCompetition': militaryCompetition,
       'latitude': latitude,
       'longitude': longitude,
       'description': description,
@@ -124,8 +145,17 @@ class University {
       tuitionRange: map['tuitionRange']?.toString() ?? '',
       hasDormitory: map['hasDormitory'] == true,
       dormitoryPrice: (map['dormitoryPrice'] is int) ? map['dormitoryPrice'] : (int.tryParse(map['dormitoryPrice']?.toString() ?? '')),
+      dormitoryForFreshmen: map['dormitoryForFreshmen'] == true,
+      dormitoryPriceYear: (map['dormitoryPriceYear'] is int) ? map['dormitoryPriceYear'] : (int.tryParse(map['dormitoryPriceYear']?.toString() ?? '')),
+      dormitoryPhotoUrls: _parseStringList(map['dormitoryPhotoUrls']),
+      dormitoryDistanceInfo: map['dormitoryDistanceInfo']?.toString(),
+      dormitoryDescription: map['dormitoryDescription']?.toString(),
       hasGrants: map['hasGrants'] == true,
       hasMilitaryDepartment: map['hasMilitaryDepartment'] == true,
+      militaryStartCourse: (map['militaryStartCourse'] is int)
+          ? map['militaryStartCourse']
+          : int.tryParse(map['militaryStartCourse']?.toString() ?? ''),
+      militaryCompetition: map['militaryCompetition']?.toString(),
       latitude: (map['latitude'] as num?)?.toDouble(),
       longitude: (map['longitude'] as num?)?.toDouble(),
       description: map['description']?.toString() ?? '',
@@ -159,6 +189,7 @@ class University {
     List<String>? majorFilter,
     bool? onlyGrants,
     double? maxPrice,
+    bool? onlyMilitary,
   }) {
     if (cityFilter != null &&
         cityFilter.isNotEmpty &&
@@ -191,6 +222,11 @@ class University {
       final bool matchesPrice =
           maxTuitionValue > 0 && maxTuitionValue <= maxPrice;
       if (!matchesPrice) return false;
+    }
+
+    // 🎖️ Military department filter
+    if (onlyMilitary == true && !hasMilitaryDepartment) {
+      return false;
     }
 
     return true;
