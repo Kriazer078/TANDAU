@@ -39,7 +39,7 @@ class ComparisonService {
 
   static const String _storageKey = 'comparison_universities';
   static const int maxComparisonItems =
-      2; // Максимум 2 университета для сравнения
+      3; // Максимум 3 университета для сравнения
 
   /// Get current comparison list from local storage
   Future<ComparisonItem?> getUserComparison() async {

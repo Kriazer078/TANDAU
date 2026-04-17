@@ -153,11 +153,21 @@
     "comparisonParamDormitory": "Общежитие",
     "comparisonParamStudents": "Студенты",
     "comparisonParamPassingScore": "Проходной балл",
+    "comparisonParamMilitary": "Военная кафедра",
+    "comparisonParamDeadline": "Срок подачи",
+    "comparisonParamDormPrice": "Цена общежития",
     "commonYes": "Да",
     "commonNo": "Нет",
     "commonCancel": "Отмена",
     "comparisonAddToCompare": "Добавить к сравнению",
-    "comparisonComparing": "Сравнение 2 университетов",
+    "comparisonComparing": "Сравнение {count} университетов",
+    "@comparisonComparing": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "comparisonAddMore": "Добавить еще университет",
     "comparisonAddUniversity": "Добавить университет",
     "backToList": "Назад к списку",

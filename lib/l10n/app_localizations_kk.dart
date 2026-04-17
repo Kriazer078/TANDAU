@@ -433,6 +433,15 @@ class AppLocalizationsKk extends AppLocalizations {
   String get comparisonParamPassingScore => 'Өту балы';
 
   @override
+  String get comparisonParamMilitary => 'Әскери кафедра';
+
+  @override
+  String get comparisonParamDeadline => 'Құжат тапсыру мерзімі';
+
+  @override
+  String get comparisonParamDormPrice => 'Жатақхана бағасы';
+
+  @override
   String get commonYes => 'Иә';
 
   @override
@@ -445,7 +454,9 @@ class AppLocalizationsKk extends AppLocalizations {
   String get comparisonAddToCompare => 'Салыстыруға қосу';
 
   @override
-  String get comparisonComparing => '2 университетті салыстыру';
+  String comparisonComparing(int count) {
+    return '$count университетті салыстыру';
+  }
 
   @override
   String get comparisonAddMore => 'Тағы бір университет қосу';

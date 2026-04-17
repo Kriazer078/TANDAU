@@ -894,6 +894,74 @@ class AuthService {
     }
   }
 
+  /// 🔍 Узнать текущего провайдера авторизации
+  String? get currentAuthProviderId {
+    final user = _auth.currentUser;
+    if (user == null || user.providerData.isEmpty) return null;
+    // user.providerData stores linked providers (e.g. google.com, apple.com, password)
+    return user.providerData.first.providerId;
+  }
+
+  /// 🔄 Повторная авторизация (Google) для удаления аккаунта
+  Future<String?> reauthenticateWithGoogle() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return 'Пользователь не авторизован';
+
+      await _googleSignIn.signOut();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return 'Вход отменен';
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'web-context-canceled') return 'Вход отменен';
+      return _getErrorMessage(e.code);
+    } catch (e) {
+      debugPrint('Reauth with Google error: $e');
+      return 'Ошибка проверки аккаунта. Попробуйте позже.';
+    }
+  }
+
+  /// 🔄 Повторная авторизация (Apple) для удаления аккаунта
+  Future<String?> reauthenticateWithApple() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return 'Пользователь не авторизован';
+
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+        nonce: nonce,
+      );
+
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+
+      await user.reauthenticateWithCredential(oauthCredential);
+      return null;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) return 'Вход отменен';
+      return 'Ошибка проверки Apple: ${e.message}';
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'web-context-canceled') return 'Вход отменен';
+      return _getErrorMessage(e.code);
+    } catch (e) {
+      debugPrint('Reauth with Apple error: $e');
+      return 'Ошибка проверки аккаунта. Попробуйте позже.';
+    }
+  }
+
   /// Get error message from FirebaseAuthException
   String getErrorMessage(FirebaseAuthException e) {
     return _getErrorMessage(e.code);

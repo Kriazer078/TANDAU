@@ -434,6 +434,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comparisonParamPassingScore => 'Passing Score';
 
   @override
+  String get comparisonParamMilitary => 'Military Department';
+
+  @override
+  String get comparisonParamDeadline => 'Application Deadline';
+
+  @override
+  String get comparisonParamDormPrice => 'Dormitory Price';
+
+  @override
   String get commonYes => 'Yes';
 
   @override
@@ -446,7 +455,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comparisonAddToCompare => 'Add to Compare';
 
   @override
-  String get comparisonComparing => 'Comparing 2 Universities';
+  String comparisonComparing(int count) {
+    return 'Comparing $count Universities';
+  }
 
   @override
   String get comparisonAddMore => 'Add one more university to compare';

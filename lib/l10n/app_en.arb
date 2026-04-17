@@ -153,11 +153,21 @@
     "comparisonParamDormitory": "Dormitory",
     "comparisonParamStudents": "Students",
     "comparisonParamPassingScore": "Passing Score",
+    "comparisonParamMilitary": "Military Department",
+    "comparisonParamDeadline": "Application Deadline",
+    "comparisonParamDormPrice": "Dormitory Price",
     "commonYes": "Yes",
     "commonNo": "No",
     "commonCancel": "Cancel",
     "comparisonAddToCompare": "Add to Compare",
-    "comparisonComparing": "Comparing 2 Universities",
+    "comparisonComparing": "Comparing {count} Universities",
+    "@comparisonComparing": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "comparisonAddMore": "Add one more university to compare",
     "comparisonAddUniversity": "Add University",
     "backToList": "Back to List",

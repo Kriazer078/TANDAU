@@ -655,8 +655,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   (route) => false,
                 );
               } else if (result == 'requires-recent-login') {
-                // Need re-auth
-                _showReauthDialog(ctx);
+                // Need re-auth based on provider
+                final providerId = AuthService().currentAuthProviderId;
+                
+                if (providerId == 'google.com' || providerId == 'apple.com') {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(
+                      content: Text('Пожалуйста, подтвердите вход для удаления'),
+                    ),
+                  );
+                  
+                  final String? reauthResult;
+                  if (providerId == 'google.com') {
+                    reauthResult = await AuthService().reauthenticateWithGoogle();
+                  } else {
+                    reauthResult = await AuthService().reauthenticateWithApple();
+                  }
+                  
+                  if (!ctx.mounted) return;
+                  
+                  if (reauthResult == null) {
+                    // Re-auth success, try deleting again
+                    final deleteResult = await AuthService().deleteAccount();
+                    if (!ctx.mounted) return;
+                    
+                    if (deleteResult == null) {
+                      LikeButton.clearCache();
+                      Navigator.of(ctx).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(content: Text(deleteResult), backgroundColor: Colors.red),
+                      );
+                    }
+                  } else {
+                     ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(content: Text(reauthResult), backgroundColor: Colors.red),
+                     );
+                  }
+                } else {
+                  // Standard email/password flow
+                  _showReauthDialog(ctx);
+                }
               } else {
                 ScaffoldMessenger.of(ctx).showSnackBar(
                   SnackBar(

@@ -436,6 +436,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get comparisonParamPassingScore => 'Проходной балл';
 
   @override
+  String get comparisonParamMilitary => 'Военная кафедра';
+
+  @override
+  String get comparisonParamDeadline => 'Срок подачи';
+
+  @override
+  String get comparisonParamDormPrice => 'Цена общежития';
+
+  @override
   String get commonYes => 'Да';
 
   @override
@@ -448,7 +457,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get comparisonAddToCompare => 'Добавить к сравнению';
 
   @override
-  String get comparisonComparing => 'Сравнение 2 университетов';
+  String comparisonComparing(int count) {
+    return 'Сравнение $count университетов';
+  }
 
   @override
   String get comparisonAddMore => 'Добавить еще университет';

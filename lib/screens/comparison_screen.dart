@@ -117,15 +117,15 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Two university header card placeholders
+            // Three university header card placeholders
             Row(
               children: List.generate(
-                2,
+                3,
                 (_) => Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Container(
-                      height: 200,
+                      height: 180,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
@@ -138,11 +138,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             const SizedBox(height: 20),
             // Table row skeletons
             ...List.generate(
-              6,
+              10,
               (_) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Container(
-                  height: 52,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -207,39 +207,46 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   // COMPARISON CONTENT
   // ═══════════════════════════════════════════
   Widget _buildComparisonContent(AppLocalizations? l10n, bool isDark) {
+    // 💡 If we have more than 2 universities, we use horizontal scrolling for the data columns
+    final bool useScroll = _universities.length > 2;
+    final double columnWidth = useScroll ? 140 : MediaQuery.of(context).size.width * 0.4;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // University header cards
-          _buildUniversityHeaders(isDark),
-          const SizedBox(height: 20),
-          // Comparison table
-          _buildComparisonTable(l10n, isDark),
+          // Header section with scrolling capability for university cards
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _universities.map((uni) {
+                return Container(
+                  width: columnWidth,
+                  margin: const EdgeInsets.only(right: 12),
+                  child: _buildUniversityCard(uni, isDark),
+                );
+              }).toList(),
+            ),
+          ),
+          
+          const SizedBox(height: 8),
+
+          // Main Comparison Table
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _buildComparisonTable(l10n, isDark, columnWidth),
+          ),
+          
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  // ═══════════════════════════════════════════
-  // UNIVERSITY HEADER CARDS
-  // ═══════════════════════════════════════════
-  Widget _buildUniversityHeaders(bool isDark) {
-    final List<Widget> children = [];
-    for (int i = 0; i < _universities.length; i++) {
-      if (i > 0) {
-        children.add(const SizedBox(width: 12));
-      }
-      children.add(
-        Expanded(child: _buildUniversityCard(_universities[i], isDark)),
-      );
-    }
-    return Row(children: children);
-  }
-
   Widget _buildUniversityCard(University uni, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -248,20 +255,24 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             : [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 12,
+                  blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
-        border: Border.all(color: isDark ? Colors.white10 : AppColors.border),
+        border: Border.all(
+          color: isDark ? Colors.white10 : AppColors.border,
+          width: 1,
+        ),
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Column(
             children: [
               // Logo
               Container(
-                width: 56,
-                height: 56,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
@@ -271,24 +282,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                     ? CachedNetworkImage(
                         imageUrl: uni.logoUrl,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => const Icon(
-                          Icons.school_rounded,
-                          color: AppColors.primary,
-                          size: 28,
-                        ),
-                        errorWidget: (context, url, error) => const Icon(
-                          Icons.school_rounded,
-                          color: AppColors.primary,
-                          size: 28,
-                        ),
+                        errorWidget: (_, __, ___) => const Icon(Icons.school, size: 24, color: AppColors.primary),
                       )
-                    : const Icon(
-                        Icons.school_rounded,
-                        color: AppColors.primary,
-                        size: 28,
-                      ),
+                    : const Icon(Icons.school, size: 24, color: AppColors.primary),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               // Name
               Text(
                 uni.name,
@@ -296,10 +294,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : AppColors.textPrimary,
-                  height: 1.2,
+                  height: 1.1,
                 ),
               ),
               const SizedBox(height: 4),
@@ -307,27 +305,32 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               Text(
                 uni.city,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: isDark ? Colors.white54 : AppColors.textSecondary,
                 ),
               ),
             ],
           ),
           Positioned(
-            top: -12,
-            right: -12,
-            child: IconButton(
-              onPressed: () async {
+            top: -8,
+            right: -8,
+            child: GestureDetector(
+              onTap: () async {
                 await _comparisonService.removeFromComparison(uni.id);
-                // Reload or navigate back if less than 2
                 _loadUniversities();
                 final count = await _comparisonService.getComparisonCount();
                 if (count < 2 && mounted) {
                   Navigator.pop(context);
                 }
               },
-              icon: const Icon(Icons.cancel, color: Colors.grey),
-              tooltip: 'Удалить из сравнения',
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, size: 14, color: Colors.white),
+              ),
             ),
           ),
         ],
@@ -335,10 +338,42 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     );
   }
 
-  // ═══════════════════════════════════════════
-  // COMPARISON TABLE
-  // ═══════════════════════════════════════════
-  Widget _buildComparisonTable(AppLocalizations? l10n, bool isDark) {
+  Widget _buildComparisonTable(AppLocalizations? l10n, bool isDark, double columnWidth) {
+    // Determine winners for highlighting
+    int? tuitionWinner;
+    int? ratingWinner;
+    int? specialtiesWinner;
+
+    if (_universities.length > 1) {
+      // 💰 Tuition winner (Lowest max)
+      double minTuition = double.infinity;
+      for (int i = 0; i < _universities.length; i++) {
+        final val = _universities[i].maxTuitionValue;
+        if (val > 0 && val < minTuition) {
+          minTuition = val;
+          tuitionWinner = i;
+        }
+      }
+
+      // ⭐ Rating winner (Highest)
+      double maxRating = -1;
+      for (int i = 0; i < _universities.length; i++) {
+        if (_universities[i].rating > maxRating) {
+          maxRating = _universities[i].rating;
+          ratingWinner = i;
+        }
+      }
+
+      // 📚 Specialties winner (Most)
+      int maxMajors = -1;
+      for (int i = 0; i < _universities.length; i++) {
+        if (_universities[i].majors.length > maxMajors) {
+          maxMajors = _universities[i].majors.length;
+          specialtiesWinner = i;
+        }
+      }
+    }
+
     final List<_ComparisonRow> rows = [
       _ComparisonRow(
         icon: Icons.location_city_rounded,
@@ -349,17 +384,18 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         icon: Icons.payments_rounded,
         label: l10n?.comparisonParamTuition ?? 'Tuition Cost',
         values: _universities.map((u) => u.tuitionRange).toList(),
-      ),
-      _ComparisonRow(
-        icon: Icons.score_rounded,
-        label: l10n?.comparisonParamPassingScore ?? 'Passing Score',
-        values: _universities.map((u) => u.passingScore.toString()).toList(),
+        winnerIndex: tuitionWinner,
       ),
       _ComparisonRow(
         icon: Icons.star_rounded,
         label: l10n?.comparisonParamRating ?? 'Rating',
         values: _universities.map((u) => u.rating.toStringAsFixed(1)).toList(),
-        highlightBetter: true,
+        winnerIndex: ratingWinner,
+      ),
+      _ComparisonRow(
+        icon: Icons.score_rounded,
+        label: l10n?.comparisonParamPassingScore ?? 'Passing Score',
+        values: _universities.map((u) => u.passingScore.toString()).toList(),
       ),
       _ComparisonRow(
         icon: Icons.school_rounded,
@@ -374,149 +410,145 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         isBool: true,
       ),
       _ComparisonRow(
+        icon: Icons.price_change_rounded,
+        label: l10n?.comparisonParamDormPrice ?? 'Dorm Price',
+        values: _universities.map((u) => u.dormitoryPrice != null ? '${u.dormitoryPrice} ₸' : '-').toList(),
+      ),
+      _ComparisonRow(
+        icon: Icons.shield_rounded,
+        label: l10n?.comparisonParamMilitary ?? 'Military Dept',
+        values: _universities.map((u) => u.hasMilitaryDepartment).toList(),
+        isBool: true,
+      ),
+      _ComparisonRow(
+        icon: Icons.event_rounded,
+        label: l10n?.comparisonParamDeadline ?? 'Deadline',
+        values: _universities.map((u) => u.applicationDeadline).toList(),
+      ),
+      _ComparisonRow(
         icon: Icons.people_rounded,
         label: l10n?.comparisonParamStudents ?? 'Students',
-        values:
-            _universities.map((u) => _formatNumber(u.studentCount)).toList(),
+        values: _universities.map((u) => _formatNumber(u.studentCount)).toList(),
       ),
       _ComparisonRow(
         icon: Icons.menu_book_rounded,
         label: l10n?.comparisonParamSpecialties ?? 'Specialties',
-        values: _universities.map((u) => u.majors.take(3).join(', ')).toList(),
-        isMultiLine: true,
+        values: _universities.map((u) => u.majors.length.toString()).toList(),
+        winnerIndex: specialtiesWinner,
       ),
     ];
 
     return Container(
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: isDark ? Colors.white10 : AppColors.border),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          // Header
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : AppColors.primary.withValues(alpha: 0.05),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.analytics_rounded,
-                  size: 18,
-                  color: isDark ? Colors.white70 : AppColors.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  l10n?.comparisonParameters ?? 'Parameters',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Table Header
+          _buildTableHeader(l10n, isDark),
+          
           // Rows
           ...rows.asMap().entries.map((entry) {
-            final int index = entry.key;
-            final _ComparisonRow row = entry.value;
-            final bool isEven = index.isEven;
-
-            return _buildTableRow(row, isDark, isEven);
+            return _buildRow(entry.value, isDark, entry.key.isEven, columnWidth);
           }),
         ],
       ),
     );
   }
 
-  Widget _buildTableRow(_ComparisonRow row, bool isDark, bool isEven) {
+  Widget _buildTableHeader(AppLocalizations? l10n, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: isEven
-            ? (isDark
-                ? Colors.white.withValues(alpha: 0.02)
-                : Colors.grey.withValues(alpha: 0.03))
-            : Colors.transparent,
-        border: Border(
-          bottom: BorderSide(
-            color: isDark ? Colors.white10 : AppColors.border,
-            width: 0.5,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.primary.withValues(alpha: 0.05),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.analytics_rounded, size: 20, color: AppColors.primary),
+          const SizedBox(width: 8),
+          Text(
+            l10n?.comparisonParameters ?? 'Parameters',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRow(_ComparisonRow row, bool isDark, bool isEven, double columnWidth) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isEven ? (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.grey.withValues(alpha: 0.02)) : Colors.transparent,
+        border: Border(bottom: BorderSide(color: isDark ? Colors.white10 : AppColors.border, width: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label row
-          Row(
-            children: [
-              Icon(
-                row.icon,
-                size: 16,
-                color: isDark ? Colors.white54 : AppColors.textSecondary,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
+          // Title of parameter
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Icon(row.icon, size: 14, color: AppColors.primary.withValues(alpha: 0.7)),
+                const SizedBox(width: 6),
+                Text(
                   row.label,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white54 : AppColors.textSecondary,
+                    color: isDark ? Colors.white60 : Colors.black54,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
-          // Values row
-          Row(
-            children: row.values.asMap().entries.map((entry) {
-              final int i = entry.key;
-              final dynamic val = entry.value;
-
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(
-                    right: i < row.values.length - 1 ? 6 : 0,
-                    left: i > 0 ? 6 : 0,
+          // Scrollable values
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Row(
+              children: row.values.asMap().entries.map((e) {
+                final bool isWinner = e.key == row.winnerIndex;
+                return Container(
+                  width: columnWidth,
+                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: isWinner 
+                      ? Colors.green.withValues(alpha: isDark ? 0.15 : 0.1) 
+                      : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.withValues(alpha: 0.05)),
+                    borderRadius: BorderRadius.circular(12),
+                    border: isWinner ? Border.all(color: Colors.green.withValues(alpha: 0.5)) : null,
                   ),
-                  child: row.isBool
-                      ? _buildBoolValue(val as bool, isDark)
-                      : Text(
-                          val.toString(),
-                          textAlign: TextAlign.center,
-                          maxLines: row.isMultiLine ? 3 : 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
-                            height: row.isMultiLine ? 1.4 : 1.2,
+                  child: row.isBool 
+                    ? _buildBoolValue(e.value as bool, isDark)
+                    : Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Text(
+                            e.value.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: isWinner ? FontWeight.w800 : FontWeight.bold,
+                              color: isWinner ? Colors.green : (isDark ? Colors.white : AppColors.textPrimary),
+                            ),
                           ),
-                        ),
-                ),
-              );
-            }).toList(),
+                          if (isWinner)
+                            const Positioned(
+                              right: -4,
+                              top: -4,
+                              child: Icon(Icons.auto_awesome, size: 10, color: Colors.green),
+                            ),
+                        ],
+                      ),
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),
@@ -576,15 +608,13 @@ class _ComparisonRow {
   final String label;
   final List<dynamic> values;
   final bool isBool;
-  final bool isMultiLine;
-  final bool highlightBetter;
+  final int? winnerIndex;
 
   const _ComparisonRow({
     required this.icon,
     required this.label,
     required this.values,
     this.isBool = false,
-    this.isMultiLine = false,
-    this.highlightBetter = false,
+    this.winnerIndex,
   });
 }

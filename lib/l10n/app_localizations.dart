@@ -922,6 +922,24 @@ abstract class AppLocalizations {
   /// **'Passing Score'**
   String get comparisonParamPassingScore;
 
+  /// No description provided for @comparisonParamMilitary.
+  ///
+  /// In en, this message translates to:
+  /// **'Military Department'**
+  String get comparisonParamMilitary;
+
+  /// No description provided for @comparisonParamDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Application Deadline'**
+  String get comparisonParamDeadline;
+
+  /// No description provided for @comparisonParamDormPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Dormitory Price'**
+  String get comparisonParamDormPrice;
+
   /// No description provided for @commonYes.
   ///
   /// In en, this message translates to:
@@ -949,8 +967,8 @@ abstract class AppLocalizations {
   /// No description provided for @comparisonComparing.
   ///
   /// In en, this message translates to:
-  /// **'Comparing 2 Universities'**
-  String get comparisonComparing;
+  /// **'Comparing {count} Universities'**
+  String comparisonComparing(int count);
 
   /// No description provided for @comparisonAddMore.
   ///

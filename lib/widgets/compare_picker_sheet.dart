@@ -10,7 +10,7 @@ import '../screens/comparison_screen.dart';
 
 /// Reusable Compare Picker Bottom Sheet.
 ///
-/// Opens a modal where the user selects up to 2 universities,
+/// Opens a modal where the user selects up to 3 universities,
 /// then navigates to [ComparisonScreen].
 ///
 /// Usage:
@@ -108,14 +108,14 @@ class _ComparePickerSheetState extends State<ComparePickerSheet> {
     setState(() {
       if (_selected.contains(uni)) {
         _selected.remove(uni);
-      } else if (_selected.length < 2) {
+      } else if (_selected.length < 3) {
         _selected.add(uni);
       } else {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              l10n?.comparisonFull(2) ?? 'Select max 2 universities',
+              l10n?.comparisonFull(3) ?? 'Select max 3 universities',
             ),
           ),
         );
@@ -178,9 +178,9 @@ class _ComparePickerSheetState extends State<ComparePickerSheet> {
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${_selected.length}/2',
+                      '${_selected.length}/3',
                       style: TextStyle(
-                        color: _selected.length == 2
+                        color: _selected.length == 3
                             ? AppColors.primary
                             : Colors.grey,
                         fontWeight: FontWeight.bold,

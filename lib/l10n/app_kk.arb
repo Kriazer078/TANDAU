@@ -153,11 +153,21 @@
     "comparisonParamDormitory": "Жатақхана",
     "comparisonParamStudents": "Студенттер",
     "comparisonParamPassingScore": "Өту балы",
+    "comparisonParamMilitary": "Әскери кафедра",
+    "comparisonParamDeadline": "Құжат тапсыру мерзімі",
+    "comparisonParamDormPrice": "Жатақхана бағасы",
     "commonYes": "Иә",
     "commonNo": "Жоқ",
     "commonCancel": "Болдырмау",
     "comparisonAddToCompare": "Салыстыруға қосу",
-    "comparisonComparing": "2 университетті салыстыру",
+    "comparisonComparing": "{count} университетті салыстыру",
+    "@comparisonComparing": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "comparisonAddMore": "Тағы бір университет қосу",
     "comparisonAddUniversity": "Университет қосу",
     "backToList": "Тізімге оралу",
