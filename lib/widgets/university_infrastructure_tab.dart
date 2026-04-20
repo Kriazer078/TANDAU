@@ -32,7 +32,10 @@ class UniversityInfrastructureTab extends StatelessWidget {
             const SizedBox(height: 24),
           ] else ...[
             _buildMissingFeatureCard(
-                Icons.shield_rounded, 'Нет военной кафедры', AppColors.error),
+              Icons.shield_rounded,
+              l10n?.militaryNotAvailable ?? 'Нет военной кафедры',
+              AppColors.error,
+            ),
             const SizedBox(height: 24),
           ],
 
@@ -121,7 +124,7 @@ class UniversityInfrastructureTab extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  l10n?.detailAvailable ?? 'Есть военная кафедра',
+                  l10n?.militaryAvailable ?? 'Есть военная кафедра',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -140,8 +143,9 @@ class UniversityInfrastructureTab extends StatelessWidget {
             if (university.militaryStartCourse != null)
               _buildDetailRow(
                 Icons.school_rounded,
-                'С какого курса',
-                'С ${university.militaryStartCourse} курса',
+                l10n?.militaryStartCourseLabel ?? 'С какого курса',
+                l10n?.militaryStartCourse(university.militaryStartCourse!) ??
+                    'С ${university.militaryStartCourse} курса',
                 AppColors.gold,
               ),
             if (university.militaryStartCourse != null &&
@@ -152,7 +156,7 @@ class UniversityInfrastructureTab extends StatelessWidget {
                 university.militaryCompetition!.isNotEmpty)
               _buildDetailRow(
                 Icons.people_rounded,
-                'Конкурс',
+                l10n?.militaryCompetitionLabel ?? 'Конкурс',
                 university.militaryCompetition!,
                 AppColors.gold,
               ),

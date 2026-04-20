@@ -1315,8 +1315,32 @@ abstract class AppLocalizations {
   /// No description provided for @homeAIPowered.
   ///
   /// In en, this message translates to:
-  /// **'AI Powered'**
+  /// **'AI powered'**
   String get homeAIPowered;
+
+  /// No description provided for @homeRoiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ROI Analysis'**
+  String get homeRoiTitle;
+
+  /// No description provided for @homeRoiSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate benefit'**
+  String get homeRoiSubtitle;
+
+  /// No description provided for @homeCareerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Guidance'**
+  String get homeCareerTitle;
+
+  /// No description provided for @homeCareerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'RIASEC Tests'**
+  String get homeCareerSubtitle;
 
   /// No description provided for @homeGreetingMorning.
   ///
@@ -4293,6 +4317,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No dormitory'**
   String get dormitoryNotAvailable;
+
+  /// No description provided for @militaryNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No military department'**
+  String get militaryNotAvailable;
+
+  /// No description provided for @militaryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Military department available'**
+  String get militaryAvailable;
+
+  /// No description provided for @militaryStartCourseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts from year'**
+  String get militaryStartCourseLabel;
+
+  /// No description provided for @citySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search city...'**
+  String get citySearchHint;
+
+  /// No description provided for @majorSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search major...'**
+  String get majorSearchHint;
+
+  /// No description provided for @militaryCompetitionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Competition'**
+  String get militaryCompetitionLabel;
+
+  /// No description provided for @grantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} grants'**
+  String grantsCount(int count);
+
+  /// No description provided for @moreInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'More Info'**
+  String get moreInfo;
+
+  /// No description provided for @careerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Potential Careers:'**
+  String get careerTitle;
+
+  /// No description provided for @workplacesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Potential Employers:'**
+  String get workplacesTitle;
+
+  /// No description provided for @grantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Grants'**
+  String get grantsLabel;
+
+  /// No description provided for @score2025Label.
+  ///
+  /// In en, this message translates to:
+  /// **'2025 Score'**
+  String get score2025Label;
+
+  /// No description provided for @predictionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction'**
+  String get predictionLabel;
+
+  /// No description provided for @aiDescriptionLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading AI description...'**
+  String get aiDescriptionLoading;
+
+  /// No description provided for @aiDescriptionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load description. Server is restarting (up to 1 min).'**
+  String get aiDescriptionError;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @commonCopiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get commonCopiedToClipboard;
+
+  /// No description provided for @profileRestorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring purchases...'**
+  String get profileRestorePurchases;
+
+  /// No description provided for @profileDeletingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting account...'**
+  String get profileDeletingAccount;
+
+  /// No description provided for @profileConfirmReauth.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm login to delete'**
+  String get profileConfirmReauth;
+
+  /// No description provided for @profileConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get profileConfirmPassword;
+
+  /// No description provided for @commonDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete error'**
+  String get commonDeleteError;
+
+  /// No description provided for @commonSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Save error'**
+  String get commonSaveError;
+
+  /// No description provided for @adminNoAccessToSection.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no access to this section'**
+  String get adminNoAccessToSection;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @moreStats.
+  ///
+  /// In en, this message translates to:
+  /// **'More details about major'**
+  String get moreStats;
+
+  /// No description provided for @majorsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} majors'**
+  String majorsCount(int count);
 }
 
 class _AppLocalizationsDelegate

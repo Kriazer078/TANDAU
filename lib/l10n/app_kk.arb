@@ -58,6 +58,24 @@
     "filterBudget": "Бюджетіңіз қандай?",
     "filterBudgetSubtitle": "Жылдық оқу ақысының диапазонын таңдаңыз",
     "filterClear": "Тазалау",
+    "citySearchHint": "Қаланы іздеу...",
+    "majorSearchHint": "Мамандықты іздеу...",
+    "grantsCount": "{count} грант",
+    "@grantsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "moreStats": "+{count} тағы",
+    "@moreStats": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "filterEducationType": "Оқу түрі",
     "filterGrant": "Грант",
     "filterPaid": "Ақылы",
@@ -187,6 +205,7 @@
     "tabOverview": "Шолу",
     "tabMajors": "Мамандықтар",
     "tabAdmissions": "Оқуға түсу",
+    "tabDormitory": "Жатақхана",
     "tabContact": "Контактілер",
     "tabReviews": "Пікірлер",
     "detailAbout": "Университет туралы",
@@ -234,6 +253,10 @@
     "homeTools": "Құралдар",
     "homeMarketInsights": "Нарыққа шолу",
     "homeAIPowered": "AI негізінде",
+    "homeRoiTitle": "Өзін-өзі ақтау",
+    "homeRoiSubtitle": "ROI талдауы",
+    "homeCareerTitle": "Кәсіби бағдар",
+    "homeCareerSubtitle": "RIASEC тесттері",
     "homeGreetingMorning": "Қайырлы таң",
     "homeGreetingAfternoon": "Қайырлы күн",
     "homeGreetingEvening": "Қайырлы кеш",
@@ -941,5 +964,46 @@
     "dormitoryPhotos": "Бөлме фотолары",
     "dormitoryConditions": "Тұру жағдайлары",
     "dormitoryAvailable": "Жатақхана бар",
-    "dormitoryNotAvailable": "Жатақхана жоқ"
-}
+    "dormitoryNotAvailable": "Жатақхана жоқ",
+    "militaryNotAvailable": "Әскери кафедра жоқ",
+    "militaryAvailable": "Әскери кафедра бар",
+    "militaryStartCourseLabel": "Қай курстан бастап",
+    "citySearchHint": "Қаланы іздеу...",
+    "majorSearchHint": "Мамандықты іздеу...",
+    "militaryCompetitionLabel": "Конкурс",
+    "grantsCount": "{count} грант",
+    "@grantsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "moreInfo": "Толығырақ",
+    "careerTitle": "Кім болып жұмыс істеймін:",
+    "workplacesTitle": "Қайда жұмыс істейді:",
+    "grantsLabel": "Гранттар",
+    "score2025Label": "2025 балл",
+    "predictionLabel": "Болжам",
+    "aiDescriptionLoading": "AI сипаттамасын жүктеуде...",
+    "aiDescriptionError": "Сипаттаманы жүктеу мүмкін болмады. Сервер қайта қосылуда (1 мин-қа дейін).",
+    "commonDelete": "Жою",
+    "commonCopiedToClipboard": "Алмасу буферіне көшірілді",
+    "profileRestorePurchases": "Сатып алуларды қалпына келтіру...",
+    "profileDeletingAccount": "Аккаунтты жою...",
+    "profileConfirmReauth": "Жою үшін логинді растаңыз",
+    "profileConfirmPassword": "Құпия сөзді растаңыз",
+    "commonDeleteError": "Жою қатесі",
+    "commonSaveError": "Сақтау қатесі",
+    "adminNoAccessToSection": "Бұл бөлімге кіруге рұқсатыңыз жоқ",
+    "retry": "Қайталау",
+    "moreStats": "Мамандық туралы толығырақ",
+    "majorsCount": "{count} мамандық",
+    "@majorsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
+}

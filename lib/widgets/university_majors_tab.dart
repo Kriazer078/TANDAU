@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../l10n/app_localizations.dart';
 
 import '../data/ent_specialties_2026.dart';
 import '../models/university.dart';
@@ -21,6 +22,7 @@ class UniversityMajorsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       itemCount: university.majors.length,
@@ -99,7 +101,7 @@ class UniversityMajorsTab extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              '${matched.quotaEmoji} ${matched.grantQuota2025} грантов',
+                              '${matched.quotaEmoji} ${l10n.grantsCount(matched.grantQuota2025)}',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isDark
@@ -133,6 +135,7 @@ class UniversityMajorsTab extends StatelessWidget {
   ) {
     final isDarkMode =
         Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
       context: context,
@@ -209,8 +212,8 @@ class UniversityMajorsTab extends StatelessWidget {
                             Icons.open_in_new_rounded,
                             size: 18,
                           ),
-                          label: const Text(
-                            'Подробнее о специальности',
+                          label: Text(
+                            l10n.moreStats,
                           ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: isDarkMode

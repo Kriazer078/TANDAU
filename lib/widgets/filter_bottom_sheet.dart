@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
-import '../utils/l10n_extensions.dart';
 import 'package:intl/intl.dart';
 
 class FilterBottomSheet extends StatefulWidget {
@@ -106,7 +105,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
@@ -167,7 +166,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                         children: [
                           // ═══ Section: Cities ═══
                           _buildExpandableSection(
-                            title: l10n?.filterCity ?? 'Город',
+                            title: l10n.filterCity,
                             icon: Icons.location_on_outlined,
                             isExpanded: _cityExpanded,
                             selectedCount: _city.length,
@@ -175,14 +174,14 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                                 setState(() => _cityExpanded = !_cityExpanded),
                             isDark: isDark,
                             theme: theme,
-                            child: _buildCitySection(isDark, theme),
+                            child: _buildCitySection(l10n, isDark, theme),
                           ),
 
                           const SizedBox(height: 8),
 
                           // ═══ Section: Majors ═══
                           _buildExpandableSection(
-                            title: l10n?.filterMajor ?? 'Специальность',
+                            title: l10n.filterMajor,
                             icon: Icons.school_outlined,
                             isExpanded: _majorExpanded,
                             selectedCount: _major.length,
@@ -191,7 +190,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                             ),
                             isDark: isDark,
                             theme: theme,
-                            child: _buildMajorSection(isDark, theme),
+                            child: _buildMajorSection(l10n, isDark, theme),
                           ),
 
                           const SizedBox(height: 8),
@@ -218,7 +217,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
 
                           // ═══ Section: Infrastructure ═══
                           _buildExpandableSection(
-                            title: l10n?.moderatorSectionInfra ?? 'Инфраструктура',
+                            title: l10n.moderatorSectionInfra,
                             icon: Icons.shield_outlined,
                             isExpanded: _infraExpanded,
                             selectedCount: _onlyMilitary ? 1 : 0,
@@ -249,7 +248,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   // ═════════════════════════════════════════
   // HEADER
   // ═════════════════════════════════════════
-  Widget _buildHeader(ThemeData theme, AppLocalizations? l10n, bool isDark) {
+  Widget _buildHeader(ThemeData theme, AppLocalizations l10n, bool isDark) {
     return Column(
       children: [
         // Drag handle
@@ -277,7 +276,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                   Icon(Icons.tune_rounded, size: 22, color: AppColors.primary),
                   const SizedBox(width: 10),
                   Text(
-                    l10n?.filterTitle ?? 'Фильтры',
+                    l10n.filterTitle,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white : AppColors.textPrimary,
@@ -310,7 +309,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                 TextButton.icon(
                   onPressed: _resetAll,
                   icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: Text(l10n?.filterClear ?? 'Сбросить'),
+                  label: Text(l10n.filterClear),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.error,
                     textStyle: const TextStyle(
@@ -436,7 +435,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   // ═════════════════════════════════════════
   // CITY SECTION
   // ═════════════════════════════════════════
-  Widget _buildCitySection(bool isDark, ThemeData theme) {
+  Widget _buildCitySection(AppLocalizations l10n, bool isDark, ThemeData theme) {
     final filteredCities = _citySearch.isEmpty
         ? widget.cities
         : widget.cities
@@ -450,10 +449,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: _buildMiniSearch(
-              hint: 'Поиск города...',
+              hint: l10n.citySearchHint,
               value: _citySearch,
               onChanged: (v) => setState(() => _citySearch = v),
               isDark: isDark,
+              sectionType: 'city',
             ),
           ),
 
@@ -486,7 +486,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   // ═════════════════════════════════════════
   // MAJOR SECTION
   // ═════════════════════════════════════════
-  Widget _buildMajorSection(bool isDark, ThemeData theme) {
+  Widget _buildMajorSection(AppLocalizations l10n, bool isDark, ThemeData theme) {
     final allMajors = widget.majors.map((m) => m['name'] as String).toList();
     final filteredMajors = _majorSearch.isEmpty
         ? allMajors
@@ -503,10 +503,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: _buildMiniSearch(
-              hint: 'Поиск специальности...',
+              hint: l10n.majorSearchHint,
               value: _majorSearch,
               onChanged: (v) => setState(() => _majorSearch = v),
               isDark: isDark,
+              sectionType: 'major',
             ),
           ),
 
@@ -540,7 +541,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   // EDUCATION TYPE SECTION
   // ═════════════════════════════════════════
   Widget _buildEducationTypeSection(
-    AppLocalizations? l10n,
+    AppLocalizations l10n,
     bool isDark,
     ThemeData theme,
   ) {
@@ -583,7 +584,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              l10n?.filterMaxPrice ?? 'Макс. цена',
+                              l10n.filterMaxPrice,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: isDark
@@ -673,7 +674,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   // INFRASTRUCTURE SECTION (Military)
   // ═════════════════════════════════════════
   Widget _buildInfraSection(
-    AppLocalizations? l10n,
+    AppLocalizations l10n,
     bool isDark,
     ThemeData theme,
   ) {
@@ -681,7 +682,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildFilterChip(
-          label: l10n?.filterMilitary ?? 'Военная кафедра',
+          label: l10n.filterMilitary,
           isSelected: _onlyMilitary,
           onTap: () => setState(() => _onlyMilitary = !_onlyMilitary),
           isDark: isDark,
@@ -695,7 +696,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
   // BOTTOM BAR (Apply Button)
   // ═════════════════════════════════════════
   Widget _buildBottomBar(
-    AppLocalizations? l10n,
+    AppLocalizations l10n,
     bool isDark,
     ThemeData theme,
     double bottomPadding,
@@ -738,7 +739,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
               const Icon(Icons.check_rounded, size: 20),
               const SizedBox(width: 8),
               Text(
-                l10n?.filterShowResults ?? 'Показать результаты',
+                l10n.filterShowResults,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -759,7 +760,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
     required String value,
     required ValueChanged<String> onChanged,
     required bool isDark,
+    required String sectionType,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       height: 40,
       child: TextField(
@@ -769,7 +772,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet>
           color: isDark ? Colors.white : AppColors.textPrimary,
         ),
         decoration: InputDecoration(
-          hintText: hint,
+          hintText: sectionType == 'city' ? l10n.citySearchHint : l10n.majorSearchHint,
           hintStyle: TextStyle(
             fontSize: 13,
             color: isDark ? Colors.white38 : Colors.grey.shade400,

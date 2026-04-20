@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 import '../data/ent_specialties_2026.dart';
 import '../services/specialty_description_service.dart';
@@ -53,6 +54,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final langCode = Localizations.localeOf(context).languageCode;
+    final l10n = AppLocalizations.of(context)!;
     final desc = _service.getDescription(widget.specialty.code);
 
     return GestureDetector(
@@ -94,23 +96,23 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
               if (!widget.compact) ...[
                 const SizedBox(height: 16),
                 // 👔 Кем буду работать
-                _buildCareerSection(desc, isDark),
+                _buildCareerSection(desc, isDark, l10n),
 
                 const SizedBox(height: 12),
                 // 🏢 Где работают
-                _buildWorkplacesSection(desc, isDark),
+                _buildWorkplacesSection(desc, isDark, l10n),
               ],
             ] else if (_isLoading) ...[
               const SizedBox(height: 12),
-              _buildLoadingState(isDark),
+              _buildLoadingState(isDark, l10n),
             ] else ...[
               const SizedBox(height: 12),
-              _buildErrorState(isDark),
+              _buildErrorState(isDark, l10n),
             ],
 
             const SizedBox(height: 12),
             // 📊 Статистика
-            _buildStats(isDark),
+            _buildStats(isDark, l10n),
           ],
         ),
       ),
@@ -200,6 +202,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
   Widget _buildCareerSection(
     SpecialtyDescription desc,
     bool isDark,
+    AppLocalizations l10n,
   ) {
     if (desc.careerExamples.isEmpty) return const SizedBox();
 
@@ -211,7 +214,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
             const Icon3D(emoji: '👔', size: 16),
             const SizedBox(width: 6),
             Text(
-              'Кем буду работать:',
+              l10n.careerTitle,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -255,6 +258,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
   Widget _buildWorkplacesSection(
     SpecialtyDescription desc,
     bool isDark,
+    AppLocalizations l10n,
   ) {
     if (desc.workplaces.isEmpty) return const SizedBox();
 
@@ -268,7 +272,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
             TextSpan(
               children: [
                 TextSpan(
-                  text: 'Где работают: ',
+                  text: '${l10n.workplacesTitle} ',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -290,7 +294,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
     );
   }
 
-  Widget _buildStats(bool isDark) {
+  Widget _buildStats(bool isDark, AppLocalizations l10n) {
     final s = widget.specialty;
     return Container(
       padding:
@@ -305,17 +309,17 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildStatItem(
-            '${s.quotaEmoji} Грантов',
+            '${s.quotaEmoji} ${l10n.grantsLabel}',
             '${s.grantQuota2025}',
             isDark,
           ),
           _buildStatItem(
-            '📈 Балл 2025',
+            '📈 ${l10n.score2025Label}',
             '${s.minScore2025}',
             isDark,
           ),
           _buildStatItem(
-            '🎯 Прогноз',
+            '🎯 ${l10n.predictionLabel}',
             '${s.predictedMin2026}',
             isDark,
           ),
@@ -347,7 +351,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
     );
   }
 
-  Widget _buildLoadingState(bool isDark) {
+  Widget _buildLoadingState(bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -368,7 +372,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
           ),
           const SizedBox(width: 10),
           Text(
-            'Загружаю описание от AI...',
+            l10n.aiDescriptionLoading,
             style: TextStyle(
               fontSize: 13,
               color: isDark ? Colors.white38 : Colors.black38,
@@ -379,7 +383,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
     );
   }
 
-  Widget _buildErrorState(bool isDark) {
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -398,7 +402,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Не удалось загрузить описание. Сервер перезапускается (до 1 мин).',
+              l10n.aiDescriptionError,
               style: TextStyle(
                 fontSize: 13,
                 color: isDark ? Colors.redAccent.shade100 : Colors.red.shade800,
@@ -414,7 +418,7 @@ class _SpecialtyInfoCardState extends State<SpecialtyInfoCard> {
                 if (mounted) setState(() => _isLoading = false);
               });
             },
-            tooltip: 'Повторить',
+            tooltip: l10n.retry,
           ),
         ],
       ),

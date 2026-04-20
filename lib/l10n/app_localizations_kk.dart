@@ -639,6 +639,18 @@ class AppLocalizationsKk extends AppLocalizations {
   String get homeAIPowered => 'AI негізінде';
 
   @override
+  String get homeRoiTitle => 'Өзін-өзі ақтау';
+
+  @override
+  String get homeRoiSubtitle => 'ROI талдауы';
+
+  @override
+  String get homeCareerTitle => 'Кәсіби бағдар';
+
+  @override
+  String get homeCareerSubtitle => 'RIASEC тесттері';
+
+  @override
   String get homeGreetingMorning => 'Қайырлы таң';
 
   @override
@@ -2238,4 +2250,90 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get dormitoryNotAvailable => 'Жатақхана жоқ';
+
+  @override
+  String get militaryNotAvailable => 'Әскери кафедра жоқ';
+
+  @override
+  String get militaryAvailable => 'Әскери кафедра бар';
+
+  @override
+  String get militaryStartCourseLabel => 'Қай курстан бастап';
+
+  @override
+  String get citySearchHint => 'Қаланы іздеу...';
+
+  @override
+  String get majorSearchHint => 'Мамандықты іздеу...';
+
+  @override
+  String get militaryCompetitionLabel => 'Конкурс';
+
+  @override
+  String grantsCount(int count) {
+    return '$count грант';
+  }
+
+  @override
+  String get moreInfo => 'Толығырақ';
+
+  @override
+  String get careerTitle => 'Кім болып жұмыс істеймін:';
+
+  @override
+  String get workplacesTitle => 'Қайда жұмыс істейді:';
+
+  @override
+  String get grantsLabel => 'Гранттар';
+
+  @override
+  String get score2025Label => '2025 балл';
+
+  @override
+  String get predictionLabel => 'Болжам';
+
+  @override
+  String get aiDescriptionLoading => 'AI сипаттамасын жүктеуде...';
+
+  @override
+  String get aiDescriptionError =>
+      'Сипаттаманы жүктеу мүмкін болмады. Сервер қайта қосылуда (1 мин-қа дейін).';
+
+  @override
+  String get commonDelete => 'Жою';
+
+  @override
+  String get commonCopiedToClipboard => 'Алмасу буферіне көшірілді';
+
+  @override
+  String get profileRestorePurchases => 'Сатып алуларды қалпына келтіру...';
+
+  @override
+  String get profileDeletingAccount => 'Аккаунтты жою...';
+
+  @override
+  String get profileConfirmReauth => 'Жою үшін логинді растаңыз';
+
+  @override
+  String get profileConfirmPassword => 'Құпия сөзді растаңыз';
+
+  @override
+  String get commonDeleteError => 'Жою қатесі';
+
+  @override
+  String get commonSaveError => 'Сақтау қатесі';
+
+  @override
+  String get adminNoAccessToSection => 'Бұл бөлімге кіруге рұқсатыңыз жоқ';
+
+  @override
+  String get retry => 'Қайталау';
+
+  @override
+  String get moreStats => 'Мамандық туралы толығырақ';
+
+  @override
+  String majorsCount(int count) {
+    return '$count мамандық';
+  }
 }

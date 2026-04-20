@@ -236,13 +236,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               },
             ),
           ),
-          const SizedBox(width: 16),
           SizedBox(
             width: 160,
             child: _buildActionCard(
               context,
-              title: 'Окупаемость',
-              subtitle: 'Анализ ROI',
+              title: l10n?.homeRoiTitle ?? 'Окупаемость',
+              subtitle: l10n?.homeRoiSubtitle ?? 'Анализ ROI',
               icon: Icons.trending_up_rounded,
               color: const Color(0xFF3B82F6),
               isDark: isDark,
@@ -261,8 +260,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             width: 160,
             child: _buildActionCard(
               context,
-              title: 'Профориентация',
-              subtitle: 'Тесты RIASEC',
+              title: l10n?.homeCareerTitle ?? 'Профориентация',
+              subtitle: l10n?.homeCareerSubtitle ?? 'Тесты RIASEC',
               icon: Icons.psychology_rounded,
               color: const Color(0xFFE91E63),
               isDark: isDark,

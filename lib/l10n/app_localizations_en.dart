@@ -636,7 +636,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeMarketInsights => 'Market Insights';
 
   @override
-  String get homeAIPowered => 'AI Powered';
+  String get homeAIPowered => 'AI powered';
+
+  @override
+  String get homeRoiTitle => 'ROI Analysis';
+
+  @override
+  String get homeRoiSubtitle => 'Calculate benefit';
+
+  @override
+  String get homeCareerTitle => 'Career Guidance';
+
+  @override
+  String get homeCareerSubtitle => 'RIASEC Tests';
 
   @override
   String get homeGreetingMorning => 'Good Morning';
@@ -2231,4 +2243,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dormitoryNotAvailable => 'No dormitory';
+
+  @override
+  String get militaryNotAvailable => 'No military department';
+
+  @override
+  String get militaryAvailable => 'Military department available';
+
+  @override
+  String get militaryStartCourseLabel => 'Starts from year';
+
+  @override
+  String get citySearchHint => 'Search city...';
+
+  @override
+  String get majorSearchHint => 'Search major...';
+
+  @override
+  String get militaryCompetitionLabel => 'Competition';
+
+  @override
+  String grantsCount(int count) {
+    return '$count grants';
+  }
+
+  @override
+  String get moreInfo => 'More Info';
+
+  @override
+  String get careerTitle => 'Potential Careers:';
+
+  @override
+  String get workplacesTitle => 'Potential Employers:';
+
+  @override
+  String get grantsLabel => 'Grants';
+
+  @override
+  String get score2025Label => '2025 Score';
+
+  @override
+  String get predictionLabel => 'Prediction';
+
+  @override
+  String get aiDescriptionLoading => 'Loading AI description...';
+
+  @override
+  String get aiDescriptionError =>
+      'Failed to load description. Server is restarting (up to 1 min).';
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get commonCopiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get profileRestorePurchases => 'Restoring purchases...';
+
+  @override
+  String get profileDeletingAccount => 'Deleting account...';
+
+  @override
+  String get profileConfirmReauth => 'Please confirm login to delete';
+
+  @override
+  String get profileConfirmPassword => 'Confirm password';
+
+  @override
+  String get commonDeleteError => 'Delete error';
+
+  @override
+  String get commonSaveError => 'Save error';
+
+  @override
+  String get adminNoAccessToSection => 'You have no access to this section';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get moreStats => 'More details about major';
+
+  @override
+  String majorsCount(int count) {
+    return '$count majors';
+  }
 }

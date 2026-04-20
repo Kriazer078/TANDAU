@@ -232,7 +232,11 @@
     "moderationProfanity": "Please use respectful language. Profanity is not allowed.",
     "homeTools": "Tools",
     "homeMarketInsights": "Market Insights",
-    "homeAIPowered": "AI Powered",
+    "homeAIPowered": "AI powered",
+    "homeRoiTitle": "ROI Analysis",
+    "homeRoiSubtitle": "Calculate benefit",
+    "homeCareerTitle": "Career Guidance",
+    "homeCareerSubtitle": "RIASEC Tests",
     "homeGreetingMorning": "Good Morning",
     "homeGreetingAfternoon": "Good Afternoon",
     "homeGreetingEvening": "Good Evening",
@@ -962,5 +966,46 @@
     "dormitoryPhotos": "Room photos",
     "dormitoryConditions": "Living conditions",
     "dormitoryAvailable": "Dormitory available",
-    "dormitoryNotAvailable": "No dormitory"
-}
+    "dormitoryNotAvailable": "No dormitory",
+    "militaryNotAvailable": "No military department",
+    "militaryAvailable": "Military department available",
+    "militaryStartCourseLabel": "Starts from year",
+    "citySearchHint": "Search city...",
+    "majorSearchHint": "Search major...",
+    "militaryCompetitionLabel": "Competition",
+    "grantsCount": "{count} grants",
+    "@grantsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "moreInfo": "More Info",
+    "careerTitle": "Potential Careers:",
+    "workplacesTitle": "Potential Employers:",
+    "grantsLabel": "Grants",
+    "score2025Label": "2025 Score",
+    "predictionLabel": "Prediction",
+    "aiDescriptionLoading": "Loading AI description...",
+    "aiDescriptionError": "Failed to load description. Server is restarting (up to 1 min).",
+    "commonDelete": "Delete",
+    "commonCopiedToClipboard": "Copied to clipboard",
+    "profileRestorePurchases": "Restoring purchases...",
+    "profileDeletingAccount": "Deleting account...",
+    "profileConfirmReauth": "Please confirm login to delete",
+    "profileConfirmPassword": "Confirm password",
+    "commonDeleteError": "Delete error",
+    "commonSaveError": "Save error",
+    "adminNoAccessToSection": "You have no access to this section",
+    "retry": "Retry",
+    "moreStats": "More details about major",
+    "majorsCount": "{count} majors",
+    "@majorsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
+}

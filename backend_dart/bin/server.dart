@@ -36,11 +36,11 @@ void main(List<String> args) async {
   firebaseService.setCacheService(cacheService);
   stderr.writeln('📦 Cache Service initialized');
 
-  final geminiService = GeminiService(geminiKey);
+  final aiService = GeminiService(geminiKey);
 
   // 💰 Initialize Cost Tracker
   final costTracker = CostTrackerService();
-  geminiService.setCostTracker(costTracker);
+  aiService.setCostTracker(costTracker);
   stderr.writeln('💰 Cost Tracker initialized');
 
   // Initialize Knowledge Service (RAG)
@@ -68,7 +68,7 @@ void main(List<String> args) async {
 
   // Initialize Controller
   final universityController =
-      UniversityController(firebaseService, geminiService, knowledgeService);
+      UniversityController(firebaseService, aiService, knowledgeService);
   universityController.setAILogger(aiLogger);
 
   final notificationController = NotificationController(firebaseService);

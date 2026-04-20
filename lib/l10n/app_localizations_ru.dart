@@ -640,7 +640,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homeMarketInsights => 'Обзор рынка';
 
   @override
-  String get homeAIPowered => 'На базе AI';
+  String get homeAIPowered => 'на базе AI';
+
+  @override
+  String get homeRoiTitle => 'Окупаемость';
+
+  @override
+  String get homeRoiSubtitle => 'Анализ ROI';
+
+  @override
+  String get homeCareerTitle => 'Профориентация';
+
+  @override
+  String get homeCareerSubtitle => 'Тесты RIASEC';
 
   @override
   String get homeGreetingMorning => 'Доброе утро';
@@ -2238,4 +2250,91 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get dormitoryNotAvailable => 'Общежития нет';
+
+  @override
+  String get militaryNotAvailable => 'Нет военной кафедры';
+
+  @override
+  String get militaryAvailable => 'Есть военная кафедра';
+
+  @override
+  String get militaryStartCourseLabel => 'С какого курса';
+
+  @override
+  String get citySearchHint => 'Поиск города...';
+
+  @override
+  String get majorSearchHint => 'Поиск специальности...';
+
+  @override
+  String get militaryCompetitionLabel => 'Конкурс';
+
+  @override
+  String grantsCount(int count) {
+    return '$count грантов';
+  }
+
+  @override
+  String get moreInfo => 'Подробнее';
+
+  @override
+  String get careerTitle => 'Кем буду работать:';
+
+  @override
+  String get workplacesTitle => 'Где работают:';
+
+  @override
+  String get grantsLabel => 'Грантов';
+
+  @override
+  String get score2025Label => 'Балл 2025';
+
+  @override
+  String get predictionLabel => 'Прогноз';
+
+  @override
+  String get aiDescriptionLoading => 'Загружаю описание от AI...';
+
+  @override
+  String get aiDescriptionError =>
+      'Не удалось загрузить описание. Сервер перезапускается (до 1 мин).';
+
+  @override
+  String get commonDelete => 'Удалить';
+
+  @override
+  String get commonCopiedToClipboard => 'Скопировано в буфер обмена';
+
+  @override
+  String get profileRestorePurchases => 'Восстановление покупок...';
+
+  @override
+  String get profileDeletingAccount => 'Удаление аккаунта...';
+
+  @override
+  String get profileConfirmReauth =>
+      'Пожалуйста, подтвердите вход для удаления';
+
+  @override
+  String get profileConfirmPassword => 'Подтвердите пароль';
+
+  @override
+  String get commonDeleteError => 'Ошибка удаления';
+
+  @override
+  String get commonSaveError => 'Ошибка сохранения';
+
+  @override
+  String get adminNoAccessToSection => 'У вас нет доступа к этому разделу';
+
+  @override
+  String get retry => 'Повторить';
+
+  @override
+  String get moreStats => 'Подробнее о специальности';
+
+  @override
+  String majorsCount(int count) {
+    return '$count специальностей';
+  }
 }

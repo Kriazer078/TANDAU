@@ -233,7 +233,11 @@
     "moderationProfanity": "Пожалуйста, соблюдайте правила приличия. Использование мата запрещено.",
     "homeTools": "Инструменты",
     "homeMarketInsights": "Обзор рынка",
-    "homeAIPowered": "На базе AI",
+    "homeAIPowered": "на базе AI",
+    "homeRoiTitle": "Окупаемость",
+    "homeRoiSubtitle": "Анализ ROI",
+    "homeCareerTitle": "Профориентация",
+    "homeCareerSubtitle": "Тесты RIASEC",
     "homeGreetingMorning": "Доброе утро",
     "homeGreetingAfternoon": "Добрый день",
     "homeGreetingEvening": "Добрый вечер",
@@ -958,5 +962,46 @@
     "dormitoryPhotos": "Фото комнат",
     "dormitoryConditions": "Условия проживания",
     "dormitoryAvailable": "Общежитие есть",
-    "dormitoryNotAvailable": "Общежития нет"
-}
+    "dormitoryNotAvailable": "Общежития нет",
+    "militaryNotAvailable": "Нет военной кафедры",
+    "militaryAvailable": "Есть военная кафедра",
+    "militaryStartCourseLabel": "С какого курса",
+    "citySearchHint": "Поиск города...",
+    "majorSearchHint": "Поиск специальности...",
+    "militaryCompetitionLabel": "Конкурс",
+    "grantsCount": "{count} грантов",
+    "@grantsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "moreInfo": "Подробнее",
+    "careerTitle": "Кем буду работать:",
+    "workplacesTitle": "Где работают:",
+    "grantsLabel": "Грантов",
+    "score2025Label": "Балл 2025",
+    "predictionLabel": "Прогноз",
+    "aiDescriptionLoading": "Загружаю описание от AI...",
+    "aiDescriptionError": "Не удалось загрузить описание. Сервер перезапускается (до 1 мин).",
+    "commonDelete": "Удалить",
+    "commonCopiedToClipboard": "Скопировано в буфер обмена",
+    "profileRestorePurchases": "Восстановление покупок...",
+    "profileDeletingAccount": "Удаление аккаунта...",
+    "profileConfirmReauth": "Пожалуйста, подтвердите вход для удаления",
+    "profileConfirmPassword": "Подтвердите пароль",
+    "commonDeleteError": "Ошибка удаления",
+    "commonSaveError": "Ошибка сохранения",
+    "adminNoAccessToSection": "У вас нет доступа к этому разделу",
+    "retry": "Повторить",
+    "moreStats": "Подробнее о специальности",
+    "majorsCount": "{count} специальностей",
+    "@majorsCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    }
+}
