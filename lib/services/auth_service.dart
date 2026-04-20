@@ -1056,7 +1056,7 @@ class AuthService {
   Future<void> _trackNewUser() async {
     try {
       final uri = Uri.parse(
-        'https://tandau-backend.onrender.com/v1/stats/user-created',
+        'https://tandau-backend-60478017512.europe-west1.run.app/v1/stats/user-created',
       );
       // Fire and forget with 10s timeout to prevent lingering HTTP handles
       http.post(uri).timeout(const Duration(seconds: 10)).then((response) {

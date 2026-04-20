@@ -26,13 +26,17 @@ class FirebaseService {
   FirestoreApi get firestoreApi => _firestoreApi;
 
   Future<void> init() async {
-    // Path to your service account key file.
-    // Ensure you download this from Firebase Console: Project Settings -> Service Accounts -> Generate new private key
+    // Determine if we are running in a Cloud Run environment or have ADC configured
+    final kIsCloudRun = Platform.environment['K_SERVICE'] != null;
     final serviceAccountPath =
         Platform.environment['GOOGLE_APPLICATION_CREDENTIALS'] ??
             'service_account.json';
 
-    if (!File(serviceAccountPath).existsSync()) {
+    if (kIsCloudRun || !File(serviceAccountPath).existsSync()) {
+      stderr.writeln(kIsCloudRun 
+          ? '☁️ Running on Cloud Run: Using Application Default Credentials'
+          : '📂 No service_account.json found: Using Application Default Credentials');
+      
       var client = await clientViaApplicationDefaultCredentials(scopes: [
         FirestoreApi.datastoreScope,
         FirebaseCloudMessagingApi.firebaseMessagingScope
@@ -40,6 +44,7 @@ class FirebaseService {
       _firestoreApi = FirestoreApi(client);
       _fcmApi = FirebaseCloudMessagingApi(client);
     } else {
+      stderr.writeln('🔑 Using local service account: $serviceAccountPath');
       final accountCredentials = ServiceAccountCredentials.fromJson(
           await File(serviceAccountPath).readAsString());
 
