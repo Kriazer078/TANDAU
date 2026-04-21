@@ -1,59 +1,65 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../models/university.dart';
+import 'cost_tracker_service.dart';
+import 'system_prompts.dart';
 
-/// @deprecated This service is no longer used. Use GeminiService instead.
-/// Kept for reference only. Will be removed in a future cleanup.
-@Deprecated('Use GeminiService instead — this service is no longer active.')
 class OpenAIService {
   final String _apiKey;
+  CostTrackerService? _costTracker;
+  final String _model = 'gpt-4o-mini';
 
   OpenAIService(this._apiKey);
 
-  Future<String> generateRecommendation({
-    required List<University> universities,
-    required String userPrompt,
-    required Map<String, dynamic> userProfile,
-  }) async {
-    final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+  void setCostTracker(CostTrackerService tracker) {
+    _costTracker = tracker;
+  }
 
-    // Filter relevant universities based on request (simple matching for context reduction)
-    final contextUniversities = universities
-        .take(15)
-        .map((u) =>
-            "- ${u.name} in ${u.city}. Subjects: ${u.subjects.join(', ')}. Min Score: ${u.minScore}. Price: ${u.price}. Grants: ${u.hasGrants}.")
-        .join('\n');
+  static List<Map<String, dynamic>> buildMessages({
+    required String question,
+    String? systemInstruction,
+    List<Map<String, dynamic>>? history,
+    String? ragContext,
+  }) {
+    final List<Map<String, dynamic>> messages = [];
+    
+    // 1. System Instruction
+    String fullSystemPrompt = systemInstruction ?? 'You are TANDAU AI, an expert in Kazakhstan education.';
+    if (ragContext != null && ragContext.isNotEmpty) {
+      fullSystemPrompt += '\n\nDATABASE CONTEXT (TRUSTED FACTS):\n$ragContext';
+    }
+    
+    messages.add({'role': 'system', 'content': fullSystemPrompt});
 
-    final systemPrompt = '''
-You are "TANDAU AI", a university admission navigator for students in Kazakhstan.
-Your role is to compare universities and provide recommendations based on the user's profile.
-The user will provide their score, preferred city, and subjects.
-
-Available Universities to consider (from database):
-$contextUniversities
-
-Instructions:
-1. Analyze the user's profile and the available universities.
-2. Recommend the best 3-5 matching universities. If none match perfectly, suggest close alternatives.
-3. Compare them by price, score, and grant availability.
-4. Format your response in clean Markdown.
-5. Be encouraging but realistic about admission chances.
-6. Answer in the same language as the user (Russian/Kazakh/English).
-''';
-
-    final body = jsonEncode({
-      'model': 'gpt-4o-mini', // or gpt-3.5-turbo if cost is concern
-      'messages': [
-        {'role': 'system', 'content': systemPrompt},
-        {
-          'role': 'user',
-          'content': 'User Profile: $userProfile\n\nUser Question: $userPrompt'
+    // 2. Chat History
+    if (history != null && history.isNotEmpty) {
+      // Convert Gemini history (parts) to OpenAI format if needed
+      for (var item in history) {
+        final role = item['role'] == 'model' ? 'assistant' : item['role'];
+        var content = '';
+        if (item['parts'] is List) {
+          content = item['parts'][0]['text'] ?? '';
+        } else {
+          content = item['content'] ?? '';
         }
-      ],
-      'temperature': 0.7,
-      'max_tokens': 1000,
-    });
+        messages.add({'role': role, 'content': content});
+      }
+    }
 
+    // 3. User Question
+    messages.add({'role': 'user', 'content': question});
+    
+    return messages;
+  }
+
+  Future<String> _generateCompletion({
+    required List<Map<String, dynamic>> messages,
+  }) async {
+    if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) return 'Ошибка: API ключ OpenAI не настроен.';
+
+    final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+    
     try {
       final response = await http.post(
         url,
@@ -61,56 +67,178 @@ Instructions:
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
         },
-        body: body,
-      );
+        body: jsonEncode({
+          'model': _model,
+          'messages': messages,
+          'temperature': 0.7,
+        }),
+      ).timeout(const Duration(seconds: 45));
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes));
-        return data['choices'][0]['message']['content'];
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
+        final text = json['choices']?[0]?['message']?['content'];
+        _trackTokenUsage(json, _model);
+        return text ?? 'Ошибка: Пустой ответ от OpenAI';
       } else {
-        // print('OpenAI API Error: ${response.body}');
-        return 'Error communicating with AI service. Status: ${response.statusCode}';
+        stderr.writeln('❌ OpenAI Error: ${response.statusCode} - ${response.body}');
+        if (response.statusCode == 429) return '📍 **Лимит запросов OpenAI исчерпан.**';
+        return 'Извините, сервис OpenAI временно недоступен. (${response.statusCode})';
       }
     } catch (e) {
-      // print('Exception calling OpenAI: $e');
-      return 'Error: $e';
+      stderr.writeln('⚠️ OpenAI Connection error: $e');
+      return 'Ошибка соединения с OpenAI.';
     }
   }
 
-  Future<String> generateChat(String question) async {
+  Future<Stream<String>> _generateStream({
+    required List<Map<String, dynamic>> messages,
+  }) async {
+    if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) return Stream.value('Ошибка: API ключ OpenAI не настроен.');
+
     final url = Uri.parse('https://api.openai.com/v1/chat/completions');
-
-    final body = jsonEncode({
-      'model': 'gpt-4o-mini',
-      'messages': [
-        {
-          'role': 'system',
-          'content':
-              'You are "TANDAU AI", a university admission navigator for students in Kazakhstan. Answer in the same language as the user. Be friendly, encouraging, and realistic.'
-        },
-        {'role': 'user', 'content': question}
-      ],
-      'temperature': 0.7,
-    });
-
+    
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $_apiKey',
-        },
-        body: body,
-      );
+      final request = http.Request('POST', url);
+      request.headers['Content-Type'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer $_apiKey';
+      request.body = jsonEncode({
+        'model': _model,
+        'messages': messages,
+        'temperature': 0.7,
+        'stream': true,
+      });
+
+      final client = http.Client();
+      final response = await client.send(request).timeout(const Duration(seconds: 45));
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes));
-        return data['choices'][0]['message']['content'];
+        return response.stream
+            .transform(utf8.decoder)
+            .transform(const LineSplitter())
+            .where((line) => line.startsWith('data: '))
+            .map((line) {
+              final dataStr = line.substring(6);
+              if (dataStr.trim() == '[DONE]') return '';
+              try {
+                final json = jsonDecode(dataStr);
+                return json['choices']?[0]?['delta']?['content']?.toString() ?? '';
+              } catch (e) { return ''; }
+            })
+            .where((text) => text.isNotEmpty)
+            .cast<String>();
       } else {
-        return 'Server error: ${response.statusCode}';
+        client.close();
+        return Stream.value('Ошибка OpenAI: ${response.statusCode}');
       }
     } catch (e) {
-      return 'Error: $e';
+      stderr.writeln('⚠️ OpenAI Stream Error: $e');
+      return Stream.value('Ошибка стрима OpenAI.');
     }
+  }
+
+  // --- Feature Parity Methods ---
+
+  Future<String> generateChat(String question, {List<Map<String, dynamic>>? history, String? ragContext, String? userContext, String? intentInstruction}) async {
+    return _generateCompletion(
+      messages: buildMessages(
+        question: question, 
+        systemInstruction: SystemPrompts.buildChatPrompt(userContext: userContext, intentInstruction: intentInstruction), 
+        history: history, 
+        ragContext: ragContext
+      ),
+    );
+  }
+
+  Future<Stream<String>> generateChatStream(String question, {List<Map<String, dynamic>>? history, String? ragContext, String? userContext, String? intentInstruction}) async {
+    return _generateStream(
+      messages: buildMessages(
+        question: question, 
+        systemInstruction: SystemPrompts.buildChatPrompt(userContext: userContext, intentInstruction: intentInstruction), 
+        history: history, 
+        ragContext: ragContext
+      ),
+    );
+  }
+
+  Future<String> generateAnswer({required String question, required String ragContext, String? userContext}) async {
+    return _generateCompletion(
+      messages: buildMessages(
+        question: question, 
+        systemInstruction: SystemPrompts.buildChatPrompt(userContext: userContext), 
+        ragContext: ragContext
+      ),
+    );
+  }
+
+  Future<String> generateComparison({required String university1, required String university2, required String context, String language = 'ru'}) async {
+    return _generateCompletion(
+      messages: buildMessages(
+        question: 'Compare $university1 and $university2:\n$context', 
+        systemInstruction: SystemPrompts.intentCompare
+      ),
+    );
+  }
+
+  Future<String> generateRoadmap({required String target, required String currentProfile}) async {
+    return _generateCompletion(
+      messages: buildMessages(
+        question: 'Roadmap for Target: $target\nProfile: $currentProfile', 
+        systemInstruction: SystemPrompts.strategy
+      ),
+    );
+  }
+
+  Future<String> generateRecommendation({required List<University> universities, required String userPrompt, required Map<String, dynamic> userProfile}) async {
+    final context = universities.map((u) => "- ${u.name} (Min Score: ${u.minScore})").join('\n');
+    return _generateCompletion(
+      messages: buildMessages(
+        question: 'Recommend for: $userPrompt\nProfile: $userProfile\nUnis:\n$context', 
+        systemInstruction: 'Recommend the best universities from the list.'
+      ),
+    );
+  }
+
+  Future<String> generateAIStrategy({required String universityName, required int untScore, required String specialty, required Map<String, int> subjectScores, required String alternativesCtx, required String language}) async {
+    final prompt = SystemPrompts.buildStrategyPrompt(universityName: universityName, untScore: untScore, specialty: specialty, scoresText: subjectScores.toString(), alternativesCtx: alternativesCtx, language: language);
+    return _generateCompletion(
+      messages: buildMessages(
+        question: prompt, 
+        systemInstruction: SystemPrompts.strategy
+      ),
+    );
+  }
+
+  Future<String> generateZhekeZhospar({required String userProfile, String? ragContext}) async {
+    return _generateCompletion(
+      messages: buildMessages(
+        question: 'Создай Жеке Жоспар:\n$userProfile', 
+        systemInstruction: SystemPrompts.zhekeZhospar, 
+        ragContext: ragContext
+      ),
+    );
+  }
+
+  Future<Stream<String>> generateZhekeZhosparStream({required String userProfile, String? ragContext}) async {
+    return _generateStream(
+      messages: buildMessages(
+        question: 'Создай Жеке Жоспар:\n$userProfile', 
+        systemInstruction: SystemPrompts.zhekeZhospar, 
+        ragContext: ragContext
+      ),
+    );
+  }
+
+  void _trackTokenUsage(Map<String, dynamic> json, String model) {
+    if (_costTracker == null) return;
+    try {
+      final usage = json['usage'];
+      if (usage != null) {
+        _costTracker!.trackUsage(
+          endpoint: model, 
+          inputTokens: usage['prompt_tokens'] as int? ?? 0, 
+          outputTokens: usage['completion_tokens'] as int? ?? 0
+        );
+      }
+    } catch (e) { stderr.writeln('⚠️ OpenAI Tracking error: $e'); }
   }
 }
