@@ -17,9 +17,9 @@ class GeminiService {
   // ✅ 2026 stable Gemini models with better fallback coverage
   static const List<String> _endpoints = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent',
     'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-002:generateContent',
   ];
 
   /// Keywords that require fresh data via Google Search Grounding.
@@ -84,16 +84,24 @@ class GeminiService {
       try {
         final modelName = endpoint.split('/models/').last.split(':').first;
 
+        final isV1 = endpoint.contains('/v1/');
         final Map<String, dynamic> requestBody = {
           'contents': contents,
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
-          requestBody['systemInstruction'] = {
+          final systemPart = {
             'parts': [
               {'text': systemInstruction}
             ]
           };
+          
+          // 💡 v1 uses system_instruction (underscore), v1beta uses systemInstruction
+          if (isV1) {
+            requestBody['system_instruction'] = systemPart;
+          } else {
+            requestBody['systemInstruction'] = systemPart;
+          }
         }
 
         // 🔍 Google Search Grounding (REST API v1beta syntax)
