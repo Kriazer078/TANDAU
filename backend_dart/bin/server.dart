@@ -25,7 +25,7 @@ void main(List<String> args) async {
   }
 
   final projectId = env['FIREBASE_PROJECT_ID'] ?? 'tandau-app';
-  final openAIKey = env['OPENAI_API_KEY'] ?? '';
+  final openAIKey = env['OPENROUTER_API_KEY'] ?? env['OPENAI_API_KEY'] ?? env['GEMINI_API_KEY'] ?? '';
   final port = int.parse(env['PORT'] ?? '8080');
 
   stderr.writeln('🆔 Using Project ID: $projectId');

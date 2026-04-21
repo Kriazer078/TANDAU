@@ -8,7 +8,7 @@ import 'system_prompts.dart';
 class OpenAIService {
   final String _apiKey;
   CostTrackerService? _costTracker;
-  final String _model = 'gpt-4o-mini';
+  final String _model = 'google/gemini-2.0-flash-lite-preview-02-05:free'; // Free tier on OpenRouter
 
   OpenAIService(this._apiKey);
 
@@ -58,7 +58,7 @@ class OpenAIService {
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) return 'Ошибка: API ключ OpenAI не настроен.';
 
-    final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+    final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
     
     try {
       final response = await http.post(
@@ -66,6 +66,8 @@ class OpenAIService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
+          'HTTP-Referer': 'https://tandau.kz',
+          'X-Title': 'TANDAU App',
         },
         body: jsonEncode({
           'model': _model,
@@ -95,12 +97,14 @@ class OpenAIService {
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) return Stream.value('Ошибка: API ключ OpenAI не настроен.');
 
-    final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+    final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
     
     try {
       final request = http.Request('POST', url);
       request.headers['Content-Type'] = 'application/json';
       request.headers['Authorization'] = 'Bearer $_apiKey';
+      request.headers['HTTP-Referer'] = 'https://tandau.kz';
+      request.headers['X-Title'] = 'TANDAU App';
       request.body = jsonEncode({
         'model': _model,
         'messages': messages,
