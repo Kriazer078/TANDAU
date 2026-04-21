@@ -27,7 +27,6 @@ class GeminiService {
     'новост', 'сейчас', 'актуальн', 'конкурс', 'current', 'latest',
     'рейтинг', 'ranking', 'бюджет', 'дедлайн', 'deadline',
   ];
-
   /// Returns true if the question likely needs live Google Search data.
   static bool _needsGrounding(String question) {
     final q = question.toLowerCase();
