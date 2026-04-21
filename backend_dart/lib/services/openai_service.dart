@@ -9,7 +9,7 @@ class OpenAIService {
   final String _apiKey; 
   CostTrackerService? _costTracker;
 
-  final String _model = 'gemma2-9b-it'; // Google's model on Groq, perfect Russian language support
+  final String _model = 'llama-3.3-70b-versatile'; // Meta's model on Groq, supports system role + good Russian
   final Uri _apiUrl = Uri.parse('https://api.groq.com/openai/v1/chat/completions');
 
   OpenAIService(this._apiKey);
@@ -26,13 +26,16 @@ class OpenAIService {
   }) {
     final List<Map<String, dynamic>> messages = [];
     
-    // 1. Prepare System Instruction
+    // 1. System Instruction (llama-3.3 supports 'system' role natively)
     String fullSystemPrompt = systemInstruction ?? 'You are TANDAU AI, an expert in Kazakhstan education.';
     if (ragContext != null && ragContext.isNotEmpty) {
-      fullSystemPrompt += '\n\nDATABASE CONTEXT (TRUSTED FACTS):\n$ragContext';
+      // Truncate RAG context to prevent token overflow
+      final truncatedRag = ragContext.length > 3000 ? ragContext.substring(0, 3000) : ragContext;
+      fullSystemPrompt += '\n\nDATABASE CONTEXT (TRUSTED FACTS):\n$truncatedRag';
     }
     
-    bool systemPromptInjected = false;
+    // Add system message as proper 'system' role
+    messages.add({'role': 'system', 'content': fullSystemPrompt});
 
     // 2. Chat History
     if (history != null && history.isNotEmpty) {
@@ -46,12 +49,6 @@ class OpenAIService {
         }
         
         if (content.trim().isNotEmpty) {
-          // Prepend system prompt to the first user message (Gemma on Groq doesn't support 'system' role)
-          if (role == 'user' && !systemPromptInjected) {
-            content = '$fullSystemPrompt\n\n$content';
-            systemPromptInjected = true;
-          }
-          
           // Groq requires strictly alternating roles (user -> assistant -> user)
           if (messages.isNotEmpty && messages.last['role'] == role) {
             messages.last['content'] = '${messages.last['content']}\n\n$content';
@@ -64,18 +61,17 @@ class OpenAIService {
 
     // 3. User Question
     if (question.trim().isNotEmpty) {
-      var finalQuestion = question;
-      if (!systemPromptInjected) {
-        finalQuestion = '$fullSystemPrompt\n\n$question';
-        systemPromptInjected = true;
-      }
-      
       // Prevent two user messages in a row
       if (messages.isNotEmpty && messages.last['role'] == 'user') {
-        messages.last['content'] = '${messages.last['content']}\n\n$finalQuestion';
+        messages.last['content'] = '${messages.last['content']}\n\n$question';
       } else {
-        messages.add({'role': 'user', 'content': finalQuestion});
+        messages.add({'role': 'user', 'content': question});
       }
+    }
+    
+    // 4. Ensure last message is from user (Groq requirement)
+    if (messages.isNotEmpty && messages.last['role'] != 'user') {
+      messages.add({'role': 'user', 'content': 'Продолжай на основе контекста выше.'});
     }
     
     return messages;
@@ -101,6 +97,7 @@ class OpenAIService {
           'model': _model,
           'messages': messages,
           'temperature': 0.7,
+          'max_tokens': 1024,
         }),
       ).timeout(const Duration(seconds: 45));
 
@@ -137,6 +134,7 @@ class OpenAIService {
         'model': _model,
         'messages': messages,
         'temperature': 0.7,
+        'max_tokens': 1024,
         'stream': true,
       });
 

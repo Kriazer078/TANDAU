@@ -326,14 +326,21 @@ class UniversityController {
         intentInstruction: intentInstruction,
       );
 
-      // Deduct token if successful and not premium
-      _deductToken(uid, shouldDeductToken);
+      // Deduct token only after first successful chunk (not before stream starts)
+      bool tokenDeducted = false;
 
       // Write SSE chunks
       final sseStream = () async* {
         try {
           await for (final text in stream) {
             if (text.trim().isEmpty) continue; // Skip empty/whitespace chunks
+            
+            // ✅ Deduct token on first real chunk (not before)
+            if (!tokenDeducted && shouldDeductToken) {
+              tokenDeducted = true;
+              _deductToken(uid, shouldDeductToken);
+            }
+            
             final encodedText = jsonEncode(text);
             yield utf8.encode('data: {"answer": $encodedText}\n\n');
           }

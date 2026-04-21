@@ -32,7 +32,7 @@ void main(List<String> args) async {
 
   // Initialize Services
   final firebaseService = FirebaseService(projectId);
-  final knowledgeService = KnowledgeService(firebaseService, groqApiKey);
+  final knowledgeService = KnowledgeService(firebaseService);
   final aiService = OpenAIService(groqApiKey);
 
   stderr.writeln('🚀 Starting services initialization...');

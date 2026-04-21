@@ -179,6 +179,7 @@ class AIConsultantService {
   }
 
   /// Отправить сообщение AI консультанту (Chat)
+  /// Backend /chat always returns SSE (text/event-stream), so we parse it here.
   Future<String> sendMessage(
     String message, {
     List<Map<String, dynamic>>? history,
@@ -187,12 +188,9 @@ class AIConsultantService {
     try {
       final bodyData = <String, dynamic>{'question': message};
 
-      // 🔧 BUG C FIX: Send language so backend can localize responses
+      // 🔧 Send language so backend can localize responses
       final language = LocaleManager().locale.value?.languageCode ?? 'ru';
       bodyData['language'] = language;
-
-      // NOTE: Moderation (profanity) is checked in the UI layer
-      // (AIConsultantScreen._sendMessage) before calling this method.
 
       if (!isInternalStrategyCall) {
         // userContext is now built entirely on the backend securely via `uid`.
@@ -220,9 +218,11 @@ class AIConsultantService {
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode(bodyData),
               )
-              .timeout(const Duration(seconds: 40));
+              .timeout(const Duration(seconds: 60));
 
-          if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
+          if (response.statusCode == 502 ||
+              response.statusCode == 503 ||
+              response.statusCode == 504) {
             retryCount++;
             if (retryCount >= maxRetries) break;
             await Future.delayed(const Duration(seconds: 2));
@@ -241,11 +241,38 @@ class AIConsultantService {
       if (response == null) throw Exception('No response received');
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes));
-        if (data['outOfTokens'] == true) {
-          throw OutOfTokensException(data['answer'] ?? '');
+        final responseBody = utf8.decode(response.bodyBytes);
+
+        // 🔧 Backend /chat returns SSE format (text/event-stream)
+        // Parse SSE lines: "data: {...}" and "data: [DONE]"
+        final StringBuffer fullAnswer = StringBuffer();
+
+        for (final line in responseBody.split('\n')) {
+          final trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+          final payload = trimmed.substring(6); // Remove "data: "
+
+          if (payload == '[DONE]') break;
+
+          try {
+            final chunk = jsonDecode(payload);
+            if (chunk['outOfTokens'] == true) {
+              throw OutOfTokensException(chunk['answer'] ?? '');
+            }
+            final answer = chunk['answer']?.toString() ?? '';
+            if (answer.isNotEmpty) {
+              fullAnswer.write(answer);
+            }
+          } catch (e) {
+            if (e is OutOfTokensException) rethrow;
+            // Skip malformed SSE lines
+            debugPrint('⚠️ SSE parse skip: $payload');
+          }
         }
-        return data['answer'] ?? 'Извините, ответ не получен.';
+
+        final result = fullAnswer.toString();
+        if (result.isNotEmpty) return result;
+        return 'Извините, ответ не получен.';
       }
       throw Exception('Server error: ${response.statusCode}');
     } catch (e) {
