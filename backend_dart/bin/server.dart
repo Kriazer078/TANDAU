@@ -10,7 +10,7 @@ import 'package:dotenv/dotenv.dart';
 import 'package:antigravity_backend/controllers/university_controller.dart';
 import 'package:antigravity_backend/controllers/notification_controller.dart';
 import 'package:antigravity_backend/services/firebase_service.dart';
-import 'package:antigravity_backend/services/gemini_service.dart';
+import 'package:antigravity_backend/services/openai_service.dart';
 import 'package:antigravity_backend/services/knowledge_service.dart';
 import 'package:antigravity_backend/services/cache_service.dart';
 import 'package:antigravity_backend/services/ai_logger_service.dart';
@@ -25,15 +25,15 @@ void main(List<String> args) async {
   }
 
   final projectId = env['FIREBASE_PROJECT_ID'] ?? 'tandau-app';
-  final geminiKey = env['GEMINI_API_KEY'] ?? '';
+  final openAIKey = env['OPENAI_API_KEY'] ?? '';
   final port = int.parse(env['PORT'] ?? '8080');
 
   stderr.writeln('🆔 Using Project ID: $projectId');
 
   // Initialize Services
   final firebaseService = FirebaseService(projectId);
-  final knowledgeService = KnowledgeService(firebaseService, geminiKey);
-  final aiService = GeminiService(geminiKey);
+  final knowledgeService = KnowledgeService(firebaseService, openAIKey);
+  final aiService = OpenAIService(openAIKey);
 
   stderr.writeln('🚀 Starting services initialization...');
 
@@ -56,7 +56,7 @@ void main(List<String> args) async {
     stderr.writeln('❌ CRITICAL ERROR during service initialization: $e');
     stderr.writeln(stack);
     // Note: We intentionally don't exit(1) here so the health check endpoint 
-    // can still return an error message rather than a generic Cloud Run crash.
+    // can still return an error message rather than a generic server crash.
   }
 
   // 📦 Initialize Cache Service
@@ -241,7 +241,7 @@ void main(List<String> args) async {
     <p>Данные не продаются третьим лицам. Данные передаются только:</p>
     <ul>
       <li><strong>Google Firebase</strong> — хранение, Auth, Analytics</li>
-      <li><strong>Google Gemini AI</strong> — для обработки запросов к AI-консультанту (только текст запросов).</li>
+      <li><strong>OpenAI</strong> — для обработки запросов к AI-консультанту (только текст запросов).</li>
       <li><strong>RevenueCat</strong> — обработка покупок и подписок.</li>
     </ul>
   </section>
