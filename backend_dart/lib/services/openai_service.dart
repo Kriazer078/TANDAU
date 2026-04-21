@@ -8,7 +8,7 @@ import 'system_prompts.dart';
 class OpenAIService {
   final String _apiKey;
   CostTrackerService? _costTracker;
-  final String _model = 'google/gemini-2.0-flash-lite-preview-02-05:free'; // Free tier on OpenRouter
+  final String _model = 'meta-llama/llama-3.3-70b-instruct:free'; // Free tier on OpenRouter
 
   OpenAIService(this._apiKey);
 
