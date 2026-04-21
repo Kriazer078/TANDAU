@@ -14,10 +14,10 @@ class GeminiService {
     _costTracker = tracker;
   }
 
-  // ✅ Using latest stable aliases to prevent 404 errors
+  // ✅ LATEST 2026 MODELS (Gemini 1.5 is deprecated as of April 2026)
   static const List<String> _endpoints = [
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
   ];
 
   /// Keywords that require fresh data via Google Search Grounding.
