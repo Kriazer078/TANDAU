@@ -16,10 +16,8 @@ class GeminiService {
 
   // ✅ 2026 stable Gemini models with better fallback coverage
   static const List<String> _endpoints = [
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-002:generateContent',
   ];
 
   /// Keywords that require fresh data via Google Search Grounding.
@@ -84,7 +82,8 @@ class GeminiService {
       try {
         final modelName = endpoint.split('/models/').last.split(':').first;
 
-        final isV1 = endpoint.contains('/v1/');
+        final isV1beta = endpoint.contains('/v1beta/');
+        final isV1 = !isV1beta && endpoint.contains('/v1/');
         final Map<String, dynamic> requestBody = {
           'contents': contents,
         };
