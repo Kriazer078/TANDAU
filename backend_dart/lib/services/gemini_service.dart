@@ -14,10 +14,18 @@ class GeminiService {
     _costTracker = tracker;
   }
 
-  // ✅ LATEST 2026 MODELS (Gemini 1.5 is deprecated as of April 2026)
+  // ✅ Multi-version 2026 Fallback System
   static const List<String> _endpoints = [
+    // Latest 2026 Models
+    'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent', 
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+    
+    // High Compatibility 1.5 Series
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    
+    // Generic Aliases
+    'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent',
   ];
 
   /// Keywords that require fresh data via Google Search Grounding.
@@ -76,21 +84,12 @@ class GeminiService {
       return 'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.';
     }
 
-    // 🛠️ ULTIMATE STABILITY: Inject system instruction directly into prompt
-    // This avoids "Unknown name systemInstruction" field errors entirely.
+    // 🛠️ FAILSAFE: Normalize contents (roles must alternate)
     final List<Map<String, dynamic>> normalizedContents = [];
     String lastRole = '';
-    
     for (var i = 0; i < contents.length; i++) {
       final content = Map<String, dynamic>.from(contents[i]);
       final role = content['role'] ?? 'user';
-      
-      // On the first user message, prepend system instruction as text
-      if (i == 0 && systemInstruction != null && systemInstruction.isNotEmpty) {
-        final originalText = content['parts'][0]['text'] ?? '';
-        content['parts'][0]['text'] = 'SYSTEM INSTRUCTIONS (FOLLOW STRICTLY):\n$systemInstruction\n\nUSER QUESTION:\n$originalText';
-      }
-
       if (role != lastRole) {
         normalizedContents.add(content);
         lastRole = role;
@@ -104,10 +103,23 @@ class GeminiService {
       try {
         final modelName = endpoint.split('/models/').last.split(':').first;
         final isV1beta = endpoint.contains('/v1beta/');
+        final isV1 = endpoint.contains('/v1/');
 
         final Map<String, dynamic> requestBody = {
           'contents': normalizedContents,
         };
+
+        // 🧠 Proper System Instruction handling for different versions
+        if (systemInstruction != null && systemInstruction.isNotEmpty) {
+          final systemPart = {
+            'parts': [ {'text': systemInstruction} ]
+          };
+          if (isV1) {
+            requestBody['system_instruction'] = systemPart;
+          } else {
+            requestBody['systemInstruction'] = systemPart;
+          }
+        }
 
         // 🔍 Google Search Grounding (ONLY for v1beta)
         if (useGrounding && isV1beta) {
@@ -133,24 +145,32 @@ class GeminiService {
 
         if (response.statusCode == 200) {
           final json = jsonDecode(utf8.decode(response.bodyBytes));
-          final text = json['candidates']?[0]?['content']?['parts']?[0]?['text'];
+          final text = json['candidates']?[0]?['content']?[ 'parts']?[0]?['text'];
           if (text != null) {
-            stderr.writeln('✅ Gemini ($modelName) Success');
+            stderr.writeln('✅ Gemini ($modelName) Success via ${isV1 ? "v1" : "v1beta"}');
             _trackTokenUsage(json, modelName);
             return text;
           }
         }
         
+        errors.add('$modelName (${response.statusCode}): ${response.body}');
+        
         // 🛡️ RECOVERY LAYER: If any error occurs, try a "CLEAN" request as last resort
-        if (response.statusCode != 200) {
+        if (response.statusCode != 200 && response.statusCode != 429) {
           stderr.writeln('⚠️ Error ${response.statusCode}. Trying "Safe Mode" for $modelName...');
-          final lastPrompt = normalizedContents.lastWhere((c) => c['role'] == 'user', orElse: () => normalizedContents.last);
+          final lastPromptPart = normalizedContents.last['parts'][0]['text'];
+          final safePrompt = 'Follow instructions strictly.\n\nContext: $systemInstruction\n\nQuestion: $lastPromptPart';
           
           final cleanResponse = await http.post(
             Uri.parse('$endpoint?key=$_apiKey'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
-              'contents': [lastPrompt] // NO history, NO system field, NO tools
+              'contents': [
+                {
+                  'role': 'user',
+                  'parts': [ {'text': safePrompt} ]
+                }
+              ]
             }),
           ).timeout(const Duration(seconds: 15));
           
