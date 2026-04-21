@@ -26,31 +26,57 @@ class OpenAIService {
   }) {
     final List<Map<String, dynamic>> messages = [];
     
-    // 1. System Instruction
+    // 1. Prepare System Instruction
     String fullSystemPrompt = systemInstruction ?? 'You are TANDAU AI, an expert in Kazakhstan education.';
     if (ragContext != null && ragContext.isNotEmpty) {
       fullSystemPrompt += '\n\nDATABASE CONTEXT (TRUSTED FACTS):\n$ragContext';
     }
     
-    messages.add({'role': 'system', 'content': fullSystemPrompt});
+    bool systemPromptInjected = false;
 
     // 2. Chat History
     if (history != null && history.isNotEmpty) {
-      // Convert Gemini history (parts) to OpenAI format if needed
       for (var item in history) {
-        final role = item['role'] == 'model' ? 'assistant' : item['role'];
+        final role = item['role'] == 'model' ? 'assistant' : (item['role'] ?? 'user');
         var content = '';
-        if (item['parts'] is List) {
+        if (item['parts'] is List && item['parts'].isNotEmpty) {
           content = item['parts'][0]['text'] ?? '';
         } else {
-          content = item['content'] ?? '';
+          content = item['content']?.toString() ?? '';
         }
-        messages.add({'role': role, 'content': content});
+        
+        if (content.trim().isNotEmpty) {
+          // Prepend system prompt to the first user message (Gemma on Groq doesn't support 'system' role)
+          if (role == 'user' && !systemPromptInjected) {
+            content = '$fullSystemPrompt\n\n$content';
+            systemPromptInjected = true;
+          }
+          
+          // Groq requires strictly alternating roles (user -> assistant -> user)
+          if (messages.isNotEmpty && messages.last['role'] == role) {
+            messages.last['content'] = '${messages.last['content']}\n\n$content';
+          } else {
+            messages.add({'role': role, 'content': content});
+          }
+        }
       }
     }
 
     // 3. User Question
-    messages.add({'role': 'user', 'content': question});
+    if (question.trim().isNotEmpty) {
+      var finalQuestion = question;
+      if (!systemPromptInjected) {
+        finalQuestion = '$fullSystemPrompt\n\n$question';
+        systemPromptInjected = true;
+      }
+      
+      // Prevent two user messages in a row
+      if (messages.isNotEmpty && messages.last['role'] == 'user') {
+        messages.last['content'] = '${messages.last['content']}\n\n$finalQuestion';
+      } else {
+        messages.add({'role': 'user', 'content': finalQuestion});
+      }
+    }
     
     return messages;
   }
