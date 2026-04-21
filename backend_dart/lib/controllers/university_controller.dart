@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import '../services/firebase_service.dart';
-import '../services/openai_service.dart';
+import '../services/gemini_service.dart';
 import '../services/knowledge_service.dart';
 import '../services/intent_detector.dart';
 import '../services/system_prompts.dart';
@@ -12,7 +12,7 @@ import '../models/university.dart';
 
 class UniversityController {
   final FirebaseService _firebaseService;
-  final OpenAIService _aiService;
+  final GeminiService _aiService;
   final KnowledgeService _knowledgeService;
   AILoggerService? _aiLogger;
   final Router router = Router();

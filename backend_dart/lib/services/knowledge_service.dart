@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'firebase_service.dart';
 
 /// Service that searches the knowledge base using vector embeddings
-/// for semantic similarity (RAG pipeline with OpenAI Embeddings).
+/// for semantic similarity (RAG pipeline with Gemini Embeddings).
 class KnowledgeService {
   final FirebaseService _firebaseService;
   final String _apiKey;
@@ -19,9 +19,13 @@ class KnowledgeService {
   bool _isLoaded = false;
   bool get isInitialized => _isLoaded;
 
-  /// OpenAI Embedding model endpoint
-  static const String _embeddingEndpoint = 'https://api.openai.com/v1/embeddings';
-  static const String _model = 'text-embedding-3-small';
+  /// Gemini Embedding model endpoint
+  static const String _embeddingEndpoint =
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent';
+
+  /// Batch embedding endpoint
+  static const String _batchEmbeddingEndpoint =
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:batchEmbedContents';
 
   KnowledgeService(this._firebaseService, this._apiKey);
 
@@ -56,17 +60,14 @@ class KnowledgeService {
 
   /// Generate embeddings for all KB documents in batches
   Future<void> _computeEmbeddings() async {
-    stderr.writeln('🧮 Checking embeddings for ${_knowledgeBase.length} docs (OpenAI)...');
+    stderr.writeln('🧮 Checking embeddings for ${_knowledgeBase.length} docs...');
     final List<List<double>> allEmbeddings = List.filled(_knowledgeBase.length, []);
 
     // 1. Extract already computed embeddings from database
     List<int> missingIndices = [];
     for (int i = 0; i < _knowledgeBase.length; i++) {
       final doc = _knowledgeBase[i];
-      // Note: If we switched from Gemini to OpenAI, existing embeddings in Firestore might be the wrong size/model.
-      // We should probably check the dimension or have a model version flag.
-      // OpenAI text-embedding-3-small is 1536 dims. Gemini is 768.
-      if (doc['embedding'] != null && doc['embedding'] is List && (doc['embedding'] as List).length == 1536) {
+      if (doc['embedding'] != null && doc['embedding'] is List && (doc['embedding'] as List).isNotEmpty) {
         allEmbeddings[i] = (doc['embedding'] as List).map((e) => (e as num).toDouble()).toList();
       } else {
         missingIndices.add(i);
@@ -79,9 +80,9 @@ class KnowledgeService {
       return;
     }
 
-    stderr.writeln('🧮 Computing missing embeddings for ${missingIndices.length} docs with OpenAI...');
+    stderr.writeln('🧮 Computing missing embeddings for ${missingIndices.length} docs...');
 
-    // 2. Process missing ones in batches of 20
+    // 2. Process missing ones in batches of 20 (API limit)
     const int batchSize = 20;
     for (int i = 0; i < missingIndices.length; i += batchSize) {
       final batchIndices = missingIndices.sublist(
@@ -89,30 +90,33 @@ class KnowledgeService {
         min(i + batchSize, missingIndices.length),
       );
 
-      final List<String> inputs = batchIndices.map((idx) {
+      final List<Map<String, dynamic>> requests = batchIndices.map((idx) {
         final doc = _knowledgeBase[idx];
-        return '${doc['title'] ?? ''}: ${doc['content'] ?? ''}';
+        final text = '${doc['title'] ?? ''}: ${doc['content'] ?? ''}';
+        return {
+          'model': 'models/gemini-embedding-001',
+          'content': {
+            'parts': [
+              {'text': text}
+            ]
+          },
+          'taskType': 'RETRIEVAL_DOCUMENT',
+        };
       }).toList();
 
       try {
         final response = await http.post(
-          Uri.parse(_embeddingEndpoint),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $_apiKey',
-          },
-          body: jsonEncode({
-            'model': _model,
-            'input': inputs,
-          }),
+          Uri.parse('$_batchEmbeddingEndpoint?key=$_apiKey'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'requests': requests}),
         );
 
         if (response.statusCode == 200) {
           final json = jsonDecode(response.body);
-          final data = json['data'] as List<dynamic>;
-          for (int j = 0; j < data.length; j++) {
-            final embData = data[j];
-            final values = (embData['embedding'] as List<dynamic>)
+          final embeddings = json['embeddings'] as List<dynamic>;
+          for (int j = 0; j < embeddings.length; j++) {
+            final emb = embeddings[j];
+            final values = (emb['values'] as List<dynamic>)
                 .map((v) => (v as num).toDouble())
                 .toList();
             
@@ -126,12 +130,13 @@ class KnowledgeService {
             }
           }
         } else {
-          stderr.writeln('⚠️ OpenAI Embedding batch failed: ${response.statusCode} - ${response.body}');
+          stderr.writeln('⚠️ Embedding batch failed: ${response.statusCode}');
         }
       } catch (e) {
-        stderr.writeln('⚠️ OpenAI Embedding batch error: $e');
+        stderr.writeln('⚠️ Embedding batch error: $e');
       }
 
+      // Small delay to avoid rate limiting
       if (i + batchSize < missingIndices.length) {
         await Future.delayed(const Duration(milliseconds: 200));
       }
@@ -139,36 +144,38 @@ class KnowledgeService {
 
     _docEmbeddings = allEmbeddings;
     final validCount = allEmbeddings.where((e) => e.isNotEmpty).length;
-    stderr.writeln('✅ OpenAI Embeddings loaded/computed: $validCount/${_knowledgeBase.length} docs');
+    stderr.writeln('✅ Embeddings loaded/computed: $validCount/${_knowledgeBase.length} docs');
   }
 
   /// Embed a user query for retrieval
   Future<List<double>> _embedQuery(String query) async {
     try {
       final response = await http.post(
-        Uri.parse(_embeddingEndpoint),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $_apiKey',
-        },
+        Uri.parse('$_embeddingEndpoint?key=$_apiKey'),
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'model': _model,
-          'input': query,
+          'content': {
+            'parts': [
+              {'text': query}
+            ]
+          },
+          'taskType': 'RETRIEVAL_QUERY',
         }),
       );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
-        return (json['data'][0]['embedding'] as List<dynamic>)
+        return (json['embedding']['values'] as List<dynamic>)
             .map((v) => (v as num).toDouble())
             .toList();
       }
     } catch (e) {
-      stderr.writeln('⚠️ OpenAI Query embedding error: $e');
+      stderr.writeln('⚠️ Query embedding error: $e');
     }
     return [];
   }
 
+  /// Cosine similarity between two vectors
   static double _cosineSimilarity(List<double> a, List<double> b) {
     if (a.isEmpty || b.isEmpty || a.length != b.length) return 0.0;
     double dotProduct = 0.0;
@@ -184,27 +191,44 @@ class KnowledgeService {
     return dotProduct / denominator;
   }
 
+  /// Search knowledge base using vector similarity.
+  /// Falls back to keyword search if embeddings unavailable.
   String searchAndFormat(String query) {
     if (!_isLoaded || _knowledgeBase.isEmpty) return '';
+
+    // If embeddings are ready, use them (async result cached)
+    // Since searchAndFormat is sync, we check if we have embeddings
     if (_docEmbeddings.isNotEmpty && _docEmbeddings.any((e) => e.isNotEmpty)) {
-      return _keywordSearch(query); // Sync fallback
+      return _searchSync(query);
     }
+
+    // Fallback: keyword search
     return _keywordSearch(query);
   }
 
+  /// Async vector search — preferred method
   Future<String> searchAndFormatAsync(String query) async {
     if (!_isLoaded || _knowledgeBase.isEmpty) return '';
 
     if (_docEmbeddings.isNotEmpty && _docEmbeddings.any((e) => e.isNotEmpty)) {
+      // Embed the query and search
       final queryEmbedding = await _embedQuery(query);
       if (queryEmbedding.isNotEmpty) {
         return _vectorSearch(queryEmbedding);
       }
     }
 
+    // Fallback: keyword search
     return _keywordSearch(query);
   }
 
+  /// Sync search using pre-computed query embeddings cache
+  String _searchSync(String query) {
+    // Use keyword search as sync fallback — vector search is async
+    return _keywordSearch(query);
+  }
+
+  /// Vector similarity search — returns top-5 most relevant docs
   String _vectorSearch(List<double> queryEmbedding) {
     final List<MapEntry<int, double>> scored = [];
 
@@ -216,10 +240,11 @@ class KnowledgeService {
 
     if (scored.isEmpty) return '';
 
+    // Sort by similarity descending, take top 5
     scored.sort((a, b) => b.value.compareTo(a.value));
     final topDocs = scored
         .take(5)
-        .where((e) => e.value > 0.4) // Threshold for OpenAI text-embedding-3-small
+        .where((e) => e.value > 0.3) // Minimum similarity threshold
         .map((e) => _knowledgeBase[e.key])
         .toList();
 
@@ -228,6 +253,7 @@ class KnowledgeService {
     return _formatDocs(topDocs);
   }
 
+  /// Keyword-based fallback search (original logic, improved)
   String _keywordSearch(String query) {
     final queryLower = query.toLowerCase();
 
@@ -303,6 +329,7 @@ class KnowledgeService {
     return _formatDocs(topDocs);
   }
 
+  /// Format documents for RAG injection
   String _formatDocs(List<Map<String, dynamic>> docs) {
     final buffer = StringBuffer();
     buffer.writeln('[ФАКТЫ ИЗ БАЗЫ ЗНАНИЙ TANDAU (верифицированные данные):');

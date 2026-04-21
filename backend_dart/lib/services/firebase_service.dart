@@ -30,16 +30,15 @@ class FirebaseService {
 
   Future<void> init() async {
     try {
-      // Determine if we are running in a cloud environment (Cloud Run or Render)
-      final kIsCloud = Platform.environment['K_SERVICE'] != null || 
-                       Platform.environment['RENDER'] != null;
+      // Determine if we are running in a Cloud Run environment or have ADC configured
+      final kIsCloudRun = Platform.environment['K_SERVICE'] != null;
       final serviceAccountPath =
           Platform.environment['GOOGLE_APPLICATION_CREDENTIALS'] ??
               'service_account.json';
 
-      if (kIsCloud || !File(serviceAccountPath).existsSync()) {
-        stderr.writeln(kIsCloud
-            ? '☁️ Running in Cloud: Using Application Default Credentials'
+      if (kIsCloudRun || !File(serviceAccountPath).existsSync()) {
+        stderr.writeln(kIsCloudRun
+            ? '☁️ Running on Cloud Run: Using Application Default Credentials'
             : '📂 No service_account.json found: Using Application Default Credentials');
 
         var client = await clientViaApplicationDefaultCredentials(scopes: [

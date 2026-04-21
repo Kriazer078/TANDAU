@@ -1,22 +1,25 @@
 import 'dart:io';
 
-/// 💰 Cost Tracking Service for OpenAI API usage.
+/// 💰 Cost Tracking Service for Gemini API usage.
 ///
 /// Tracks input/output tokens per request and calculates
-/// estimated cost based on OpenAI pricing.
+/// estimated cost based on Gemini pricing.
 class CostTrackerService {
-  // ── Pricing: GPT-4o-mini (April 2026) ──
-  // https://openai.com/pricing
-  static const double inputPricePer1M = 0.150;  // $0.150 per 1M input tokens
-  static const double outputPricePer1M = 0.600; // $0.600 per 1M output tokens
+  // ── Pricing: Gemini 2.0 Flash (April 2026) ──
+  // https://ai.google.dev/pricing
+  static const double inputPricePer1M = 0.075;  // $0.075 per 1M input tokens
+  static const double outputPricePer1M = 0.30;  // $0.30  per 1M output tokens
 
   // ── Per-model pricing overrides ──
   static const Map<String, List<double>> _modelPricing = {
-    'gpt-4o-mini':      [0.150, 0.600],
-    'gpt-4o':           [2.50, 10.00],
-    'o1-mini':          [1.10, 4.40],
-    'text-embedding-3-small': [0.02, 0.00],
+    'gemini-2.5-flash':      [0.075, 0.30],
+    'gemini-2.5-pro':        [3.50, 10.50],
+    'gemini-2.5-flash-lite': [0.035, 0.15],
+    'gemini-2.0-flash':      [0.075, 0.30],
   };
+
+
+
 
   // ── Aggregate counters ──
   int _totalInputTokens = 0;
@@ -60,7 +63,7 @@ class CostTrackerService {
     day.requests++;
     day.costUsd += cost;
 
-    stderr.writeln('💰 Cost (OpenAI): +$inputTokens in / +$outputTokens out = '
+    stderr.writeln('💰 Cost: +$inputTokens in / +$outputTokens out = '
         '\$${cost.toStringAsFixed(6)} ($endpoint)');
   }
 
@@ -91,7 +94,7 @@ class CostTrackerService {
         'cost_formatted': '\$${_totalCostUsd.toStringAsFixed(4)}',
       },
       'pricing': {
-        'model': 'GPT-4o-mini',
+        'model': 'Gemini 2.0 Flash',
         'input_per_1M': '\$$inputPricePer1M',
         'output_per_1M': '\$$outputPricePer1M',
       },
