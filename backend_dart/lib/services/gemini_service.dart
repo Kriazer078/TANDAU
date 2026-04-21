@@ -98,6 +98,7 @@ class GeminiService {
     }
 
     int lastStatusCode = 0;
+    final List<String> errors = [];
     
     for (final endpoint in _endpoints) {
       try {
