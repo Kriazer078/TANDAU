@@ -16,11 +16,9 @@ class GeminiService {
 
   // ✅ 2026 Verified stable Gemini models, ordered by priority (best first)
   static const List<String> _endpoints = [
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
   ];
 
 
@@ -139,10 +137,8 @@ class GeminiService {
           errors.add(
               '$modelName failed: ${response.statusCode} - ${response.body}');
           
-          // 🛡️ Circuit Breaker: Continue to fallback model on rate limits
-          if (response.statusCode == 429) {
-            continue; 
-          }
+          // 🛡️ Circuit Breaker: Continue to fallback model on any error
+          continue; 
         }
       } catch (e) {
         stderr.writeln('Connection Error: $e');

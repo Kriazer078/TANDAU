@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:collection';
+import 'dart:async';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
@@ -23,29 +24,50 @@ void main(List<String> args) async {
     env.load();
   }
 
-  final projectId = env['FIREBASE_PROJECT_ID'] ?? 'your-project-id';
+  final projectId = env['FIREBASE_PROJECT_ID'] ?? 'tandau-app';
   final geminiKey = env['GEMINI_API_KEY'] ?? '';
   final port = int.parse(env['PORT'] ?? '8080');
 
+  stderr.writeln('🆔 Using Project ID: $projectId');
+
   // Initialize Services
   final firebaseService = FirebaseService(projectId);
-  await firebaseService.init();
+  final knowledgeService = KnowledgeService(firebaseService, geminiKey);
+  final aiService = GeminiService(geminiKey);
+
+  stderr.writeln('🚀 Starting services initialization...');
+
+  try {
+    // 1. Core Firebase Init (must be fast)
+    await firebaseService.init().timeout(const Duration(seconds: 10), onTimeout: () {
+      throw Exception('Firebase initialization timed out (10s)');
+    });
+    stderr.writeln('✅ Firebase Service initialized');
+
+    // 2. Knowledge Base Init (run in background to avoid blocking health check)
+    // We don't await this directly if it takes too long
+    unawaited(knowledgeService.init().then((_) {
+      stderr.writeln('✅ Knowledge Base background indexing complete');
+    }).catchError((e) {
+      stderr.writeln('⚠️ Knowledge Base background init failed: $e');
+    }));
+
+  } catch (e, stack) {
+    stderr.writeln('❌ CRITICAL ERROR during service initialization: $e');
+    stderr.writeln(stack);
+    // Note: We intentionally don't exit(1) here so the health check endpoint 
+    // can still return an error message rather than a generic Cloud Run crash.
+  }
 
   // 📦 Initialize Cache Service
   final cacheService = CacheService();
   firebaseService.setCacheService(cacheService);
   stderr.writeln('📦 Cache Service initialized');
 
-  final aiService = GeminiService(geminiKey);
-
   // 💰 Initialize Cost Tracker
   final costTracker = CostTrackerService();
   aiService.setCostTracker(costTracker);
   stderr.writeln('💰 Cost Tracker initialized');
-
-  // Initialize Knowledge Service (RAG)
-  final knowledgeService = KnowledgeService(firebaseService, geminiKey);
-  await knowledgeService.init();
 
   // 📊 Initialize AI Logger
   final aiLogger = AILoggerService(

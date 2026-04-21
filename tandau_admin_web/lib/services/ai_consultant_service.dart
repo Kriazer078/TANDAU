@@ -19,17 +19,17 @@ class AIConsultantService {
   AIConsultantService._internal();
 
   // PRODUCTION URL:
-  static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
+  static const String _baseUrl = 'https://tandau-backend-60478017512.europe-west1.run.app/api/v1';
 
   /// Инициализация (Warm-up backend)
   void init() {
-    // Fire and forget request to wake up Render instance
+    // Fire and forget request to warm up Cloud Run instance
     _wakeUpBackend();
   }
 
   Future<void> _wakeUpBackend() async {
     try {
-      // Отправляем легкий запрос, чтобы "разбудить" сервер (Render Cold Start)
+      // Отправляем легкий запрос для прогрева (Cloud Run Cold Start)
       // Нам не важен ответ (404 или 200), главное — инициировать процесс
       await http
           .get(Uri.parse('$_baseUrl/health'))

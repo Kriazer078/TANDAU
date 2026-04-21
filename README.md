@@ -68,7 +68,7 @@ flutter run
 
 <div align="center">
 
-📄 [Privacy Policy](https://tandau-app.web.app/privacy_policy.html) • 🗑 [Delete Account](https://tandau-backend.onrender.com/delete-account) • 📧 [Support](mailto:tandau.app.help@gmail.com)
+📄 [Privacy Policy](https://tandau-app.web.app/privacy_policy.html) • 🗑 [Delete Account](https://tandau-backend-60478017512.europe-west1.run.app/delete-account) • 📧 [Support](mailto:tandau.app.help@gmail.com)
 
 **© 2026 TANDAU**  
 *Made in Kazakhstan 🇰🇿*

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
@@ -17,6 +17,7 @@ class KnowledgeService {
   List<List<double>> _docEmbeddings = [];
 
   bool _isLoaded = false;
+  bool get isInitialized => _isLoaded;
 
   /// Gemini Embedding model endpoint
   static const String _embeddingEndpoint =
@@ -32,24 +33,24 @@ class KnowledgeService {
   Future<void> init() async {
     try {
       _knowledgeBase = await _firebaseService.getKnowledgeBase();
-      print('📚 Knowledge Base loaded: ${_knowledgeBase.length} documents');
+      stderr.writeln('📚 Knowledge Base loaded: ${_knowledgeBase.length} documents');
 
       if (_apiKey.isNotEmpty && !_apiKey.startsWith('REPLACE')) {
         await _computeEmbeddings();
       } else {
-        print('⚠️ No API key — falling back to keyword search');
+        stderr.writeln('⚠️ No API key — falling back to keyword search');
       }
 
       _isLoaded = true;
     } catch (e) {
-      print('⚠️ Failed to load Knowledge Base: $e');
+      stderr.writeln('⚠️ Failed to load Knowledge Base: $e');
       _knowledgeBase = [];
     }
   }
 
   /// Generate embeddings for all KB documents in batches
   Future<void> _computeEmbeddings() async {
-    print('🧮 Checking embeddings for ${_knowledgeBase.length} docs...');
+    stderr.writeln('🧮 Checking embeddings for ${_knowledgeBase.length} docs...');
     final List<List<double>> allEmbeddings = List.filled(_knowledgeBase.length, []);
 
     // 1. Extract already computed embeddings from database
@@ -65,11 +66,11 @@ class KnowledgeService {
 
     if (missingIndices.isEmpty) {
       _docEmbeddings = allEmbeddings;
-      print('✅ All embeddings loaded from database (${allEmbeddings.length} docs)');
+      stderr.writeln('✅ All embeddings loaded from database (${allEmbeddings.length} docs)');
       return;
     }
 
-    print('🧮 Computing missing embeddings for ${missingIndices.length} docs...');
+    stderr.writeln('🧮 Computing missing embeddings for ${missingIndices.length} docs...');
 
     // 2. Process missing ones in batches of 20 (API limit)
     const int batchSize = 20;
@@ -119,10 +120,10 @@ class KnowledgeService {
             }
           }
         } else {
-          print('⚠️ Embedding batch failed: ${response.statusCode}');
+          stderr.writeln('⚠️ Embedding batch failed: ${response.statusCode}');
         }
       } catch (e) {
-        print('⚠️ Embedding batch error: $e');
+        stderr.writeln('⚠️ Embedding batch error: $e');
       }
 
       // Small delay to avoid rate limiting
@@ -133,7 +134,7 @@ class KnowledgeService {
 
     _docEmbeddings = allEmbeddings;
     final validCount = allEmbeddings.where((e) => e.isNotEmpty).length;
-    print('✅ Embeddings loaded/computed: $validCount/${_knowledgeBase.length} docs');
+    stderr.writeln('✅ Embeddings loaded/computed: $validCount/${_knowledgeBase.length} docs');
   }
 
   /// Embed a user query for retrieval
@@ -159,7 +160,7 @@ class KnowledgeService {
             .toList();
       }
     } catch (e) {
-      print('⚠️ Query embedding error: $e');
+      stderr.writeln('⚠️ Query embedding error: $e');
     }
     return [];
   }

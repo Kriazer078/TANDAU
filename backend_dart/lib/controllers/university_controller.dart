@@ -23,8 +23,20 @@ class UniversityController {
     router.post('/chat', _chat);
     router.post('/zheke-zhospar', _zhekeZhospar);
     router.post('/ai/getAIStrategy', _getAIStrategy);
-    router.get('/health',
-        (Request req) => Response.ok('Antigravity Server is running'));
+    router.get('/health', (Request req) {
+      final status = {
+        'status': 'ok',
+        'service': 'TANDAU Backend',
+        'version': '1.1.0',
+        'firebase_initialized': _firebaseService.isInitialized,
+        'knowledge_initialized': _knowledgeService.isInitialized,
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+      };
+      return Response.ok(
+        jsonEncode(status),
+        headers: {'Content-Type': 'application/json'},
+      );
+    });
   }
 
   /// Set AI logger (optional, set from server.dart)
@@ -349,6 +361,7 @@ class UniversityController {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
+          'X-Accel-Buffering': 'no',
         },
         context: {
           "shelf.io.buffer_output": false

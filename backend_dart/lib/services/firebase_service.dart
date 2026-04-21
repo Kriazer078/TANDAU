@@ -8,6 +8,9 @@ import 'cache_service.dart';
 class FirebaseService {
   late FirestoreApi _firestoreApi;
   late FirebaseCloudMessagingApi _fcmApi;
+  bool _isInitialized = false;
+
+  bool get isInitialized => _isInitialized;
   final String _projectId;
   CacheService? _cacheService;
 
@@ -26,34 +29,42 @@ class FirebaseService {
   FirestoreApi get firestoreApi => _firestoreApi;
 
   Future<void> init() async {
-    // Determine if we are running in a Cloud Run environment or have ADC configured
-    final kIsCloudRun = Platform.environment['K_SERVICE'] != null;
-    final serviceAccountPath =
-        Platform.environment['GOOGLE_APPLICATION_CREDENTIALS'] ??
-            'service_account.json';
+    try {
+      // Determine if we are running in a Cloud Run environment or have ADC configured
+      final kIsCloudRun = Platform.environment['K_SERVICE'] != null;
+      final serviceAccountPath =
+          Platform.environment['GOOGLE_APPLICATION_CREDENTIALS'] ??
+              'service_account.json';
 
-    if (kIsCloudRun || !File(serviceAccountPath).existsSync()) {
-      stderr.writeln(kIsCloudRun 
-          ? '☁️ Running on Cloud Run: Using Application Default Credentials'
-          : '📂 No service_account.json found: Using Application Default Credentials');
-      
-      var client = await clientViaApplicationDefaultCredentials(scopes: [
-        FirestoreApi.datastoreScope,
-        FirebaseCloudMessagingApi.firebaseMessagingScope
-      ]);
-      _firestoreApi = FirestoreApi(client);
-      _fcmApi = FirebaseCloudMessagingApi(client);
-    } else {
-      stderr.writeln('🔑 Using local service account: $serviceAccountPath');
-      final accountCredentials = ServiceAccountCredentials.fromJson(
-          await File(serviceAccountPath).readAsString());
+      if (kIsCloudRun || !File(serviceAccountPath).existsSync()) {
+        stderr.writeln(kIsCloudRun
+            ? '☁️ Running on Cloud Run: Using Application Default Credentials'
+            : '📂 No service_account.json found: Using Application Default Credentials');
 
-      final client = await clientViaServiceAccount(accountCredentials, [
-        FirestoreApi.datastoreScope,
-        FirebaseCloudMessagingApi.firebaseMessagingScope
-      ]);
-      _firestoreApi = FirestoreApi(client);
-      _fcmApi = FirebaseCloudMessagingApi(client);
+        var client = await clientViaApplicationDefaultCredentials(scopes: [
+          FirestoreApi.datastoreScope,
+          FirebaseCloudMessagingApi.firebaseMessagingScope
+        ]);
+        _firestoreApi = FirestoreApi(client);
+        _fcmApi = FirebaseCloudMessagingApi(client);
+      } else {
+        stderr.writeln('🔑 Using local service account: $serviceAccountPath');
+        final accountCredentials = ServiceAccountCredentials.fromJson(
+            await File(serviceAccountPath).readAsString());
+
+        final client = await clientViaServiceAccount(accountCredentials, [
+          FirestoreApi.datastoreScope,
+          FirebaseCloudMessagingApi.firebaseMessagingScope
+        ]);
+        _firestoreApi = FirestoreApi(client);
+        _fcmApi = FirebaseCloudMessagingApi(client);
+      }
+      _isInitialized = true;
+      stderr.writeln('✅ Firebase Service initialized successfully');
+    } catch (e, stack) {
+      stderr.writeln('❌ CRITICAL: Failed to initialize Firebase: $e');
+      stderr.writeln(stack);
+      rethrow; // Rethrow to let server.dart handle it
     }
   }
 

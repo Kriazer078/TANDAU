@@ -12,7 +12,7 @@ class AdminService {
   final AuthService _authService = AuthService();
 
   // Backend URL for Push Notifications
-  static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
+  static const String _baseUrl = 'https://tandau-backend-60478017512.europe-west1.run.app/api/v1';
 
   /// Verify caller is admin. Throws if not.
   void _requireAdmin() {
