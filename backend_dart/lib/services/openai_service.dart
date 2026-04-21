@@ -6,9 +6,20 @@ import 'cost_tracker_service.dart';
 import 'system_prompts.dart';
 
 class OpenAIService {
-  final String _apiKey;
+  final String _apiKey; 
   CostTrackerService? _costTracker;
-  final String _model = 'meta-llama/llama-3.3-70b-instruct:free'; // Free tier on OpenRouter
+  // Models will be determined dynamically by the API key format
+  String get _model {
+    if (_apiKey.startsWith('gsk_')) return 'llama-3.3-70b-versatile'; // Groq
+    if (_apiKey.startsWith('sk-or-')) return 'meta-llama/llama-3.3-70b-instruct:free'; // OpenRouter
+    return 'gpt-4o-mini'; // OpenAI fallback
+  }
+
+  Uri get _apiUrl {
+    if (_apiKey.startsWith('gsk_')) return Uri.parse('https://api.groq.com/openai/v1/chat/completions');
+    if (_apiKey.startsWith('sk-or-')) return Uri.parse('https://openrouter.ai/api/v1/chat/completions');
+    return Uri.parse('https://api.openai.com/v1/chat/completions');
+  }
 
   OpenAIService(this._apiKey);
 
@@ -58,7 +69,7 @@ class OpenAIService {
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) return 'Ошибка: API ключ OpenAI не настроен.';
 
-    final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
+    final url = _apiUrl;
     
     try {
       final response = await http.post(
@@ -97,7 +108,7 @@ class OpenAIService {
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) return Stream.value('Ошибка: API ключ OpenAI не настроен.');
 
-    final url = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
+    final url = _apiUrl;
     
     try {
       final request = http.Request('POST', url);
