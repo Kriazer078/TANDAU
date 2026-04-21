@@ -17,11 +17,9 @@ class GeminiService {
   // ✅ 2026 Verified stable Gemini models, ordered by priority (best first)
   static const List<String> _endpoints = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
   ];
-
-
 
   /// Keywords that require fresh data via Google Search Grounding.
   static const List<String> _groundingTriggers = [
@@ -79,8 +77,6 @@ class GeminiService {
       return 'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.';
     }
 
-    stderr.write('Sending advanced prompt to Gemini... ');
-
     int lastStatusCode = 0;
     List<String> errors = [];
 
@@ -100,15 +96,19 @@ class GeminiService {
           };
         }
 
-        // 🔍 Google Search Grounding
+        // 🔍 Google Search Grounding (REST API v1beta syntax)
         if (useGrounding) {
           requestBody['tools'] = [
-            {'googleSearch': {}}
+            {
+              'google_search_retrieval': {
+                'dynamic_retrieval_config': {
+                  'mode': 'MODE_DYNAMIC',
+                  'dynamic_threshold': 0.1,
+                }
+              }
+            }
           ];
         }
-
-        stderr.writeln('Endpoint: $endpoint');
-        stderr.writeln('Payload: ${jsonEncode(requestBody)}');
 
         final response = await http.post(
           Uri.parse('$endpoint?key=$_apiKey'),
@@ -123,31 +123,36 @@ class GeminiService {
           final text =
               json['candidates']?[0]?['content']?['parts']?[0]?['text'];
           if (text != null) {
-            stderr.writeln('OK ($modelName)');
-            // 💰 Track token usage
+            stderr.writeln('✅ Gemini ($modelName) Success');
             _trackTokenUsage(json, modelName);
             return text;
           }
-          stderr.writeln('Empty response from $modelName:\n${response.body}');
-          errors.add(
-              '$modelName returned 200 but text is null. Body: ${response.body}');
+          errors.add('$modelName: Null text response');
         } else {
-          stderr.writeln(
-              'Model $modelName failed: ${response.statusCode} - ${response.body}');
-          errors.add(
-              '$modelName failed: ${response.statusCode} - ${response.body}');
+          final errorText = response.body;
+          stderr.writeln('❌ Model $modelName failed (${response.statusCode})');
           
-          // 🛡️ Circuit Breaker: Continue to fallback model on any error
+          // 🛡️ Grounding Fallback: If 400 occurs with grounding, retry without it
+          if (response.statusCode == 400 && useGrounding) {
+            stderr.writeln('⚠️ Grounding failed for $modelName. Retrying WITHOUT tools...');
+            return _generateAdvanced(
+              systemInstruction: systemInstruction,
+              contents: contents,
+              useGrounding: false,
+            );
+          }
+
+          errors.add('$modelName (${response.statusCode}): $errorText');
           continue; 
         }
       } catch (e) {
-        stderr.writeln('Connection Error: $e');
-        errors.add('Connection Error: $e');
+        stderr.writeln('⚠️ $e');
+        errors.add('Connection error: $e');
       }
     }
 
     if (lastStatusCode == 429) {
-      return '📍 **Лимит запросов исчерпан.**\n\nИзвините, сейчас слишком много людей пользуются AI-консультантом. Пожалуйста, подождите немного (около 30-60 секунд) и попробуйте снова. Мы работаем над расширением лимитов!';
+      return '📍 **Лимит запросов исчерпан.**\n\nИзвините, сейчас слишком много людей пользуются AI-консультантом. Пожалуйста, подождите немного и попробуйте снова.';
     }
 
     return 'Извините, сервис временно недоступен.\n\n[ДЛЯ РАЗРАБОТЧИКА]:\n${errors.join('\n\n')}';
@@ -159,11 +164,8 @@ class GeminiService {
     bool useGrounding = false,
   }) async {
     if (_apiKey.isEmpty || _apiKey.startsWith('REPLACE')) {
-      return Stream.value(
-          'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.');
+      return Stream.value('Ошибка: API ключ не настроен.');
     }
-
-    stderr.write('Sending advanced stream prompt to Gemini... ');
 
     int lastStatusCode = 0;
     List<String> errors = [];
@@ -190,7 +192,14 @@ class GeminiService {
         // 🔍 Google Search Grounding
         if (useGrounding) {
           requestBody['tools'] = [
-            {'googleSearch': {}}
+            {
+              'google_search_retrieval': {
+                'dynamic_retrieval_config': {
+                  'mode': 'MODE_DYNAMIC',
+                  'dynamic_threshold': 0.1,
+                }
+              }
+            }
           ];
         }
 
@@ -205,7 +214,8 @@ class GeminiService {
         lastStatusCode = response.statusCode;
 
         if (response.statusCode == 200) {
-          stderr.writeln('Stream OK ($modelName)');
+          stderr.writeln('✅ Stream started: $modelName');
+          
           return response.stream
               .transform(utf8.decoder)
               .transform(const LineSplitter())
@@ -226,30 +236,34 @@ class GeminiService {
               .cast<String>();
         } else {
           final errorBody = await response.stream.bytesToString();
-          stderr.writeln(
-              'Model $modelName stream failed: ${response.statusCode} - $errorBody');
-          errors.add('$modelName failed: ${response.statusCode} - $errorBody');
-          client.close();
+          stderr.writeln('❌ Stream failed for $modelName (${response.statusCode})');
           
-          // 🛡️ Circuit Breaker: Continue to fallback model on rate limits
-          if (response.statusCode == 429) {
-            continue; 
+          if (response.statusCode == 400 && useGrounding) {
+            stderr.writeln('⚠️ Grounding stream failed. Retrying WITHOUT tools...');
+            client.close();
+            return _generateStreamAdvanced(
+              systemInstruction: systemInstruction,
+              contents: contents,
+              useGrounding: false,
+            );
           }
+
+          errors.add('$modelName (${response.statusCode}): $errorBody');
+          client.close();
+          continue; 
         }
       } catch (e) {
-        stderr.writeln('Stream Connection Error: $e');
-        errors.add('Connection Error: $e');
+        stderr.writeln('⚠️ Connection error: $e');
+        errors.add('Connection error: $e');
       }
     }
 
     if (lastStatusCode == 429) {
-      return Stream.value('📍 **Лимит запросов исчерпан.**\n\nИзвините, сейчас слишком много людей пользуются AI-консультантом. Пожалуйста, подождите немного (около 30-60 секунд) и попробуйте снова. Мы работаем над расширением лимитов!');
+      return Stream.value('📍 **Лимит запросов исчерпан.**');
     }
 
-    return Stream.value('Извините, сервис временно недоступен.\n\n[ДЛЯ РАЗРАБОТЧИКА]:\n${errors.join('\n\n')}');
+    return Stream.value('Сервис временно недоступен.\n\n[ДЛЯ РАЗРАБОТЧИКА]:\n${errors.join('\n\n')}');
   }
-
-  // Backward compatibility
 
   Future<String> generateChat(
     String question, {
@@ -258,7 +272,6 @@ class GeminiService {
     String? userContext,
     String? intentInstruction,
   }) async {
-    // 🔍 Only use grounding when question needs live data
     final shouldGround = _needsGrounding(question);
     return _generateAdvanced(
       systemInstruction: SystemPrompts.buildChatPrompt(
@@ -281,7 +294,6 @@ class GeminiService {
     String? userContext,
     String? intentInstruction,
   }) async {
-    // 🔍 Only use grounding when question needs live data
     final shouldGround = _needsGrounding(question);
     return _generateStreamAdvanced(
       systemInstruction: SystemPrompts.buildChatPrompt(
@@ -383,7 +395,6 @@ $context
     );
   }
 
-  /// Build Zheke Zhospar contents with RAG context
   static List<Map<String, dynamic>> _buildZhekeContents({
     required String userProfile,
     String? ragContext,
@@ -406,7 +417,6 @@ $context
     ];
   }
 
-  /// Generate a personalized "Жеке Жоспар" (non-stream)
   Future<String> generateZhekeZhospar({
     required String userProfile,
     String? ragContext,
@@ -421,7 +431,6 @@ $context
     );
   }
 
-  /// Generate a personalized "Жеке Жоспар" (stream)
   Future<Stream<String>> generateZhekeZhosparStream({
     required String userProfile,
     String? ragContext,
@@ -435,11 +444,7 @@ $context
       useGrounding: true,
     );
   }
-  // ═══════════════════════════════════════════════════════════════
-  // COST TRACKING — parse usageMetadata from Gemini responses
-  // ═══════════════════════════════════════════════════════════════
 
-  /// Parse and track token usage from Gemini API response.
   void _trackTokenUsage(Map<String, dynamic> json, String model) {
     if (_costTracker == null) return;
     try {
