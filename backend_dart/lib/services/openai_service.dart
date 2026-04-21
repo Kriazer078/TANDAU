@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -31,7 +32,7 @@ class OpenAIService {
     if (ragContext != null && ragContext.isNotEmpty) {
       // Truncate RAG context to prevent token overflow
       final truncatedRag = ragContext.length > 3000 ? ragContext.substring(0, 3000) : ragContext;
-      fullSystemPrompt += '\n\nDATABASE CONTEXT (TRUSTED FACTS):\n$truncatedRag';
+      fullSystemPrompt += '\n\n$truncatedRag';
     }
     
     // Add system message as proper 'system' role
@@ -90,8 +91,6 @@ class OpenAIService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
-          'HTTP-Referer': 'https://tandau.kz',
-          'X-Title': 'TANDAU App',
         },
         body: jsonEncode({
           'model': _model,
@@ -128,8 +127,6 @@ class OpenAIService {
       final request = http.Request('POST', url);
       request.headers['Content-Type'] = 'application/json';
       request.headers['Authorization'] = 'Bearer $_apiKey';
-      request.headers['HTTP-Referer'] = 'https://tandau.kz';
-      request.headers['X-Title'] = 'TANDAU App';
       request.body = jsonEncode({
         'model': _model,
         'messages': messages,
@@ -142,7 +139,9 @@ class OpenAIService {
       final response = await client.send(request).timeout(const Duration(seconds: 45));
 
       if (response.statusCode == 200) {
-        return response.stream
+        // Use a controller to properly close the HTTP client when stream ends
+        final controller = StreamController<String>();
+        response.stream
             .transform(utf8.decoder)
             .transform(const LineSplitter())
             .where((line) => line.startsWith('data: '))
@@ -155,7 +154,15 @@ class OpenAIService {
               } catch (e) { return ''; }
             })
             .where((text) => text.isNotEmpty)
-            .cast<String>();
+            .listen(
+              controller.add,
+              onError: controller.addError,
+              onDone: () {
+                controller.close();
+                client.close(); // ✅ Properly close HTTP client
+              },
+            );
+        return controller.stream;
       } else {
         client.close();
         return Stream.value('Ошибка OpenAI: ${response.statusCode}');

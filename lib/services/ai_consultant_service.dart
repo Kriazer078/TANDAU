@@ -329,7 +329,7 @@ class AIConsultantService {
           request.headers['Content-Type'] = 'application/json';
           request.body = jsonEncode(bodyData);
 
-          response = await client.send(request).timeout(const Duration(seconds: 40));
+          response = await client.send(request).timeout(const Duration(seconds: 55));
 
           if (response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504) {
             retryCount++;

@@ -304,7 +304,7 @@ class UniversityController {
               .map((u) => '- ${u.id}: ${u.name} (${u.city})')
               .join('\n');
           enrichedContext +=
-              '\n\n### СПРАВОЧНИК ID ВУЗОВ (используй ТОЛЬКО эти ID для ссылок app://university/ID):\n$idMap';
+              '\n\n### ВУЗЫ (ID → Название, для ссылок [Название](app://university/ID)):\n$idMap';
         }
       } catch (e) {
         stderr.writeln('⚠️ Failed to load uni IDs for context: $e');
@@ -312,11 +312,8 @@ class UniversityController {
 
       // 🧭 Navigation whitelist — strict allowed targets
       enrichedContext +=
-          '\n\n### ДОПУСТИМЫЕ НАВИГАЦИИ (используй ТОЛЬКО эти значения для ACTION NAVIGATE):\n'
-          '- favorites — Избранные вузы\n'
-          '- profile — Настройка профиля\n'
-          '- calculator — Калькулятор шансов\n'
-          '- home — Главная страница';
+          '\n\nНавигация (допустимые target для ACTION NAVIGATE): '
+          'favorites, profile, calculator, home.';
 
       final stream = await _aiService.generateChatStream(
         question,
