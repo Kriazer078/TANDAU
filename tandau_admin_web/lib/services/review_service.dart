@@ -438,7 +438,7 @@ class ReviewService {
     try {
       // Note: Assuming backend is deployed at this URL
       final uri = Uri.parse(
-        'https://tandau-backend-60478017512.europe-west1.run.app/v1/stats/review-created',
+        'https://tandau-backend.onrender.com/v1/stats/review-created',
       );
 
       // Fire and forget - don't await/block UI

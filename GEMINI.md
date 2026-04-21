@@ -8,7 +8,7 @@
 - **Framework**: Flutter 3.x (Dart 3.10.8+)
 - **Target platforms**: Android, iOS, Web, macOS, Windows
 - **Main entry point**: `lib/main.dart`
-- **Backend**: Dart Shelf server in `backend_dart/` folder (deployed at tandau-backend-60478017512.europe-west1.run.app)
+- **Backend**: Dart Shelf server in `backend_dart/` folder (deployed at tandau-backend.onrender.com)
 - **Tests**: `test/` (widget tests)
 - **State Management**: flutter_riverpod + ValueNotifier
 - **Internationalization**: 3 locales (Russian default, Kazakh, English) via `lib/l10n/`

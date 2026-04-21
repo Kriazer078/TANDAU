@@ -19,7 +19,7 @@ class AIConsultantService {
   AIConsultantService._internal();
 
   // PRODUCTION URL:
-  static const String _baseUrl = 'https://tandau-backend-60478017512.europe-west1.run.app/api/v1';
+  static const String _baseUrl = 'https://tandau-backend.onrender.com/api/v1';
 
   /// Инициализация (Warm-up backend)
   void init() {
