@@ -9,7 +9,7 @@ class OpenAIService {
   final String _apiKey; 
   CostTrackerService? _costTracker;
 
-  final String _model = 'llama-3.3-70b-versatile'; // Standard extremely fast model on Groq
+  final String _model = 'gemma2-9b-it'; // Google's model on Groq, perfect Russian language support
   final Uri _apiUrl = Uri.parse('https://api.groq.com/openai/v1/chat/completions');
 
   OpenAIService(this._apiKey);
