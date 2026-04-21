@@ -8,18 +8,9 @@ import 'system_prompts.dart';
 class OpenAIService {
   final String _apiKey; 
   CostTrackerService? _costTracker;
-  // Models will be determined dynamically by the API key format
-  String get _model {
-    if (_apiKey.startsWith('gsk_')) return 'llama-3.3-70b-versatile'; // Groq
-    if (_apiKey.startsWith('sk-or-')) return 'meta-llama/llama-3.3-70b-instruct:free'; // OpenRouter
-    return 'gpt-4o-mini'; // OpenAI fallback
-  }
 
-  Uri get _apiUrl {
-    if (_apiKey.startsWith('gsk_')) return Uri.parse('https://api.groq.com/openai/v1/chat/completions');
-    if (_apiKey.startsWith('sk-or-')) return Uri.parse('https://openrouter.ai/api/v1/chat/completions');
-    return Uri.parse('https://api.openai.com/v1/chat/completions');
-  }
+  final String _model = 'llama-3.3-70b-versatile'; // Standard extremely fast model on Groq
+  final Uri _apiUrl = Uri.parse('https://api.groq.com/openai/v1/chat/completions');
 
   OpenAIService(this._apiKey);
 

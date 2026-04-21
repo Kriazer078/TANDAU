@@ -25,15 +25,15 @@ void main(List<String> args) async {
   }
 
   final projectId = env['FIREBASE_PROJECT_ID'] ?? 'tandau-app';
-  final openAIKey = env['OPENROUTER_API_KEY'] ?? env['OPENAI_API_KEY'] ?? env['GEMINI_API_KEY'] ?? '';
+  final groqApiKey = env['GROQ_API_KEY'] ?? env['OPENAI_API_KEY'] ?? '';
   final port = int.parse(env['PORT'] ?? '8080');
 
   stderr.writeln('🆔 Using Project ID: $projectId');
 
   // Initialize Services
   final firebaseService = FirebaseService(projectId);
-  final knowledgeService = KnowledgeService(firebaseService, openAIKey);
-  final aiService = OpenAIService(openAIKey);
+  final knowledgeService = KnowledgeService(firebaseService, groqApiKey);
+  final aiService = OpenAIService(groqApiKey);
 
   stderr.writeln('🚀 Starting services initialization...');
 
