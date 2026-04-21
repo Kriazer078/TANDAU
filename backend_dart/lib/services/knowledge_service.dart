@@ -31,6 +31,16 @@ class KnowledgeService {
 
   /// Load knowledge base and pre-compute embeddings
   Future<void> init() async {
+    await _loadAndCompute();
+  }
+
+  /// Force reload of knowledge base (e.g. after admin updates)
+  Future<void> reinit() async {
+    _isLoaded = false;
+    await _loadAndCompute();
+  }
+
+  Future<void> _loadAndCompute() async {
     try {
       _knowledgeBase = await _firebaseService.getKnowledgeBase();
       stderr.writeln('📚 Knowledge Base loaded: ${_knowledgeBase.length} documents');

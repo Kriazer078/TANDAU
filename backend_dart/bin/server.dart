@@ -121,6 +121,22 @@ void main(List<String> args) async {
     );
   });
 
+  // 🔄 Admin: Refresh Knowledge Base
+  router.post('/admin/refresh-kb', (Request req) async {
+    try {
+      await knowledgeService.reinit();
+      return Response.ok(
+        jsonEncode({'status': 'success', 'message': 'Knowledge base refreshed'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      return Response.internalServerError(
+        body: jsonEncode({'status': 'error', 'message': e.toString()}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+  });
+
   // 📊 Admin: Request stats
   router.get('/admin/stats', (Request req) {
     final uptime = DateTime.now().toUtc().difference(serverStartTime);
