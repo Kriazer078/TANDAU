@@ -55,5 +55,22 @@
 	<false/>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>TANDAU не отслеживает вашу активность. Данные используются только для улучшения работы приложения.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.60478017512-dosnp8lrf2aihm7m3t401kgmb95v7fet</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+		<string>https</string>
+	</array>
 </dict>
 </plist>
