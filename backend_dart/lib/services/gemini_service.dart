@@ -14,11 +14,12 @@ class GeminiService {
     _costTracker = tracker;
   }
 
-  // ✅ 2026 Verified stable Gemini models, ordered by priority (best first)
+  // ✅ 2026 stable Gemini models with better fallback coverage
   static const List<String> _endpoints = [
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
   ];
 
   /// Keywords that require fresh data via Google Search Grounding.
