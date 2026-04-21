@@ -75,6 +75,17 @@ class GeminiService {
       return 'Ошибка: API ключ не настроен. Пожалуйста, обратитесь в поддержку.';
     }
 
+    // 🛠️ Failsafe: Ensure roles alternate (user -> model -> user) to avoid 400 errors
+    final List<Map<String, dynamic>> normalizedContents = [];
+    String lastRole = '';
+    for (var content in contents) {
+      final role = content['role'] ?? 'user';
+      if (role != lastRole) {
+        normalizedContents.add(content);
+        lastRole = role;
+      }
+    }
+
     int lastStatusCode = 0;
     List<String> errors = [];
 
@@ -85,7 +96,7 @@ class GeminiService {
         final isV1beta = endpoint.contains('/v1beta/');
         final isV1 = !isV1beta && endpoint.contains('/v1/');
         final Map<String, dynamic> requestBody = {
-          'contents': contents,
+          'contents': normalizedContents,
         };
 
         if (systemInstruction != null && systemInstruction.isNotEmpty) {
@@ -95,7 +106,6 @@ class GeminiService {
             ]
           };
           
-          // 💡 v1 uses system_instruction (underscore), v1beta uses systemInstruction
           if (isV1) {
             requestBody['system_instruction'] = systemPart;
           } else {
@@ -103,8 +113,8 @@ class GeminiService {
           }
         }
 
-        // 🔍 Google Search Grounding (REST API v1beta syntax)
-        if (useGrounding) {
+        // 🔍 Google Search Grounding (ONLY for v1beta)
+        if (useGrounding && isV1beta) {
           requestBody['tools'] = [
             {
               'google_search_retrieval': {
@@ -134,23 +144,25 @@ class GeminiService {
             _trackTokenUsage(json, modelName);
             return text;
           }
-          errors.add('$modelName: Null text response');
-        } else {
-          final errorText = response.body;
-          stderr.writeln('❌ Model $modelName failed (${response.statusCode})');
+        }
+        
+        // 🛡️ RECOVERY LAYER: If 400 occurs, try a "CLEAN" request with only current prompt
+        if (response.statusCode == 400) {
+          stderr.writeln('⚠️ 400 Error. Trying "Ultimate Last Resort" for $modelName...');
+          final lastPrompt = normalizedContents.lastWhere((c) => c['role'] == 'user', orElse: () => normalizedContents.last);
           
-          // 🛡️ Grounding Fallback: If 400 occurs with grounding, retry without it
-          if (response.statusCode == 400 && useGrounding) {
-            stderr.writeln('⚠️ Grounding failed for $modelName. Retrying WITHOUT tools...');
-            return _generateAdvanced(
-              systemInstruction: systemInstruction,
-              contents: contents,
-              useGrounding: false,
-            );
+          final cleanResponse = await http.post(
+            Uri.parse('$endpoint?key=$_apiKey'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'contents': [lastPrompt] // NO history, NO system, NO tools
+            }),
+          ).timeout(const Duration(seconds: 15));
+          
+          if (cleanResponse.statusCode == 200) {
+            final json = jsonDecode(utf8.decode(cleanResponse.bodyBytes));
+            return json['candidates']?[0]?['content']?['parts']?[0]?['text'] ?? 'Ошибка парсинга';
           }
-
-          errors.add('$modelName (${response.statusCode}): $errorText');
-          continue; 
         }
       } catch (e) {
         stderr.writeln('⚠️ $e');
