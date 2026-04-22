@@ -10,8 +10,8 @@ class OpenAIService {
   final String _apiKey; 
   CostTrackerService? _costTracker;
 
-  final String _model = 'llama-3.3-70b-versatile'; // Meta's model on Groq, supports system role + good Russian
-  final Uri _apiUrl = Uri.parse('https://api.groq.com/openai/v1/chat/completions');
+  final String _model = 'gpt-4o-mini'; // OpenAI GPT-4o Mini — fast, cheap, supports Russian
+  final Uri _apiUrl = Uri.parse('https://api.openai.com/v1/chat/completions');
 
   OpenAIService(this._apiKey);
 
@@ -27,7 +27,7 @@ class OpenAIService {
   }) {
     final List<Map<String, dynamic>> messages = [];
     
-    // 1. System Instruction (llama-3.3 supports 'system' role natively)
+    // 1. System Instruction
     String fullSystemPrompt = systemInstruction ?? 'You are TANDAU AI, an expert in Kazakhstan education.';
     if (ragContext != null && ragContext.isNotEmpty) {
       // Truncate RAG context to prevent token overflow
@@ -50,7 +50,7 @@ class OpenAIService {
         }
         
         if (content.trim().isNotEmpty) {
-          // Groq requires strictly alternating roles (user -> assistant -> user)
+          // Merge consecutive same-role messages to keep history clean
           if (messages.isNotEmpty && messages.last['role'] == role) {
             messages.last['content'] = '${messages.last['content']}\n\n$content';
           } else {
@@ -68,11 +68,6 @@ class OpenAIService {
       } else {
         messages.add({'role': 'user', 'content': question});
       }
-    }
-    
-    // 4. Ensure last message is from user (Groq requirement)
-    if (messages.isNotEmpty && messages.last['role'] != 'user') {
-      messages.add({'role': 'user', 'content': 'Продолжай на основе контекста выше.'});
     }
     
     return messages;
